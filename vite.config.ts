@@ -1,7 +1,5 @@
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import type { VitePWAOptions } from 'vite-plugin-pwa'
-import { VitePWA as vitePWA } from 'vite-plugin-pwa'
+import { VitePWA as vitePWA, type VitePWAOptions } from 'vite-plugin-pwa'
 
 const pwaOptions: Partial<VitePWAOptions> = {
   mode: 'production',
@@ -44,7 +42,7 @@ const pwaOptions: Partial<VitePWAOptions> = {
 }
 
 export default defineConfig({
-  plugins: [react(), vitePWA(pwaOptions)],
+  plugins: [vitePWA(pwaOptions)],
   worker: { format: 'es' },
 
   test: {
