@@ -1,2 +1,3 @@
-# scorable
+# Scorable
+
 Score-keeping for Scrabble™

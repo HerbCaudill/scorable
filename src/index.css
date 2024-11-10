@@ -1,0 +1,27 @@
+h2 {
+  @apply font-bold border-b-2 border-b-black pb-2 mb-2;
+}
+
+h2 i {
+  @apply not-italic text-2xl;
+}
+
+.button {
+  @apply inline-flex items-center rounded-full border border-opacity-50 border-black;
+  @apply focus:outline-none focus:ring-0;
+  @apply font-mono;
+}
+
+.button-sm {
+  @apply text-sm;
+  @apply px-5 py-2;
+}
+
+.button-xs {
+  @apply text-xs;
+  @apply px-3 py-1;
+}
+
+.Message strong {
+  @apply font-black;
+}
