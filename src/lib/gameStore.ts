@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Game, GameSummary, PlayerRecord, BoardState, Move, Player } from './types'
+import type { Game, GameSummary, PlayerRecord, BoardState, GameMove, Player } from './types'
 import { createEmptyBoard, createPlayer } from './types'
 import { calculateMoveScore } from './calculateMoveScore'
 
@@ -11,7 +11,7 @@ export const getPlayerScore = (game: Game, playerIndex: number): number => {
 
   for (const move of game.moves) {
     if (move.playerIndex === playerIndex) {
-      score += calculateMoveScore({ move, board: boardState })
+      score += calculateMoveScore({ move: move.tilesPlaced, board: boardState })
     }
     // Update board state after each move
     for (const { row, col, tile } of move.tilesPlaced) {
@@ -39,7 +39,7 @@ type GameStore = {
   resumeGame: () => void
 
   // Gameplay
-  recordMove: (move: Move) => void
+  recordMove: (move: GameMove) => void
   updateBoard: (board: BoardState) => void
   nextTurn: () => void
   updatePlayerTime: (playerIndex: number, timeRemainingMs: number) => void
@@ -138,7 +138,7 @@ export const useGameStore = create<GameStore>()(
         const { currentGame } = get()
         if (!currentGame) return
 
-        const newMove: Move = {
+        const newMove: GameMove = {
           ...move,
         }
 
