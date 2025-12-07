@@ -8,16 +8,16 @@
 
 ## Phase 0: Storybook setup & screen design
 
-- [ ] Set up Storybook for React
-- [ ] Create base component stories (Button, Input, Select, etc.)
-- [ ] Establish minimal, monochromatic design system in Storybook
-- [ ] Design and prototype all screens in Storybook:
-  - Home screen (new game / past games)
-  - Player setup screen
-  - Game play screen (board, scores, move entry)
-- [ ] Document component patterns and usage
-- [ ] Validate layouts and interactions across screen sizes
-- [ ] Build reusable component foundations before integration
+- [x] Set up Storybook for React
+- [x] Create base component stories (Button, Input, Select, etc.)
+- [x] Establish minimal, monochromatic design system in Storybook
+- [x] Design and prototype all screens in Storybook:
+  - [x] Home screen (new game / past games)
+  - [x] Player setup screen
+  - [x] Game play screen (board, scores, move entry)
+- [x] Document component patterns and usage
+- [x] Validate layouts and interactions across screen sizes
+- [x] Build reusable component foundations before integration
 
 ## Phase 1: Core data models & state management
 
@@ -126,4 +126,8 @@
 
 - React app scaffolded with Vite
 - Tailwind CSS configured
-- Ready to start Phase 0: Storybook setup
+- **Phase 0 complete**: Storybook set up with component library and screen designs
+  - Button, Input, Select components with stories
+  - Home screen, Player setup screen, and Game play screen designs
+  - Minimal, monochromatic design system established
+- Ready to start Phase 1: Core data models & state management
