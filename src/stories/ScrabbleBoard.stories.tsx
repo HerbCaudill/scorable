@@ -1,12 +1,16 @@
-import React from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
 import ScrabbleBoard from '../components/ScrabbleBoard'
 
-export default {
+const meta = {
   title: 'Components/ScrabbleBoard',
   component: ScrabbleBoard,
-}
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+} satisfies Meta<typeof ScrabbleBoard>
 
-const Template = args => <ScrabbleBoard {...args} />
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Default = Template.bind({})
-Default.args = {}
+export const Default: Story = {}
