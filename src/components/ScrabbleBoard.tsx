@@ -12,7 +12,7 @@ type ScrabbleBoardProps = {
 
 const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSquare }: ScrabbleBoardProps) => {
   // Dots component for multipliers
-  const Dots = ({ count, light = false, rotation }: { count: number; light: boolean; rotation: string }) => {
+  const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
     return (
       <div className={cx('flex gap-1', rotation)}>
         {Array.from({ length: count }).map((_, i) => (
