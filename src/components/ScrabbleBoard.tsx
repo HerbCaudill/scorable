@@ -1,34 +1,13 @@
 import { BOARD_LAYOUT, type SquareType } from '../lib/board'
+import { cx } from '../lib/cx'
 
 const ScrabbleBoard = () => {
-  const center = 7
-
-  // Get rotation angle based on position relative to center
-  const getRotation = (row: number, col: number): string => {
-    if (row === center && col === center) return 'rotate-0' // Center
-    if (row === center) return 'rotate-0' // Center row - horizontal
-    if (col === center) return 'rotate-90' // Center column - vertical
-    if (row < center && col < center) return 'rotate-45' // Top-left quadrant
-    if (row < center && col > center) return 'rotate-[135deg]' // Top-right quadrant
-    if (row > center && col < center) return '-rotate-45' // Bottom-left quadrant
-    return '-rotate-[135deg]' // Bottom-right quadrant
-  }
-
-  const getSquareClasses = (squareType: SquareType): string => {
-    // DW/TW/ST get dark background, DL/TL get light background
-    if (squareType === 'DW' || squareType === 'TW' || squareType === 'ST') {
-      return 'bg-neutral-800'
-    }
-    return 'bg-white'
-  }
-
   // Dots component for multipliers
   const Dots = ({ count, light, rotation }: { count: number; light: boolean; rotation: string }) => {
-    const dotColor = light ? 'bg-neutral-800' : 'bg-white'
     return (
-      <div className={`flex gap-1 ${rotation}`}>
+      <div className={cx('flex gap-1', rotation)}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+          <div key={i} className={cx('w-1.5 h-1.5 rounded-full', light ? 'bg-neutral-800' : 'bg-white')} />
         ))}
       </div>
     )
@@ -44,7 +23,23 @@ const ScrabbleBoard = () => {
   )
 
   const renderSquareContent = (squareType: SquareType, row: number, col: number) => {
-    const rotation = getRotation(row, col)
+    const center = 7
+    // Get rotation angle based on position relative to center
+    const rotation =
+      row === center && col === center
+        ? 'rotate-0' // Center
+        : row === center
+        ? 'rotate-0' // Center row - horizontal
+        : col === center
+        ? 'rotate-90' // Center column - vertical
+        : row < center && col < center
+        ? 'rotate-45' // Top-left quadrant
+        : row < center && col > center
+        ? 'rotate-[135deg]' // Top-right quadrant
+        : row > center && col < center
+        ? '-rotate-45' // Bottom-left quadrant
+        : '-rotate-[135deg]' // Bottom-right quadrant
+
     switch (squareType) {
       case 'DL':
         return <Dots count={2} light rotation={rotation} />
@@ -67,9 +62,12 @@ const ScrabbleBoard = () => {
         row.map((squareType, colIndex) => (
           <div
             key={`${rowIndex}-${colIndex}`}
-            className={`w-10 h-10 flex items-center justify-center border-b border-r border-neutral-300 ${
-              rowIndex === 0 ? 'border-t' : ''
-            } ${colIndex === 0 ? 'border-l' : ''} ${getSquareClasses(squareType)}`}
+            className={cx(
+              'w-10 h-10 flex items-center justify-center border-b border-r border-neutral-300',
+              rowIndex === 0 && 'border-t',
+              colIndex === 0 && 'border-l',
+              squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-neutral-800' : 'bg-white'
+            )}
           >
             {renderSquareContent(squareType, rowIndex, colIndex)}
           </div>
