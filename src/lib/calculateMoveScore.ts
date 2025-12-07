@@ -1,4 +1,4 @@
-import { getkSquareType, getSquareType } from './getSquareType'
+import { getSquareType } from './getSquareType'
 import { tileValues } from './tileValues'
 import type { BoardState, Move, SquareType } from './types'
 
