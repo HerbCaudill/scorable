@@ -1,4 +1,4 @@
-import { BOARD_LAYOUT, type SquareType, type BoardState, type Tile, createEmptyBoard, createTile } from '../lib/board'
+import { BOARD_LAYOUT, type SquareType, type BoardState, createEmptyBoard, getTileValue } from '../lib/board'
 import { cx } from '../lib/cx'
 
 type ScrabbleBoardProps = {
@@ -66,19 +66,22 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
   }
 
   // Tile component to display placed tiles
-  const TileDisplay = ({ tile }: { tile: Tile }) => (
-    <div className="relative flex h-full w-full items-center justify-center rounded-sm bg-amber-100 shadow-sm">
-      <span className="text-lg font-bold text-neutral-800">{tile.letter}</span>
-      <span className="absolute bottom-0.5 right-1 text-[8px] font-semibold text-neutral-600">
-        {tile.value > 0 ? tile.value : ''}
-      </span>
-    </div>
-  )
+  const TileDisplay = ({ letter }: { letter: string }) => {
+    const value = getTileValue(letter)
+    return (
+      <div className="relative flex h-full w-full items-center justify-center rounded-sm bg-amber-100 shadow-sm">
+        <span className="text-lg font-bold text-neutral-800">{letter.toUpperCase()}</span>
+        <span className="absolute bottom-0.5 right-1 text-[8px] font-semibold text-neutral-600">
+          {value > 0 ? value : ''}
+        </span>
+      </div>
+    )
+  }
 
   const isSelected = (row: number, col: number) => selectedSquare?.row === row && selectedSquare?.col === col
 
   return (
-    <div className="grid grid-cols-15 gap-px bg-neutral-300 p-px">
+    <div className="grid grid-cols-15 gap-0.5 bg-neutral-300 p-0.5">
       {BOARD_LAYOUT.map((row, rowIndex) =>
         row.map((squareType, colIndex) => {
           const tile = tiles[rowIndex][colIndex]
@@ -89,13 +92,13 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
               key={`${rowIndex}-${colIndex}`}
               onClick={() => onSquareClick?.(rowIndex, colIndex)}
               className={cx(
-                'flex h-10 w-10 items-center justify-center p-0.5',
-                squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-neutral-800' : 'bg-white',
+                'flex h-10 w-10 items-center justify-center',
+                squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-neutral-500' : 'bg-neutral-200',
                 onSquareClick && 'cursor-pointer hover:opacity-80',
                 isSelected(rowIndex, colIndex) && 'ring-2 ring-blue-500 ring-inset'
               )}
             >
-              {hasTile ? <TileDisplay tile={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
+              {hasTile ? <TileDisplay letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
             </div>
           )
         })

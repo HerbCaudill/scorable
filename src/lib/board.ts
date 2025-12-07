@@ -1,10 +1,5 @@
 export type SquareType = 'TW' | 'DW' | 'TL' | 'DL' | 'ST' | null
 
-export type Tile = {
-  letter: string
-  value: number
-}
-
 // Standard Scrabble tile values
 export const TILE_VALUES: Record<string, number> = {
   A: 1,
@@ -36,13 +31,10 @@ export const TILE_VALUES: Record<string, number> = {
   ' ': 0, // Blank tile
 }
 
-export const createTile = (letter: string): Tile => ({
-  letter: letter.toUpperCase(),
-  value: TILE_VALUES[letter.toUpperCase()] ?? 0,
-})
+export const getTileValue = (letter: string): number => TILE_VALUES[letter.toUpperCase()] ?? 0
 
-// Board state is a 15x15 grid of tiles (null if empty)
-export type BoardState = (Tile | null)[][]
+// Board state is a 15x15 grid of letters (null if empty)
+export type BoardState = (string | null)[][]
 
 export const createEmptyBoard = (): BoardState =>
   Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => null))
