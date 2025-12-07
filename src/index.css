@@ -1,9 +1,49 @@
 @import 'tailwindcss';
 
-@layer theme {
-  :root {
-    --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'IBM Plex Serif', ui-serif, Georgia, serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  }
+@theme {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'IBM Plex Serif', ui-serif, Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* https://www.tints.dev/orange/b36d1e */
+  --color-orange-50: oklch(96.08% 0.019 67.6);
+  --color-orange-100: oklch(92.29% 0.038 71.21);
+  --color-orange-200: oklch(84.7% 0.077 71.01);
+  --color-orange-300: oklch(77.93% 0.11 68.95);
+  --color-orange-400: oklch(71.1% 0.14 64.76);
+  --color-orange-500: oklch(59.88% 0.125 63.25);
+  --color-orange-600: oklch(51.29% 0.105 63.99);
+  --color-orange-700: oklch(42.32% 0.084 65.15);
+  --color-orange-800: oklch(31.61% 0.059 65.96);
+  --color-orange-900: oklch(21.04% 0.035 66.84);
+  --color-orange-950: oklch(15.45% 0.022 79.91);
+  --color-orange: var(--color-orange-500);
+
+  /* https://www.tints.dev/teal/00b399 */
+  --color-teal-50: oklch(97.64% 0.033 184.93);
+  --color-teal-100: oklch(95.33% 0.067 184.58);
+  --color-teal-200: oklch(91.95% 0.121 182.38);
+  --color-teal-300: oklch(90.03% 0.155 179.5);
+  --color-teal-400: oklch(86.7% 0.162 176.39);
+  --color-teal-500: oklch(68.57% 0.127 177.34);
+  --color-teal-600: oklch(58.1% 0.108 176.71);
+  --color-teal-700: oklch(47.21% 0.087 177.63);
+  --color-teal-800: oklch(35.64% 0.065 179.37);
+  --color-teal-900: oklch(23.31% 0.043 179.09);
+  --color-teal-950: oklch(17.17% 0.031 183.03);
+  --color-teal: var(--color-teal-500);
+
+  /* https://www.tints.dev/khaki/b0a092 */
+  --color-khaki-50: oklch(97.04% 0.003 84.56);
+  --color-khaki-100: oklch(94.76% 0.005 67.76);
+  --color-khaki-200: oklch(88.64% 0.01 58.2);
+  --color-khaki-300: oklch(83.24% 0.016 61.3);
+  --color-khaki-400: oklch(77.11% 0.022 65.23);
+  --color-khaki-500: oklch(71.56% 0.027 63.58);
+  --color-khaki-600: oklch(60.83% 0.039 62.81);
+  --color-khaki-700: oklch(50.02% 0.031 65.19);
+  --color-khaki-800: oklch(37.63% 0.021 61.39);
+  --color-khaki-900: oklch(25.16% 0.012 67.24);
+  --color-khaki-950: oklch(17.13% 0.007 55.91);
+  --color-khaki: var(--color-khaki-500);
 }

@@ -204,7 +204,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
     return (
       <div className={cx('flex gap-[0.9cqw]', rotation)}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className={cx('size-[0.8cqw] rounded-full', light ? 'bg-neutral-800' : 'bg-white')} />
+          <div key={i} className={cx('size-[0.8cqw] rounded-full', light ? 'bg-khaki-800' : 'bg-white')} />
         ))}
       </div>
     )
@@ -257,11 +257,11 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
   const Tile = ({ letter }: { letter: string }) => {
     const value = getTileValue(letter)
     return (
-      <div className="relative flex h-full w-full items-center justify-center rounded-[0.2cqw] bg-amber-100 shadow-sm">
-        <span className="text-[3.5cqw] font-bold text-neutral-800 leading-none">
+      <div className="relative flex h-full w-full items-center justify-center rounded-[0.2cqw] bg-amber-100 shadow-sm z-0">
+        <span className="text-[3.5cqw] font-bold text-khaki-800 leading-none">
           {letter === ' ' ? '' : letter.toUpperCase()}
         </span>
-        <span className="absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold text-neutral-600 leading-none">
+        <span className="absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold text-khaki-600 leading-none">
           {value > 0 ? value : ''}
         </span>
       </div>
@@ -272,12 +272,12 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
   const CursorArrow = ({ direction }: { direction: CursorDirection }) => (
     <div
       className={cx(
-        'absolute w-0 h-0 border-solid',
+        'absolute w-0 h-0 border-solid z-20',
         direction === 'horizontal'
           ? // Right-pointing triangle, positioned to the right of the box
-            'left-full top-1/2 -translate-y-1/2 ml-[0.2cqw] border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-blue-600'
+            'left-full top-1/2 -translate-y-1/2  border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-teal-600'
           : // Down-pointing triangle, positioned below the box
-            'top-full left-1/2 -translate-x-1/2 mt-[0.2cqw] border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-blue-600'
+            'top-full left-1/2 -translate-x-1/2  border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-teal-600'
       )}
     />
   )
@@ -289,7 +289,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
       onKeyDown={handleKeyDown}
       className="@container w-full max-w-2xl outline-none"
     >
-      <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-neutral-300 p-[0.25cqw]">
+      <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {BOARD_LAYOUT.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
             const tile = tiles[rowIndex][colIndex]
@@ -302,15 +302,18 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
                 onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
                   'relative flex aspect-square items-center justify-center overflow-visible',
-                  squareType === 'DW' || squareType === 'TW' || squareType === 'ST'
-                    ? 'bg-neutral-500'
-                    : 'bg-neutral-200',
+                  squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-khaki-500' : 'bg-khaki-200',
                   editable && 'cursor-pointer hover:opacity-80',
-                  hasCursor && 'ring-[0.4cqw] ring-blue-600 ring-inset z-10'
+                  hasCursor && 'z-10'
                 )}
               >
                 {hasTile ? <Tile letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
-                {hasCursor && cursor && <CursorArrow direction={cursor.direction} />}
+                {hasCursor && (
+                  <>
+                    <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
+                    {cursor && <CursorArrow direction={cursor.direction} />}
+                  </>
+                )}
               </div>
             )
           })
