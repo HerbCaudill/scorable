@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { GameScreen } from '../components/GameScreen'
+import { useGameStore } from '@/lib/gameStore'
+import { createEmptyBoard, createPlayer, DEFAULT_TIME_MS } from '@/lib/types'
 
 const meta = {
   title: 'Screens/GameScreen',
@@ -23,8 +25,6 @@ export const NewGame: Story = {
   name: 'New Game - 2 Players',
   decorators: [
     Story => {
-      const { useGameStore } = require('@/lib/gameStore')
-      const { createEmptyBoard, createPlayer } = require('@/lib/types')
       const state = useGameStore.getState()
       useGameStore.setState({
         ...state,
@@ -48,8 +48,6 @@ export const FourPlayers: Story = {
   name: 'New Game - 4 Players',
   decorators: [
     Story => {
-      const { useGameStore } = require('@/lib/gameStore')
-      const { createEmptyBoard, createPlayer } = require('@/lib/types')
       const state = useGameStore.getState()
       useGameStore.setState({
         ...state,
@@ -78,9 +76,6 @@ export const InProgress: Story = {
   name: 'Game In Progress',
   decorators: [
     Story => {
-      const { useGameStore } = require('@/lib/gameStore')
-      const { createEmptyBoard, createPlayer, DEFAULT_TIME_MS } = require('@/lib/types')
-
       // Create board with some tiles
       const board = createEmptyBoard()
       // Place "HELLO" horizontally starting at center

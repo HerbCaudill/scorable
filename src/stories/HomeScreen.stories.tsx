@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { HomeScreen } from '../components/HomeScreen'
+import { useGameStore } from '@/lib/gameStore'
+import { createEmptyBoard, createPlayer } from '@/lib/types'
 
 const meta = {
   title: 'Screens/HomeScreen',
@@ -25,7 +27,6 @@ export const WithPastGames: Story = {
   decorators: [
     Story => {
       // Mock the store with past games
-      const { useGameStore } = require('@/lib/gameStore')
       const state = useGameStore.getState()
       useGameStore.setState({
         ...state,
@@ -63,8 +64,6 @@ export const WithCurrentGame: Story = {
   name: 'With Resumable Game',
   decorators: [
     Story => {
-      const { useGameStore } = require('@/lib/gameStore')
-      const { createEmptyBoard, createPlayer } = require('@/lib/types')
       const state = useGameStore.getState()
       useGameStore.setState({
         ...state,
