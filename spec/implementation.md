@@ -19,7 +19,26 @@
 - [x] Validate layouts and interactions across screen sizes
 - [x] Build reusable component foundations before integration
 
-## Phase 1: Core data models & state management
+## Phase 1: Scrabble board UI
+
+- [x] Create 15x15 Scrabble board grid
+- [x] Render board squares with correct multipliers:
+  - DL (Double Letter): normal (light) square with two dots
+  - TL (Triple Letter): normal (light) square with three dots
+  - DW (Double Word): reversed (dark) square with two dots
+  - TW (Triple Word): reversed (dark) square with three dots
+  - A bulls-eye in the center indicating the starting position
+- [x] Mobile-responsive board scaling (fits viewport with proper aspect ratio)
+
+## Phase 2: Player setup screen
+
+- [ ] Player name input/selection form (up to 4 players)
+- [ ] Dropdown with previously-used player names (sorted by frequency)
+- [ ] Support for entering new player names
+- [ ] "Start game" button (enabled when at least 2 players entered)
+- [ ] Storybook stories for form states (empty, partial, complete)
+
+## Phase 3: Core data models & state management
 
 - [ ] Define TypeScript types for:
   - `Player` (name, score, time remaining)
@@ -29,7 +48,7 @@
 - [ ] Configure Automerge document structure for CRDT-based sync
 - [ ] Implement local-first sync with automerge-repo
 
-## Phase 2: Navigation & screens
+## Phase 4: Navigation & screens
 
 - [ ] Create main router with screens:
   - Home (New game / Resume / Past games)
@@ -39,7 +58,7 @@
 - [ ] Mobile-responsive layout (touch-friendly, full viewport utilization)
 - [ ] Build screen component stories in Storybook first
 
-## Phase 3: Home screen
+## Phase 5: Home screen
 
 - [ ] Display "New game" button
 - [ ] Display "Past games" section with previous game results
@@ -47,25 +66,6 @@
 - [ ] Mobile-responsive layout with proper touch targets (min 44x44px)
 - [ ] Storybook stories for layout variations (with/without past games)
 - [ ] Minimal, monochromatic design (black/white/gray only)
-
-## Phase 4: Player setup screen
-
-- [ ] Player name input/selection form (up to 4 players)
-- [ ] Dropdown with previously-used player names (sorted by frequency)
-- [ ] Support for entering new player names
-- [ ] "Start game" button (enabled when at least 2 players entered)
-- [ ] Storybook stories for form states (empty, partial, complete)
-
-## Phase 5: Scrabble board UI
-
-- [ ] Create 15x15 Scrabble board grid
-- [ ] Render board squares with correct multipliers:
-  - DL (Double Letter): normal (light) square with two dots
-  - TL (Triple Letter): normal (light) square with three dots
-  - DW (Double Word): reversed (dark) square with two dots
-  - TW (Triple Word): reversed (dark) square with three dots
-  - A bulls-eye in the center indicating the starting position
-- [ ] Mobile-responsive board scaling (fits viewport with proper aspect ratio)
 
 ## Phase 6: Move entry & scoring
 
