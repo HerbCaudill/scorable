@@ -64,11 +64,7 @@
   - TL (Triple Letter): normal (light) square with three dots
   - DW (Double Word): reversed (dark) square with two dots
   - TW (Triple Word): reversed (dark) square with three dots
-- [ ] Mobile-responsive board scaling (fits viewport with proper aspect ratio)
-- [ ] Storybook stories for board component and square variations
-  - TL (Triple Letter): normal (light) square with three dots
-  - DW (Double Word): reversed (dark) square with two dots
-  - TW (Triple Word): reversed (dark) square with three dots
+  - A bulls-eye in the center indicating the starting position
 - [ ] Mobile-responsive board scaling (fits viewport with proper aspect ratio)
 
 ## Phase 6: Move entry & scoring
