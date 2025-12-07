@@ -1,16 +1,204 @@
-import { BOARD_LAYOUT, type SquareType, type BoardState, createEmptyBoard, getTileValue } from '../lib/board'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  BOARD_LAYOUT,
+  type SquareType,
+  type BoardState,
+  createEmptyBoard,
+  getTileValue,
+  TILE_VALUES,
+} from '../lib/board'
 import { cx } from '../lib/cx'
 
-type ScrabbleBoardProps = {
-  /** The current state of tiles on the board */
-  tiles?: BoardState
-  /** Callback when a square is clicked */
-  onSquareClick?: (row: number, col: number) => void
-  /** The currently selected square (for highlighting) */
-  selectedSquare?: { row: number; col: number } | null
-}
+const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }: Props) => {
+  const [internalTiles, setInternalTiles] = useState<BoardState>(createEmptyBoard)
+  const [cursor, setCursor] = useState<Cursor | null>(null)
+  const boardRef = useRef<HTMLDivElement>(null)
 
-const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSquare }: ScrabbleBoardProps) => {
+  // Use external tiles if provided (controlled mode), otherwise internal state
+  const tiles = externalTiles ?? internalTiles
+
+  const setTiles = useCallback(
+    (newTiles: BoardState | ((prev: BoardState) => BoardState)) => {
+      if (onTilesChange) {
+        const resolved = typeof newTiles === 'function' ? newTiles(tiles) : newTiles
+        onTilesChange(resolved)
+      } else {
+        setInternalTiles(newTiles)
+      }
+    },
+    [onTilesChange, tiles]
+  )
+
+  // Handle square click - set cursor position
+  const handleSquareClick = useCallback(
+    (row: number, col: number) => {
+      if (!editable) return
+
+      // If clicking on the current cursor position, toggle direction
+      if (cursor && cursor.row === row && cursor.col === col) {
+        setCursor({
+          ...cursor,
+          direction: cursor.direction === 'horizontal' ? 'vertical' : 'horizontal',
+        })
+      } else {
+        // Set cursor to clicked position
+        setCursor({ row, col, direction: cursor?.direction ?? 'horizontal' })
+      }
+
+      // Focus the board for keyboard input
+      boardRef.current?.focus()
+    },
+    [editable, cursor]
+  )
+
+  // Find next empty position in current direction
+  const findNextPosition = useCallback(
+    (fromRow: number, fromCol: number, direction: CursorDirection, skipExisting: boolean): Cursor | null => {
+      let row = fromRow
+      let col = fromCol
+
+      if (direction === 'horizontal') {
+        col++
+        while (col < 15) {
+          if (!skipExisting || tiles[row][col] === null) {
+            return { row, col, direction }
+          }
+
+          col++
+        }
+      } else {
+        row++
+        while (row < 15) {
+          if (!skipExisting || tiles[row][col] === null) {
+            return { row, col, direction }
+          }
+
+          row++
+        }
+      }
+
+      return null // Off the board
+    },
+    [tiles]
+  )
+
+  // Handle keyboard input
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (!editable || !cursor) return
+
+      // Stop propagation to prevent Storybook shortcuts from triggering
+      event.stopPropagation()
+
+      const { key } = event
+
+      // Handle backspace - delete current tile and move back
+      if (key === 'Backspace') {
+        event.preventDefault()
+        const { row, col, direction } = cursor
+
+        // If current cell has a tile, just delete it
+        if (tiles[row][col] !== null) {
+          setTiles(prev => {
+            const newTiles = prev.map(r => [...r])
+            newTiles[row][col] = null
+            return newTiles
+          })
+        } else {
+          // Move back and delete previous tile
+          const prevRow = direction === 'vertical' ? row - 1 : row
+          const prevCol = direction === 'horizontal' ? col - 1 : col
+
+          if (prevRow >= 0 && prevCol >= 0) {
+            setTiles(prev => {
+              const newTiles = prev.map(r => [...r])
+              newTiles[prevRow][prevCol] = null
+              return newTiles
+            })
+            setCursor({ row: prevRow, col: prevCol, direction })
+          }
+        }
+
+        return
+      }
+
+      // Handle arrow keys for cursor movement
+      if (key === 'ArrowUp' && cursor.row > 0) {
+        event.preventDefault()
+        setCursor({ ...cursor, row: cursor.row - 1 })
+        return
+      }
+
+      if (key === 'ArrowDown' && cursor.row < 14) {
+        event.preventDefault()
+        setCursor({ ...cursor, row: cursor.row + 1 })
+        return
+      }
+
+      if (key === 'ArrowLeft' && cursor.col > 0) {
+        event.preventDefault()
+        setCursor({ ...cursor, col: cursor.col - 1 })
+        return
+      }
+
+      if (key === 'ArrowRight' && cursor.col < 14) {
+        event.preventDefault()
+        setCursor({ ...cursor, col: cursor.col + 1 })
+        return
+      }
+
+      // Handle space for blank tile
+      if (key === ' ') {
+        event.preventDefault()
+        const { row, col, direction } = cursor
+
+        // Place blank tile
+        setTiles(prev => {
+          const newTiles = prev.map(r => [...r])
+          newTiles[row][col] = ' '
+          return newTiles
+        })
+
+        // Move to next position, skipping existing tiles
+        const next = findNextPosition(row, col, direction, true)
+        if (next) {
+          setCursor(next)
+        }
+
+        return
+      }
+
+      // Handle letter input
+      const letter = key.toUpperCase()
+      if (letter.length === 1 && letter in TILE_VALUES && letter !== ' ') {
+        event.preventDefault()
+        const { row, col, direction } = cursor
+
+        // Place the letter
+        setTiles(prev => {
+          const newTiles = prev.map(r => [...r])
+          newTiles[row][col] = letter
+          return newTiles
+        })
+
+        // Move to next position, skipping existing tiles
+        const next = findNextPosition(row, col, direction, true)
+        if (next) {
+          setCursor(next)
+        }
+      }
+    },
+    [editable, cursor, tiles, setTiles, findNextPosition]
+  )
+
+  // Focus board when cursor is set
+  useEffect(() => {
+    if (cursor && boardRef.current) {
+      boardRef.current.focus()
+    }
+  }, [cursor])
+
+  const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
   // Dots component for multipliers - sized relative to container
   const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
     return (
@@ -70,7 +258,9 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
     const value = getTileValue(letter)
     return (
       <div className="relative flex h-full w-full items-center justify-center rounded-[0.2cqw] bg-amber-100 shadow-sm">
-        <span className="text-[3.5cqw] font-bold text-neutral-800 leading-none">{letter.toUpperCase()}</span>
+        <span className="text-[3.5cqw] font-bold text-neutral-800 leading-none">
+          {letter === ' ' ? '' : letter.toUpperCase()}
+        </span>
         <span className="absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold text-neutral-600 leading-none">
           {value > 0 ? value : ''}
         </span>
@@ -78,30 +268,49 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
     )
   }
 
-  const isSelected = (row: number, col: number) => selectedSquare?.row === row && selectedSquare?.col === col
+  // Cursor arrow component - triangle positioned outside the box
+  const CursorArrow = ({ direction }: { direction: CursorDirection }) => (
+    <div
+      className={cx(
+        'absolute w-0 h-0 border-solid',
+        direction === 'horizontal'
+          ? // Right-pointing triangle, positioned to the right of the box
+            'left-full top-1/2 -translate-y-1/2 ml-[0.2cqw] border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-blue-600'
+          : // Down-pointing triangle, positioned below the box
+            'top-full left-1/2 -translate-x-1/2 mt-[0.2cqw] border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-blue-600'
+      )}
+    />
+  )
 
   return (
-    <div className="@container w-full max-w-2xl">
+    <div
+      ref={boardRef}
+      tabIndex={editable ? 0 : undefined}
+      onKeyDown={handleKeyDown}
+      className="@container w-full max-w-2xl outline-none"
+    >
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-neutral-300 p-[0.25cqw]">
         {BOARD_LAYOUT.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
             const tile = tiles[rowIndex][colIndex]
             const hasTile = tile !== null
+            const hasCursor = isCursorAt(rowIndex, colIndex)
 
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                onClick={() => onSquareClick?.(rowIndex, colIndex)}
+                onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
-                  'flex aspect-square items-center justify-center',
+                  'relative flex aspect-square items-center justify-center overflow-visible',
                   squareType === 'DW' || squareType === 'TW' || squareType === 'ST'
                     ? 'bg-neutral-500'
                     : 'bg-neutral-200',
-                  onSquareClick && 'cursor-pointer hover:opacity-80',
-                  isSelected(rowIndex, colIndex) && 'ring-[0.15cqw] ring-blue-500 ring-inset'
+                  editable && 'cursor-pointer hover:opacity-80',
+                  hasCursor && 'ring-[0.4cqw] ring-blue-600 ring-inset z-10'
                 )}
               >
                 {hasTile ? <Tile letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
+                {hasCursor && cursor && <CursorArrow direction={cursor.direction} />}
               </div>
             )
           })
@@ -112,3 +321,20 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
 }
 
 export default ScrabbleBoard
+
+type CursorDirection = 'horizontal' | 'vertical'
+
+type Cursor = {
+  row: number
+  col: number
+  direction: CursorDirection
+}
+
+type Props = {
+  /** The current state of tiles on the board */
+  tiles?: BoardState
+  /** Callback when tiles are changed (for controlled mode) */
+  onTilesChange?: (tiles: BoardState) => void
+  /** Whether the board is in editing mode */
+  editable?: boolean
+}

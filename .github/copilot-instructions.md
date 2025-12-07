@@ -8,3 +8,5 @@ When working on this project, always refer to the following documents:
 These documents should guide all development decisions and code suggestions.
 
 Use Tailwind CSS for styling.
+
+Each React component goes in its own file under `/src/components`. It should include a props type just called `Props`. Types are defined below the component.

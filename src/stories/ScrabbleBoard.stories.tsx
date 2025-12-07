@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 import ScrabbleBoard from '../components/ScrabbleBoard'
 import { createEmptyBoard, type BoardState } from '../lib/board'
 
@@ -64,5 +65,60 @@ const boardWithMultipleWords = (): BoardState => {
 export const WithMultipleWords: Story = {
   args: {
     tiles: boardWithMultipleWords(),
+  },
+}
+
+// Editable board story with controlled state
+const EditableBoardWrapper = () => {
+  const [tiles, setTiles] = useState<BoardState>(createEmptyBoard)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-neutral-600">
+        Click any square to place the cursor, then type letters. Click the cursor to toggle direction. Use arrow keys to
+        move, backspace to delete.
+      </p>
+      <ScrabbleBoard tiles={tiles} onTilesChange={setTiles} editable />
+    </div>
+  )
+}
+
+export const Editable: Story = {
+  render: () => <EditableBoardWrapper />,
+}
+
+// Editable board with some existing tiles
+const EditableWithTilesWrapper = () => {
+  const [tiles, setTiles] = useState<BoardState>(boardWithHello)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-neutral-600">
+        Board with existing tiles. When typing, the cursor skips over existing tiles. Click directly on a tile to
+        overwrite it.
+      </p>
+      <ScrabbleBoard tiles={tiles} onTilesChange={setTiles} editable />
+    </div>
+  )
+}
+
+export const EditableWithExistingTiles: Story = {
+  render: () => <EditableWithTilesWrapper />,
+}
+
+// Board with a blank tile
+const boardWithBlank = (): BoardState => {
+  const board = createEmptyBoard()
+  // QUIZ with blank used as U
+  board[7][5] = 'Q'
+  board[7][6] = ' ' // Blank tile
+  board[7][7] = 'I'
+  board[7][8] = 'Z'
+  return board
+}
+
+export const WithBlankTile: Story = {
+  args: {
+    tiles: boardWithBlank(),
   },
 }
