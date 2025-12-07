@@ -2,6 +2,25 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Game, GameSummary, PlayerRecord, BoardState, Move, Player } from './types'
 import { createEmptyBoard, createPlayer } from './types'
+import { calculateMoveScore } from './calculateMoveScore'
+
+/** Calculate a player's total score from all their moves */
+export const getPlayerScore = (game: Game, playerIndex: number): number => {
+  let score = 0
+  let boardState = createEmptyBoard()
+
+  for (const move of game.moves) {
+    if (move.playerIndex === playerIndex) {
+      score += calculateMoveScore({ move, board: boardState })
+    }
+    // Update board state after each move
+    for (const { row, col, tile } of move.tilesPlaced) {
+      boardState[row][col] = tile
+    }
+  }
+
+  return score
+}
 
 type GameStore = {
   // Current game state
@@ -20,7 +39,7 @@ type GameStore = {
   resumeGame: () => void
 
   // Gameplay
-  recordMove: (move: Omit<Move, 'id' | 'timestamp'>) => void
+  recordMove: (move: Move) => void
   updateBoard: (board: BoardState) => void
   nextTurn: () => void
   updatePlayerTime: (playerIndex: number, timeRemainingMs: number) => void
@@ -33,8 +52,6 @@ type GameStore = {
   addPlayerRecord: (name: string) => void
   getPlayerNames: () => string[]
 }
-
-const generateId = () => Math.random().toString(36).substring(2, 9)
 
 export const useGameStore = create<GameStore>()(
   persist(
@@ -53,7 +70,6 @@ export const useGameStore = create<GameStore>()(
         }
 
         const game: Game = {
-          id: generateId(),
           players,
           currentPlayerIndex: 0,
           board: createEmptyBoard(),
@@ -71,17 +87,17 @@ export const useGameStore = create<GameStore>()(
         const { currentGame, pastGames } = get()
         if (!currentGame) return
 
-        // Determine winner(s)
-        const maxScore = Math.max(...currentGame.players.map(p => p.score))
+        // Calculate scores from moves
+        const playerScores = currentGame.players.map((_, index) => getPlayerScore(currentGame, index))
+        const maxScore = Math.max(...playerScores)
 
         // Create game summary
         const summary: GameSummary = {
-          id: currentGame.id,
           date: currentGame.createdAt,
-          players: currentGame.players.map(p => ({
+          players: currentGame.players.map((p, index) => ({
             name: p.name,
-            score: p.score,
-            isWinner: p.score === maxScore,
+            score: playerScores[index],
+            isWinner: playerScores[index] === maxScore,
           })),
         }
 
@@ -124,21 +140,12 @@ export const useGameStore = create<GameStore>()(
 
         const newMove: Move = {
           ...move,
-          id: generateId(),
-          timestamp: Date.now(),
-        }
-
-        const updatedPlayers = [...currentGame.players]
-        updatedPlayers[move.playerIndex] = {
-          ...updatedPlayers[move.playerIndex],
-          score: updatedPlayers[move.playerIndex].score + move.totalScore,
         }
 
         set({
           currentGame: {
             ...currentGame,
             moves: [...currentGame.moves, newMove],
-            players: updatedPlayers,
             updatedAt: Date.now(),
           },
         })

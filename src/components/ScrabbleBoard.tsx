@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { boardLayout, type SquareType, type BoardState } from '../lib/boardLayout'
+import { boardLayout } from '@/lib/boardLayout'
+import { type SquareType, type BoardState } from '@/lib/types'
 import { createEmptyBoard } from '@/lib/createEmptyBoard'
 import { tileValues } from '@/lib/tileValues'
 import { getTileValue } from '@/lib/getTileValue'
-import { cx } from '../lib/cx'
+import { cx } from '@/lib/cx'
 
 const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }: Props) => {
   const [internalTiles, setInternalTiles] = useState<BoardState>(createEmptyBoard)
