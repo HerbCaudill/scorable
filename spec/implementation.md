@@ -50,13 +50,13 @@
 
 ## Phase 4: Navigation & screens
 
-- [ ] Create main router with screens:
+- [x] Create main router with screens:
   - Home (New game / Resume / Past games)
   - Player setup (enter/select player names)
   - Game play (board, timer, scoring)
-- [ ] Implement navigation between screens
-- [ ] Mobile-responsive layout (touch-friendly, full viewport utilization)
-- [ ] Build screen component stories in Storybook first
+- [x] Implement navigation between screens
+- [x] Mobile-responsive layout (touch-friendly, full viewport utilization)
+- [x] Build screen component stories in Storybook first
 
 ## Phase 5: Home screen
 
