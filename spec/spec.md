@@ -18,7 +18,7 @@ Multiple players can see the same game and keep score collaboratively. This is d
 
 ## Interface
 
-### Screen 1: Home Screen
+### Screen 1: Home screen
 
 <img src='./1.png' width='300'>
 
@@ -31,7 +31,7 @@ The home screen features a large "New game" button at the top, prominently displ
 
 The layout is clean and simple, with the past games list showing two players per game with their respective scores. The most recent games appear at the top of the list.
 
-### Screen 2: Player Setup
+### Screen 2: Player setup
 
 <img src='./2.png' width='300'>
 
@@ -39,7 +39,7 @@ When starting a new game, the player setup screen displays input fields for up t
 
 The interface is minimalist, focusing on the essential task of collecting player names before beginning gameplay.
 
-### Screen 3: Player Name Selection
+### Screen 3: Player name selection
 
 <img src='./3.png' width='300'>
 
@@ -47,7 +47,7 @@ When tapping on a player name input field, a dropdown menu appears showing avail
 
 The dropdown overlays the input fields and provides quick access to frequently-played participants, reducing the need to retype names for regular players.
 
-### Screen 4: Ready to Start
+### Screen 4: Ready to start
 
 <img src='./4.png' width='300'>
 
@@ -55,7 +55,7 @@ Once at least two players have been entered (shown here: "1. Lynne" and "2. Herb
 
 This screen confirms that the minimum requirement for starting a game has been met.
 
-### Screen 5: Game Board with Timer Start
+### Screen 5: Game board with timer start
 
 <img src='./5.png' width='300'>
 
@@ -75,7 +75,7 @@ The main gameplay screen shows:
 
 Each player is assigned a color, which is used in their time visualization and as a background color when it is their turn.
 
-### Screen 6: Active Gameplay
+### Screen 6: Active gameplay
 
 <img src='./6.png' width='300'>
 
@@ -91,3 +91,15 @@ Each player has a panel showing:
 - A list of words played along with their scores, starting with the most recent
 
 The active player panel (highlighted with that player's color background) shows a pause button (‖) inside the circle. The active player's timer is counting down and can be paused, while the inactive player's timer is static. The interface provides a clear visual indication of whose turn it is through the background highlighting and timer state.
+
+### Editing the board
+
+To add tiles to the board, the user can click or tap on any square and start typing.
+
+There is a cursor that consists of a thick border around the cell, with an arrow indicating whether we are typing horizontally (pointing to the right) or vertically (pointing down).
+
+Clicking or tapping the cursor changes its direction.
+
+As we're typing, we skip over any existing tiles; but if we click on an existing tile, we can overwrite it.
+
+A space enters a blank tile. Any keystrokes that don't correspond to a letter with a known point value are ignored.
