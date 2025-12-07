@@ -3,7 +3,7 @@ import { cx } from '../lib/cx'
 
 const ScrabbleBoard = () => {
   // Dots component for multipliers
-  const Dots = ({ count, light, rotation }: { count: number; light: boolean; rotation: string }) => {
+  const Dots = ({ count, light = false, rotation }: { count: number; light: boolean; rotation: string }) => {
     return (
       <div className={cx('flex gap-1', rotation)}>
         {Array.from({ length: count }).map((_, i) => (
@@ -46,9 +46,9 @@ const ScrabbleBoard = () => {
       case 'TL':
         return <Dots count={3} light rotation={rotation} />
       case 'DW':
-        return <Dots count={2} light={false} rotation={rotation} />
+        return <Dots count={2} rotation={rotation} />
       case 'TW':
-        return <Dots count={3} light={false} rotation={rotation} />
+        return <Dots count={3} rotation={rotation} />
       case 'ST':
         return <BullsEye />
       default:
@@ -57,15 +57,13 @@ const ScrabbleBoard = () => {
   }
 
   return (
-    <div className="grid grid-cols-15 w-150 h-150 gap-0">
+    <div className="grid grid-cols-15 gap-px bg-neutral-300 p-px">
       {BOARD_LAYOUT.map((row, rowIndex) =>
         row.map((squareType, colIndex) => (
           <div
             key={`${rowIndex}-${colIndex}`}
             className={cx(
-              'w-10 h-10 flex items-center justify-center border-b border-r border-neutral-300',
-              rowIndex === 0 && 'border-t',
-              colIndex === 0 && 'border-l',
+              'flex h-10 w-10 items-center justify-center',
               squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-neutral-800' : 'bg-white'
             )}
           >
