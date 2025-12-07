@@ -5,19 +5,6 @@
   --font-serif: 'IBM Plex Serif', ui-serif, Georgia, serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* Shadcn variables */
-  --radius: 0.625rem;
-  --color-primary: oklch(0.205 0 0);
-  --color-primary-foreground: oklch(0.985 0 0);
-  --color-secondary: oklch(0.97 0 0);
-  --color-secondary-foreground: oklch(0.205 0 0);
-  --color-muted: oklch(0.97 0 0);
-  --color-muted-foreground: oklch(0.556 0 0);
-  --color-accent: oklch(0.97 0 0);
-  --color-accent-foreground: oklch(0.205 0 0);
-  --color-destructive: oklch(0.577 0.245 27.325);
-  --color-border: oklch(0.922 0 0);
-
   /* https://www.tints.dev/orange/b36d1e */
   --color-orange-50: oklch(96.08% 0.019 67.6);
   --color-orange-100: oklch(92.29% 0.038 71.21);
@@ -59,4 +46,17 @@
   --color-khaki-900: oklch(25.16% 0.012 67.24);
   --color-khaki-950: oklch(17.13% 0.007 55.91);
   --color-khaki: var(--color-khaki-500);
+
+  /* Shadcn variables */
+  --radius: 0.625rem;
+  --color-primary: var(--color-teal-700);
+  --color-primary-foreground: white;
+  --color-secondary: oklch(0.97 0 0);
+  --color-secondary-foreground: oklch(0.205 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-accent: var(--color-orange-500);
+  --color-accent-foreground: white;
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-border: oklch(0.922 0 0);
 }

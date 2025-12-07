@@ -51,8 +51,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
     }
   }
 
-  const handleClearPlayer = (index: number, event: React.MouseEvent) => {
-    event.stopPropagation()
+  const handleClearPlayer = (index: number) => {
     const newPlayers = [...players]
     newPlayers[index] = null
     setPlayers(newPlayers)
@@ -104,7 +103,11 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
               </span>
               {player && (
                 <button
-                  onClick={event => handleClearPlayer(index, event)}
+                  onPointerDown={event => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    handleClearPlayer(index)
+                  }}
                   className="text-gray-400 hover:text-black transition-colors"
                   aria-label="Clear player"
                 >
@@ -162,7 +165,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
         disabled={!canStartGame}
         className={`
           mt-4 w-full
-          ${canStartGame ? 'border-2 border-blue-500' : 'opacity-50 cursor-not-allowed'}
+          ${canStartGame ? '' : 'opacity-50 cursor-not-allowed'}
         `}
       >
         start game
