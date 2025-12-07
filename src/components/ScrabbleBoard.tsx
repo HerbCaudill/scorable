@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  BOARD_LAYOUT,
-  type SquareType,
-  type BoardState,
-  createEmptyBoard,
-  getTileValue,
-  TILE_VALUES,
-} from '../lib/board'
+import { boardLayout, type SquareType, type BoardState } from '../lib/boardLayout'
+import { createEmptyBoard } from '@/lib/createEmptyBoard'
+import { tileValues } from '@/lib/tileValues'
+import { getTileValue } from '@/lib/getTileValue'
 import { cx } from '../lib/cx'
 
 const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }: Props) => {
@@ -170,7 +166,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
 
       // Handle letter input
       const letter = key.toUpperCase()
-      if (letter.length === 1 && letter in TILE_VALUES && letter !== ' ') {
+      if (letter.length === 1 && letter in tileValues && letter !== ' ') {
         event.preventDefault()
         const { row, col, direction } = cursor
 
@@ -290,7 +286,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
       className="@container w-full max-w-2xl outline-none"
     >
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
-        {BOARD_LAYOUT.map((row, rowIndex) =>
+        {boardLayout.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
             const tile = tiles[rowIndex][colIndex]
             const hasTile = tile !== null

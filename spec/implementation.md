@@ -40,11 +40,11 @@
 
 ## Phase 3: Core data models & state management
 
-- [ ] Define TypeScript types for:
+- [x] Define TypeScript types for:
   - `Player` (name, score, time remaining)
   - `Game` (players, current turn, board state, history)
   - `Move` (player, word, score, timestamp)
-- [ ] Set up Zustand store for game state
+- [x] Set up Zustand store for game state
 - [ ] Configure Automerge document structure for CRDT-based sync
 - [ ] Implement local-first sync with automerge-repo
 

@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import ScrabbleBoard from '../components/ScrabbleBoard'
-import { createEmptyBoard, type BoardState } from '../lib/board'
+import ScrabbleBoard from '@/components/ScrabbleBoard'
+import { type BoardState } from '@/lib/types'
+import { createEmptyBoard } from '@/lib/createEmptyBoard'
 
 const meta = {
   title: 'Components/ScrabbleBoard',
