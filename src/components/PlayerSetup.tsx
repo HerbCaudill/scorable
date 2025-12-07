@@ -145,7 +145,13 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
               </div>
             ) : (
               <>
-                <DropdownMenuItem onSelect={handleNewClick} className="font-medium">
+                <DropdownMenuItem
+                  onSelect={event => {
+                    event.preventDefault()
+                    handleNewClick()
+                  }}
+                  className="font-medium"
+                >
                   New...
                 </DropdownMenuItem>
                 {availablePlayers.map(name => (

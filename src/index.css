@@ -53,10 +53,11 @@
   --color-primary-foreground: white;
   --color-secondary: oklch(0.97 0 0);
   --color-secondary-foreground: oklch(0.205 0 0);
-  --color-muted: oklch(0.97 0 0);
-  --color-muted-foreground: oklch(0.556 0 0);
+  --color-muted: var(--color-khaki-100);
+  --color-muted-foreground: var(--color-khaki-700);
   --color-accent: var(--color-orange-500);
   --color-accent-foreground: white;
   --color-destructive: oklch(0.577 0.245 27.325);
   --color-border: oklch(0.922 0 0);
+  --color-ring: var(--color-primary);
 }
