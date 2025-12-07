@@ -6,3 +6,5 @@ When working on this project, always refer to the following documents:
 - `/spec/implementation.md` - Technical implementation details and architecture decisions
 
 These documents should guide all development decisions and code suggestions.
+
+Use Tailwind CSS for styling.
