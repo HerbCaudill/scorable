@@ -85,11 +85,10 @@ export const InProgress: Story = {
       board[7][10] = 'L'
       board[7][11] = 'O'
       // Place "WORLD" vertically from the L
-      board[8][9] = 'W'
-      board[9][9] = 'O'
-      board[10][9] = 'R'
-      board[11][9] = 'L'
-      board[12][9] = 'D'
+      board[6][11] = 'W'
+      board[8][11] = 'R'
+      board[9][11] = 'L'
+      board[10][11] = 'D'
 
       const state = useGameStore.getState()
       useGameStore.setState({
