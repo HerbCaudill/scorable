@@ -9,6 +9,13 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    Story => (
+      <div className="w-[min(90vw,512px)]">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof ScrabbleBoard>
 
 export default meta

@@ -11,22 +11,22 @@ type ScrabbleBoardProps = {
 }
 
 const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSquare }: ScrabbleBoardProps) => {
-  // Dots component for multipliers
+  // Dots component for multipliers - sized relative to container
   const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
     return (
-      <div className={cx('flex gap-1', rotation)}>
+      <div className={cx('flex gap-[0.9cqw]', rotation)}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className={cx('w-1.5 h-1.5 rounded-full', light ? 'bg-neutral-800' : 'bg-white')} />
+          <div key={i} className={cx('size-[0.8cqw] rounded-full', light ? 'bg-neutral-800' : 'bg-white')} />
         ))}
       </div>
     )
   }
 
-  // Bulls-eye component for start square
+  // Bulls-eye component for start square - sized relative to container
   const BullsEye = () => (
     <div className="relative flex items-center justify-center">
-      <div className="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-white" />
+      <div className="size-[2.5cqw] rounded-full border-[0.15cqw] border-white flex items-center justify-center">
+        <div className="size-[1cqw] rounded-full bg-white" />
       </div>
     </div>
   )
@@ -65,13 +65,13 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
     }
   }
 
-  // Tile component to display placed tiles
-  const TileDisplay = ({ letter }: { letter: string }) => {
+  // Tile component to display placed tiles - sized relative to container
+  const Tile = ({ letter }: { letter: string }) => {
     const value = getTileValue(letter)
     return (
-      <div className="relative flex h-full w-full items-center justify-center rounded-sm bg-amber-100 shadow-sm">
-        <span className="text-lg font-bold text-neutral-800">{letter.toUpperCase()}</span>
-        <span className="absolute bottom-0.5 right-1 text-[8px] font-semibold text-neutral-600">
+      <div className="relative flex h-full w-full items-center justify-center rounded-[0.2cqw] bg-amber-100 shadow-sm">
+        <span className="text-[3.5cqw] font-bold text-neutral-800 leading-none">{letter.toUpperCase()}</span>
+        <span className="absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold text-neutral-600 leading-none">
           {value > 0 ? value : ''}
         </span>
       </div>
@@ -81,28 +81,32 @@ const ScrabbleBoard = ({ tiles = createEmptyBoard(), onSquareClick, selectedSqua
   const isSelected = (row: number, col: number) => selectedSquare?.row === row && selectedSquare?.col === col
 
   return (
-    <div className="grid grid-cols-15 gap-0.5 bg-neutral-300 p-0.5">
-      {BOARD_LAYOUT.map((row, rowIndex) =>
-        row.map((squareType, colIndex) => {
-          const tile = tiles[rowIndex][colIndex]
-          const hasTile = tile !== null
+    <div className="@container w-full max-w-2xl">
+      <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-neutral-300 p-[0.25cqw]">
+        {BOARD_LAYOUT.map((row, rowIndex) =>
+          row.map((squareType, colIndex) => {
+            const tile = tiles[rowIndex][colIndex]
+            const hasTile = tile !== null
 
-          return (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              onClick={() => onSquareClick?.(rowIndex, colIndex)}
-              className={cx(
-                'flex h-10 w-10 items-center justify-center',
-                squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-neutral-500' : 'bg-neutral-200',
-                onSquareClick && 'cursor-pointer hover:opacity-80',
-                isSelected(rowIndex, colIndex) && 'ring-2 ring-blue-500 ring-inset'
-              )}
-            >
-              {hasTile ? <TileDisplay letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
-            </div>
-          )
-        })
-      )}
+            return (
+              <div
+                key={`${rowIndex}-${colIndex}`}
+                onClick={() => onSquareClick?.(rowIndex, colIndex)}
+                className={cx(
+                  'flex aspect-square items-center justify-center',
+                  squareType === 'DW' || squareType === 'TW' || squareType === 'ST'
+                    ? 'bg-neutral-500'
+                    : 'bg-neutral-200',
+                  onSquareClick && 'cursor-pointer hover:opacity-80',
+                  isSelected(rowIndex, colIndex) && 'ring-[0.15cqw] ring-blue-500 ring-inset'
+                )}
+              >
+                {hasTile ? <Tile letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
+              </div>
+            )
+          })
+        )}
+      </div>
     </div>
   )
 }
