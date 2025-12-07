@@ -32,11 +32,11 @@
 
 ## Phase 2: Player setup screen
 
-- [ ] Player name input/selection form (up to 4 players)
-- [ ] Dropdown with previously-used player names (sorted by frequency)
-- [ ] Support for entering new player names
-- [ ] "Start game" button (enabled when at least 2 players entered)
-- [ ] Storybook stories for form states (empty, partial, complete)
+- [x] Player name input/selection form (up to 4 players)
+- [x] Dropdown with previously-used player names (sorted by frequency)
+- [x] Support for entering new player names
+- [x] "Start game" button (enabled when at least 2 players entered)
+- [x] Storybook stories for form states (empty, partial, complete)
 
 ## Phase 3: Core data models & state management
 
