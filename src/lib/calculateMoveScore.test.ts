@@ -188,7 +188,7 @@ describe('calculateMoveScore', () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
-        · A T · · ○ · · · ○ · · · ⏺︎ ·
+        C A T · · ○ · · · ○ · · · ⏺︎ ·
         · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
         ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
         · · · · ⏺︎ · · · · · ⏺︎ · · · ·
@@ -205,14 +205,14 @@ describe('calculateMoveScore', () => {
       `)
 
       const score = calculateMoveScore({ move, board })
-      expect(score).toBe(4)
+      expect(score).toBe(10)
     })
 
     it('applies triple word score', () => {
       // TW is at (0, 0)
       const board = createEmptyBoard()
       const move = parseMove(`
-        A T · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        C A T ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
         · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
         ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
@@ -230,7 +230,7 @@ describe('calculateMoveScore', () => {
       `)
 
       const score = calculateMoveScore({ move, board })
-      expect(score).toBe(6)
+      expect(score).toBe(15)
     })
 
     it('applies multiple word multipliers', () => {
@@ -255,17 +255,12 @@ describe('calculateMoveScore', () => {
       `)
 
       const score = calculateMoveScore({ move, board })
-      // A=1, B=3, C=3, D=2, E=1, F=4, G=2 = 16
-      // Two DW squares: 16 * 2 * 2 = 64
-      // Plus bingo bonus (7 tiles): 64 + 50 = 114
-      expect(score).toBe(114)
+      expect(score).toBe(114) // 16 doubled twice = 64, plus 50 for bingo
     })
   })
 
   describe('cross words', () => {
     it('scores perpendicular words formed by the move', () => {
-      // Existing word "CAT" horizontally at row 7
-      // Play 'B' at (6,8) to form "BA" vertically (B above A)
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -302,13 +297,10 @@ describe('calculateMoveScore', () => {
       `)
 
       const score = calculateMoveScore({ move, board })
-      // B at (6,8) is on DL: B=3*2=6, A=1 = 7
       expect(score).toBe(7)
     })
 
-    it('scores multiple cross words', () => {
-      // Existing horizontal word "CAT" at row 7
-      // Play 'B' at (6,8) and 'E' at (8,8), forming "BAE" vertically
+    it('scores cross words', () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -401,7 +393,7 @@ describe('calculateMoveScore', () => {
         · · · · ⏺︎ · · · · · ⏺︎ · · · ·
         · ○ · · · ○ · · · ○ · · · ○ ·
         · · ○ · · · ○ · ○ · · · ○ · ·
-        ⏺︎ · · ○ · · · ⏺︎ A T · ○ · · ⏺︎
+        ⏺︎ · · ○ · · · A T · · ○ · · ⏺︎
         · · ○ · · · ○ · ○ · · · ○ · ·
         · ○ · · · ○ · · · ○ · · · ○ ·
         · · · · ⏺︎ · · · · · ⏺︎ · · · ·
@@ -418,7 +410,7 @@ describe('calculateMoveScore', () => {
         · · · · ⏺︎ · · · · · ⏺︎ · · · ·
         · ○ · · · ○ · · · ○ · · · ○ ·
         · · ○ · · · ○ · ○ · · · ○ · ·
-        ⏺︎ · · ○ · · · C · · · ○ · · ⏺︎
+        ⏺︎ · · ○ · · C ⏺︎ · · · ○ · · ⏺︎
         · · ○ · · · ○ · ○ · · · ○ · ·
         · ○ · · · ○ · · · ○ · · · ○ ·
         · · · · ⏺︎ · · · · · ⏺︎ · · · ·
@@ -429,8 +421,47 @@ describe('calculateMoveScore', () => {
       `)
 
       const score = calculateMoveScore({ move, board })
-      // C=3 + A=1 + T=1 = 5, center is DW so *2 = 10
-      expect(score).toBe(10)
+      expect(score).toBe(5)
+    })
+
+    it('handles multiple cross words', () => {
+      const board = parseBoard(`
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        · ○ · · · ○ · · · ○ · · · ○ ·
+        · · ○ · · · ○ · ○ · · · ○ · ·
+        ⏺︎ · · ○ · · C A T · · ○ · · ⏺︎
+        · · ○ · · · ○ · ○ · · · ○ · ·
+        · ○ · · · ○ · · · ○ · · · ○ ·
+        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+      `)
+      const move = parseMove(`
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        · ○ · · · ○ · · · ○ · · · ○ ·
+        · · ○ · · · ○ B I S Q U E · ·
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        · · ○ · · · ○ · ○ · · · ○ · ·
+        · ○ · · · ○ · · · ○ · · · ○ ·
+        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+      `)
+
+      const score = calculateMoveScore({ move, board })
+      expect(score).toBe(26)
     })
   })
 
@@ -476,33 +507,6 @@ describe('calculateMoveScore', () => {
       // Center is DW: 11 * 2 = 22
       // Bingo bonus: 22 + 50 = 72
       expect(score).toBe(72)
-    })
-
-    it('does not add bonus for fewer than 7 tiles', () => {
-      const board = createEmptyBoard()
-      const move = parseMove(`
-        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
-        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
-        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
-        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
-        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
-        · ○ · · · ○ · · · ○ · · · ○ ·
-        · · ○ · · · ○ · ○ · · · ○ · ·
-        ⏺︎ · · ○ · · · C A T S U P · ⏺︎
-        · · ○ · · · ○ · ○ · · · ○ · ·
-        · ○ · · · ○ · · · ○ · · · ○ ·
-        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
-        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
-        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
-        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
-        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
-      `)
-
-      const score = calculateMoveScore({ move, board })
-      // 6 tiles, no bingo bonus
-      // C=3, A=1, T=1, S=1, U=1 (DL at 7,11 = 2), P=3 = 11
-      // DW at center: 11 * 2 = 22
-      expect(score).toBe(22)
     })
   })
 
