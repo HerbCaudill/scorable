@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { HomeScreen } from '../components/HomeScreen'
+import { HomeScreen } from '@/components/HomeScreen'
 import { useGameStore } from '@/lib/gameStore'
 import { createEmptyBoard, createPlayer } from '@/lib/types'
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useEffect } from 'react'
-import { GameScreen } from '../components/GameScreen'
+import { GameScreen } from '@/components/GameScreen'
 import { useGameStore } from '@/lib/gameStore'
 import { createEmptyBoard, createPlayer, DEFAULT_TIME_MS, type Game } from '@/lib/types'
 
