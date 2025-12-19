@@ -1,25 +1,12 @@
 import { Button } from '@/components/ui/button'
-import { useGameStore, getPlayerScore } from '@/lib/gameStore'
-import type { Game } from '@/lib/types'
+import { useGameStore } from '@/lib/gameStore'
+import { formatDate } from '@/lib/formatDate'
+import { getScoresWithWinner } from '@/lib/getScoresWithWinner'
 import { IconSparkles, IconPlayerPlay } from '@tabler/icons-react'
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { currentGame, pastGames } = useGameStore()
   const hasCurrentGame = currentGame !== null && currentGame.status !== 'finished'
-
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp)
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  }
-
-  const getScoresWithWinner = (game: Game) => {
-    const scores = game.players.map((player, index) => ({
-      name: player.name,
-      score: getPlayerScore(game, index),
-    }))
-    const maxScore = Math.max(...scores.map(s => s.score))
-    return scores.map(s => ({ ...s, isWinner: s.score === maxScore }))
-  }
 
   return (
     <div className="flex min-h-screen flex-col p-4">

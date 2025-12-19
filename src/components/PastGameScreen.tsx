@@ -1,16 +1,16 @@
-import { useState } from 'react'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
-import { createEmptyBoard } from '@/lib/types'
-import { getWordsFromMove } from '@/lib/getWordsFromMove'
-import { calculateMoveScore } from '@/lib/calculateMoveScore'
+import { formatDate } from '@/lib/formatDate'
+import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
+import { MoveHistoryList } from './MoveHistoryList'
+import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { IconArrowLeft, IconHome } from '@tabler/icons-react'
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { pastGames } = useGameStore()
   const game = pastGames.find(g => g.id === gameId)
-  const [highlightedTiles, setHighlightedTiles] = useState<Array<{ row: number; col: number }>>([])
+  const { highlightedTiles, highlightTiles } = useHighlightedTiles()
 
   if (!game) {
     return (
@@ -26,40 +26,6 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
 
   const { players, board, moves } = game
 
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
-  // Get word history for a player
-  const getPlayerMoveHistory = (playerIndex: number) => {
-    let boardState = createEmptyBoard()
-    const history: Array<{ words: string[]; score: number; tiles: Array<{ row: number; col: number }> }> = []
-
-    for (const move of moves) {
-      if (move.playerIndex === playerIndex) {
-        const words = getWordsFromMove(move.tilesPlaced, boardState)
-        const score = calculateMoveScore({ move: move.tilesPlaced, board: boardState })
-        const tiles = move.tilesPlaced.map(({ row, col }) => ({ row, col }))
-        history.push({ words, score, tiles })
-      }
-      for (const { row, col, tile } of move.tilesPlaced) {
-        boardState[row][col] = tile
-      }
-    }
-
-    return history.reverse()
-  }
-
-  const handleMoveClick = (tiles: Array<{ row: number; col: number }>) => {
-    setHighlightedTiles(tiles)
-    setTimeout(() => setHighlightedTiles([]), 1500)
-  }
-
   // Calculate scores and determine winner
   const scores = players.map((_, index) => getPlayerScore(game, index))
   const maxScore = Math.max(...scores)
@@ -72,7 +38,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
           <IconArrowLeft size={16} />
           Back
         </Button>
-        <span className="text-sm text-gray-500">{formatDate(game.createdAt)}</span>
+        <span className="text-sm text-gray-500">{formatDate(game.createdAt, { includeYear: true })}</span>
       </div>
 
       {/* Board - read-only */}
@@ -108,20 +74,14 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
       {moves.length > 0 && (
         <div className="flex gap-2 overflow-y-auto px-4">
           {players.map((_, index) => {
-            const moveHistory = getPlayerMoveHistory(index)
+            const moveHistory = getPlayerMoveHistory(moves, index, { newestFirst: true })
             return (
-              <div key={index} className="flex flex-1 flex-col divide-y divide-neutral-200 p-2 text-xs">
-                {moveHistory.map((entry, i) => (
-                  <div
-                    key={i}
-                    className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 hover:bg-neutral-100"
-                    onClick={() => handleMoveClick(entry.tiles)}
-                  >
-                    <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
-                    <span className="font-medium">{entry.score}</span>
-                  </div>
-                ))}
-              </div>
+              <MoveHistoryList
+                key={index}
+                history={moveHistory}
+                onMoveClick={highlightTiles}
+                className="flex-1 p-2 text-xs"
+              />
             )
           })}
         </div>
