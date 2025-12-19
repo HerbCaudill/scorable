@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { useGameStore } from '@/lib/gameStore'
 import { formatDate } from '@/lib/formatDate'
 import { getScoresWithWinner } from '@/lib/getScoresWithWinner'
-import { IconSparkles, IconPlayerPlay } from '@tabler/icons-react'
+import { IconSparkles, IconPlayerPlay, IconTrophyFilled } from '@tabler/icons-react'
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { currentGame, pastGames } = useGameStore()
@@ -44,7 +44,7 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
                         <div key={playerIndex} className="flex items-center gap-1">
                           <span className="text-sm">{player.name}</span>
                           <span className="font-medium">{player.score}</span>
-                          {player.isWinner && <span className="text-amber-500">★</span>}
+                          {player.isWinner && <IconTrophyFilled size={16} className="text-amber-500" />}
                         </div>
                       ))}
                     </div>
