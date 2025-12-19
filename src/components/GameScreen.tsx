@@ -141,7 +141,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-x-hidden">
       {/* Sticky header: Board + Player panels */}
       <div className="sticky top-0 z-10 bg-white">
         {/* Board area */}
@@ -154,12 +154,15 @@ export const GameScreen = ({ onEndGame }: Props) => {
             highlightedTiles={highlightedTiles}
           />
         </div>
+      </div>
 
-        {/* Player panels */}
-        <div className="flex gap-2 px-4 py-2">
+      {/* Player panels + history - scroll together horizontally */}
+      <div className="flex-1 overflow-x-auto overflow-y-auto ">
+        <div className="inline-flex gap-3 p-2">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
             const score = getPlayerScore(currentGame, index)
+            const moveHistory = getPlayerMoveHistory(index)
 
             const handlePlayerClick = () => {
               // Only current player or next player can be clicked to end turn
@@ -195,43 +198,34 @@ export const GameScreen = ({ onEndGame }: Props) => {
             }
 
             return (
-              <div
-                key={index}
-                className="flex flex-1 cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:opacity-80"
-                style={{
-                  backgroundColor: isActive ? `${player.color}20` : 'transparent',
-                  borderWidth: 2,
-                  borderColor: isActive ? player.color : 'transparent',
-                }}
-                onClick={handlePlayerClick}
-              >
-                {/* Timer circle */}
+              <div key={index} className="flex min-w-32 flex-1 flex-col">
+                {/* Player panel */}
                 <div
-                  className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
-                  style={{ borderColor: player.color }}
+                  className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:opacity-80"
+                  style={{
+                    backgroundColor: isActive ? `${player.color}20` : 'transparent',
+                    borderWidth: 2,
+                    borderColor: isActive ? player.color : 'transparent',
+                  }}
+                  onClick={handlePlayerClick}
                 >
-                  <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
+                  {/* Timer circle */}
+                  <div
+                    className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
+                    style={{ borderColor: player.color }}
+                  >
+                    <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
+                  </div>
+
+                  {/* Player name and score */}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{player.name}</span>
+                    <span className="text-2xl font-bold">{score}</span>
+                  </div>
                 </div>
 
-                {/* Player name and score */}
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{player.name}</span>
-                  <span className="text-2xl font-bold">{score}</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Scrollable game history */}
-      <div className="flex-1 overflow-y-auto">
-        {moves.length > 0 && (
-          <div className="flex gap-2 px-4">
-            {players.map((_, index) => {
-              const moveHistory = getPlayerMoveHistory(index)
-              return (
-                <div key={index} className="flex-1 flex flex-col text-xs p-2 divide-y divide-neutral-200">
+                {/* Move history for this player */}
+                <div className="flex flex-col divide-y divide-neutral-200 p-2 text-xs">
                   {moveHistory.map((entry, i) => (
                     <div
                       key={i}
@@ -243,10 +237,10 @@ export const GameScreen = ({ onEndGame }: Props) => {
                     </div>
                   ))}
                 </div>
-              )
-            })}
-          </div>
-        )}
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* Footer */}
