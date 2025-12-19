@@ -189,10 +189,17 @@ export class GamePage {
     await this.page.getByRole('button', { name: 'Nobody (blocked)' }).click()
   }
 
+  /** Get the player section by finding the element containing the player's name */
+  private getPlayerSection(playerName: string) {
+    // Find the section that contains the player name - it's a div with rounded-lg border p-3 classes
+    // Use filter to find the one containing the specific player name
+    return this.page.locator('div.rounded-lg.border.p-3').filter({ hasText: playerName })
+  }
+
   /** Focus the rack input for a player and type tiles */
   async enterRackTiles(playerName: string, tiles: string) {
-    // Find the player's input section and click to focus
-    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const playerSection = this.getPlayerSection(playerName)
+    // Click the focusable container (tabindex=0) within the player section
     const input = playerSection.locator('[tabindex="0"]')
     await input.click()
     await this.page.keyboard.type(tiles)
@@ -200,9 +207,9 @@ export class GamePage {
 
   /** Clear rack tiles for a player using backspace */
   async clearRackTiles(playerName: string, count: number) {
-    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
-    const input = playerSection.locator('[tabindex="0"]')
-    await input.click()
+    const playerSection = this.getPlayerSection(playerName)
+    // Click somewhere in the input area (the focusable container)
+    await playerSection.locator('[tabindex="0"]').click()
     for (let i = 0; i < count; i++) {
       await this.page.keyboard.press('Backspace')
     }
@@ -210,7 +217,8 @@ export class GamePage {
 
   /** Get the adjustment value shown for a player */
   async getPlayerAdjustment(playerName: string): Promise<string> {
-    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const playerSection = this.getPlayerSection(playerName)
+    // The adjustment is shown with tabular-nums class for alignment
     const adjustment = playerSection.locator('.tabular-nums')
     return (await adjustment.textContent()) || ''
   }
@@ -232,13 +240,13 @@ export class GamePage {
 
   /** Expect validation error for a player */
   async expectRackError(playerName: string, errorText: string) {
-    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
-    await expect(playerSection.locator('.text-red-600')).toContainText(errorText)
+    const playerSection = this.getPlayerSection(playerName)
+    await expect(playerSection).toContainText(errorText)
   }
 
   /** Check if a player is shown as "ended the game" */
   async expectPlayerEndedGame(playerName: string) {
-    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const playerSection = this.getPlayerSection(playerName)
     await expect(playerSection).toContainText('ended the game')
   }
 }

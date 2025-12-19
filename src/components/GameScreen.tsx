@@ -101,11 +101,20 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const remainingTileCount = getRemainingTileCount(currentGame)
 
   const handleEndGameClick = () => {
-    if (remainingTileCount > 0) {
-      setShowEndGameConfirm(true)
-    } else {
+    const playerCount = currentGame?.players.length ?? 2
+    const threshold = (playerCount - 1) * 7
+
+    if (remainingTileCount === 0) {
+      // No tiles left, just end the game
       endGame()
       onEndGame()
+    } else if (remainingTileCount <= threshold) {
+      // Near end - show EndGameScreen for rack entry and adjustments
+      stopTimer()
+      setShowEndGameScreen(true)
+    } else {
+      // Early end - simple confirmation dialog
+      setShowEndGameConfirm(true)
     }
   }
 

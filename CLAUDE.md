@@ -4,12 +4,12 @@ An app for keeping score during Scrabble games.
 
 ## Quick Reference
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm dev` | Start dev server |
-| `pnpm test` | Run Vitest tests |
+| Command          | Purpose               |
+| ---------------- | --------------------- |
+| `pnpm dev`       | Start dev server      |
+| `pnpm test`      | Run Vitest tests      |
 | `pnpm storybook` | Component development |
-| `pnpm build` | Production build |
+| `pnpm build`     | Production build      |
 
 ## Project Structure
 
@@ -46,7 +46,7 @@ spec/                   # Specification and wireframes
 ```typescript
 type Move = Array<{ row: number; col: number; tile: string }>
 type GameMove = { playerIndex: number; tilesPlaced: Move }
-type BoardState = Array<Array<string | null>>  // 15x15 grid
+type BoardState = Array<Array<string | null>> // 15x15 grid
 type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
 type Player = { name: string; timeRemainingMs: number; color: string }
 ```
@@ -54,6 +54,7 @@ type Player = { name: string; timeRemainingMs: number; color: string }
 ## State Management (`src/lib/gameStore.ts`)
 
 Zustand store with actions:
+
 - `startGame(playerNames)` / `endGame()` / `pauseGame()` / `resumeGame()`
 - `commitMove(move)` - validates, scores, updates board, advances turn
 - `startTimer()` / `stopTimer()` / `updatePlayerTime()`

@@ -1,0 +1,37 @@
+#character-encoding UTF-8
+#description Created with Macondo
+#id org.macondo 69403701acf42d2730000002
+#lexicon NWL23
+#game-type classic
+#player1 jack Jackson Smylie
+#player2 steve Steve Bush
+>jack: BENQRTT -BQT +0 0
+>steve: EOOORVV -EOO +0 0
+>jack: EINNRTU -N +0 0
+>steve: AAFH H6 HAAF +20 20
+>jack: EINORTU I2 ROUTINE +69 69
+>steve: EIOTU G9 OUTIE +13 33
+>jack: AGGINSU 2E SUGA.ING +64 133
+>steve: DIIIIST K2 .ITID +12 45
+>jack: ADEJLNP 4H J.N.A +40 173
+#note PENAL preferred slightly in the sim
+>steve: EIMOR 1A MOIRE +26 71
+>jack: DEILLPT 12D LIP.D +20 193
+>steve: INY 2A YIN +25 96
+>jack: ELLNNTT E8 LENT.L +12 205
+>steve: CELSW 14A CLEWS +27 123
+>jack: AEHNPRT A8 PENTAR.H +194 399
+>steve: ACW G5 CAW +28 151
+#note overdraw, threw back the S from DSW
+>jack: EEMOSUY D4 MOUSEY +32 431
+>steve: Z H1 Z. +33 184
+>jack: AEEEFRT E4 EF +24 455
+>steve: VX C13 V.X +26 210
+>jack: ??AEERT B12 TE.E +25 480
+>steve: ABR H12 .RAB +23 233
+>jack: ??AAIRV B6 VAIR +21 501
+>steve: Q J1 Q. +11 244
+>jack: ??AEGKO 15H .lOcKAGE +104 605
+>steve: DDEOORS M4 SODDER +24 268
+>jack: BO L8 BO +16 621
+>jack: (O) +2 623

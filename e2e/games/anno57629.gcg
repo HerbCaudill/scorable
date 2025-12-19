@@ -1,0 +1,40 @@
+#character-encoding UTF-8
+#player1 Noah Noah
+#player2 Mike Mike
+>Noah: EIKRSTX H7 KEX +28 28
+>Mike: ACCUY I3 YUCCA +24 24
+#note This looked a little weird.	
+>Noah: AIMRRST H1 TRAM +39 67
+>Mike: DEEGINN G8 NEEDING +73 97
+>Noah: EINPRRS 14B SPRIN.ER +76 143
+>Mike: ?AENOSV F3 nOVENAS +74 171
+#note This also felt a little unfamiliar.
+>Noah: DEEIOTZ 12D IOD.ZE +52 195
+>Mike: IIIIUUU -IIIIUUU +0 171
+#note I picked 7 again for some reason here - Mike turned over GTTT, throwing back TT. Could've been a lot worse! Considering trying another type of tile drawing.
+>Noah: DEGHLTT 15H HELD +41 236
+>Mike: ETV J2 VET +25 196
+>Noah: BFGJTTU J7 TUFT +16 252
+#note Over TUFT K4 for defense. Sim prefers K4, I think I still prefer this.
+>Mike: HINW 6B WHIN. +19 215
+>Noah: BEGIJOR D2 ORIB. +14 266
+#note Giving up even more for defense here. This does block a *lot*, but the problem with plays like this in general is that the opponent can often still make openings that are hard to block (or bingo with the existing marginal lanes), which plays like JOB have a decent chance of outrunning. (though the J helps with that a bit) Running macondo generates OGIVE, though, which I didn't see. ORIBI blocks the T, which is probably a better lane than the W, but OGIVE seems much better at outrunning a bingo; I think it's the play by a lot here.
+>Mike: EIQU K11 EQUI. +30 245
+>Noah: DEEGJLT C2 JET +35 301
+>Mike: BOO 15A BOO +21 266
+>Noah: ADEGLMO K5 GLAM +26 327
+#note Playing defense again. This feels OK - not OGAM because it gives back better L1 plays that both score and open. Maybe I should do something like DOM 7A or GLOAM 11A to open scoring instead. Column L plays making QI, or QU plays like he did, both seem pretty annoying here. I think I can often weather an L5 bingo after playing something like GLOAM, though Q plays are still annoying.
+>Mike: AU 12K .UA +24 290
+>Noah: ADELOOW 11C LOWE. +33 360
+#note Realized later in bed that I could've played WOODED or WOADED for the same score. This felt like a "Nigel play" but it's unclear if it's actually good. Keeping the D seems lke a small positive here, the two points are OK too. I think I'm ok with WO?DED, playing an extra tile, maybe WOADED for the challenge equity and because the bag is weighted toward As over Os. Sim pretty surprisingly likes LOWE(D) *very* clearly over other plays, over 3% above the next play! (Several other plays do better equity-wise, including DOWE(D)). Maybe I should keep running my "Nigel approximator". 
+>Mike: AEPR 2J .APER +20 310
+>Noah: ADIIOSY 1M YOD +28 388
+#note My main other idea here was SAIYID N7 (I was briefly excited by YAUDS 13I). Maybe SAYID N8 could give back fewer bingos? This felt like it could with stand some bingos, but would have problems against stuff like RAFTING and LOFTING and maybe even lesser bingos. Thinking about it more, I'm more inclined to SAIYID than YOD: SAIYID still gives back quite a few bingos, but YOD seems likely to give back quite a few more, and AIIS and a 78 point lead seem poorly positioned to outrun the combination of a column N bingo and a two-tile out play (we will occasionally draw our own response bingo, but that seems rare). Fishes are also an issue for YOD, maybe a small issue? But a 3M fish seems like it could yield racks that we can't beat. The main way YOD could be better than SAIYID is if AIIS is actually pretty good at outrunning a bingo+2-tile score. Sim tells a different story here, with L2 PODIA on top, and YOD well above SAIYID. Given win%s SAIYID: 63.68% (I'm guessing this is just the non-bingoing percentage for Mike), PODIA: 91.73%, YOD: 87.02%. Just looking at a few (non-blank) bingos: it seems like YOD always beat FLORIST, and sometimes lose to RATINGS and ORIGANS. I can see PODIA as well: VAPERS and column M don't help Mike that much, while we get the advantages of playing an extra tile and keeping a leave which seems better for scoring than AIIS (e.g. with EYRE, QUAY, and VAPERS). I'll keep PODIA as my working hypothesis, but maybe YOD was OK. 
+>Mike: ?AAFNOT B11 FA +18 328
+#note Actual rack, which we discussed after the game. This situation doesn't look very good for Mike, but I suspected he was better off fishing two on row 3, even if he has to keep the F, as it looks pretty likely that I'll be able to deal with all of his bingos post FA. 2-ply peg reports him as just totally losing here no matter what he does, assuming he empties the bag. Perhaps I could have trouble blocking ANTIFOG post-(OR)A, but I think that line just doesn't score enough to work. 
+>Noah: AIILRSS M9 RAI.S +12 400
+#note Took me a bit to come up with this. I only noticed RIALS N11 with very little time left, and was worried I might be missing something, so went with the safer choice. This is -33 on Champ but gets the job done.
+>Mike: ?AGINOT N12 GOAT +26 354
+>Noah: ILS O10 LIS +20 420
+#note ORIBI and YOD are probably my biggest mistakes here, GLAM, LOWED, and maybe TUFT are questionable, RAIAS is a spread mistake. Some data points this session about my intuition being better than my second guesses (though some the other way as well). 
+>Noah:  (?IN) +4 424
