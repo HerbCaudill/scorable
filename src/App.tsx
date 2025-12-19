@@ -3,6 +3,7 @@ import { HomeScreen } from './components/HomeScreen'
 import { PlayerSetupScreen } from './components/PlayerSetupScreen'
 import { GameScreen } from './components/GameScreen'
 import { useGameStore } from './lib/gameStore'
+import { Toaster } from '@/components/ui/sonner'
 
 type Screen = 'home' | 'player-setup' | 'game'
 
@@ -24,6 +25,7 @@ function App() {
         <PlayerSetupScreen onStartGame={() => setScreen('game')} onBack={() => setScreen('home')} />
       )}
       {screen === 'game' && <GameScreen onEndGame={() => setScreen('home')} />}
+      <Toaster />
     </div>
   )
 }

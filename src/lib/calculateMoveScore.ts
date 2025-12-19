@@ -120,7 +120,7 @@ const scoreCrossWords = (
 /**
  * Get the full word at a position in a given direction
  */
-const getWordAt = (
+export const getWordAt = (
   row: number,
   col: number,
   board: BoardState,

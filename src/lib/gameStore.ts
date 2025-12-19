@@ -42,6 +42,7 @@ type GameStore = {
   recordMove: (move: GameMove) => void
   updateBoard: (board: BoardState) => void
   nextTurn: () => void
+  commitMove: (move: GameMove) => void
   updatePlayerTime: (playerIndex: number, timeRemainingMs: number) => void
 
   // Timer
@@ -173,6 +174,33 @@ export const useGameStore = create<GameStore>()(
         set({
           currentGame: {
             ...currentGame,
+            currentPlayerIndex: nextPlayerIndex,
+            updatedAt: Date.now(),
+          },
+        })
+      },
+
+      commitMove: move => {
+        const { currentGame } = get()
+        if (!currentGame) return
+
+        // Record move to history
+        const newMoves = [...currentGame.moves, move]
+
+        // Merge tiles into board
+        const newBoard = currentGame.board.map(r => [...r])
+        for (const { row, col, tile } of move.tilesPlaced) {
+          newBoard[row][col] = tile
+        }
+
+        // Advance turn
+        const nextPlayerIndex = (currentGame.currentPlayerIndex + 1) % currentGame.players.length
+
+        set({
+          currentGame: {
+            ...currentGame,
+            moves: newMoves,
+            board: newBoard,
             currentPlayerIndex: nextPlayerIndex,
             updatedAt: Date.now(),
           },
