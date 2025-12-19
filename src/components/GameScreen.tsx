@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
-import { createEmptyBoard, type BoardState, DEFAULT_TIME_MS } from '@/lib/types'
+import { createEmptyBoard, type BoardState } from '@/lib/types'
 import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getRemainingTileCount, checkTileOveruse, type TileOveruseWarning } from '@/lib/tileBag'
@@ -10,9 +10,10 @@ import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
 import { UnplayedTilesScreen } from './TileBagScreen'
 import { ConfirmDialog } from './ConfirmDialog'
 import { MoveHistoryList } from './MoveHistoryList'
+import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
-import { IconPlayerPauseFilled, IconPlayerPlayFilled, IconFlag, IconCards } from '@tabler/icons-react'
+import { IconPlayerPlayFilled, IconPlayerPauseFilled, IconFlag, IconCards } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
@@ -81,18 +82,13 @@ export const GameScreen = ({ onEndGame }: Props) => {
         playerIndex: currentPlayerIndex,
         tilesPlaced: move,
       })
+
       // Clear new tiles for next player
       setNewTiles(createEmptyBoard())
     } else {
       // No tiles placed - show confirmation dialog
       setShowPassConfirm(true)
     }
-  }
-
-  const formatTime = (ms: number) => {
-    const minutes = Math.floor(ms / 60_000)
-    const seconds = Math.floor((ms % 60_000) / 1000)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
   const remainingTileCount = getRemainingTileCount(currentGame)
@@ -184,43 +180,12 @@ export const GameScreen = ({ onEndGame }: Props) => {
                   }}
                   onClick={handlePlayerClick}
                 >
-                  {/* Timer circle with progress */}
-                  {(() => {
-                    const timeRemainingPercent = Math.max(0, (player.timeRemainingMs / DEFAULT_TIME_MS) * 100)
-                    const radius = 20
-                    const circumference = 2 * Math.PI * radius
-                    const strokeDashoffset = circumference - (timeRemainingPercent / 100) * circumference
-
-                    return (
-                      <div
-                        className="relative flex size-12 shrink-0 items-center justify-center transition-opacity"
-                        style={{ opacity: isActive && timerRunning ? 1 : 0.4 }}
-                      >
-                        <svg className="absolute size-12 rotate-90 -scale-x-100">
-                          {/* Background circle (time used) */}
-                          <circle cx="24" cy="24" r={radius} fill="none" stroke="#e5e5e5" strokeWidth="4" />
-                          {/* Progress circle (time remaining) */}
-                          <circle
-                            cx="24"
-                            cy="24"
-                            r={radius}
-                            fill="none"
-                            stroke={player.color}
-                            strokeWidth="4"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <span className="text-[10px] font-medium">{formatTime(player.timeRemainingMs)}</span>
-                        {!timerRunning && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <IconPlayerPauseFilled size={24} className="opacity-25" />
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })()}
+                  <Timer
+                    timeRemainingMs={player.timeRemainingMs}
+                    color={player.color}
+                    isActive={isActive}
+                    isPaused={!timerRunning}
+                  />
 
                   {/* Player name and score */}
                   <div className="flex flex-col">
