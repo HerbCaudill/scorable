@@ -7,6 +7,8 @@ import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { calculateMoveScore } from '@/lib/calculateMoveScore'
+import { getRemainingTileCount, checkTileOveruse } from '@/lib/tileBag'
+import { TileBagScreen } from './TileBagScreen'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -18,15 +20,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { IconPlayerPause, IconPlayerPlay, IconFlag } from '@tabler/icons-react'
+import { IconPlayerPause, IconPlayerPlay, IconFlag, IconCards } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const [highlightedTiles, setHighlightedTiles] = useState<Array<{ row: number; col: number }>>([])
   const [showPassConfirm, setShowPassConfirm] = useState(false)
+  const [showTileBag, setShowTileBag] = useState(false)
+  const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
 
   if (!currentGame) return null
+
+  if (showTileBag) {
+    return <TileBagScreen onBack={() => setShowTileBag(false)} />
+  }
 
   const { players, currentPlayerIndex, board, moves, timerRunning } = currentGame
   const isFirstMove = moves.length === 0
@@ -37,7 +45,19 @@ export const GameScreen = ({ onEndGame }: Props) => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  const handleEndGame = () => {
+  const remainingTileCount = getRemainingTileCount(currentGame)
+
+  const handleEndGameClick = () => {
+    if (remainingTileCount > 0) {
+      setShowEndGameConfirm(true)
+    } else {
+      endGame()
+      onEndGame()
+    }
+  }
+
+  const handleConfirmEndGame = () => {
+    setShowEndGameConfirm(false)
     endGame()
     onEndGame()
   }
@@ -118,6 +138,15 @@ export const GameScreen = ({ onEndGame }: Props) => {
                   return
                 }
 
+                // Check for tile overuse and warn (but allow)
+                const overuseWarnings = checkTileOveruse(currentGame, move)
+                if (overuseWarnings.length > 0) {
+                  const warningMessages = overuseWarnings.map(
+                    w => `${w.tile}: ${w.used} used but only ${w.available} exist`
+                  )
+                  toast.warning(`Too many tiles played: ${warningMessages.join(', ')}`)
+                }
+
                 commitMove({
                   playerIndex: currentPlayerIndex,
                   tilesPlaced: move,
@@ -191,7 +220,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
           {timerRunning ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
           {timerRunning ? 'Pause timer' : 'Start timer'}
         </Button>
-        <Button variant="outline" size="sm" onClick={handleEndGame}>
+        <Button variant="outline" size="sm" onClick={() => setShowTileBag(true)}>
+          <IconCards size={16} />
+          Tiles ({remainingTileCount})
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleEndGameClick}>
           <IconFlag size={16} />
           End game
         </Button>
@@ -209,6 +242,22 @@ export const GameScreen = ({ onEndGame }: Props) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmPass}>Pass</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* End game confirmation dialog */}
+      <AlertDialog open={showEndGameConfirm} onOpenChange={setShowEndGameConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>End game?</AlertDialogTitle>
+            <AlertDialogDescription>
+              There are still {remainingTileCount} tiles remaining in the bag. Are you sure you want to end the game?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmEndGame}>End game</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
