@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { IconPlayerPause, IconPlayerPlay, IconFlag, IconCards } from '@tabler/icons-react'
+import { IconPlayerPauseFilled, IconPlayerPlayFilled, IconFlag, IconCards } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
@@ -200,8 +200,12 @@ export const GameScreen = ({ onEndGame }: Props) => {
             return (
               <div
                 key={index}
-                className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg border"
-                style={{ borderColor: player.color }}
+                className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg"
+                style={{
+                  borderWidth: isActive ? 3 : 1,
+                  borderStyle: 'solid',
+                  borderColor: player.color,
+                }}
               >
                 {/* Player panel */}
                 <div
@@ -221,7 +225,10 @@ export const GameScreen = ({ onEndGame }: Props) => {
                     const strokeDashoffset = circumference - (timeRemainingPercent / 100) * circumference
 
                     return (
-                      <div className="relative flex size-12 shrink-0 items-center justify-center">
+                      <div
+                        className="relative flex size-12 shrink-0 items-center justify-center transition-opacity"
+                        style={{ opacity: isActive && timerRunning ? 1 : 0.4 }}
+                      >
                         <svg className="absolute size-12 rotate-90 -scale-x-100">
                           {/* Background circle (time used) */}
                           <circle cx="24" cy="24" r={radius} fill="none" stroke="#e5e5e5" strokeWidth="4" />
@@ -239,6 +246,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
                           />
                         </svg>
                         <span className="text-[10px] font-medium">{formatTime(player.timeRemainingMs)}</span>
+                        {!timerRunning && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <IconPlayerPauseFilled size={24} className="opacity-25" />
+                          </div>
+                        )}
                       </div>
                     )
                   })()}
@@ -271,8 +283,8 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
       {/* Footer */}
       <div className="flex justify-center gap-2 border-t bg-white p-2">
-        <Button variant="outline" size="xs" onClick={handleTimerToggle}>
-          {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+        <Button variant={timerRunning ? 'outline' : 'default'} size="xs" onClick={handleTimerToggle}>
+          {timerRunning ? <IconPlayerPauseFilled size={14} /> : <IconPlayerPlayFilled size={14} />}
           {timerRunning ? 'Pause timer' : 'Start timer'}
         </Button>
         <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
