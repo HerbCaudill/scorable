@@ -3,8 +3,8 @@ import { boardLayout } from '@/lib/boardLayout'
 import { type SquareType, type BoardState } from '@/lib/types'
 import { createEmptyBoard } from '@/lib/createEmptyBoard'
 import { tileValues } from '@/lib/tileValues'
-import { getTileValue } from '@/lib/getTileValue'
 import { cx } from '@/lib/cx'
+import { Tile } from './Tile'
 
 const ScrabbleBoard = ({
   tiles,
@@ -263,30 +263,6 @@ const ScrabbleBoard = ({
     }
   }
 
-  // Tile component to display placed tiles - sized relative to container
-  const Tile = ({ letter, isExisting = false }: { letter: string; isExisting?: boolean }) => {
-    const value = getTileValue(letter)
-    return (
-      <div
-        className={cx(
-          'relative flex h-full w-full items-center justify-center rounded-[0.2cqw] shadow-sm z-0',
-          isExisting ? 'bg-amber-50' : 'bg-teal-300'
-        )}
-      >
-        <span className={cx('text-[3.5cqw] font-bold leading-none', isExisting ? 'text-khaki-800' : 'text-teal-800')}>
-          {letter === ' ' ? '' : letter.toUpperCase()}
-        </span>
-        <span
-          className={cx(
-            'absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold leading-none',
-            isExisting ? 'text-khaki-600' : 'text-teal-600'
-          )}
-        >
-          {value > 0 ? value : ''}
-        </span>
-      </div>
-    )
-  }
 
   // Cursor arrow component - triangle positioned outside the box
   const CursorArrow = ({ direction }: { direction: CursorDirection }) => (
@@ -330,7 +306,7 @@ const ScrabbleBoard = ({
                 )}
               >
                 {hasTile ? (
-                  <Tile letter={tile} isExisting={!isNewTile} />
+                  <Tile letter={tile} variant={isNewTile ? 'new' : 'existing'} />
                 ) : (
                   renderSquareContent(squareType, rowIndex, colIndex)
                 )}
