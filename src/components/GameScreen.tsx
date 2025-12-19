@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
@@ -23,12 +23,35 @@ import {
 import { IconPlayerPause, IconPlayerPlay, IconFlag, IconCards } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
-  const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
+  const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const [highlightedTiles, setHighlightedTiles] = useState<Array<{ row: number; col: number }>>([])
   const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
   const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
+
+  // Timer interval - decrement current player's time every second
+  const lastTickRef = useRef<number>(Date.now())
+  const timerRunning = currentGame?.timerRunning ?? false
+  const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
+
+  useEffect(() => {
+    if (!timerRunning || !currentGame) return
+
+    lastTickRef.current = Date.now()
+
+    const interval = setInterval(() => {
+      const now = Date.now()
+      const elapsed = now - lastTickRef.current
+      lastTickRef.current = now
+
+      const currentTime = currentGame.players[currentPlayerIndex].timeRemainingMs
+      const newTime = Math.max(0, currentTime - elapsed)
+      updatePlayerTime(currentPlayerIndex, newTime)
+    }, 100) // Update frequently for smooth display
+
+    return () => clearInterval(interval)
+  }, [timerRunning, currentPlayerIndex, currentGame, updatePlayerTime])
 
   if (!currentGame) return null
 
@@ -36,7 +59,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
     return <TileBagScreen onBack={() => setShowTileBag(false)} />
   }
 
-  const { players, currentPlayerIndex, board, moves, timerRunning } = currentGame
+  const { players, board, moves } = currentGame
   const isFirstMove = moves.length === 0
 
   const formatTime = (ms: number) => {
