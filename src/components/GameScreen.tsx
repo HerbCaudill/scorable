@@ -202,9 +202,9 @@ export const GameScreen = ({ onEndGame }: Props) => {
                 key={index}
                 className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg"
                 style={{
-                  borderWidth: isActive ? 3 : 1,
-                  borderStyle: 'solid',
-                  borderColor: player.color,
+                  boxShadow: isActive
+                    ? `0 0 0 3px ${player.color}`
+                    : `0 0 0 1px ${player.color}40`,
                 }}
               >
                 {/* Player panel */}
