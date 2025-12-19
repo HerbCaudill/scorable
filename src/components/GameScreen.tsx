@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
-import { createEmptyBoard, type BoardState } from '@/lib/types'
+import { createEmptyBoard, type BoardState, DEFAULT_TIME_MS } from '@/lib/types'
 import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
@@ -205,7 +205,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
               >
                 {/* Player panel */}
                 <div
-                  className="flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
+                  className="flex cursor-pointer items-center gap-3 p-1 transition-colors hover:opacity-80"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : 'transparent',
                     borderBottomWidth: 2,
@@ -213,13 +213,35 @@ export const GameScreen = ({ onEndGame }: Props) => {
                   }}
                   onClick={handlePlayerClick}
                 >
-                  {/* Timer circle */}
-                  <div
-                    className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
-                    style={{ borderColor: player.color }}
-                  >
-                    <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
-                  </div>
+                  {/* Timer circle with progress */}
+                  {(() => {
+                    const timeRemainingPercent = Math.max(0, (player.timeRemainingMs / DEFAULT_TIME_MS) * 100)
+                    const radius = 20
+                    const circumference = 2 * Math.PI * radius
+                    const strokeDashoffset = circumference - (timeRemainingPercent / 100) * circumference
+
+                    return (
+                      <div className="relative flex size-12 shrink-0 items-center justify-center">
+                        <svg className="absolute size-12 rotate-90 -scale-x-100">
+                          {/* Background circle (time used) */}
+                          <circle cx="24" cy="24" r={radius} fill="none" stroke="#e5e5e5" strokeWidth="4" />
+                          {/* Progress circle (time remaining) */}
+                          <circle
+                            cx="24"
+                            cy="24"
+                            r={radius}
+                            fill="none"
+                            stroke={player.color}
+                            strokeWidth="4"
+                            strokeDasharray={circumference}
+                            strokeDashoffset={strokeDashoffset}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
+                      </div>
+                    )
+                  })()}
 
                   {/* Player name and score */}
                   <div className="flex flex-col">
