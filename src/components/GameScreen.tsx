@@ -114,7 +114,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
           return (
             <div
               key={index}
-              className="flex flex-1 cursor-pointer flex-col items-center rounded-lg p-3 transition-colors hover:opacity-80"
+              className="flex flex-1 cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors hover:opacity-80"
               style={{
                 backgroundColor: isActive ? `${player.color}20` : 'transparent',
                 borderWidth: 2,
@@ -124,17 +124,17 @@ export const GameScreen = ({ onEndGame }: Props) => {
             >
               {/* Timer circle */}
               <div
-                className="mb-2 flex size-16 items-center justify-center rounded-full border-4"
+                className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
                 style={{ borderColor: player.color }}
               >
                 <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
               </div>
 
-              {/* Player name */}
-              <span className="text-sm font-medium">{player.name}</span>
-
-              {/* Score */}
-              <span className="text-2xl font-bold">{score}</span>
+              {/* Player name and score */}
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{player.name}</span>
+                <span className="text-2xl font-bold">{score}</span>
+              </div>
             </div>
           )
         })}
