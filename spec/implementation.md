@@ -77,7 +77,7 @@
 
 ## Phase 7: Game history & results
 
-- [ ] Display game history (moves made, scores per turn)
+- [x] Display game history (moves made, scores per turn)
 - [x] Show final scores at game end
 - [x] Store completed games in localStorage
 - [x] Display past games on home screen

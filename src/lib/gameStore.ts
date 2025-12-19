@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Game, GameSummary, PlayerRecord, BoardState, GameMove, Player } from './types'
+import type { Game, PlayerRecord, BoardState, GameMove, Player } from './types'
 import { createEmptyBoard, createPlayer } from './types'
 import { calculateMoveScore } from './calculateMoveScore'
 
@@ -27,7 +27,7 @@ type GameStore = {
   currentGame: Game | null
 
   // Historical data
-  pastGames: GameSummary[]
+  pastGames: Game[]
   playerRecords: PlayerRecord[]
 
   // ACTIONS
@@ -71,6 +71,7 @@ export const useGameStore = create<GameStore>()(
         }
 
         const game: Game = {
+          id: crypto.randomUUID(),
           players,
           currentPlayerIndex: 0,
           board: createEmptyBoard(),
@@ -88,23 +89,15 @@ export const useGameStore = create<GameStore>()(
         const { currentGame, pastGames } = get()
         if (!currentGame) return
 
-        // Calculate scores from moves
-        const playerScores = currentGame.players.map((_, index) => getPlayerScore(currentGame, index))
-        const maxScore = Math.max(...playerScores)
-
-        // Create game summary
-        const summary: GameSummary = {
-          date: currentGame.createdAt,
-          players: currentGame.players.map((p, index) => ({
-            name: p.name,
-            score: playerScores[index],
-            isWinner: playerScores[index] === maxScore,
-          })),
+        const finishedGame: Game = {
+          ...currentGame,
+          status: 'finished',
+          updatedAt: Date.now(),
         }
 
         set({
-          currentGame: { ...currentGame, status: 'finished' },
-          pastGames: [summary, ...pastGames],
+          currentGame: finishedGame,
+          pastGames: [finishedGame, ...pastGames],
         })
       },
 
@@ -295,11 +288,24 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'scrabble-game-storage',
+      version: 2,
       partialize: state => ({
+        currentGame: state.currentGame,
         pastGames: state.pastGames,
         playerRecords: state.playerRecords,
-        // Don't persist currentGame - it will be managed by Automerge later
       }),
+      migrate: (persistedState, version) => {
+        const state = persistedState as Partial<GameStore>
+        if (version < 2) {
+          // Discard old GameSummary[] format, keep only playerRecords
+          return {
+            currentGame: null,
+            pastGames: [],
+            playerRecords: state.playerRecords ?? [],
+          }
+        }
+        return state as GameStore
+      },
     }
   )
 )

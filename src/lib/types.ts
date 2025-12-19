@@ -34,6 +34,7 @@ export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
 
 /** Complete game state  */
 export type Game = {
+  id: string
   players: Player[]
   currentPlayerIndex: number
   board: BoardState
@@ -49,16 +50,6 @@ export type PlayerRecord = {
   name: string
   gamesPlayed: number
   lastPlayedAt: number
-}
-
-/** Past game summary for home screen  */
-export type GameSummary = {
-  date: number
-  players: Array<{
-    name: string
-    score: number
-    isWinner: boolean
-  }>
 }
 
 /** Default time per player (30 minutes)  */

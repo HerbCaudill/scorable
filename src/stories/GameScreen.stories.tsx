@@ -44,6 +44,7 @@ export const NewGame: Story = {
   decorators: [
     Story => {
       useStoreSetup({
+        id: crypto.randomUUID(),
         players: [createPlayer('Herb', 0), createPlayer('Lynne', 1)],
         currentPlayerIndex: 0,
         board: createEmptyBoard(),
@@ -63,6 +64,7 @@ export const FourPlayers: Story = {
   decorators: [
     Story => {
       useStoreSetup({
+        id: crypto.randomUUID(),
         players: [createPlayer('Herb', 0), createPlayer('Lynne', 1), createPlayer('Nolan', 2), createPlayer('Mike', 3)],
         currentPlayerIndex: 0,
         board: createEmptyBoard(),
@@ -98,6 +100,7 @@ export const InProgress: Story = {
       board[10][11] = 'D'
 
       useStoreSetup({
+        id: crypto.randomUUID(),
         players: [
           { ...createPlayer('Herb', 0), timeRemainingMs: DEFAULT_TIME_MS - 180_000 }, // 27 min left
           { ...createPlayer('Lynne', 1), timeRemainingMs: DEFAULT_TIME_MS - 120_000 }, // 28 min left
