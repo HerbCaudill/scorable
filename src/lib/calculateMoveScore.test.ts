@@ -257,6 +257,34 @@ describe('calculateMoveScore', () => {
       const score = calculateMoveScore({ move, board })
       expect(score).toBe(114) // 16 doubled twice = 64, plus 50 for bingo
     })
+
+    it('applies multiple triple word multipliers (9x)', () => {
+      // TW at (7,0) and (14,0) - playing FLATFISH vertically down left edge
+      const board = createEmptyBoard()
+      const move = parseMove(`
+        ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        · · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        ○ · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        · · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        · ○ · · · ○ · · · ○ · · · ○ ·
+        · · ○ · · · ○ · ○ · · · ○ · ·
+        F · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+        L · ○ · · · ○ · ○ · · · ○ · ·
+        A ○ · · · ○ · · · ○ · · · ○ ·
+        T · · · ⏺︎ · · · · · ⏺︎ · · · ·
+        F · · ⏺︎ · · · ○ · · · ⏺︎ · · ○
+        I · ⏺︎ · · · ○ · ○ · · · ⏺︎ · ·
+        S ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
+        H · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
+      `)
+
+      const score = calculateMoveScore({ move, board })
+      // F=4, L=1, A=1, T=1, F=4*2(DL at 11,0)=8, I=1, S=1, H=4 = 21
+      // Two TW multipliers at (7,0) and (14,0): 21 * 3 * 3 = 189
+      // No bingo bonus (8 tiles, bingo requires exactly 7)
+      expect(score).toBe(189)
+    })
   })
 
   describe('cross words', () => {
