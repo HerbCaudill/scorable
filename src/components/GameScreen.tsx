@@ -7,7 +7,7 @@ import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { calculateMoveScore } from '@/lib/calculateMoveScore'
-import { getRemainingTileCount, checkTileOveruse } from '@/lib/tileBag'
+import { getRemainingTileCount, checkTileOveruse, type TileOveruseWarning } from '@/lib/tileBag'
 import { TileBagScreen } from './TileBagScreen'
 import { toast } from 'sonner'
 import {
@@ -29,6 +29,10 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
   const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
+  const [tileOveruseConfirm, setTileOveruseConfirm] = useState<{
+    warnings: TileOveruseWarning[]
+    pendingMove: Array<{ row: number; col: number; tile: string }>
+  } | null>(null)
 
   // Timer interval - decrement current player's time every second
   const lastTickRef = useRef<number>(Date.now())
@@ -126,6 +130,16 @@ export const GameScreen = ({ onEndGame }: Props) => {
     setShowPassConfirm(false)
   }
 
+  const handleConfirmTileOveruse = () => {
+    if (!tileOveruseConfirm) return
+    commitMove({
+      playerIndex: currentPlayerIndex,
+      tilesPlaced: tileOveruseConfirm.pendingMove,
+    })
+    setNewTiles(createEmptyBoard())
+    setTileOveruseConfirm(null)
+  }
+
   return (
     <div className="flex h-screen flex-col">
       {/* Sticky header: Board + Player panels */}
@@ -161,13 +175,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
                   return
                 }
 
-                // Check for tile overuse and warn (but allow)
+                // Check for tile overuse and show confirmation dialog
                 const overuseWarnings = checkTileOveruse(currentGame, move)
                 if (overuseWarnings.length > 0) {
-                  const warningMessages = overuseWarnings.map(
-                    w => `${w.tile}: ${w.used} used but only ${w.available} exist`
-                  )
-                  toast.warning(`Too many tiles played: ${warningMessages.join(', ')}`)
+                  setTileOveruseConfirm({ warnings: overuseWarnings, pendingMove: move })
+                  return
                 }
 
                 commitMove({
@@ -281,6 +293,39 @@ export const GameScreen = ({ onEndGame }: Props) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmEndGame}>End game</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Tile overuse confirmation dialog */}
+      <AlertDialog open={tileOveruseConfirm !== null} onOpenChange={open => !open && setTileOveruseConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Too many tiles used</AlertDialogTitle>
+            <AlertDialogDescription className="text-left">
+              {tileOveruseConfirm && (
+                <>
+                  This move uses more tiles than exist in the game:
+                  <ul className="mt-2 list-disc pl-5">
+                    {tileOveruseConfirm.warnings.map((w, i) => (
+                      <li key={i}>
+                        <strong>{w.tile}</strong>: {w.used} used, but only {w.available} exist
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2">Do you want to play this move anyway?</p>
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={handleConfirmTileOveruse}
+              className="border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              Play anyway
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setTileOveruseConfirm(null)}>Fix move</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

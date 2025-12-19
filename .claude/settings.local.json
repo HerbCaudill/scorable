@@ -51,7 +51,8 @@
       "WebFetch(*)",
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(pnpm tsc:*)"
     ]
   }
 }
