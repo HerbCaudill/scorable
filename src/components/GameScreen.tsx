@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
+  const [highlightedTiles, setHighlightedTiles] = useState<Array<{ row: number; col: number }>>([])
 
   if (!currentGame) return null
 
@@ -57,13 +58,14 @@ export const GameScreen = ({ onEndGame }: Props) => {
   // Get word history for a player
   const getPlayerMoveHistory = (playerIndex: number) => {
     let boardState = createEmptyBoard()
-    const history: Array<{ words: string[]; score: number }> = []
+    const history: Array<{ words: string[]; score: number; tiles: Array<{ row: number; col: number }> }> = []
 
     for (const move of moves) {
       if (move.playerIndex === playerIndex) {
         const words = getWordsFromMove(move.tilesPlaced, boardState)
         const score = calculateMoveScore({ move: move.tilesPlaced, board: boardState })
-        history.push({ words, score })
+        const tiles = move.tilesPlaced.map(({ row, col }) => ({ row, col }))
+        history.push({ words, score, tiles })
       }
       // Update board state after each move
       for (const { row, col, tile } of move.tilesPlaced) {
@@ -74,11 +76,23 @@ export const GameScreen = ({ onEndGame }: Props) => {
     return history.reverse() // Most recent first
   }
 
+  // Briefly highlight tiles on the board
+  const handleMoveClick = (tiles: Array<{ row: number; col: number }>) => {
+    setHighlightedTiles(tiles)
+    setTimeout(() => setHighlightedTiles([]), 1500)
+  }
+
   return (
     <div className="flex h-screen flex-col">
       {/* Board area */}
       <div className="flex flex-col items-center p-4 pb-2">
-        <ScrabbleBoard tiles={board} newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
+        <ScrabbleBoard
+          tiles={board}
+          newTiles={newTiles}
+          onNewTilesChange={setNewTiles}
+          editable
+          highlightedTiles={highlightedTiles}
+        />
       </div>
 
       {/* Player panels */}
@@ -130,7 +144,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
             return (
               <div key={index} className="flex-1 flex flex-col text-xs p-2 divide-y divide-neutral-200">
                 {moveHistory.map((entry, i) => (
-                  <div key={i} className="flex justify-between gap-2 py-1 text-neutral-600">
+                  <div
+                    key={i}
+                    className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 hover:bg-neutral-100"
+                    onClick={() => handleMoveClick(entry.tiles)}
+                  >
                     <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
                     <span className="font-medium">{entry.score}</span>
                   </div>

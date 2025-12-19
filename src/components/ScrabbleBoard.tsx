@@ -6,7 +6,13 @@ import { tileValues } from '@/lib/tileValues'
 import { getTileValue } from '@/lib/getTileValue'
 import { cx } from '@/lib/cx'
 
-const ScrabbleBoard = ({ tiles, newTiles: externalNewTiles, onNewTilesChange, editable = false }: Props) => {
+const ScrabbleBoard = ({
+  tiles,
+  newTiles: externalNewTiles,
+  onNewTilesChange,
+  editable = false,
+  highlightedTiles = [],
+}: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
@@ -201,6 +207,8 @@ const ScrabbleBoard = ({ tiles, newTiles: externalNewTiles, onNewTilesChange, ed
   }, [cursor])
 
   const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
+  const isHighlighted = (row: number, col: number) =>
+    highlightedTiles.some(t => t.row === row && t.col === col)
   // Dots component for multipliers - sized relative to container
   const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
     return (
@@ -308,6 +316,7 @@ const ScrabbleBoard = ({ tiles, newTiles: externalNewTiles, onNewTilesChange, ed
             const hasTile = tile !== null
             const isNewTile = newTiles[rowIndex][colIndex] !== null
             const hasCursor = isCursorAt(rowIndex, colIndex)
+            const highlighted = isHighlighted(rowIndex, colIndex)
 
             return (
               <div
@@ -330,6 +339,9 @@ const ScrabbleBoard = ({ tiles, newTiles: externalNewTiles, onNewTilesChange, ed
                     <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
                     {cursor && <CursorArrow direction={cursor.direction} />}
                   </>
+                )}
+                {highlighted && (
+                  <div className="absolute inset-0 ring-[0.4cqw] ring-orange-500 ring-inset pointer-events-none z-10 animate-highlight-fade" />
                 )}
               </div>
             )
@@ -359,4 +371,6 @@ type Props = {
   onNewTilesChange?: (tiles: BoardState) => void
   /** Whether the board is in editing mode */
   editable?: boolean
+  /** Tiles to highlight (e.g., when showing a past move) */
+  highlightedTiles?: Array<{ row: number; col: number }>
 }

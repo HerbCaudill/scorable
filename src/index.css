@@ -170,3 +170,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes highlight-fade {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-highlight-fade {
+  animation: highlight-fade 1.5s ease-out forwards;
+}
