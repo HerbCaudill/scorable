@@ -13,7 +13,14 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
-import { IconPlayerPlayFilled, IconPlayerPauseFilled, IconFlag, IconCards } from '@tabler/icons-react'
+import {
+  IconPlayerPlayFilled,
+  IconPlayerPauseFilled,
+  IconFlag,
+  IconCards,
+  IconPlayerPause,
+  IconPlayerPlay,
+} from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
@@ -209,7 +216,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
       {/* Footer */}
       <div className="flex justify-center gap-2 border-t bg-white p-2">
         <Button variant={timerRunning ? 'outline' : 'default'} size="xs" onClick={handleTimerToggle}>
-          {timerRunning ? <IconPlayerPauseFilled size={14} /> : <IconPlayerPlayFilled size={14} />}
+          {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
           {timerRunning ? 'Pause timer' : 'Start timer'}
         </Button>
         <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
