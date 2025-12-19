@@ -8,7 +8,7 @@ import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { calculateMoveScore } from '@/lib/calculateMoveScore'
 import { getRemainingTileCount, checkTileOveruse, type TileOveruseWarning } from '@/lib/tileBag'
-import { TileBagScreen } from './TileBagScreen'
+import { UnplayedTilesScreen } from './TileBagScreen'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -60,7 +60,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
   if (!currentGame) return null
 
   if (showTileBag) {
-    return <TileBagScreen onBack={() => setShowTileBag(false)} />
+    return <UnplayedTilesScreen onBack={() => setShowTileBag(false)} />
   }
 
   const { players, board, moves } = currentGame
@@ -307,7 +307,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>End game?</AlertDialogTitle>
             <AlertDialogDescription>
-              There are still {remainingTileCount} tiles remaining in the bag. Are you sure you want to end the game?
+              There are still {remainingTileCount} unplayed tiles. Are you sure you want to end the game?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

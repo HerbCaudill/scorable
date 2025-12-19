@@ -8,7 +8,7 @@ type Props = {
   onBack: () => void
 }
 
-export const TileBagScreen = ({ onBack }: Props) => {
+export const UnplayedTilesScreen = ({ onBack }: Props) => {
   const { currentGame } = useGameStore()
 
   if (!currentGame) return null
@@ -27,7 +27,7 @@ export const TileBagScreen = ({ onBack }: Props) => {
           <IconArrowLeft size={16} />
         </Button>
         <div>
-          <h1 className="text-lg font-semibold">Tile Bag</h1>
+          <h1 className="text-lg font-semibold">Unplayed Tiles</h1>
           <p className="text-sm text-neutral-500">
             {remainingCount} tiles remaining · {playedCount} played
           </p>
