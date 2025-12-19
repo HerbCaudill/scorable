@@ -15,7 +15,7 @@ export const Tile = ({ letter, variant = 'existing', className }: Props) => {
     <div
       className={cx(
         '@container relative flex h-full w-full items-center justify-center rounded-[2%] shadow-sm z-0',
-        isExisting ? 'bg-amber-50' : 'bg-teal-300',
+        isExisting ? 'bg-amber-100' : 'bg-teal-300',
         className
       )}
     >

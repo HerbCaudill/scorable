@@ -1,11 +1,5 @@
 import { useGameStore } from '@/lib/gameStore'
-import {
-  getRemainingTiles,
-  getRemainingTileCount,
-  getSortedTileEntries,
-  TILE_DISTRIBUTION,
-  TOTAL_TILES,
-} from '@/lib/tileBag'
+import { getRemainingTiles, getRemainingTileCount, getSortedTileEntries, TILE_DISTRIBUTION, TOTAL_TILES } from '@/lib/tileBag'
 import { Button } from '@/components/ui/button'
 import { IconArrowLeft } from '@tabler/icons-react'
 import { Tile } from './Tile'
@@ -40,37 +34,27 @@ export const UnplayedTilesScreen = ({ onBack }: Props) => {
         </div>
       </div>
 
-      {/* Tile grid */}
+      {/* Tile rows - each letter on its own row */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="@container grid grid-cols-7 gap-5">
+        <div className="flex flex-col gap-1">
           {sortedTiles.map(([letter, total]) => {
             const remaining = remainingTiles[letter] || 0
             const played = total - remaining
-            const isEmpty = remaining === 0
 
             return (
-              <div key={letter} className="flex flex-col gap-3">
-                {/* Tile */}
-                <div className={`aspect-square w-full ${isEmpty ? 'opacity-30' : ''}`}>
-                  <Tile letter={letter} />
-                </div>
-
-                <div className="flex flex-col items-center gap-1">
-                  {/* Count remaining */}
-                  <span className={`text-xs font-semibold ${isEmpty ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                    {remaining}
-                  </span>
-
-                  {/* Visual indicator: filled dots for remaining, empty for played */}
-                  <div className="flex flex-wrap justify-center gap-0.5 px-2">
-                    {Array.from({ length: remaining }).map((_, i) => (
-                      <div key={`remaining-${i}`} className="size-1.5 rounded-full bg-amber-500" />
-                    ))}
-                    {Array.from({ length: played }).map((_, i) => (
-                      <div key={`played-${i}`} className="size-1.5 rounded-full border border-neutral-300" />
-                    ))}
+              <div key={letter} className="flex gap-1">
+                {/* Remaining tiles */}
+                {Array.from({ length: remaining }).map((_, i) => (
+                  <div key={`remaining-${i}`} className="aspect-square w-8">
+                    <Tile letter={letter} />
                   </div>
-                </div>
+                ))}
+                {/* Played tiles (faded) */}
+                {Array.from({ length: played }).map((_, i) => (
+                  <div key={`played-${i}`} className="aspect-square w-8 opacity-20">
+                    <Tile letter={letter} />
+                  </div>
+                ))}
               </div>
             )
           })}
