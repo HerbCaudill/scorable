@@ -66,12 +66,13 @@ test.describe('End Game Flow', () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Alice ended the game, enter tiles for Bob
-    await gamePage.enterRackTiles('Bob', 'QZ')
+    // Alice ended the game, enter some common tiles for Bob
+    // Using I, N, N (which are remaining based on the original game ending)
+    await gamePage.enterRackTiles('Bob', 'INN')
 
-    // Q=10, Z=10 = -20 deduction
+    // I=1, N=1, N=1 = -3 deduction
     const adjustment = await gamePage.getPlayerAdjustment('Bob')
-    expect(adjustment).toBe('-20')
+    expect(adjustment).toBe('-3')
   })
 
   test('player who ended game gets bonus', async ({ page }) => {
@@ -80,11 +81,11 @@ test.describe('End Game Flow', () => {
     await gamePage.expectOnEndGameScreen()
 
     // Alice ended the game, enter tiles for Bob
-    await gamePage.enterRackTiles('Bob', 'QZ')
+    await gamePage.enterRackTiles('Bob', 'INN')
 
-    // Alice should get +20 bonus (Bob's tiles)
+    // Alice should get +3 bonus (Bob's tiles: I=1, N=1, N=1)
     const aliceAdjustment = await gamePage.getPlayerAdjustment('Alice')
-    expect(aliceAdjustment).toBe('+20')
+    expect(aliceAdjustment).toBe('+3')
   })
 
   test('validates rack tiles against remaining', async ({ page }) => {
@@ -92,10 +93,10 @@ test.describe('End Game Flow', () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Try to enter too many Q tiles (only 1 Q in distribution)
-    await gamePage.enterRackTiles('Bob', 'QQ')
+    // Try to enter too many Q tiles (Q was already played in the game)
+    await gamePage.enterRackTiles('Bob', 'Q')
 
-    // Should show error
+    // Should show error since Q was already used
     await gamePage.expectRackError('Bob', 'Too many Q')
 
     // Apply button should be disabled
@@ -118,8 +119,8 @@ test.describe('End Game Flow', () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Alice ended, Bob has QZ (20 points)
-    await gamePage.enterRackTiles('Bob', 'QZ')
+    // Alice ended, Bob has INN (3 points) - tiles remaining from the game
+    await gamePage.enterRackTiles('Bob', 'INN')
     await gamePage.applyAndEndGame()
 
     // Should return to home screen
@@ -131,13 +132,13 @@ test.describe('End Game Flow', () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Enter QZ, then remove one
-    await gamePage.enterRackTiles('Bob', 'QZ')
+    // Enter INN, then remove one
+    await gamePage.enterRackTiles('Bob', 'INN')
     let adjustment = await gamePage.getPlayerAdjustment('Bob')
-    expect(adjustment).toBe('-20') // Q=10, Z=10
+    expect(adjustment).toBe('-3') // I=1, N=1, N=1
 
     await gamePage.clearRackTiles('Bob', 1)
     adjustment = await gamePage.getPlayerAdjustment('Bob')
-    expect(adjustment).toBe('-10') // Just Q=10
+    expect(adjustment).toBe('-2') // I=1, N=1
   })
 })

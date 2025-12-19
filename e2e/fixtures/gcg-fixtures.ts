@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
-import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/gcg/parseGcg'
+import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/parseGcg'
 import type { BoardState } from '../../src/lib/types'
 
 const __filename = fileURLToPath(import.meta.url)
