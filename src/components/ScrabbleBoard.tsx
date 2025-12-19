@@ -33,6 +33,69 @@ const ScrabbleBoard = ({
     [onNewTilesChange, newTiles]
   )
 
+  // Determine the best cursor direction based on surrounding tiles
+  const inferCursorDirection = useCallback(
+    (row: number, col: number): CursorDirection => {
+      if (!tiles) return cursor?.direction ?? 'horizontal'
+
+      // Find closest tile in each direction
+      let closestLeft = Infinity
+      let closestRight = Infinity
+      let closestAbove = Infinity
+      let closestBelow = Infinity
+
+      // Scan left
+      for (let c = col - 1; c >= 0; c--) {
+        if (tiles[row][c] !== null) {
+          closestLeft = col - c
+          break
+        }
+      }
+      // Scan right
+      for (let c = col + 1; c < 15; c++) {
+        if (tiles[row][c] !== null) {
+          closestRight = c - col
+          break
+        }
+      }
+      // Scan above
+      for (let r = row - 1; r >= 0; r--) {
+        if (tiles[r][col] !== null) {
+          closestAbove = row - r
+          break
+        }
+      }
+      // Scan below
+      for (let r = row + 1; r < 15; r++) {
+        if (tiles[r][col] !== null) {
+          closestBelow = r - row
+          break
+        }
+      }
+
+      const closestHorizontal = Math.min(closestLeft, closestRight)
+      const closestVertical = Math.min(closestAbove, closestBelow)
+
+      // If only one direction has tiles, use that
+      if (closestVertical < Infinity && closestHorizontal === Infinity) {
+        return 'vertical'
+      }
+      if (closestHorizontal < Infinity && closestVertical === Infinity) {
+        return 'horizontal'
+      }
+      // Both directions have tiles: prefer the closer one
+      if (closestVertical < closestHorizontal) {
+        return 'vertical'
+      }
+      if (closestHorizontal < closestVertical) {
+        return 'horizontal'
+      }
+      // Equal distance or no tiles: keep current direction or default to horizontal
+      return cursor?.direction ?? 'horizontal'
+    },
+    [tiles, cursor?.direction]
+  )
+
   // Handle square click - set cursor position
   const handleSquareClick = useCallback(
     (row: number, col: number) => {
@@ -45,14 +108,15 @@ const ScrabbleBoard = ({
           direction: cursor.direction === 'horizontal' ? 'vertical' : 'horizontal',
         })
       } else {
-        // Set cursor to clicked position
-        setCursor({ row, col, direction: cursor?.direction ?? 'horizontal' })
+        // Set cursor to clicked position with intelligently inferred direction
+        const direction = inferCursorDirection(row, col)
+        setCursor({ row, col, direction })
       }
 
       // Focus the board for keyboard input
       boardRef.current?.focus()
     },
-    [editable, cursor]
+    [editable, cursor, inferCursorDirection]
   )
 
   // Combined view of all tiles (existing + new)
