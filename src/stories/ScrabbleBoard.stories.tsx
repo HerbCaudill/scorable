@@ -90,15 +90,16 @@ export const Editable: Story = {
 
 // Editable board with some existing tiles
 const EditableWithTilesWrapper = () => {
-  const [tiles, setTiles] = useState<BoardState>(boardWithHello)
+  const existingTiles = boardWithHello()
+  const [tiles, setTiles] = useState<BoardState>(() => existingTiles.map(row => [...row]))
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-neutral-600">
-        Board with existing tiles. When typing, the cursor skips over existing tiles. Click directly on a tile to
-        overwrite it.
+        Board with existing tiles (shown in light blue). When typing, the cursor skips over existing tiles. Click
+        directly on a tile to overwrite it.
       </p>
-      <ScrabbleBoard tiles={tiles} onTilesChange={setTiles} editable />
+      <ScrabbleBoard tiles={tiles} existingTiles={existingTiles} onTilesChange={setTiles} editable />
     </div>
   )
 }

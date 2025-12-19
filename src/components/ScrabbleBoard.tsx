@@ -6,7 +6,7 @@ import { tileValues } from '@/lib/tileValues'
 import { getTileValue } from '@/lib/getTileValue'
 import { cx } from '@/lib/cx'
 
-const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }: Props) => {
+const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, editable = false }: Props) => {
   const [internalTiles, setInternalTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
@@ -251,14 +251,24 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
   }
 
   // Tile component to display placed tiles - sized relative to container
-  const Tile = ({ letter }: { letter: string }) => {
+  const Tile = ({ letter, isExisting = false }: { letter: string; isExisting?: boolean }) => {
     const value = getTileValue(letter)
     return (
-      <div className="relative flex h-full w-full items-center justify-center rounded-[0.2cqw] bg-amber-100 shadow-sm z-0">
-        <span className="text-[3.5cqw] font-bold text-khaki-800 leading-none">
+      <div
+        className={cx(
+          'relative flex h-full w-full items-center justify-center rounded-[0.2cqw] shadow-sm z-0',
+          isExisting ? 'bg-orange-50' : 'bg-teal-300'
+        )}
+      >
+        <span className={cx('text-[3.5cqw] font-bold leading-none', isExisting ? 'text-khaki-800' : 'text-teal-800')}>
           {letter === ' ' ? '' : letter.toUpperCase()}
         </span>
-        <span className="absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold text-khaki-600 leading-none">
+        <span
+          className={cx(
+            'absolute bottom-[0.2cqw] right-[0.4cqw] text-[1.6cqw] font-semibold leading-none',
+            isExisting ? 'text-khaki-600' : 'text-teal-600'
+          )}
+        >
           {value > 0 ? value : ''}
         </span>
       </div>
@@ -304,7 +314,11 @@ const ScrabbleBoard = ({ tiles: externalTiles, onTilesChange, editable = false }
                   hasCursor && 'z-10'
                 )}
               >
-                {hasTile ? <Tile letter={tile} /> : renderSquareContent(squareType, rowIndex, colIndex)}
+                {hasTile ? (
+                  <Tile letter={tile} isExisting={existingTiles?.[rowIndex]?.[colIndex] === tile} />
+                ) : (
+                  renderSquareContent(squareType, rowIndex, colIndex)
+                )}
                 {hasCursor && (
                   <>
                     <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
@@ -333,6 +347,8 @@ type Cursor = {
 type Props = {
   /** The current state of tiles on the board */
   tiles?: BoardState
+  /** Tiles that were already on the board before editing (displayed in a different color) */
+  existingTiles?: BoardState
   /** Callback when tiles are changed (for controlled mode) */
   onTilesChange?: (tiles: BoardState) => void
   /** Whether the board is in editing mode */
