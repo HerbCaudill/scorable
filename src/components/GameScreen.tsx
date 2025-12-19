@@ -244,17 +244,17 @@ export const GameScreen = ({ onEndGame }: Props) => {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-center gap-4 border-t bg-white p-2">
-        <Button variant="outline" size="sm" onClick={handleTimerToggle}>
-          {timerRunning ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
+      <div className="flex justify-center gap-2 border-t bg-white p-2">
+        <Button variant="outline" size="xs" onClick={handleTimerToggle}>
+          {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
           {timerRunning ? 'Pause timer' : 'Start timer'}
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setShowTileBag(true)}>
-          <IconCards size={16} />
+        <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+          <IconCards size={14} />
           Tiles ({remainingTileCount})
         </Button>
-        <Button variant="outline" size="sm" onClick={handleEndGameClick}>
-          <IconFlag size={16} />
+        <Button variant="outline" size="xs" onClick={handleEndGameClick}>
+          <IconFlag size={14} />
           End game
         </Button>
       </div>
