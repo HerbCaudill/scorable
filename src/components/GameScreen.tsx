@@ -153,7 +153,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
       {/* Sticky header: Board + Player panels */}
       <div className="sticky top-0 z-10 bg-white">
         {/* Board area */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
           <ScrabbleBoard
             tiles={board}
             newTiles={newTiles}

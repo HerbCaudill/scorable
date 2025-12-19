@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
 
 const PORT = 5174
 
@@ -18,12 +18,13 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 14 Pro Max'] },
+      use: {
+        browserName: 'webkit',
+        viewport: { width: 485, height: 932 },
+        isMobile: true,
+        hasTouch: true,
+      },
     },
   ],
 

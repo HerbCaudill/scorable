@@ -355,7 +355,7 @@ const ScrabbleBoard = ({
       ref={boardRef}
       tabIndex={editable ? 0 : undefined}
       onKeyDown={handleKeyDown}
-      className="@container w-full max-w-2xl outline-none"
+      className="@container w-full outline-none"
     >
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
