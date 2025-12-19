@@ -145,6 +145,11 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
               </div>
             ) : (
               <>
+                {availablePlayers.map(name => (
+                  <DropdownMenuItem key={name} onSelect={() => handleSelectPlayer(index, name)}>
+                    {name}
+                  </DropdownMenuItem>
+                ))}
                 <DropdownMenuItem
                   onSelect={event => {
                     event.preventDefault()
@@ -154,11 +159,6 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                 >
                   New...
                 </DropdownMenuItem>
-                {availablePlayers.map(name => (
-                  <DropdownMenuItem key={name} onSelect={() => handleSelectPlayer(index, name)}>
-                    {name}
-                  </DropdownMenuItem>
-                ))}
               </>
             )}
           </DropdownMenuContent>
