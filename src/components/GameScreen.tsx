@@ -198,14 +198,18 @@ export const GameScreen = ({ onEndGame }: Props) => {
             }
 
             return (
-              <div key={index} className="flex min-w-32 flex-1 flex-col">
+              <div
+                key={index}
+                className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg border"
+                style={{ borderColor: player.color }}
+              >
                 {/* Player panel */}
                 <div
-                  className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:opacity-80"
+                  className="flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : 'transparent',
-                    borderWidth: 2,
-                    borderColor: isActive ? player.color : 'transparent',
+                    borderBottomWidth: 2,
+                    borderBottomColor: isActive ? player.color : '#e5e5e5',
                   }}
                   onClick={handlePlayerClick}
                 >
