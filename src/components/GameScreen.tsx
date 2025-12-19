@@ -14,14 +14,7 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
-import {
-  IconPlayerPlayFilled,
-  IconPlayerPauseFilled,
-  IconFlag,
-  IconCards,
-  IconPlayerPause,
-  IconPlayerPlay,
-} from '@tabler/icons-react'
+import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
