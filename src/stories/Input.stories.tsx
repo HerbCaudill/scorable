@@ -20,6 +20,7 @@ export const Default: Story = {
 }
 
 export const WithValue: Story = {
+  name: 'With value',
   args: {
     placeholder: 'Player name',
     defaultValue: 'John Doe',
@@ -34,6 +35,7 @@ export const Disabled: Story = {
 }
 
 export const WithType: Story = {
+  name: 'With type',
   args: {
     type: 'email',
     placeholder: 'Enter email...',

@@ -38,6 +38,7 @@ export const Default: Story = {
 }
 
 export const WithGroups: Story = {
+  name: 'With groups',
   render: () => (
     <Select>
       <SelectTrigger className="w-[180px]">

@@ -58,7 +58,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Empty: Story = {
-  name: 'No Past Games',
+  name: 'No past games',
   decorators: [
     Story => {
       useStoreSetup({ currentGame: null, pastGames: [] })
@@ -68,7 +68,7 @@ export const Empty: Story = {
 }
 
 export const WithPastGames: Story = {
-  name: 'With Past Games',
+  name: 'With past games',
   decorators: [
     Story => {
       useStoreSetup({
@@ -99,7 +99,7 @@ export const WithPastGames: Story = {
 }
 
 export const WithCurrentGame: Story = {
-  name: 'With Resumable Game',
+  name: 'With resumable game',
   decorators: [
     Story => {
       useStoreSetup({

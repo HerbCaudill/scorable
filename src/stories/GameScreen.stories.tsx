@@ -30,7 +30,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const NoGame: Story = {
-  name: 'No Active Game',
+  name: 'No active game',
   decorators: [
     Story => {
       useStoreSetup(null)
@@ -40,7 +40,7 @@ export const NoGame: Story = {
 }
 
 export const NewGame: Story = {
-  name: 'New Game - 2 Players',
+  name: 'New game - 2 players',
   decorators: [
     Story => {
       useStoreSetup({
@@ -60,7 +60,7 @@ export const NewGame: Story = {
 }
 
 export const FourPlayers: Story = {
-  name: 'New Game - 4 Players',
+  name: 'New game - 4 players',
   decorators: [
     Story => {
       useStoreSetup({
@@ -80,7 +80,7 @@ export const FourPlayers: Story = {
 }
 
 export const InProgress: Story = {
-  name: 'Game In Progress - 2 Players',
+  name: 'Game in progress - 2 players',
   decorators: [
     Story => {
       // Create board with some tiles
@@ -139,7 +139,7 @@ export const InProgress: Story = {
 }
 
 export const ThreePlayersInProgress: Story = {
-  name: 'Game In Progress - 3 Players',
+  name: 'Game in progress - 3 players',
   decorators: [
     Story => {
       const board = createEmptyBoard()
@@ -231,7 +231,7 @@ export const ThreePlayersInProgress: Story = {
 }
 
 export const FourPlayersInProgress: Story = {
-  name: 'Game In Progress - 4 Players',
+  name: 'Game in progress - 4 players',
   decorators: [
     Story => {
       const board = createEmptyBoard()

@@ -39,6 +39,7 @@ const boardWithHello = (): BoardState => {
 }
 
 export const WithTiles: Story = {
+  name: 'With tiles',
   args: {
     tiles: boardWithHello(),
   },
@@ -64,6 +65,7 @@ const boardWithMultipleWords = (): BoardState => {
 }
 
 export const WithMultipleWords: Story = {
+  name: 'With multiple words',
   args: {
     tiles: boardWithMultipleWords(),
   },
@@ -105,6 +107,7 @@ const EditableWithTilesWrapper = () => {
 }
 
 export const EditableWithExistingTiles: Story = {
+  name: 'Editable with existing tiles',
   render: () => <EditableWithTilesWrapper />,
 }
 
@@ -120,6 +123,7 @@ const boardWithBlank = (): BoardState => {
 }
 
 export const WithBlankTile: Story = {
+  name: 'With blank tile',
   args: {
     tiles: boardWithBlank(),
   },

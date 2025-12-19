@@ -29,12 +29,14 @@ export const Empty: Story = {
 }
 
 export const NoPreviousPlayers: Story = {
+  name: 'No previous players',
   args: {
     previousPlayers: [],
   },
 }
 
 export const WithOnStartGame: Story = {
+  name: 'With onStartGame callback',
   args: {
     previousPlayers,
     onStartGame: players => {
