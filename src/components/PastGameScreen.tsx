@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { createEmptyBoard } from '@/lib/types'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { calculateMoveScore } from '@/lib/calculateMoveScore'
+import { IconArrowLeft, IconHome } from '@tabler/icons-react'
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { pastGames } = useGameStore()
@@ -15,7 +16,10 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
         <p className="text-gray-500">Game not found</p>
-        <Button onClick={onBack}>Back to Home</Button>
+        <Button onClick={onBack}>
+          <IconHome size={16} />
+          Back to Home
+        </Button>
       </div>
     )
   }
@@ -65,7 +69,8 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
       {/* Header */}
       <div className="flex items-center justify-between border-b bg-white p-4">
         <Button variant="outline" size="sm" onClick={onBack}>
-          ← Back
+          <IconArrowLeft size={16} />
+          Back
         </Button>
         <span className="text-sm text-gray-500">{formatDate(game.createdAt)}</span>
       </div>

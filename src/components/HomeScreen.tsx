@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import type { Game } from '@/lib/types'
+import { IconPlus, IconPlayerPlay } from '@tabler/icons-react'
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { currentGame, pastGames } = useGameStore()
@@ -26,10 +27,12 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
         {/* Main actions */}
         <div className="flex flex-col gap-3">
           <Button size="lg" onClick={onNewGame} className="w-full">
+            <IconPlus size={20} />
             New game
           </Button>
           {hasCurrentGame && (
             <Button size="lg" variant="outline" onClick={onResumeGame} className="w-full">
+              <IconPlayerPlay size={20} />
               Resume game
             </Button>
           )}

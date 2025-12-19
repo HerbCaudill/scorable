@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { IconPlus, IconX, IconCheck, IconPlayerPlay } from '@tabler/icons-react'
 
 export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const [players, setPlayers] = useState<Array<string | null>>([null, null, null, null])
@@ -111,7 +112,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   className="text-gray-400 hover:text-black transition-colors"
                   aria-label="Clear player"
                 >
-                  ×
+                  <IconX size={16} />
                 </button>
               )}
             </div>
@@ -129,6 +130,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                 />
                 <div className="flex gap-2 mt-2">
                   <Button size="sm" onClick={() => handleNewNameSubmit(index)} disabled={!newNameInput.trim()}>
+                    <IconCheck size={16} />
                     Add
                   </Button>
                   <Button
@@ -139,6 +141,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                       setNewNameInput('')
                     }}
                   >
+                    <IconX size={16} />
                     Cancel
                   </Button>
                 </div>
@@ -157,6 +160,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   }}
                   className="font-medium"
                 >
+                  <IconPlus size={16} />
                   New...
                 </DropdownMenuItem>
               </>
@@ -174,7 +178,8 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
           ${canStartGame ? '' : 'opacity-50 cursor-not-allowed'}
         `}
       >
-        start game
+        <IconPlayerPlay size={20} />
+        Start game
       </Button>
     </div>
   )

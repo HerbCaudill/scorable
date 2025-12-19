@@ -1,5 +1,6 @@
 import { PlayerSetup } from './PlayerSetup'
 import { useGameStore } from '@/lib/gameStore'
+import { IconArrowLeft } from '@tabler/icons-react'
 
 export const PlayerSetupScreen = ({ onStartGame, onBack }: Props) => {
   const { getPlayerNames, startGame } = useGameStore()
@@ -19,7 +20,8 @@ export const PlayerSetupScreen = ({ onStartGame, onBack }: Props) => {
           onClick={onBack}
           className="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"
         >
-          ← Back
+          <IconArrowLeft size={16} />
+          Back
         </button>
 
         {/* Player setup form */}

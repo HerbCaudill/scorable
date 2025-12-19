@@ -1,6 +1,9 @@
 {
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["shadcn", "context7"],
+  "enabledMcpjsonServers": [
+    "shadcn",
+    "context7"
+  ],
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "superpowers@superpowers-marketplace": true
@@ -45,7 +48,9 @@
       "Bash(tree:*)",
       "Bash(claude mcp:*)",
       "WebSearch(*)",
-      "WebFetch(*)"
+      "WebFetch(*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }

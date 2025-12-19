@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { IconPlayerPause, IconPlayerPlay, IconFlag } from '@tabler/icons-react'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
@@ -187,9 +188,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
       {/* Footer */}
       <div className="flex justify-center gap-4 border-t bg-white p-2">
         <Button variant="outline" size="sm" onClick={handleTimerToggle}>
-          {timerRunning ? '⏸ Pause timer' : '▶ Start timer'}
+          {timerRunning ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
+          {timerRunning ? 'Pause timer' : 'Start timer'}
         </Button>
         <Button variant="outline" size="sm" onClick={handleEndGame}>
+          <IconFlag size={16} />
           End game
         </Button>
       </div>
