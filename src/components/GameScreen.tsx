@@ -84,106 +84,108 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      {/* Board area */}
-      <div className="flex flex-col items-center p-4 pb-2">
-        <ScrabbleBoard
-          tiles={board}
-          newTiles={newTiles}
-          onNewTilesChange={setNewTiles}
-          editable
-          highlightedTiles={highlightedTiles}
-        />
-      </div>
+      {/* Sticky header: Board + Player panels */}
+      <div className="sticky top-0 z-10 bg-white">
+        {/* Board area */}
+        <div className="flex flex-col items-center">
+          <ScrabbleBoard
+            tiles={board}
+            newTiles={newTiles}
+            onNewTilesChange={setNewTiles}
+            editable
+            highlightedTiles={highlightedTiles}
+          />
+        </div>
 
-      {/* Player panels */}
-      <div className="flex gap-2 px-4 pt-0">
-        {players.map((player, index) => {
-          const isActive = index === currentPlayerIndex
-          const score = getPlayerScore(currentGame, index)
+        {/* Player panels */}
+        <div className="flex gap-2 px-4 py-2">
+          {players.map((player, index) => {
+            const isActive = index === currentPlayerIndex
+            const score = getPlayerScore(currentGame, index)
 
-          const handlePlayerClick = () => {
-            // Only current player or next player can be clicked to end turn
-            if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
+            const handlePlayerClick = () => {
+              // Only current player or next player can be clicked to end turn
+              if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
 
-            const move = boardStateToMove(newTiles)
+              const move = boardStateToMove(newTiles)
 
-            if (move.length > 0) {
-              // Validate and commit the move
-              const validation = validateMove(move, board, isFirstMove)
-              if (!validation.valid) {
-                toast.error(validation.error)
-                return
+              if (move.length > 0) {
+                // Validate and commit the move
+                const validation = validateMove(move, board, isFirstMove)
+                if (!validation.valid) {
+                  toast.error(validation.error)
+                  return
+                }
+
+                commitMove({
+                  playerIndex: currentPlayerIndex,
+                  tilesPlaced: move,
+                })
+                // Clear new tiles for next player
+                setNewTiles(createEmptyBoard())
+              } else {
+                // No tiles placed - show confirmation dialog
+                setShowPassConfirm(true)
               }
-
-              commitMove({
-                playerIndex: currentPlayerIndex,
-                tilesPlaced: move,
-              })
-              // Clear new tiles for next player
-              setNewTiles(createEmptyBoard())
-            } else {
-              // No tiles placed - show confirmation dialog
-              setShowPassConfirm(true)
             }
-          }
 
-          return (
-            <div
-              key={index}
-              className="flex flex-1 cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors hover:opacity-80"
-              style={{
-                backgroundColor: isActive ? `${player.color}20` : 'transparent',
-                borderWidth: 2,
-                borderColor: isActive ? player.color : 'transparent',
-              }}
-              onClick={handlePlayerClick}
-            >
-              {/* Timer circle */}
-              <div
-                className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
-                style={{ borderColor: player.color }}
-              >
-                <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
-              </div>
-
-              {/* Player name and score */}
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{player.name}</span>
-                <span className="text-2xl font-bold">{score}</span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Game history */}
-      {moves.length > 0 && (
-        <div className="flex gap-2 px-4">
-          {players.map((_, index) => {
-            const moveHistory = getPlayerMoveHistory(index)
             return (
-              <div key={index} className="flex-1 flex flex-col text-xs p-2 divide-y divide-neutral-200">
-                {moveHistory.map((entry, i) => (
-                  <div
-                    key={i}
-                    className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 hover:bg-neutral-100"
-                    onClick={() => handleMoveClick(entry.tiles)}
-                  >
-                    <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
-                    <span className="font-medium">{entry.score}</span>
-                  </div>
-                ))}
+              <div
+                key={index}
+                className="flex flex-1 cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:opacity-80"
+                style={{
+                  backgroundColor: isActive ? `${player.color}20` : 'transparent',
+                  borderWidth: 2,
+                  borderColor: isActive ? player.color : 'transparent',
+                }}
+                onClick={handlePlayerClick}
+              >
+                {/* Timer circle */}
+                <div
+                  className="flex size-12 shrink-0 items-center justify-center rounded-full border-4"
+                  style={{ borderColor: player.color }}
+                >
+                  <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
+                </div>
+
+                {/* Player name and score */}
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">{player.name}</span>
+                  <span className="text-2xl font-bold">{score}</span>
+                </div>
               </div>
             )
           })}
         </div>
-      )}
+      </div>
 
-      {/* Spacer to push footer down */}
-      <div className="flex-1" />
+      {/* Scrollable game history */}
+      <div className="flex-1 overflow-y-auto">
+        {moves.length > 0 && (
+          <div className="flex gap-2 px-4">
+            {players.map((_, index) => {
+              const moveHistory = getPlayerMoveHistory(index)
+              return (
+                <div key={index} className="flex-1 flex flex-col text-xs p-2 divide-y divide-neutral-200">
+                  {moveHistory.map((entry, i) => (
+                    <div
+                      key={i}
+                      className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 hover:bg-neutral-100"
+                      onClick={() => handleMoveClick(entry.tiles)}
+                    >
+                      <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
+                      <span className="font-medium">{entry.score}</span>
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Footer */}
-      <div className="flex justify-center gap-4 border-t bg-white p-4">
+      <div className="flex justify-center gap-4 border-t bg-white p-2">
         <Button variant="outline" size="sm" onClick={handleTimerToggle}>
           {timerRunning ? '⏸ Pause timer' : '▶ Start timer'}
         </Button>
@@ -198,8 +200,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Pass turn?</AlertDialogTitle>
             <AlertDialogDescription>
-              {players[currentPlayerIndex].name} has not placed any tiles. Are you sure you want to
-              pass this turn?
+              {players[currentPlayerIndex].name} has not placed any tiles. Are you sure you want to pass this turn?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
