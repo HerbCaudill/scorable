@@ -171,4 +171,74 @@ export class GamePage {
   async expectErrorToast(message: string) {
     await expect(this.page.getByText(message)).toBeVisible()
   }
+
+  // End Game Screen methods
+
+  /** Expect the end game screen to be visible */
+  async expectOnEndGameScreen() {
+    await expect(this.page.getByRole('heading', { name: 'End Game' })).toBeVisible()
+  }
+
+  /** Select who ended the game */
+  async selectPlayerWhoEndedGame(playerName: string) {
+    await this.page.getByRole('button', { name: playerName }).click()
+  }
+
+  /** Select "Nobody (blocked)" for blocked games */
+  async selectNobodyEndedGame() {
+    await this.page.getByRole('button', { name: 'Nobody (blocked)' }).click()
+  }
+
+  /** Focus the rack input for a player and type tiles */
+  async enterRackTiles(playerName: string, tiles: string) {
+    // Find the player's input section and click to focus
+    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const input = playerSection.locator('[tabindex="0"]')
+    await input.click()
+    await this.page.keyboard.type(tiles)
+  }
+
+  /** Clear rack tiles for a player using backspace */
+  async clearRackTiles(playerName: string, count: number) {
+    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const input = playerSection.locator('[tabindex="0"]')
+    await input.click()
+    for (let i = 0; i < count; i++) {
+      await this.page.keyboard.press('Backspace')
+    }
+  }
+
+  /** Get the adjustment value shown for a player */
+  async getPlayerAdjustment(playerName: string): Promise<string> {
+    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    const adjustment = playerSection.locator('.tabular-nums')
+    return (await adjustment.textContent()) || ''
+  }
+
+  /** Click Apply & End Game button */
+  async applyAndEndGame() {
+    await this.page.getByRole('button', { name: 'Apply & End Game' }).click()
+  }
+
+  /** Click Cancel on end game screen */
+  async cancelEndGame() {
+    await this.page.getByRole('button', { name: 'Cancel' }).click()
+  }
+
+  /** Check if Apply & End Game button is disabled */
+  async isApplyButtonDisabled(): Promise<boolean> {
+    return this.page.getByRole('button', { name: 'Apply & End Game' }).isDisabled()
+  }
+
+  /** Expect validation error for a player */
+  async expectRackError(playerName: string, errorText: string) {
+    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    await expect(playerSection.locator('.text-red-600')).toContainText(errorText)
+  }
+
+  /** Check if a player is shown as "ended the game" */
+  async expectPlayerEndedGame(playerName: string) {
+    const playerSection = this.page.locator('.rounded-lg.border.p-3').filter({ hasText: playerName })
+    await expect(playerSection).toContainText('ended the game')
+  }
 }
