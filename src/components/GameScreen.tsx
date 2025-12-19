@@ -8,11 +8,22 @@ import { boardStateToMove } from '@/lib/boardStateToMove'
 import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { calculateMoveScore } from '@/lib/calculateMoveScore'
 import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const [highlightedTiles, setHighlightedTiles] = useState<Array<{ row: number; col: number }>>([])
+  const [showPassConfirm, setShowPassConfirm] = useState(false)
 
   if (!currentGame) return null
 
@@ -53,13 +64,22 @@ export const GameScreen = ({ onEndGame }: Props) => {
       }
     }
 
-    return history.reverse() // Most recent first
+    return history // First move first
   }
 
   // Briefly highlight tiles on the board
   const handleMoveClick = (tiles: Array<{ row: number; col: number }>) => {
     setHighlightedTiles(tiles)
     setTimeout(() => setHighlightedTiles([]), 1500)
+  }
+
+  const handleConfirmPass = () => {
+    commitMove({
+      playerIndex: currentPlayerIndex,
+      tilesPlaced: [],
+    })
+    setNewTiles(createEmptyBoard())
+    setShowPassConfirm(false)
   }
 
   return (
@@ -99,16 +119,12 @@ export const GameScreen = ({ onEndGame }: Props) => {
                 playerIndex: currentPlayerIndex,
                 tilesPlaced: move,
               })
+              // Clear new tiles for next player
+              setNewTiles(createEmptyBoard())
             } else {
-              // Pass (no tiles placed)
-              commitMove({
-                playerIndex: currentPlayerIndex,
-                tilesPlaced: [],
-              })
+              // No tiles placed - show confirmation dialog
+              setShowPassConfirm(true)
             }
-
-            // Clear new tiles for next player
-            setNewTiles(createEmptyBoard())
           }
 
           return (
@@ -175,6 +191,23 @@ export const GameScreen = ({ onEndGame }: Props) => {
           End game
         </Button>
       </div>
+
+      {/* Pass confirmation dialog */}
+      <AlertDialog open={showPassConfirm} onOpenChange={setShowPassConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Pass turn?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {players[currentPlayerIndex].name} has not placed any tiles. Are you sure you want to
+              pass this turn?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmPass}>Pass</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

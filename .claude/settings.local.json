@@ -1,12 +1,51 @@
 {
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["shadcn", "context7"],
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true
+  },
   "permissions": {
     "allow": [
+      "Skill(superpowers:*)",
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)",
+      "Bash(echo:*)",
+      "Bash(pwd)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Git(*)",
+      "Curl(*)",
+      "HTTP(*)",
+      "NPM(*)",
+      "Pip(*)",
+      "Cargo(*)",
+      "Jest(*)",
+      "Vitest(*)",
+      "Pytest(*)",
+      "TodoRead(*)",
+      "TodoWrite(*)",
+      "mcp__*",
       "Bash(tree:*)",
-      "Bash(claude mcp add context7 -- npx -y @upstash/context7-mcp@latest)",
       "Bash(claude mcp:*)",
-      "Bash(claude --version:*)",
-      "Bash(pnpm build:*)",
-      "Bash(pnpm test:*)"
+      "WebSearch(*)",
+      "WebFetch(*)"
     ]
   }
 }
