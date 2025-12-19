@@ -6,24 +6,24 @@ import { tileValues } from '@/lib/tileValues'
 import { getTileValue } from '@/lib/getTileValue'
 import { cx } from '@/lib/cx'
 
-const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, editable = false }: Props) => {
-  const [internalTiles, setInternalTiles] = useState<BoardState>(createEmptyBoard)
+const ScrabbleBoard = ({ tiles, newTiles: externalNewTiles, onNewTilesChange, editable = false }: Props) => {
+  const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
 
-  // Use external tiles if provided (controlled mode), otherwise internal state
-  const tiles = externalTiles ?? internalTiles
+  // Use external newTiles if provided (controlled mode), otherwise internal state
+  const newTiles = externalNewTiles ?? internalNewTiles
 
-  const setTiles = useCallback(
-    (newTiles: BoardState | ((prev: BoardState) => BoardState)) => {
-      if (onTilesChange) {
-        const resolved = typeof newTiles === 'function' ? newTiles(tiles) : newTiles
-        onTilesChange(resolved)
+  const setNewTiles = useCallback(
+    (updatedTiles: BoardState | ((prev: BoardState) => BoardState)) => {
+      if (onNewTilesChange) {
+        const resolved = typeof updatedTiles === 'function' ? updatedTiles(newTiles) : updatedTiles
+        onNewTilesChange(resolved)
       } else {
-        setInternalTiles(newTiles)
+        setInternalNewTiles(updatedTiles)
       }
     },
-    [onTilesChange, tiles]
+    [onNewTilesChange, newTiles]
   )
 
   // Handle square click - set cursor position
@@ -48,6 +48,11 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
     [editable, cursor]
   )
 
+  // Combined view of all tiles (existing + new)
+  const allTiles = tiles
+    ? tiles.map((row, rowIndex) => row.map((tile, colIndex) => newTiles[rowIndex][colIndex] ?? tile))
+    : newTiles
+
   // Find next empty position in current direction
   const findNextPosition = useCallback(
     (fromRow: number, fromCol: number, direction: CursorDirection, skipExisting: boolean): Cursor | null => {
@@ -57,7 +62,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
       if (direction === 'horizontal') {
         col++
         while (col < 15) {
-          if (!skipExisting || tiles[row][col] === null) {
+          if (!skipExisting || allTiles[row][col] === null) {
             return { row, col, direction }
           }
 
@@ -66,7 +71,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
       } else {
         row++
         while (row < 15) {
-          if (!skipExisting || tiles[row][col] === null) {
+          if (!skipExisting || allTiles[row][col] === null) {
             return { row, col, direction }
           }
 
@@ -76,7 +81,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
 
       return null // Off the board
     },
-    [tiles]
+    [allTiles]
   )
 
   // Handle keyboard input
@@ -94,23 +99,23 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
         event.preventDefault()
         const { row, col, direction } = cursor
 
-        // If current cell has a tile, just delete it
-        if (tiles[row][col] !== null) {
-          setTiles(prev => {
-            const newTiles = prev.map(r => [...r])
-            newTiles[row][col] = null
-            return newTiles
+        // If current cell has a new tile, just delete it
+        if (newTiles[row][col] !== null) {
+          setNewTiles(prev => {
+            const updated = prev.map(r => [...r])
+            updated[row][col] = null
+            return updated
           })
         } else {
           // Move back and delete previous tile
           const prevRow = direction === 'vertical' ? row - 1 : row
           const prevCol = direction === 'horizontal' ? col - 1 : col
 
-          if (prevRow >= 0 && prevCol >= 0) {
-            setTiles(prev => {
-              const newTiles = prev.map(r => [...r])
-              newTiles[prevRow][prevCol] = null
-              return newTiles
+          if (prevRow >= 0 && prevCol >= 0 && newTiles[prevRow][prevCol] !== null) {
+            setNewTiles(prev => {
+              const updated = prev.map(r => [...r])
+              updated[prevRow][prevCol] = null
+              return updated
             })
             setCursor({ row: prevRow, col: prevCol, direction })
           }
@@ -150,10 +155,10 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
         const { row, col, direction } = cursor
 
         // Place blank tile
-        setTiles(prev => {
-          const newTiles = prev.map(r => [...r])
-          newTiles[row][col] = ' '
-          return newTiles
+        setNewTiles(prev => {
+          const updated = prev.map(r => [...r])
+          updated[row][col] = ' '
+          return updated
         })
 
         // Move to next position, skipping existing tiles
@@ -172,10 +177,10 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
         const { row, col, direction } = cursor
 
         // Place the letter
-        setTiles(prev => {
-          const newTiles = prev.map(r => [...r])
-          newTiles[row][col] = letter
-          return newTiles
+        setNewTiles(prev => {
+          const updated = prev.map(r => [...r])
+          updated[row][col] = letter
+          return updated
         })
 
         // Move to next position, skipping existing tiles
@@ -185,7 +190,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
         }
       }
     },
-    [editable, cursor, tiles, setTiles, findNextPosition]
+    [editable, cursor, newTiles, setNewTiles, findNextPosition]
   )
 
   // Focus board when cursor is set
@@ -257,7 +262,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
       <div
         className={cx(
           'relative flex h-full w-full items-center justify-center rounded-[0.2cqw] shadow-sm z-0',
-          isExisting ? 'bg-orange-50' : 'bg-teal-300'
+          isExisting ? 'bg-amber-50' : 'bg-teal-300'
         )}
       >
         <span className={cx('text-[3.5cqw] font-bold leading-none', isExisting ? 'text-khaki-800' : 'text-teal-800')}>
@@ -299,8 +304,9 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
-            const tile = tiles[rowIndex][colIndex]
+            const tile = allTiles[rowIndex][colIndex]
             const hasTile = tile !== null
+            const isNewTile = newTiles[rowIndex][colIndex] !== null
             const hasCursor = isCursorAt(rowIndex, colIndex)
 
             return (
@@ -315,7 +321,7 @@ const ScrabbleBoard = ({ tiles: externalTiles, existingTiles, onTilesChange, edi
                 )}
               >
                 {hasTile ? (
-                  <Tile letter={tile} isExisting={existingTiles?.[rowIndex]?.[colIndex] === tile} />
+                  <Tile letter={tile} isExisting={!isNewTile} />
                 ) : (
                   renderSquareContent(squareType, rowIndex, colIndex)
                 )}
@@ -345,12 +351,12 @@ type Cursor = {
 }
 
 type Props = {
-  /** The current state of tiles on the board */
+  /** Pre-existing tiles on the board (displayed in amber) */
   tiles?: BoardState
-  /** Tiles that were already on the board before editing (displayed in a different color) */
-  existingTiles?: BoardState
-  /** Callback when tiles are changed (for controlled mode) */
-  onTilesChange?: (tiles: BoardState) => void
+  /** New tiles being placed in the current turn (displayed in teal) */
+  newTiles?: BoardState
+  /** Callback when new tiles are changed (for controlled mode) */
+  onNewTilesChange?: (tiles: BoardState) => void
   /** Whether the board is in editing mode */
   editable?: boolean
 }

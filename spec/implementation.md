@@ -45,8 +45,6 @@
   - `Game` (players, current turn, board state, history)
   - `Move` (player, word, score, timestamp)
 - [x] Set up Zustand store for game state
-- [ ] Configure Automerge document structure for CRDT-based sync
-- [ ] Implement local-first sync with automerge-repo
 
 ## Phase 4: Navigation & screens
 
@@ -60,29 +58,29 @@
 
 ## Phase 5: Home screen
 
-- [ ] Display "New game" button
-- [ ] Display "Past games" section with previous game results
+- [x] Display "New game" button
+- [x] Display "Past games" section with previous game results
 - [ ] Implement game resume functionality
-- [ ] Mobile-responsive layout with proper touch targets (min 44x44px)
-- [ ] Storybook stories for layout variations (with/without past games)
-- [ ] Minimal, monochromatic design (black/white/gray only)
+- [x] Mobile-responsive layout with proper touch targets (min 44x44px)
+- [x] Storybook stories for layout variations (with/without past games)
+- [x] Minimal, monochromatic design (black/white/gray only)
 
 ## Phase 6: Move entry & scoring
 
-- [ ] Interface to enter word played
-- [ ] Calculate score based on:
+- [x] Interface to enter word played
+- [x] Calculate score based on:
   - Tile values
   - Board multipliers
   - Bingo bonus (50 points if using all 7 tiles)
-- [ ] Record move to game history
-- [ ] Update running scores
+- [x] Record move to game history
+- [x] Update running scores
 
 ## Phase 7: Game history & results
 
 - [ ] Display game history (moves made, scores per turn)
-- [ ] Show final scores at game end
-- [ ] Store completed games in localStorage
-- [ ] Display past games on home screen
+- [x] Show final scores at game end
+- [x] Store completed games in localStorage
+- [x] Display past games on home screen
 
 ## Phase 8: Multiplayer sync (local first)
 
@@ -92,7 +90,7 @@
 - [ ] Sync state across browser tabs and local devices
 - [ ] Handle offline changes and merge conflicts automatically
 
-## Phase 9: Timer system (low priority)
+## Phase 9: Timer system
 
 - [ ] Implement chess-style clock UI
 - [ ] Each player gets configurable time (default 30 minutes)
@@ -122,8 +120,8 @@
 
 - React app scaffolded with Vite
 - Tailwind CSS configured
-- **Phase 0 complete**: Storybook set up with component library and screen designs
-  - Button, Input, Select components with stories
-  - Home screen, Player setup screen, and Game play screen designs
-  - Minimal, monochromatic design system established
-- Ready to start Phase 1: Core data models & state management
+- **Phase 0-4 complete**: Full UI component library, screens, and navigation
+- **Phase 5 mostly complete**: Home screen functional, resume feature pending
+- **Phase 6 complete**: Move entry with keyboard-based board editing, full scoring engine
+- **Phase 7 partially complete**: Past games stored/displayed, in-game history UI pending
+- Ready to continue with: Game resume, in-game history display, or Phase 8 (Automerge sync)

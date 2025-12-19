@@ -71,7 +71,7 @@ export const WithMultipleWords: Story = {
 
 // Editable board story with controlled state
 const EditableBoardWrapper = () => {
-  const [tiles, setTiles] = useState<BoardState>(createEmptyBoard)
+  const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
 
   return (
     <div className="flex flex-col gap-4">
@@ -79,7 +79,7 @@ const EditableBoardWrapper = () => {
         Click any square to place the cursor, then type letters. Click the cursor to toggle direction. Use arrow keys to
         move, backspace to delete.
       </p>
-      <ScrabbleBoard tiles={tiles} onTilesChange={setTiles} editable />
+      <ScrabbleBoard newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
     </div>
   )
 }
@@ -91,15 +91,15 @@ export const Editable: Story = {
 // Editable board with some existing tiles
 const EditableWithTilesWrapper = () => {
   const existingTiles = boardWithHello()
-  const [tiles, setTiles] = useState<BoardState>(() => existingTiles.map(row => [...row]))
+  const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-neutral-600">
-        Board with existing tiles (shown in light blue). When typing, the cursor skips over existing tiles. Click
-        directly on a tile to overwrite it.
+        Board with existing tiles (shown in amber). New tiles you type appear in teal. When typing, the cursor skips
+        over existing tiles.
       </p>
-      <ScrabbleBoard tiles={tiles} existingTiles={existingTiles} onTilesChange={setTiles} editable />
+      <ScrabbleBoard tiles={existingTiles} newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
     </div>
   )
 }
