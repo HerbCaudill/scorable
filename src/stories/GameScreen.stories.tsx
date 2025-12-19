@@ -83,14 +83,16 @@ export const InProgress: Story = {
     Story => {
       // Create board with some tiles
       const board = createEmptyBoard()
-      // Place "HELLO" horizontally starting at center
+      // Place "HELLO" horizontally starting at center (Herb's move)
       board[7][7] = 'H'
       board[7][8] = 'E'
       board[7][9] = 'L'
       board[7][10] = 'L'
       board[7][11] = 'O'
-      // Place "WORLD" vertically from the L
+      // Place "WORLD" vertically using the O from HELLO (Lynne's move)
+      // W-O-R-L-D where O is already on the board at (7,11)
       board[6][11] = 'W'
+      // O at (7,11) already placed
       board[8][11] = 'R'
       board[9][11] = 'L'
       board[10][11] = 'D'
@@ -100,7 +102,7 @@ export const InProgress: Story = {
           { ...createPlayer('Herb', 0), timeRemainingMs: DEFAULT_TIME_MS - 180_000 }, // 27 min left
           { ...createPlayer('Lynne', 1), timeRemainingMs: DEFAULT_TIME_MS - 120_000 }, // 28 min left
         ],
-        currentPlayerIndex: 1,
+        currentPlayerIndex: 0, // Back to Herb's turn after both have played
         board,
         moves: [
           {
@@ -116,11 +118,10 @@ export const InProgress: Story = {
           {
             playerIndex: 1,
             tilesPlaced: [
-              { row: 8, col: 9, tile: 'W' },
-              { row: 9, col: 9, tile: 'O' },
-              { row: 10, col: 9, tile: 'R' },
-              { row: 11, col: 9, tile: 'L' },
-              { row: 12, col: 9, tile: 'D' },
+              { row: 6, col: 11, tile: 'W' },
+              { row: 8, col: 11, tile: 'R' },
+              { row: 9, col: 11, tile: 'L' },
+              { row: 10, col: 11, tile: 'D' },
             ],
           },
         ],
