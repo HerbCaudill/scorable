@@ -9,9 +9,9 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed"
+    "pw": "playwright test",
+    "pw:ui": "playwright test --ui",
+    "pw:headed": "playwright test --headed"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",
