@@ -100,11 +100,6 @@
 - [ ] Visual indication of active player's timer
 - [ ] Mobile-friendly display (large, readable timer fonts)
 
-## Phase 10: Testing & refinement
-
-- [ ] Cross-browser testing (mobile and desktop)
-- [ ] Device testing (various screen sizes, orientations)
-
 ## Tech stack
 
 - **State Management**: Zustand (lightweight, simple)

@@ -35,26 +35,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
     else startTimer()
   }
 
-  const handleDone = () => {
-    const move = boardStateToMove(newTiles)
-
-    // Validate move
-    const validation = validateMove(move, board, isFirstMove)
-    if (!validation.valid) {
-      toast.error(validation.error)
-      return
-    }
-
-    // Commit the move (records history, merges board, advances turn)
-    commitMove({
-      playerIndex: currentPlayerIndex,
-      tilesPlaced: move,
-    })
-
-    // Clear new tiles for next player
-    setNewTiles(createEmptyBoard())
-  }
-
   // Get word history for a player
   const getPlayerMoveHistory = (playerIndex: number) => {
     let boardState = createEmptyBoard()
@@ -101,15 +81,46 @@ export const GameScreen = ({ onEndGame }: Props) => {
           const isActive = index === currentPlayerIndex
           const score = getPlayerScore(currentGame, index)
 
+          const handlePlayerClick = () => {
+            // Only current player or next player can be clicked to end turn
+            if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
+
+            const move = boardStateToMove(newTiles)
+
+            if (move.length > 0) {
+              // Validate and commit the move
+              const validation = validateMove(move, board, isFirstMove)
+              if (!validation.valid) {
+                toast.error(validation.error)
+                return
+              }
+
+              commitMove({
+                playerIndex: currentPlayerIndex,
+                tilesPlaced: move,
+              })
+            } else {
+              // Pass (no tiles placed)
+              commitMove({
+                playerIndex: currentPlayerIndex,
+                tilesPlaced: [],
+              })
+            }
+
+            // Clear new tiles for next player
+            setNewTiles(createEmptyBoard())
+          }
+
           return (
             <div
               key={index}
-              className="flex flex-1 flex-col items-center rounded-lg p-3 transition-colors"
+              className="flex flex-1 cursor-pointer flex-col items-center rounded-lg p-3 transition-colors hover:opacity-80"
               style={{
                 backgroundColor: isActive ? `${player.color}20` : 'transparent',
                 borderWidth: 2,
                 borderColor: isActive ? player.color : 'transparent',
               }}
+              onClick={handlePlayerClick}
             >
               {/* Timer circle */}
               <div
@@ -124,13 +135,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
               {/* Score */}
               <span className="text-2xl font-bold">{score}</span>
-
-              {/* Done button for active player */}
-              {isActive && (
-                <Button size="sm" className="mt-2" onClick={handleDone}>
-                  Done
-                </Button>
-              )}
             </div>
           )
         })}
