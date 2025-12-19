@@ -238,7 +238,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
                             strokeLinecap="round"
                           />
                         </svg>
-                        <span className="text-xs font-medium">{formatTime(player.timeRemainingMs)}</span>
+                        <span className="text-[10px] font-medium">{formatTime(player.timeRemainingMs)}</span>
                       </div>
                     )
                   })()}
@@ -251,14 +251,14 @@ export const GameScreen = ({ onEndGame }: Props) => {
                 </div>
 
                 {/* Move history for this player */}
-                <div className="flex flex-col divide-y divide-neutral-200 p-2 text-xs">
+                <div className="flex flex-col divide-y divide-neutral-200 p-2 text-[10px]">
                   {moveHistory.map((entry, i) => (
                     <div
                       key={i}
                       className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 hover:bg-neutral-100"
                       onClick={() => handleMoveClick(entry.tiles)}
                     >
-                      <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
+                      <span className="truncate font-mono">{entry.words.join(', ') || '(pass)'}</span>
                       <span className="font-medium">{entry.score}</span>
                     </div>
                   ))}
