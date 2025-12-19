@@ -12,6 +12,7 @@ const ScrabbleBoard = ({
   onNewTilesChange,
   editable = false,
   highlightedTiles = [],
+  onEnter,
 }: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
@@ -173,6 +174,13 @@ const ScrabbleBoard = ({
           setCursor(next)
         }
 
+        return
+      }
+
+      // Handle Enter key to end turn
+      if (key === 'Enter') {
+        event.preventDefault()
+        onEnter?.()
         return
       }
 
@@ -349,4 +357,6 @@ type Props = {
   editable?: boolean
   /** Tiles to highlight (e.g., when showing a past move) */
   highlightedTiles?: Array<{ row: number; col: number }>
+  /** Callback when Enter key is pressed */
+  onEnter?: () => void
 }

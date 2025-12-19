@@ -66,6 +66,37 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const { players, board, moves } = currentGame
   const isFirstMove = moves.length === 0
 
+  // End the current turn - validates and commits the move, or shows pass confirmation
+  const handleEndTurn = () => {
+    const move = boardStateToMove(newTiles)
+
+    if (move.length > 0) {
+      // Validate and commit the move
+      const validation = validateMove(move, board, isFirstMove)
+      if (!validation.valid) {
+        toast.error(validation.error)
+        return
+      }
+
+      // Check for tile overuse and show confirmation dialog
+      const overuseWarnings = checkTileOveruse(currentGame, move)
+      if (overuseWarnings.length > 0) {
+        setTileOveruseConfirm({ warnings: overuseWarnings, pendingMove: move })
+        return
+      }
+
+      commitMove({
+        playerIndex: currentPlayerIndex,
+        tilesPlaced: move,
+      })
+      // Clear new tiles for next player
+      setNewTiles(createEmptyBoard())
+    } else {
+      // No tiles placed - show confirmation dialog
+      setShowPassConfirm(true)
+    }
+  }
+
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / 60_000)
     const seconds = Math.floor((ms % 60_000) / 1000)
@@ -152,6 +183,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
             onNewTilesChange={setNewTiles}
             editable
             highlightedTiles={highlightedTiles}
+            onEnter={handleEndTurn}
           />
         </div>
       </div>
@@ -167,34 +199,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
             const handlePlayerClick = () => {
               // Only current player or next player can be clicked to end turn
               if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
-
-              const move = boardStateToMove(newTiles)
-
-              if (move.length > 0) {
-                // Validate and commit the move
-                const validation = validateMove(move, board, isFirstMove)
-                if (!validation.valid) {
-                  toast.error(validation.error)
-                  return
-                }
-
-                // Check for tile overuse and show confirmation dialog
-                const overuseWarnings = checkTileOveruse(currentGame, move)
-                if (overuseWarnings.length > 0) {
-                  setTileOveruseConfirm({ warnings: overuseWarnings, pendingMove: move })
-                  return
-                }
-
-                commitMove({
-                  playerIndex: currentPlayerIndex,
-                  tilesPlaced: move,
-                })
-                // Clear new tiles for next player
-                setNewTiles(createEmptyBoard())
-              } else {
-                // No tiles placed - show confirmation dialog
-                setShowPassConfirm(true)
-              }
+              handleEndTurn()
             }
 
             return (
