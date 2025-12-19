@@ -9,6 +9,7 @@ import { checkTileOveruse, type TileOveruseWarning } from '@/lib/checkTileOverus
 import { getRemainingTileCount } from '@/lib/getRemainingTileCount'
 import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
 import { UnplayedTilesScreen } from './TileBagScreen'
+Zimport { EndGameScreen } from './EndGameScreen'
 import { ConfirmDialog } from './ConfirmDialog'
 import { MoveHistoryList } from './MoveHistoryList'
 import { Timer } from './Timer'
@@ -23,6 +24,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
   const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
+  const [showEndGameScreen, setShowEndGameScreen] = useState(false)
   const [tileOveruseConfirm, setTileOveruseConfirm] = useState<{
     warnings: TileOveruseWarning[]
     pendingMove: Array<{ row: number; col: number; tile: string }>
@@ -55,6 +57,15 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
   if (showTileBag) {
     return <UnplayedTilesScreen onBack={() => setShowTileBag(false)} />
+  }
+
+  if (showEndGameScreen) {
+    return (
+      <EndGameScreen
+        onBack={() => setShowEndGameScreen(false)}
+        onApply={onEndGame}
+      />
+    )
   }
 
   const { players, board, moves } = currentGame
@@ -95,7 +106,15 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const remainingTileCount = getRemainingTileCount(currentGame)
 
   const handleEndGameClick = () => {
-    if (remainingTileCount > 0) {
+    // Threshold: if tiles remaining <= (players - 1) * 7, all tiles are on racks
+    const threshold = (players.length - 1) * 7
+
+    if (remainingTileCount <= threshold) {
+      // Natural end - show EndGameScreen for rack entry
+      stopTimer()
+      setShowEndGameScreen(true)
+    } else if (remainingTileCount > 0) {
+      // Early end - simple confirmation
       setShowEndGameConfirm(true)
     } else {
       endGame()

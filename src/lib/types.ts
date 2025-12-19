@@ -13,10 +13,18 @@ export type Move = Array<
   }
 >
 
+/** End-game score adjustment for a player */
+export type Adjustment = {
+  rackTiles: string[]
+  deduction: number
+  bonus: number
+}
+
 /** A move made by a specific player  */
 export type GameMove = {
   playerIndex: number
   tilesPlaced: Move
+  adjustment?: Adjustment
 }
 
 /** Player state  */

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Game, PlayerRecord, BoardState, GameMove, Player } from './types'
+import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment } from './types'
 import { createEmptyBoard, createPlayer } from './types'
 import { calculateMoveScore } from './calculateMoveScore'
 
@@ -11,7 +11,13 @@ export const getPlayerScore = (game: Game, playerIndex: number): number => {
 
   for (const move of game.moves) {
     if (move.playerIndex === playerIndex) {
+      // Add regular move score
       score += calculateMoveScore({ move: move.tilesPlaced, board: boardState })
+
+      // Add end-game adjustment if present
+      if (move.adjustment) {
+        score += move.adjustment.deduction + move.adjustment.bonus
+      }
     }
     // Update board state after each move
     for (const { row, col, tile } of move.tilesPlaced) {
@@ -35,6 +41,7 @@ type GameStore = {
   // Game lifecycle
   startGame: (playerNames: string[]) => void
   endGame: () => void
+  endGameWithAdjustments: (adjustments: Array<{ playerIndex: number } & Adjustment>) => void
   pauseGame: () => void
   resumeGame: () => void
 
@@ -92,6 +99,35 @@ export const useGameStore = create<GameStore>()(
         const finishedGame: Game = {
           ...currentGame,
           status: 'finished',
+          updatedAt: Date.now(),
+        }
+
+        set({
+          currentGame: finishedGame,
+          pastGames: [finishedGame, ...pastGames],
+        })
+      },
+
+      endGameWithAdjustments: adjustments => {
+        const { currentGame, pastGames } = get()
+        if (!currentGame) return
+
+        // Create adjustment moves for each player
+        const adjustmentMoves: GameMove[] = adjustments.map(adj => ({
+          playerIndex: adj.playerIndex,
+          tilesPlaced: [],
+          adjustment: {
+            rackTiles: adj.rackTiles,
+            deduction: adj.deduction,
+            bonus: adj.bonus,
+          },
+        }))
+
+        const finishedGame: Game = {
+          ...currentGame,
+          moves: [...currentGame.moves, ...adjustmentMoves],
+          status: 'finished',
+          timerRunning: false,
           updatedAt: Date.now(),
         }
 
