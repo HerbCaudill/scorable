@@ -30,11 +30,8 @@ export const GameScreen = ({ onEndGame }: Props) => {
   }
 
   const handleTimerToggle = () => {
-    if (timerRunning) {
-      stopTimer()
-    } else {
-      startTimer()
-    }
+    if (timerRunning) stopTimer()
+    else startTimer()
   }
 
   const handleDone = () => {
