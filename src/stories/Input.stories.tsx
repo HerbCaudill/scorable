@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Input } from '@/components/Input'
+import { Input } from '@/components/ui/input'
 
 const meta = {
   title: 'Components/Input',
@@ -19,25 +19,23 @@ export const Default: Story = {
   },
 }
 
-export const WithLabel: Story = {
+export const WithValue: Story = {
   args: {
-    label: 'Player name',
-    placeholder: 'John Doe',
-  },
-}
-
-export const WithError: Story = {
-  args: {
-    label: 'Player name',
-    placeholder: 'John Doe',
-    error: 'Player name is required',
+    placeholder: 'Player name',
+    defaultValue: 'John Doe',
   },
 }
 
 export const Disabled: Story = {
   args: {
-    label: 'Player name',
     placeholder: 'Disabled input',
     disabled: true,
+  },
+}
+
+export const WithType: Story = {
+  args: {
+    type: 'email',
+    placeholder: 'Enter email...',
   },
 }

@@ -1,4 +1,4 @@
-import { Button } from './Button'
+import { Button } from '@/components/ui/button'
 import { useGameStore } from '@/lib/gameStore'
 
 export const HomeScreen = ({ onNewGame, onResumeGame }: Props) => {

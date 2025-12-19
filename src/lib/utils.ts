@@ -1,2 +1,6 @@
-// Re-export cx as cn for shadcn/ui compatibility
-export { cx as cn } from './cx'
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}

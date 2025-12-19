@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Select } from '@/components/Select'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const meta = {
   title: 'Components/Select',
@@ -13,38 +21,54 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const sampleOptions = [
-  { value: 'herb', label: 'Herb' },
-  { value: 'lynne', label: 'Lynne' },
-  { value: 'nolan', label: 'Nolan' },
-  { value: 'mike', label: 'Mike' },
-]
-
 export const Default: Story = {
-  args: {
-    options: sampleOptions,
-  },
+  render: () => (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a player" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="herb">Herb</SelectItem>
+        <SelectItem value="lynne">Lynne</SelectItem>
+        <SelectItem value="nolan">Nolan</SelectItem>
+        <SelectItem value="mike">Mike</SelectItem>
+      </SelectContent>
+    </Select>
+  ),
 }
 
-export const WithLabel: Story = {
-  args: {
-    label: 'Select a player',
-    options: sampleOptions,
-  },
-}
-
-export const WithError: Story = {
-  args: {
-    label: 'Select a player',
-    options: sampleOptions,
-    error: 'Please select a player',
-  },
+export const WithGroups: Story = {
+  render: () => (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a player" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Team A</SelectLabel>
+          <SelectItem value="herb">Herb</SelectItem>
+          <SelectItem value="lynne">Lynne</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Team B</SelectLabel>
+          <SelectItem value="nolan">Nolan</SelectItem>
+          <SelectItem value="mike">Mike</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  ),
 }
 
 export const Disabled: Story = {
-  args: {
-    label: 'Select a player',
-    options: sampleOptions,
-    disabled: true,
-  },
+  render: () => (
+    <Select disabled>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a player" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="herb">Herb</SelectItem>
+        <SelectItem value="lynne">Lynne</SelectItem>
+      </SelectContent>
+    </Select>
+  ),
 }

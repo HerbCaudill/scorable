@@ -1,6 +1,6 @@
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
-import { Button } from './Button'
+import { Button } from '@/components/ui/button'
 
 export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, updateBoard, startTimer, stopTimer, nextTurn, endGame } = useGameStore()

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '@/components/Button'
+import { Button } from '@/components/ui/button'
 
 const meta = {
   title: 'Components/Button',
@@ -13,10 +13,10 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {
-    variant: 'primary',
-    size: 'md',
+    variant: 'default',
+    size: 'default',
     children: 'New game',
   },
 }
@@ -24,14 +24,46 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     variant: 'secondary',
-    size: 'md',
+    size: 'default',
     children: 'Cancel',
+  },
+}
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+    size: 'default',
+    children: 'Outline',
+  },
+}
+
+export const Destructive: Story = {
+  args: {
+    variant: 'destructive',
+    size: 'default',
+    children: 'Delete',
+  },
+}
+
+export const Ghost: Story = {
+  args: {
+    variant: 'ghost',
+    size: 'default',
+    children: 'Ghost',
+  },
+}
+
+export const Link: Story = {
+  args: {
+    variant: 'link',
+    size: 'default',
+    children: 'Link button',
   },
 }
 
 export const Small: Story = {
   args: {
-    variant: 'primary',
+    variant: 'default',
     size: 'sm',
     children: 'Small button',
   },
@@ -39,7 +71,7 @@ export const Small: Story = {
 
 export const Large: Story = {
   args: {
-    variant: 'primary',
+    variant: 'default',
     size: 'lg',
     children: 'Start game',
   },
@@ -47,8 +79,8 @@ export const Large: Story = {
 
 export const Disabled: Story = {
   args: {
-    variant: 'primary',
-    size: 'md',
+    variant: 'default',
+    size: 'default',
     children: 'Disabled',
     disabled: true,
   },

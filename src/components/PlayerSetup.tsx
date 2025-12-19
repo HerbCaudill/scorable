@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Button } from './Button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './DropdownMenu'
-import { Input } from './Input'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 
 export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const [players, setPlayers] = useState<Array<string | null>>([null, null, null, null])
