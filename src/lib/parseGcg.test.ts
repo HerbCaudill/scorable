@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseGcg, parsePosition, type GcgGame } from './parseGcg'
+import { parseGcg, parsePosition } from './parseGcg'
 
 describe('parsePosition', () => {
   it('parses vertical position (letter-number format)', () => {
@@ -86,7 +86,11 @@ describe('parseGcg', () => {
     const result = parseGcg(gcg)
 
     // 9A = horizontal at row 9 (index 8), starting column A (index 0)
-    expect(result.moves[0].position).toEqual({ row: 8, col: 0, direction: 'horizontal' })
+    const move = result.moves[0]
+    expect(move.type).toBe('play')
+    if (move.type === 'play') {
+      expect(move.position).toEqual({ row: 8, col: 0, direction: 'horizontal' })
+    }
   })
 
   it('parses an exchange move', () => {
