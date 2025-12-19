@@ -75,14 +75,14 @@ export const GameScreen = ({ onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col">
       {/* Board area */}
-      <div className="flex flex-1 flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center p-4 pb-2">
         <ScrabbleBoard tiles={board} newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
       </div>
 
       {/* Player panels */}
-      <div className="flex gap-2 p-4">
+      <div className="flex gap-2 px-4 pt-0">
         {players.map((player, index) => {
           const isActive = index === currentPlayerIndex
           const score = getPlayerScore(currentGame, index)
@@ -128,11 +128,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
           {players.map((_, index) => {
             const moveHistory = getPlayerMoveHistory(index)
             return (
-              <div key={index} className="flex-1 text-xs">
+              <div key={index} className="flex-1 flex flex-col text-xs p-2 divide-y divide-neutral-200">
                 {moveHistory.map((entry, i) => (
-                  <div key={i} className="flex justify-between gap-2 text-gray-600">
+                  <div key={i} className="flex justify-between gap-2 py-1 text-neutral-600">
                     <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
-                    <span className="font-medium">+{entry.score}</span>
+                    <span className="font-medium">{entry.score}</span>
                   </div>
                 ))}
               </div>
@@ -141,8 +141,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
         </div>
       )}
 
-      {/* Sticky footer */}
-      <div className="sticky bottom-0 flex justify-center gap-4 border-t bg-white p-4">
+      {/* Spacer to push footer down */}
+      <div className="flex-1" />
+
+      {/* Footer */}
+      <div className="flex justify-center gap-4 border-t bg-white p-4">
         <Button variant="outline" size="sm" onClick={handleTimerToggle}>
           {timerRunning ? '⏸ Pause timer' : '▶ Start timer'}
         </Button>
