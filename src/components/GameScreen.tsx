@@ -81,13 +81,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
         <ScrabbleBoard tiles={board} newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
       </div>
 
-      {/* Timer control */}
-      <div className="flex justify-center p-2">
-        <Button variant="outline" size="sm" onClick={handleTimerToggle}>
-          {timerRunning ? '⏸ pause timer' : '▶ start timer'}
-        </Button>
-      </div>
-
       {/* Player panels */}
       <div className="flex gap-2 p-4">
         {players.map((player, index) => {
@@ -148,8 +141,11 @@ export const GameScreen = ({ onEndGame }: Props) => {
         </div>
       )}
 
-      {/* End game button */}
-      <div className="flex justify-center p-4 pt-0">
+      {/* Sticky footer */}
+      <div className="sticky bottom-0 flex justify-center gap-4 border-t bg-white p-4">
+        <Button variant="outline" size="sm" onClick={handleTimerToggle}>
+          {timerRunning ? '⏸ Pause timer' : '▶ Start timer'}
+        </Button>
         <Button variant="outline" size="sm" onClick={handleEndGame}>
           End game
         </Button>
