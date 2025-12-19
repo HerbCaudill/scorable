@@ -13,13 +13,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
   const { currentGame, commitMove, startTimer, stopTimer, endGame } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
 
-  if (!currentGame) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">No active game</p>
-      </div>
-    )
-  }
+  if (!currentGame) return null
 
   const { players, currentPlayerIndex, board, moves, timerRunning } = currentGame
   const isFirstMove = moves.length === 0
