@@ -93,7 +93,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
         {players.map((player, index) => {
           const isActive = index === currentPlayerIndex
           const score = getPlayerScore(currentGame, index)
-          const moveHistory = getPlayerMoveHistory(index)
 
           return (
             <div
@@ -119,18 +118,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
               {/* Score */}
               <span className="text-2xl font-bold">{score}</span>
 
-              {/* Word history */}
-              {moveHistory.length > 0 && (
-                <div className="mt-2 max-h-24 w-full overflow-y-auto text-xs">
-                  {moveHistory.map((entry, i) => (
-                    <div key={i} className="flex justify-between gap-2 text-gray-600">
-                      <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
-                      <span className="font-medium">+{entry.score}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
               {/* Done button for active player */}
               {isActive && (
                 <Button size="sm" className="mt-2" onClick={handleDone}>
@@ -141,6 +128,25 @@ export const GameScreen = ({ onEndGame }: Props) => {
           )
         })}
       </div>
+
+      {/* Game history */}
+      {moves.length > 0 && (
+        <div className="flex gap-2 px-4">
+          {players.map((_, index) => {
+            const moveHistory = getPlayerMoveHistory(index)
+            return (
+              <div key={index} className="flex-1 text-xs">
+                {moveHistory.map((entry, i) => (
+                  <div key={i} className="flex justify-between gap-2 text-gray-600">
+                    <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
+                    <span className="font-medium">+{entry.score}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* End game button */}
       <div className="flex justify-center p-4 pt-0">
