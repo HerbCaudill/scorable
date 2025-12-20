@@ -64,7 +64,8 @@ export const GameScreen = ({ onEndGame }: Props) => {
   }
 
   const { players, board, moves } = currentGame
-  const isFirstMove = moves.length === 0
+  // First move for validation = no tiles on board yet (passes don't count)
+  const isFirstMove = board.every(row => row.every(cell => cell === null))
 
   // End the current turn - validates and commits the move, or shows pass confirmation
   const handleEndTurn = () => {

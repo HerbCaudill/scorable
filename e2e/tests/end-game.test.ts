@@ -1,142 +1,140 @@
 import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
 import { GamePage } from '../pages/game.page'
-import { seedStorage, clearStorage } from '../fixtures/storage-fixtures'
-import { createNearEndGame } from '../fixtures/game-fixtures'
+import { replayGcgGame } from '../fixtures/replay-game'
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
+test.describe('End Game Flow', () => {
+  test.setTimeout(120000) // 2 minutes for replaying moves
 
-  // Seed a game near end
-  const game = createNearEndGame(['Alice', 'Bob'])
-  await seedStorage(page, { currentGame: game })
-  await page.reload()
+  let gamePage: GamePage
 
-  // Resume the game
-  const homePage = new HomePage(page)
-  await homePage.clickResumeGame()
-})
+  test.beforeEach(async ({ page }) => {
+    // Replay the near-end game through the UI
+    const result = await replayGcgGame(page, 'near-end-game.gcg', {
+      playerNames: ['Alice', 'Bob'],
+    })
+    gamePage = result.gamePage
 
-test('shows EndGameScreen when tiles <= threshold', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
+    // Verify tiles remaining is low (should be < 7 for 2 players to show EndGameScreen)
+    const tilesButton = page.getByRole('button', { name: /Tiles/ })
+    const tilesText = await tilesButton.textContent()
+    const tilesMatch = tilesText?.match(/Tiles \((\d+)\)/)
+    const tilesRemaining = tilesMatch ? parseInt(tilesMatch[1], 10) : -1
+    if (tilesRemaining > 7) {
+      throw new Error(`Expected <= 7 tiles remaining, but got ${tilesRemaining}. Tile text: "${tilesText}"`)
+    }
+  })
 
-  // Click End Game - should show EndGameScreen, not simple dialog
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
-})
+  test('shows EndGameScreen when tiles <= threshold', async ({ page }) => {
+    await gamePage.expectOnGameScreen()
 
-test('defaults to last player as who ended the game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Click End Game - should show EndGameScreen, not simple dialog
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+  })
 
-  // Last move was by Alice (playerIndex 0), so Alice should be shown as "ended the game"
-  await gamePage.expectPlayerEndedGame('Alice')
-})
+  test('defaults to last player as who ended the game', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-test('can change who ended the game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Last move was by Alice (playerIndex 0), so Alice should be shown as "ended the game"
+    await gamePage.expectPlayerEndedGame('Alice')
+  })
 
-  // Change to Bob
-  await gamePage.selectPlayerWhoEndedGame('Bob')
-  await gamePage.expectPlayerEndedGame('Bob')
-})
+  test('can change who ended the game', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-test('can select nobody for blocked game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Change to Bob
+    await gamePage.selectPlayerWhoEndedGame('Bob')
+    await gamePage.expectPlayerEndedGame('Bob')
+  })
 
-  await gamePage.selectNobodyEndedGame()
+  test('can select nobody for blocked game', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  // Neither player should show "ended the game"
-  const aliceSection = page.locator('.rounded-lg.border.p-3').filter({ hasText: 'Alice' })
-  const bobSection = page.locator('.rounded-lg.border.p-3').filter({ hasText: 'Bob' })
-  await expect(aliceSection).not.toContainText('ended the game')
-  await expect(bobSection).not.toContainText('ended the game')
-})
+    await gamePage.selectNobodyEndedGame()
 
-test('can enter rack tiles and see deduction', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Neither player should show "ended the game"
+    const aliceSection = page.locator('.rounded-lg.border.p-3').filter({ hasText: 'Alice' })
+    const bobSection = page.locator('.rounded-lg.border.p-3').filter({ hasText: 'Bob' })
+    await expect(aliceSection).not.toContainText('ended the game')
+    await expect(bobSection).not.toContainText('ended the game')
+  })
 
-  // Alice ended the game, enter some common tiles for Bob
-  // Using I, N, N (which are remaining based on the original game ending)
-  await gamePage.enterRackTiles('Bob', 'INN')
+  test('can enter rack tiles and see deduction', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  // I=1, N=1, N=1 = -3 deduction
-  const adjustment = await gamePage.getPlayerAdjustment('Bob')
-  expect(adjustment).toBe('-3')
-})
+    // Alice ended the game, enter some common tiles for Bob
+    // Using I, N, N (which are remaining based on the original game ending)
+    await gamePage.enterRackTiles('Bob', 'INN')
 
-test('player who ended game gets bonus', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // I=1, N=1, N=1 = -3 deduction
+    const adjustment = await gamePage.getPlayerAdjustment('Bob')
+    expect(adjustment).toBe('-3')
+  })
 
-  // Alice ended the game, enter tiles for Bob
-  await gamePage.enterRackTiles('Bob', 'INN')
+  test('player who ended game gets bonus', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  // Alice should get +3 bonus (Bob's tiles: I=1, N=1, N=1)
-  const aliceAdjustment = await gamePage.getPlayerAdjustment('Alice')
-  expect(aliceAdjustment).toBe('+3')
-})
+    // Alice ended the game, enter tiles for Bob
+    await gamePage.enterRackTiles('Bob', 'INN')
 
-test('validates rack tiles against remaining', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Alice should get +3 bonus (Bob's tiles: I=1, N=1, N=1)
+    const aliceAdjustment = await gamePage.getPlayerAdjustment('Alice')
+    expect(aliceAdjustment).toBe('+3')
+  })
 
-  // Try to enter too many Q tiles (Q was already played in the game)
-  await gamePage.enterRackTiles('Bob', 'Q')
+  test('validates rack tiles against remaining', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  // Should show error since Q was already used
-  await gamePage.expectRackError('Bob', 'Too many Q')
+    // Try to enter too many Q tiles (Q was already played in the game)
+    await gamePage.enterRackTiles('Bob', 'Q')
 
-  // Apply button should be disabled
-  expect(await gamePage.isApplyButtonDisabled()).toBe(true)
-})
+    // Should show error since Q was already used
+    await gamePage.expectRackError('Bob', 'Too many Q')
 
-test('can cancel and return to game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Apply button should be disabled
+    expect(await gamePage.isApplyButtonDisabled()).toBe(true)
+  })
 
-  await gamePage.cancelEndGame()
-  await gamePage.expectOnGameScreen()
-})
+  test('can cancel and return to game', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-test('apply creates adjustment moves and ends game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  const homePage = new HomePage(page)
+    await gamePage.cancelEndGame()
+    await gamePage.expectOnGameScreen()
+  })
 
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+  test('apply creates adjustment moves and ends game', async ({ page }) => {
+    const homePage = new HomePage(page)
 
-  // Alice ended, Bob has INN (3 points) - tiles remaining from the game
-  await gamePage.enterRackTiles('Bob', 'INN')
-  await gamePage.applyAndEndGame()
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  // Should return to home screen
-  await homePage.expectOnHomeScreen()
-})
+    // Alice ended, Bob has INN (3 points) - tiles remaining from the game
+    await gamePage.enterRackTiles('Bob', 'INN')
+    await gamePage.applyAndEndGame()
 
-test('backspace removes tiles from rack input', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.clickEndGame()
-  await gamePage.expectOnEndGameScreen()
+    // Should return to home screen
+    await homePage.expectOnHomeScreen()
+  })
 
-  // Enter INN, then remove one
-  await gamePage.enterRackTiles('Bob', 'INN')
-  let adjustment = await gamePage.getPlayerAdjustment('Bob')
-  expect(adjustment).toBe('-3') // I=1, N=1, N=1
+  test('backspace removes tiles from rack input', async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
 
-  await gamePage.clearRackTiles('Bob', 1)
-  adjustment = await gamePage.getPlayerAdjustment('Bob')
-  expect(adjustment).toBe('-2') // I=1, N=1
+    // Enter INN, then remove one
+    await gamePage.enterRackTiles('Bob', 'INN')
+    let adjustment = await gamePage.getPlayerAdjustment('Bob')
+    expect(adjustment).toBe('-3') // I=1, N=1, N=1
+
+    await gamePage.clearRackTiles('Bob', 1)
+    adjustment = await gamePage.getPlayerAdjustment('Bob')
+    expect(adjustment).toBe('-2') // I=1, N=1
+  })
 })
