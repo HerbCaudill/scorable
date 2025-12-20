@@ -53,11 +53,11 @@ test('past game board is read-only', async ({ page }) => {
   await homePage.clickPastGame(0)
 
   // Try clicking a cell - should not show cursor
-  const cell = page.locator('.grid-cols-15 > div').nth(0)
+  const cell = page.getByRole('gridcell', { name: 'A1', exact: true })
   await cell.click()
 
-  // No cursor ring should appear
-  await expect(cell.locator('.ring-teal-600')).not.toBeVisible()
+  // No cursor should appear (aria-selected should not be true)
+  await expect(cell).not.toHaveAttribute('aria-selected', 'true')
 
   // Try typing - should not place tile
   await page.keyboard.type('X')

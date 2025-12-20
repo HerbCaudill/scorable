@@ -184,7 +184,7 @@ test('timer state persists across reload', async ({ page }) => {
   // Timer should still be running (or at least time should have decreased)
   // Note: The timer running state may or may not persist depending on implementation
   // But the time remaining should have decreased
-  const timerText = page.locator('.text-\\[10px\\]').first()
-  const time = await timerText.textContent()
-  expect(time).not.toBe('30:00') // Should be less than initial time
+  const timer = gamePage.getPlayerTimer(0)
+  const timerLabel = await timer.getAttribute('aria-label')
+  expect(timerLabel).not.toBe('30:00 remaining') // Should be less than initial time
 })

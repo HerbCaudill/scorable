@@ -22,6 +22,8 @@ export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = fals
 
   return (
     <div
+      role="timer"
+      aria-label={`${formatTime(timeRemainingMs)} remaining`}
       className="relative flex size-12 shrink-0 items-center justify-center transition-opacity"
       style={{ opacity: isActive && !isPaused ? 1 : 0.4 }}
     >

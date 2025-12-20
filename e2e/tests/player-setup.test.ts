@@ -74,7 +74,7 @@ test('starts game and navigates to game screen', async ({ page }) => {
   await setupPage.startGame()
 
   // Should see the game board
-  await expect(page.locator('.grid-cols-15')).toBeVisible()
+  await expect(page.getByRole('grid', { name: 'Scrabble board' })).toBeVisible()
 })
 
 test('can add up to 4 players', async ({ page }) => {

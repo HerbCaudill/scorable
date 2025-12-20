@@ -16,22 +16,21 @@ test.beforeEach(async ({ page }) => {
   gamePage = new GamePage(page)
 })
 
-test('clicking cell places cursor', async ({ page }) => {
+test('clicking cell places cursor', async () => {
   await gamePage.clickCell(7, 7)
 
-  // The cursor should be visible (indicated by teal ring)
-  const cell = page.locator('.grid-cols-15 > div').nth(7 * 15 + 7)
-  await expect(cell.locator('.ring-teal-600')).toBeVisible()
+  // The cursor should be visible (indicated by aria-selected)
+  await gamePage.expectCellSelected(7, 7)
 })
 
-test('typing letter places tile', async ({ page }) => {
+test('typing letter places tile', async () => {
   await gamePage.clickCell(7, 7)
   await gamePage.typeLetters('A')
 
   await gamePage.expectTileAt(7, 7, 'A')
 })
 
-test('cursor advances after placing tile', async ({ page }) => {
+test('cursor advances after placing tile', async () => {
   await gamePage.clickCell(7, 7)
   await gamePage.typeLetters('AB')
 
@@ -41,7 +40,7 @@ test('cursor advances after placing tile', async ({ page }) => {
   await gamePage.expectTileAt(7, 8, 'B')
 })
 
-test('clicking same cell toggles direction', async ({ page }) => {
+test('clicking same cell toggles direction', async () => {
   await gamePage.clickCell(7, 7)
   await gamePage.clickCell(7, 7) // Toggle to vertical
   await gamePage.typeLetters('AB')
@@ -52,28 +51,24 @@ test('clicking same cell toggles direction', async ({ page }) => {
   await gamePage.expectTileAt(8, 7, 'B')
 })
 
-test('arrow keys move cursor', async ({ page }) => {
+test('arrow keys move cursor', async () => {
   await gamePage.clickCell(7, 7)
 
   // Move right
   await gamePage.pressKey('ArrowRight')
-  let cell = page.locator('.grid-cols-15 > div').nth(7 * 15 + 8)
-  await expect(cell.locator('.ring-teal-600')).toBeVisible()
+  await gamePage.expectCellSelected(7, 8)
 
   // Move down
   await gamePage.pressKey('ArrowDown')
-  cell = page.locator('.grid-cols-15 > div').nth(8 * 15 + 8)
-  await expect(cell.locator('.ring-teal-600')).toBeVisible()
+  await gamePage.expectCellSelected(8, 8)
 
   // Move left
   await gamePage.pressKey('ArrowLeft')
-  cell = page.locator('.grid-cols-15 > div').nth(8 * 15 + 7)
-  await expect(cell.locator('.ring-teal-600')).toBeVisible()
+  await gamePage.expectCellSelected(8, 7)
 
   // Move up
   await gamePage.pressKey('ArrowUp')
-  cell = page.locator('.grid-cols-15 > div').nth(7 * 15 + 7)
-  await expect(cell.locator('.ring-teal-600')).toBeVisible()
+  await gamePage.expectCellSelected(7, 7)
 })
 
 test('backspace removes last placed tile', async ({ page }) => {
@@ -89,21 +84,19 @@ test('backspace removes last placed tile', async ({ page }) => {
 
   // A should still be there, B should be gone
   await gamePage.expectTileAt(7, 7, 'A')
-  const cellB = page.locator('.grid-cols-15 > div').nth(7 * 15 + 8)
+  const cellB = page.getByRole('gridcell', { name: 'I8', exact: true })
   await expect(cellB).not.toContainText('B')
 })
 
-test('space places blank tile', async ({ page }) => {
+test('space places blank tile', async () => {
   await gamePage.clickCell(7, 7)
   await gamePage.pressKey(' ')
 
-  // Blank tile should be visible (represented as a tile with no letter)
-  const cell = page.locator('.grid-cols-15 > div').nth(7 * 15 + 7)
-  // The cell should have a tile (teal background for new tiles: bg-teal-300)
-  await expect(cell.locator('.bg-teal-300')).toBeVisible()
+  // Blank tile should be visible (indicated by data-tile-state="new")
+  await gamePage.expectNewTileAt(7, 7)
 })
 
-test('can place word across multiple cells', async ({ page }) => {
+test('can place word across multiple cells', async () => {
   await gamePage.placeWord(7, 7, 'SCRABBLE')
 
   await gamePage.expectTileAt(7, 7, 'S')
@@ -116,7 +109,7 @@ test('can place word across multiple cells', async ({ page }) => {
   await gamePage.expectTileAt(7, 14, 'E')
 })
 
-test('can place vertical word', async ({ page }) => {
+test('can place vertical word', async () => {
   await gamePage.placeWord(7, 7, 'CAT', 'vertical')
 
   await gamePage.expectTileAt(7, 7, 'C')
@@ -124,7 +117,7 @@ test('can place vertical word', async ({ page }) => {
   await gamePage.expectTileAt(9, 7, 'T')
 })
 
-test('cursor skips existing tiles when typing', async ({ page }) => {
+test('cursor skips existing tiles when typing', async () => {
   // Place first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()

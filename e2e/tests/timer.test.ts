@@ -43,17 +43,17 @@ test('timer pauses when Pause Timer clicked', async ({ page }) => {
 test('timer countdown decrements over time', async ({ page }) => {
   const gamePage = new GamePage(page)
 
-  // Get initial time display (format is MM:SS in a small text element)
-  const timerText = page.locator('.text-\\[10px\\]').first()
-  const initialTime = await timerText.textContent()
+  // Get initial time display from the timer element
+  const timer = gamePage.getPlayerTimer(0)
+  const initialLabel = await timer.getAttribute('aria-label')
 
   // Start timer and wait
   await gamePage.toggleTimer()
   await page.waitForTimeout(1500)
 
   // Time should have decreased
-  const newTime = await timerText.textContent()
-  expect(newTime).not.toBe(initialTime)
+  const newLabel = await timer.getAttribute('aria-label')
+  expect(newLabel).not.toBe(initialLabel)
 })
 
 test('timer pauses during moves', async ({ page }) => {
@@ -62,10 +62,10 @@ test('timer pauses during moves', async ({ page }) => {
   // Start timer
   await gamePage.toggleTimer()
 
-  // Get time before move
-  const timerText = page.locator('.text-\\[10px\\]').first()
+  // Get time before pause
+  const timer = gamePage.getPlayerTimer(0)
   await page.waitForTimeout(500)
-  const timeBeforeMove = await timerText.textContent()
+  const labelBeforePause = await timer.getAttribute('aria-label')
 
   // Pause timer
   await gamePage.toggleTimer()
@@ -74,8 +74,8 @@ test('timer pauses during moves', async ({ page }) => {
   await page.waitForTimeout(1000)
 
   // Time should not have changed
-  const timeAfterPause = await timerText.textContent()
-  expect(timeAfterPause).toBe(timeBeforeMove)
+  const labelAfterPause = await timer.getAttribute('aria-label')
+  expect(labelAfterPause).toBe(labelBeforePause)
 })
 
 test('timer continues for next player after turn', async ({ page }) => {
@@ -97,18 +97,19 @@ test('each player has independent timer', async ({ page }) => {
   const gamePage = new GamePage(page)
 
   // Get initial times for both players
-  const timerElements = page.locator('.text-\\[10px\\]')
-  const aliceInitialTime = await timerElements.nth(0).textContent()
-  const bobInitialTime = await timerElements.nth(1).textContent()
+  const aliceTimer = gamePage.getPlayerTimer(0)
+  const bobTimer = gamePage.getPlayerTimer(1)
+  const aliceInitialLabel = await aliceTimer.getAttribute('aria-label')
+  const bobInitialLabel = await bobTimer.getAttribute('aria-label')
 
   // Start timer (Alice's turn)
   await gamePage.toggleTimer()
   await page.waitForTimeout(1500)
 
   // Alice's time should have decreased, Bob's should be the same
-  const aliceTimeAfter = await timerElements.nth(0).textContent()
-  const bobTimeAfter = await timerElements.nth(1).textContent()
+  const aliceLabelAfter = await aliceTimer.getAttribute('aria-label')
+  const bobLabelAfter = await bobTimer.getAttribute('aria-label')
 
-  expect(aliceTimeAfter).not.toBe(aliceInitialTime)
-  expect(bobTimeAfter).toBe(bobInitialTime)
+  expect(aliceLabelAfter).not.toBe(aliceInitialLabel)
+  expect(bobLabelAfter).toBe(bobInitialLabel)
 })

@@ -10,6 +10,8 @@ type Props = {
 export const Tile = ({ letter, variant = 'existing', className }: Props) => {
   const value = getTileValue(letter)
   const isExisting = variant === 'existing'
+  const displayLetter = letter === ' ' ? 'Blank' : letter.toUpperCase()
+  const ariaLabel = `${displayLetter}${value > 0 ? `, ${value} points` : ''}`
 
   return (
     <div
@@ -18,6 +20,7 @@ export const Tile = ({ letter, variant = 'existing', className }: Props) => {
         isExisting ? 'bg-amber-100' : 'bg-teal-300',
         className
       )}
+      aria-label={ariaLabel}
     >
       <span className={cx('text-[55cqw] font-bold leading-none', isExisting ? 'text-khaki-800' : 'text-teal-800')}>
         {letter === ' ' ? '' : letter.toUpperCase()}

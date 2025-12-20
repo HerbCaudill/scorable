@@ -1,20 +1,26 @@
 import { Page, expect, Locator } from '@playwright/test'
 
 export class GamePage {
-  private boardContainer: Locator
-  private boardGrid: Locator
+  private board: Locator
 
   constructor(private page: Page) {
-    // The outer container has tabIndex=0 and receives keyboard events
-    this.boardContainer = page.locator('.\\@container[tabindex="0"]')
-    // The inner grid has the cells
-    this.boardGrid = page.locator('.grid-cols-15')
+    this.board = page.getByRole('grid', { name: 'Scrabble board' })
+  }
+
+  /** Convert column index to letter (A-O) */
+  private colToLetter(col: number): string {
+    return String.fromCharCode(65 + col)
   }
 
   /** Get a specific cell on the board (0-indexed row and col) */
   private getCell(row: number, col: number): Locator {
-    const index = row * 15 + col
-    return this.boardGrid.locator('> div').nth(index)
+    const label = `${this.colToLetter(col)}${row + 1}`
+    return this.page.getByRole('gridcell', { name: label, exact: true })
+  }
+
+  /** Get a cell by its label (e.g., "H8") */
+  getCellByLabel(label: string): Locator {
+    return this.page.getByRole('gridcell', { name: label, exact: true })
   }
 
   /** Click on a board cell */
@@ -44,30 +50,16 @@ export class GamePage {
 
   /** End the current turn by clicking on the active player panel */
   async endTurn() {
-    // Find the active player panel (has 3px box-shadow) and click it
-    // The active player's container has style containing "3px"
-    const panels = this.page.locator('.min-w-32')
-    const count = await panels.count()
-
-    for (let i = 0; i < count; i++) {
-      const panel = panels.nth(i)
-      const style = await panel.getAttribute('style')
-      if (style && style.includes('3px')) {
-        // Click the player info row (gap-3 div) inside this panel
-        const clickableRow = panel.locator('.cursor-pointer.gap-3').first()
-        await clickableRow.click()
-        return
-      }
-    }
-
-    // Fallback: click the first player's info row
-    await panels.first().locator('.cursor-pointer.gap-3').first().click()
+    // Find the active player panel (has aria-current="true") and click it
+    const activePanel = this.page.locator('[aria-current="true"]')
+    const clickableRow = activePanel.locator('.cursor-pointer').first()
+    await clickableRow.click()
   }
 
   /** Click on a player panel to end turn */
   async clickPlayerPanel(playerIndex: number) {
-    // Click the player info row (with timer), not the whole panel
-    await this.page.locator('.min-w-32').nth(playerIndex).locator('.cursor-pointer.gap-3').click()
+    const panels = this.page.locator('[role="region"][data-player]')
+    await panels.nth(playerIndex).locator('.cursor-pointer').first().click()
   }
 
   /** Toggle the timer (start/pause) */
@@ -116,19 +108,19 @@ export class GamePage {
 
   /** Get the score for a player */
   async getPlayerScore(playerIndex: number): Promise<number> {
-    const panel = this.page.locator('.min-w-32').nth(playerIndex)
+    const panels = this.page.locator('[role="region"][data-player]')
+    const panel = panels.nth(playerIndex)
     const scoreText = await panel.locator('.text-2xl.font-bold').textContent()
     return parseInt(scoreText || '0', 10)
   }
 
-  /** Get the current player index based on active styling */
+  /** Get the current player index based on aria-current */
   async getCurrentPlayerIndex(): Promise<number> {
-    const panels = this.page.locator('.min-w-32')
+    const panels = this.page.locator('[role="region"][data-player]')
     const count = await panels.count()
     for (let i = 0; i < count; i++) {
-      const style = await panels.nth(i).getAttribute('style')
-      // Active player has a thicker box-shadow (3px) - check for "3px" in the style
-      if (style && style.includes('3px')) {
+      const ariaCurrent = await panels.nth(i).getAttribute('aria-current')
+      if (ariaCurrent === 'true') {
         return i
       }
     }
@@ -142,9 +134,9 @@ export class GamePage {
 
   /** Check if a cell has a tile */
   async cellHasTile(row: number, col: number): Promise<boolean> {
-    const content = await this.getCellContent(row, col)
-    // Cells with tiles will have the letter visible
-    return content !== null && content.trim().length > 0
+    const cell = this.getCell(row, col)
+    const hasTile = await cell.getAttribute('data-has-tile')
+    return hasTile === 'true'
   }
 
   /** Expect a tile at a specific position */
@@ -152,9 +144,25 @@ export class GamePage {
     await expect(this.getCell(row, col)).toContainText(letter)
   }
 
+  /** Expect a cell to be selected (cursor on it) */
+  async expectCellSelected(row: number, col: number) {
+    await expect(this.getCell(row, col)).toHaveAttribute('aria-selected', 'true')
+  }
+
+  /** Expect a cell to have a new tile (placed in current turn) */
+  async expectNewTileAt(row: number, col: number) {
+    await expect(this.getCell(row, col)).toHaveAttribute('data-tile-state', 'new')
+  }
+
+  /** Get timer element for a player */
+  getPlayerTimer(playerIndex: number): Locator {
+    const panels = this.page.locator('[role="region"][data-player]')
+    return panels.nth(playerIndex).getByRole('timer')
+  }
+
   /** Expect the game screen to be visible */
   async expectOnGameScreen() {
-    await expect(this.boardGrid).toBeVisible()
+    await expect(this.board).toBeVisible()
   }
 
   /** Expect player name to be visible */

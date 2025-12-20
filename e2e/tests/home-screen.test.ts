@@ -65,7 +65,7 @@ test('resumes game when Resume Game clicked', async ({ page }) => {
   await homePage.clickResumeGame()
 
   // Should see the game screen with the board
-  await expect(page.locator('.grid-cols-15')).toBeVisible()
+  await expect(page.getByRole('grid', { name: 'Scrabble board' })).toBeVisible()
   await expect(page.getByText('Alice')).toBeVisible()
   await expect(page.getByText('Bob')).toBeVisible()
 })

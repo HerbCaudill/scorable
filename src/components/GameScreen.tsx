@@ -182,6 +182,10 @@ export const GameScreen = ({ onEndGame }: Props) => {
             return (
               <div
                 key={index}
+                role="region"
+                aria-label={`${player.name}'s score panel`}
+                aria-current={isActive ? 'true' : undefined}
+                data-player={player.name}
                 className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg"
                 style={{
                   boxShadow: isActive ? `0 0 0 3px ${player.color}` : `0 0 0 1px ${player.color}40`,

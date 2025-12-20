@@ -350,12 +350,17 @@ const ScrabbleBoard = ({
     />
   )
 
+  // Convert column index to letter (A-O)
+  const colToLetter = (col: number) => String.fromCharCode(65 + col)
+
   return (
     <div
       ref={boardRef}
       tabIndex={editable ? 0 : undefined}
       onKeyDown={handleKeyDown}
       className="@container w-full outline-none"
+      role="grid"
+      aria-label="Scrabble board"
     >
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
@@ -365,10 +370,16 @@ const ScrabbleBoard = ({
             const isNewTile = newTiles[rowIndex][colIndex] !== null
             const hasCursor = isCursorAt(rowIndex, colIndex)
             const highlighted = isHighlighted(rowIndex, colIndex)
+            const cellLabel = `${colToLetter(colIndex)}${rowIndex + 1}`
 
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
+                role="gridcell"
+                aria-label={cellLabel}
+                aria-selected={hasCursor}
+                data-has-tile={hasTile || undefined}
+                data-tile-state={isNewTile ? 'new' : hasTile ? 'existing' : undefined}
                 onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
                   'relative flex aspect-square items-center justify-center overflow-visible',
