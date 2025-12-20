@@ -26,7 +26,7 @@ export const UnplayedTilesScreen = ({ onBack }: Props) => {
     <div className="flex h-screen flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 border-b p-4">
-        <Button variant="ghost" size="sm" onClick={onBack}>
+        <Button variant="ghost" size="sm" onClick={onBack} aria-label="Back">
           <IconArrowLeft size={16} />
         </Button>
         <div>

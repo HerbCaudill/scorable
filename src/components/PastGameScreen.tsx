@@ -5,7 +5,7 @@ import { formatDate } from '@/lib/formatDate'
 import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
 import { MoveHistoryList } from './MoveHistoryList'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
-import { IconArrowLeft, IconHome } from '@tabler/icons-react'
+import { IconArrowLeft, IconHome, IconTrophyFilled } from '@tabler/icons-react'
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { pastGames } = useGameStore()
@@ -64,7 +64,12 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
             >
               <span className="text-sm font-medium">{player.name}</span>
               <span className="text-2xl font-bold">{score}</span>
-              {isWinner && <span className="text-amber-500">★ Winner</span>}
+              {isWinner && (
+                <span className="text-amber-500">
+                  <IconTrophyFilled size={16} className="text-amber-500" />
+                  Winner
+                </span>
+              )}
             </div>
           )
         })}
