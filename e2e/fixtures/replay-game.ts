@@ -2,12 +2,7 @@ import { Page } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
 import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import {
-  loadGcgGame,
-  getNewTiles,
-  applyMoveToBoard,
-  getPlayerNames,
-} from './gcg-fixtures'
+import { loadGcgGame, getNewTiles, applyMoveToBoard, getPlayerNames } from './gcg-fixtures'
 import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/parseGcg'
 import type { BoardState } from '../../src/lib/types'
 
@@ -81,11 +76,7 @@ export async function replayGcgFromParsed(
   for (let i = 0; i < gcg.moves.length - 1; i++) {
     const move = gcg.moves[i]
     const nextMove = gcg.moves[i + 1]
-    if (
-      move.type === 'play' &&
-      nextMove.type === 'challenge' &&
-      move.player === nextMove.player
-    ) {
+    if (move.type === 'play' && nextMove.type === 'challenge' && move.player === nextMove.player) {
       challengedOffIndices.add(i)
     }
   }
@@ -136,14 +127,6 @@ export async function replayGcgFromParsed(
 
         // End turn
         await gamePage.endTurn()
-
-        // Handle tile overuse dialog if it appears (click "Play anyway")
-        const playAnywayButton = page.getByRole('button', { name: 'Play anyway' })
-        if (await playAnywayButton.isVisible({ timeout: 500 }).catch(() => false)) {
-          await playAnywayButton.click()
-          // Wait for dialog to close
-          await page.waitForSelector('[role="alertdialog"]', { state: 'detached', timeout: 5000 })
-        }
 
         // Update our tracked board
         board = applyMoveToBoard(playMove, board)
