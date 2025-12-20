@@ -18,7 +18,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
         <p className="text-gray-500">Game not found</p>
         <Button onClick={onBack}>
           <IconHome size={16} />
-          Back to Home
+          Back to home
         </Button>
       </div>
     )

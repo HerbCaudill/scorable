@@ -83,7 +83,7 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
         <Button variant="ghost" size="sm" onClick={onBack}>
           <IconArrowLeft size={18} />
         </Button>
-        <h1 className="text-lg font-semibold">End Game</h1>
+        <h1 className="text-lg font-semibold">End game</h1>
       </div>
 
       {/* Content */}
@@ -163,7 +163,7 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
           Cancel
         </Button>
         <Button onClick={handleApply} disabled={!validation.valid}>
-          Apply & End Game
+          Apply & end game
         </Button>
       </div>
     </div>
