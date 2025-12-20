@@ -157,20 +157,18 @@ const gcgFiles = [
   'anno57741.gcg',
 ]
 
-test.describe('Score verification against recorded games', () => {
-  for (const gcgFile of gcgFiles) {
-    test(`verifies running scores for ${gcgFile}`, async ({ page }) => {
-      test.setTimeout(180000) // 3 minutes per game
+for (const gcgFile of gcgFiles) {
+  test(`verifies running scores for ${gcgFile}`, async ({ page }) => {
+    test.setTimeout(180000) // 3 minutes per game
 
-      const gcg = loadGcgGame(gcgFile)
-      const mismatches = await playAndVerifyScores(page, gcg)
+    const gcg = loadGcgGame(gcgFile)
+    const mismatches = await playAndVerifyScores(page, gcg)
 
-      if (mismatches.length > 0) {
-        const details = mismatches
-          .map(m => `Move ${m.moveIndex}: ${m.player} expected ${m.expected}, got ${m.actual}`)
-          .join('\n')
-        expect(mismatches, `Score mismatches found:\n${details}`).toHaveLength(0)
-      }
-    })
-  }
-})
+    if (mismatches.length > 0) {
+      const details = mismatches
+        .map(m => `Move ${m.moveIndex}: ${m.player} expected ${m.expected}, got ${m.actual}`)
+        .join('\n')
+      expect(mismatches, `Score mismatches found:\n${details}`).toHaveLength(0)
+    }
+  })
+}
