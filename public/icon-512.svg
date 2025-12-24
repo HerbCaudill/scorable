@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#14b8a6" rx="64"/>
-  <text x="256" y="320" font-family="sans-serif" font-size="280" font-weight="bold" fill="white" text-anchor="middle">S</text>
+  <!-- Scrabble tile background -->
+  <rect x="42" y="42" width="428" height="428" rx="32" fill="#fef3c7"/>
+  <!-- Subtle inner shadow/border -->
+  <rect x="42" y="42" width="428" height="428" rx="32" fill="none" stroke="#d4a574" stroke-width="4"/>
+  <!-- Letter S -->
+  <text x="256" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="290" font-weight="bold" fill="#5c4a3d" text-anchor="middle">S</text>
+  <!-- Point value -->
+  <text x="416" y="426" font-family="system-ui, -apple-system, sans-serif" font-size="85" font-weight="600" fill="#8b7355" text-anchor="middle">1</text>
 </svg>
