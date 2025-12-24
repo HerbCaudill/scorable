@@ -118,3 +118,27 @@ test('each player has independent timer', async ({ page }) => {
   expect(aliceLabelAfter).not.toBe(aliceInitialLabel)
   expect(bobLabelAfter).toBe(bobInitialLabel)
 })
+
+test('board is editable while timer is running', async ({ page }) => {
+  const gamePage = new GamePage(page)
+
+  // Start timer
+  await gamePage.toggleTimer()
+  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+
+  // Wait for timer to run for a bit (several interval ticks)
+  await page.waitForTimeout(500)
+
+  // Try to place a word on the board - typing multiple letters tests that
+  // the timer interval doesn't steal focus away from the board
+  await gamePage.clickCell(7, 7)
+  await gamePage.expectCellSelected(7, 7)
+
+  // Type a word slowly to ensure timer interval has time to fire between keystrokes
+  await page.keyboard.type('CAT', { delay: 150 })
+
+  // All tiles should be placed
+  await gamePage.expectTileAt(7, 7, 'C')
+  await gamePage.expectTileAt(7, 8, 'A')
+  await gamePage.expectTileAt(7, 9, 'T')
+})
