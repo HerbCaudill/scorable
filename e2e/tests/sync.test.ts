@@ -54,9 +54,9 @@ test.describe('multi-tab sync', () => {
 
     await gamePage1.expectOnGameScreen()
 
-    // Get the game URL from the hash
+    // Get the game URL from the hash (hash contains doc ID without automerge: prefix)
     const gameUrl = await page1.evaluate(() => window.location.href)
-    expect(gameUrl).toContain('automerge:')
+    expect(gameUrl).toContain('#')
 
     // Player 2 navigates to the same URL
     await page2.goto(gameUrl)
