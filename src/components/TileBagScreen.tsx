@@ -1,4 +1,3 @@
-import { useGameStore } from '@/lib/gameStore'
 import { getSortedTileEntries } from '@/lib/getSortedTileEntries'
 import { getRemainingTileCount } from '@/lib/getRemainingTileCount'
 import { getRemainingTiles } from '@/lib/getRemainingTiles'
@@ -6,18 +5,11 @@ import { TILE_DISTRIBUTION, TOTAL_TILES } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import { IconArrowLeft } from '@tabler/icons-react'
 import { Tile } from './Tile'
+import type { Game } from '@/lib/types'
 
-type Props = {
-  onBack: () => void
-}
-
-export const UnplayedTilesScreen = ({ onBack }: Props) => {
-  const { currentGame } = useGameStore()
-
-  if (!currentGame) return null
-
-  const remainingTiles = getRemainingTiles(currentGame)
-  const remainingCount = getRemainingTileCount(currentGame)
+export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
+  const remainingTiles = getRemainingTiles(game)
+  const remainingCount = getRemainingTileCount(game)
   const playedCount = TOTAL_TILES - remainingCount
 
   const sortedTiles = getSortedTileEntries(TILE_DISTRIBUTION)
@@ -65,4 +57,9 @@ export const UnplayedTilesScreen = ({ onBack }: Props) => {
       </div>
     </div>
   )
+}
+
+type Props = {
+  game: Game
+  onBack: () => void
 }

@@ -1,26 +1,22 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { RackTileInput } from './RackTileInput'
-import { useGameStore } from '@/lib/gameStore'
 import { getRemainingTiles } from '@/lib/getRemainingTiles'
 import { validateRackTiles } from '@/lib/validateRackTiles'
 import { calculateEndGameAdjustments } from '@/lib/calculateEndGameAdjustments'
 import { cx } from '@/lib/cx'
 import { IconArrowLeft } from '@tabler/icons-react'
+import type { Game, Adjustment } from '@/lib/types'
 
-export const EndGameScreen = ({ onBack, onApply }: Props) => {
-  const { currentGame, endGameWithAdjustments } = useGameStore()
-
+export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   // Default: last player to make a move ended the game
-  const lastMovePlayerIndex = currentGame?.moves.length
-    ? currentGame.moves[currentGame.moves.length - 1].playerIndex
-    : 0
+  const lastMovePlayerIndex = game.moves.length ? game.moves[game.moves.length - 1].playerIndex : 0
 
   const [playerWhoEndedGame, setPlayerWhoEndedGame] = useState<number | null>(lastMovePlayerIndex)
 
   // Initialize racks - player who ended the game has empty rack
   const [playerRacks, setPlayerRacks] = useState<string[][]>(() =>
-    currentGame?.players.map((_, i) => (i === lastMovePlayerIndex ? [] : [])) ?? []
+    game.players.map((_, i) => (i === lastMovePlayerIndex ? [] : []))
   )
 
   // When playerWhoEndedGame changes, clear their rack
@@ -30,16 +26,11 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
     }
   }, [playerWhoEndedGame])
 
-  if (!currentGame) return null
-
-  const { players } = currentGame
-  const remainingTiles = getRemainingTiles(currentGame)
+  const { players } = game
+  const remainingTiles = getRemainingTiles(game)
 
   // Validate racks
-  const validation = useMemo(
-    () => validateRackTiles(playerRacks, remainingTiles),
-    [playerRacks, remainingTiles]
-  )
+  const validation = useMemo(() => validateRackTiles(playerRacks, remainingTiles), [playerRacks, remainingTiles])
 
   // Calculate adjustments
   const adjustments = useMemo(() => {
@@ -72,8 +63,7 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
       ...adj,
       rackTiles: playerRacks[i],
     }))
-    endGameWithAdjustments(adjustmentsWithRacks)
-    onApply()
+    onApply(adjustmentsWithRacks)
   }
 
   return (
@@ -133,14 +123,9 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
             return (
               <div key={index} className="rounded-lg border p-3">
                 <div className="mb-2 flex items-center gap-2">
-                  <div
-                    className="h-3 w-3 rounded-full"
-                    style={{ backgroundColor: player.color }}
-                  />
+                  <div className="h-3 w-3 rounded-full" style={{ backgroundColor: player.color }} />
                   <span className="font-medium">{player.name}</span>
-                  {isPlayerWhoEnded && (
-                    <span className="text-sm text-neutral-500">(ended the game)</span>
-                  )}
+                  {isPlayerWhoEnded && <span className="text-sm text-neutral-500">(ended the game)</span>}
                 </div>
 
                 <RackTileInput
@@ -171,6 +156,7 @@ export const EndGameScreen = ({ onBack, onApply }: Props) => {
 }
 
 type Props = {
+  game: Game
   onBack: () => void
-  onApply: () => void
+  onApply: (adjustments: Array<{ playerIndex: number } & Adjustment>) => void
 }

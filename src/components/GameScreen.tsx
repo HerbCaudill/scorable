@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { useGameStore, getPlayerScore } from '@/lib/gameStore'
+import type { AutomergeUrl } from '@automerge/automerge-repo'
+import { useGame } from '@/lib/useGame'
+import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
 import { createEmptyBoard, type BoardState, type GameMove } from '@/lib/types'
@@ -31,7 +33,10 @@ const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIn
 }
 
 /** Convert global move index to player's local move index */
-const getPlayerMoveIndex = (moves: GameMove[], globalIndex: number): { playerIndex: number; playerMoveIndex: number } | null => {
+const getPlayerMoveIndex = (
+  moves: GameMove[],
+  globalIndex: number
+): { playerIndex: number; playerMoveIndex: number } | null => {
   if (globalIndex < 0 || globalIndex >= moves.length) return null
   const move = moves[globalIndex]
   if (move.adjustment) return null
@@ -66,8 +71,20 @@ const moveToBoardState = (tilesPlaced: GameMove['tilesPlaced']): BoardState => {
   return board
 }
 
-export const GameScreen = ({ onEndGame }: Props) => {
-  const { currentGame, commitMove, updateMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
+export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
+  const {
+    game: currentGame,
+    isLoading,
+    timerRunning,
+    startTimer,
+    stopTimer,
+    commitMove,
+    updateMove,
+    updatePlayerTime,
+    endGame,
+    endGameWithAdjustments,
+  } = useGame(gameUrl)
+
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
   const [showPassConfirm, setShowPassConfirm] = useState(false)
@@ -82,7 +99,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
   // Timer interval - decrement current player's time every second
   const lastTickRef = useRef<number>(Date.now())
-  const timerRunning = currentGame?.timerRunning ?? false
   const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
 
   useEffect(() => {
@@ -103,14 +119,37 @@ export const GameScreen = ({ onEndGame }: Props) => {
     return () => clearInterval(interval)
   }, [timerRunning, currentPlayerIndex, currentGame, updatePlayerTime])
 
-  if (!currentGame) return null
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-gray-500">Loading game...</div>
+      </div>
+    )
+  }
+
+  if (!currentGame) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-gray-500">Game not found</div>
+      </div>
+    )
+  }
 
   if (showTileBag) {
-    return <UnplayedTilesScreen onBack={() => setShowTileBag(false)} />
+    return <UnplayedTilesScreen game={currentGame} onBack={() => setShowTileBag(false)} />
   }
 
   if (showEndGameScreen) {
-    return <EndGameScreen onBack={() => setShowEndGameScreen(false)} onApply={onEndGame} />
+    return (
+      <EndGameScreen
+        game={currentGame}
+        onBack={() => setShowEndGameScreen(false)}
+        onApply={adjustments => {
+          endGameWithAdjustments(adjustments)
+          onEndGame()
+        }}
+      />
+    )
   }
 
   const { players, board, moves } = currentGame
@@ -419,5 +458,6 @@ export const GameScreen = ({ onEndGame }: Props) => {
 }
 
 type Props = {
+  gameUrl: AutomergeUrl
   onEndGame: () => void
 }

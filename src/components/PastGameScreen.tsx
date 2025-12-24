@@ -1,4 +1,6 @@
-import { useGameStore, getPlayerScore } from '@/lib/gameStore'
+import type { AutomergeUrl } from '@automerge/automerge-repo'
+import { useGame } from '@/lib/useGame'
+import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/formatDate'
@@ -7,10 +9,17 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { IconArrowLeft, IconHome, IconTrophyFilled } from '@tabler/icons-react'
 
-export const PastGameScreen = ({ gameId, onBack }: Props) => {
-  const { pastGames } = useGameStore()
-  const game = pastGames.find(g => g.id === gameId)
+export const PastGameScreen = ({ gameUrl, onBack }: Props) => {
+  const { game, isLoading } = useGame(gameUrl)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
+        <p className="text-gray-500">Loading game...</p>
+      </div>
+    )
+  }
 
   if (!game) {
     return (
@@ -96,6 +105,6 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
 }
 
 type Props = {
-  gameId: string
+  gameUrl: AutomergeUrl
   onBack: () => void
 }
