@@ -13,6 +13,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB to accommodate Automerge WASM
+      },
       manifest: {
         name: 'Scrabble Scorekeeper',
         short_name: 'Scrabble',
