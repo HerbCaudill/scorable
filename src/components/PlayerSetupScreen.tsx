@@ -17,11 +17,6 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
       const handle = repo.create<GameDoc>()
 
       handle.change(d => {
-        // crypto.randomUUID() requires secure context (HTTPS), so use fallback for HTTP
-        d.id =
-          typeof crypto.randomUUID === 'function'
-            ? crypto.randomUUID()
-            : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
         d.players = playerNames.map((name, i) => ({
           name,
           timeRemainingMs: DEFAULT_TIME_MS,

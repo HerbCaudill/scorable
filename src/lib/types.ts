@@ -42,7 +42,6 @@ export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
 
 /** Complete game state  */
 export type Game = {
-  id: string
   players: Player[]
   currentPlayerIndex: number
   board: BoardState

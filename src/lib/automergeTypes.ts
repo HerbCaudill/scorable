@@ -36,7 +36,6 @@ export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
  * Note: board uses "" instead of null for empty cells since automerge handles strings well.
  */
 export type GameDoc = {
-  id: string
   players: PlayerDoc[]
   currentPlayerIndex: number
   board: string[][] // 15x15, empty string for unoccupied

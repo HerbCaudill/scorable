@@ -17,7 +17,6 @@ export function createTestPlayer(name: string, index: number): Player {
 
 export function createTestGame(playerNames: string[], options: Partial<Game> = {}): Game {
   return {
-    id: crypto.randomUUID(),
     players: playerNames.map((name, i) => createTestPlayer(name, i)),
     currentPlayerIndex: 0,
     board: createEmptyBoard(),

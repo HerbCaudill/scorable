@@ -79,7 +79,6 @@ export const useGameStore = create<GameStore>()(
         }
 
         const game: Game = {
-          id: crypto.randomUUID(),
           players,
           currentPlayerIndex: 0,
           board: createEmptyBoard(),

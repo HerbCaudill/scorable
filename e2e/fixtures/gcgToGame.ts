@@ -94,7 +94,6 @@ export function gcgToGame(
   const currentPlayerIndex = (lastPlayerIndex + 1) % 2
 
   return {
-    id: crypto.randomUUID(),
     players,
     currentPlayerIndex,
     board,

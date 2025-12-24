@@ -12,7 +12,6 @@ const toAppBoard = (board: string[][]): BoardState => {
 /** Convert automerge game doc to app Game type */
 const toAppGame = (doc: GameDoc, timerRunning: boolean): Game => {
   return {
-    id: doc.id,
     players: doc.players.map(p => ({
       name: p.name,
       timeRemainingMs: p.timeRemainingMs,

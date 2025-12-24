@@ -6,7 +6,6 @@ import { createEmptyBoard, createPlayer, type Game } from '@/lib/types'
 
 // Helper to create a finished game with some moves for score calculation
 const createFinishedGame = (
-  id: string,
   playerNames: string[],
   moves: Game['moves'],
   createdAt: number
@@ -18,7 +17,6 @@ const createFinishedGame = (
     }
   }
   return {
-    id,
     players: playerNames.map((name, i) => createPlayer(name, i)),
     currentPlayerIndex: 0,
     board,
@@ -75,7 +73,6 @@ export const WithPastGames: Story = {
         currentGame: null,
         pastGames: [
           createFinishedGame(
-            'game-1',
             ['Herb', 'Lynne'],
             [
               { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'H' }, { row: 7, col: 8, tile: 'I' }] },
@@ -84,7 +81,6 @@ export const WithPastGames: Story = {
             Date.now() - 86_400_000
           ),
           createFinishedGame(
-            'game-2',
             ['Mike', 'Nolan'],
             [
               { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'G' }, { row: 7, col: 8, tile: 'O' }] },
@@ -104,7 +100,6 @@ export const WithCurrentGame: Story = {
     Story => {
       useStoreSetup({
         currentGame: {
-          id: crypto.randomUUID(),
           players: [createPlayer('Herb', 0), createPlayer('Lynne', 1)],
           currentPlayerIndex: 0,
           board: createEmptyBoard(),
@@ -116,7 +111,6 @@ export const WithCurrentGame: Story = {
         },
         pastGames: [
           createFinishedGame(
-            'game-1',
             ['Herb', 'Lynne'],
             [
               { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'H' }, { row: 7, col: 8, tile: 'I' }] },
