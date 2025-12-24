@@ -17,6 +17,7 @@ const ScrabbleBoard = ({
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
+  const hiddenInputRef = useRef<HTMLInputElement>(null)
 
   // Use external newTiles if provided (controlled mode), otherwise internal state
   const newTiles = externalNewTiles ?? internalNewTiles
@@ -113,8 +114,8 @@ const ScrabbleBoard = ({
         setCursor({ row, col, direction })
       }
 
-      // Focus the board for keyboard input
-      boardRef.current?.focus()
+      // Focus the hidden input for keyboard input (needed for iOS to show keyboard)
+      hiddenInputRef.current?.focus()
     },
     [editable, cursor, inferCursorDirection]
   )
@@ -248,10 +249,25 @@ const ScrabbleBoard = ({
         return
       }
 
-      // Handle letter input
-      const letter = key.toUpperCase()
+      // Letter input is handled by onInput for iOS compatibility
+    },
+    [editable, cursor, newTiles, setNewTiles, onEnter]
+  )
+
+  // Handle input from the hidden input (more reliable on iOS for letter input)
+  const handleInput = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      if (!editable || !cursor) return
+
+      const input = event.currentTarget
+      const value = input.value.toUpperCase()
+
+      // Clear the input immediately
+      input.value = ''
+
+      // Process only the last character if multiple were typed
+      const letter = value.slice(-1)
       if (letter.length === 1 && letter in tileValues && letter !== ' ') {
-        event.preventDefault()
         const { row, col, direction } = cursor
 
         // Place the letter
@@ -268,13 +284,13 @@ const ScrabbleBoard = ({
         }
       }
     },
-    [editable, cursor, newTiles, setNewTiles, findNextPosition]
+    [editable, cursor, setNewTiles, findNextPosition]
   )
 
-  // Focus board when cursor is set
+  // Focus hidden input when cursor is set (needed for iOS to show keyboard)
   useEffect(() => {
-    if (cursor && boardRef.current) {
-      boardRef.current.focus()
+    if (cursor && hiddenInputRef.current) {
+      hiddenInputRef.current.focus()
     }
   }, [cursor])
 
@@ -356,12 +372,27 @@ const ScrabbleBoard = ({
   return (
     <div
       ref={boardRef}
-      tabIndex={editable ? 0 : undefined}
-      onKeyDown={handleKeyDown}
-      className="@container w-full outline-none"
+      className="@container w-full outline-none relative"
       role="grid"
       aria-label="Scrabble board"
     >
+      {/* Hidden input to trigger iOS keyboard */}
+      {editable && (
+        <input
+          ref={hiddenInputRef}
+          type="text"
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          className="absolute opacity-0 w-0 h-0 pointer-events-none"
+          style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
+          onKeyDown={handleKeyDown}
+          onInput={handleInput}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      )}
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
