@@ -1,35 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <!-- White background -->
-  <rect width="192" height="192" fill="#ffffff"/>
-
-  <!-- Drop shadow -->
-  <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.25"/>
-    </filter>
-  </defs>
-
-  <!-- 3D tile group - tilted back ~30 degrees using perspective transform -->
-  <g transform="translate(96, 105)" filter="url(#shadow)">
-    <!-- Apply 3D tilt: scale Y to ~0.87 (cos 30°), slight skew for perspective -->
-    <g transform="scale(1, 0.87) skewX(-2)">
-      <!-- Tile top face -->
-      <rect x="-45" y="-52" width="90" height="90" rx="6" fill="#fef3c7"/>
-      <rect x="-45" y="-52" width="90" height="90" rx="6" fill="none" stroke="#d4a574" stroke-width="1.5"/>
-
-      <!-- Letter S -->
-      <text x="0" y="17" font-family="system-ui, -apple-system, sans-serif" font-size="60" font-weight="bold" fill="#5c4a3d" text-anchor="middle">S</text>
-
-      <!-- Point value -->
-      <text x="34" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#8b7355" text-anchor="middle">1</text>
-    </g>
-
-    <!-- Bottom edge (3D depth) -->
-    <g transform="scale(1, 0.87) skewX(-2)">
-      <path d="M-45,38 L-45,44 Q-45,48 -41,48 L41,48 Q45,48 45,44 L45,38" fill="#d4a574"/>
-    </g>
-
-    <!-- Right edge (3D depth) -->
-    <path d="M39,33 L42,36 L42,42 Q42,45 40,46 L37,43 L37,38 Q37,35 39,33" fill="#c9956a" transform="scale(1, 0.87) skewX(-2)"/>
-  </g>
+  <!-- Scrabble tile background -->
+  <rect x="16" y="16" width="160" height="160" rx="12" fill="#fef3c7"/>
+  <!-- Subtle inner shadow/border -->
+  <rect x="16" y="16" width="160" height="160" rx="12" fill="none" stroke="#d4a574" stroke-width="2"/>
+  <!-- Letter S -->
+  <text x="96" y="128" font-family="system-ui, -apple-system, sans-serif" font-size="110" font-weight="bold" fill="#5c4a3d" text-anchor="middle">S</text>
+  <!-- Point value -->
+  <text x="156" y="160" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600" fill="#8b7355" text-anchor="middle">1</text>
 </svg>
