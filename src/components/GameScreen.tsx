@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useGameStore, getPlayerScore } from '@/lib/gameStore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
-import { createEmptyBoard, type BoardState } from '@/lib/types'
+import { createEmptyBoard, type BoardState, type GameMove } from '@/lib/types'
 import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { checkTileOveruse, type TileOveruseWarning } from '@/lib/checkTileOveruse'
@@ -15,16 +15,51 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
-import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react'
+import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX } from '@tabler/icons-react'
+
+/** Convert player's move index to global index in moves array */
+const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIndex: number): number => {
+  let count = 0
+  for (let i = 0; i < moves.length; i++) {
+    const move = moves[i]
+    if (move.playerIndex === playerIndex && !move.adjustment) {
+      if (count === playerMoveIndex) return i
+      count++
+    }
+  }
+  return -1
+}
+
+/** Build board state excluding a specific move's tiles */
+const getBoardExcludingMove = (moves: GameMove[], excludeIndex: number): BoardState => {
+  const board = createEmptyBoard()
+  for (let i = 0; i < moves.length; i++) {
+    if (i === excludeIndex) continue
+    for (const { row, col, tile } of moves[i].tilesPlaced) {
+      board[row][col] = tile
+    }
+  }
+  return board
+}
+
+/** Convert Move to BoardState for editing */
+const moveToBoardState = (tilesPlaced: GameMove['tilesPlaced']): BoardState => {
+  const board = createEmptyBoard()
+  for (const { row, col, tile } of tilesPlaced) {
+    board[row][col] = tile
+  }
+  return board
+}
 
 export const GameScreen = ({ onEndGame }: Props) => {
-  const { currentGame, commitMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
+  const { currentGame, commitMove, updateMove, startTimer, stopTimer, endGame, updatePlayerTime } = useGameStore()
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
   const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
   const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
   const [showEndGameScreen, setShowEndGameScreen] = useState(false)
+  const [editingMoveIndex, setEditingMoveIndex] = useState<number | null>(null)
   const [tileOveruseConfirm, setTileOveruseConfirm] = useState<{
     warnings: TileOveruseWarning[]
     pendingMove: Array<{ row: number; col: number; tile: string }>
@@ -64,11 +99,66 @@ export const GameScreen = ({ onEndGame }: Props) => {
   }
 
   const { players, board, moves } = currentGame
-  // First move for validation = no tiles on board yet (passes don't count)
-  const isFirstMove = board.every(row => row.every(cell => cell === null))
+  const isEditing = editingMoveIndex !== null
+
+  // Board to display: when editing, exclude the move being edited
+  const displayBoard = isEditing ? getBoardExcludingMove(moves, editingMoveIndex) : board
+
+  // For validation: first move = no tiles placed before this point
+  const isFirstMove = isEditing
+    ? !moves.slice(0, editingMoveIndex).some(m => m.tilesPlaced.length > 0)
+    : board.every(row => row.every(cell => cell === null))
+
+  // Handle entering edit mode
+  const handleEditMove = (playerIndex: number, playerMoveIndex: number) => {
+    // Block if tiles are in progress
+    const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
+    if (hasTilesInProgress) {
+      toast.error('Clear current move first')
+      return
+    }
+
+    const globalIndex = getGlobalMoveIndex(moves, playerIndex, playerMoveIndex)
+    if (globalIndex === -1) return
+
+    setEditingMoveIndex(globalIndex)
+    setNewTiles(moveToBoardState(moves[globalIndex].tilesPlaced))
+  }
+
+  // Cancel edit mode
+  const handleCancelEdit = () => {
+    setEditingMoveIndex(null)
+    setNewTiles(createEmptyBoard())
+  }
+
+  // Save edited move
+  const handleSaveEdit = () => {
+    if (editingMoveIndex === null) return
+
+    const move = boardStateToMove(newTiles)
+    const boardForValidation = getBoardExcludingMove(moves, editingMoveIndex)
+
+    if (move.length > 0) {
+      const validation = validateMove(move, boardForValidation, isFirstMove)
+      if (!validation.valid) {
+        toast.error(validation.error)
+        return
+      }
+    }
+
+    updateMove(editingMoveIndex, move)
+    setEditingMoveIndex(null)
+    setNewTiles(createEmptyBoard())
+  }
 
   // End the current turn - validates and commits the move, or shows pass confirmation
   const handleEndTurn = () => {
+    // If editing, save instead
+    if (isEditing) {
+      handleSaveEdit()
+      return
+    }
+
     const move = boardStateToMove(newTiles)
 
     if (move.length > 0) {
@@ -153,10 +243,17 @@ export const GameScreen = ({ onEndGame }: Props) => {
     <div className="flex h-screen flex-col overflow-x-hidden">
       {/* Sticky header: Board + Player panels */}
       <div className="sticky top-0 z-10 bg-white">
+        {/* Edit mode banner */}
+        {isEditing && (
+          <div className="bg-teal-100 px-3 py-1 text-center text-sm text-teal-800">
+            Editing move
+          </div>
+        )}
+
         {/* Board area */}
         <div className="flex flex-col items-center w-full">
           <ScrabbleBoard
-            tiles={board}
+            tiles={displayBoard}
             newTiles={newTiles}
             onNewTilesChange={setNewTiles}
             editable
@@ -219,6 +316,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
                 <MoveHistoryList
                   history={moveHistory}
                   onMoveClick={highlightTiles}
+                  onMoveLongPress={playerMoveIndex => handleEditMove(index, playerMoveIndex)}
                   className="p-2 text-[10px] [&_span:first-child]:font-mono"
                 />
               </div>
@@ -229,18 +327,32 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
       {/* Footer */}
       <div className="flex justify-center gap-2 border-t bg-white p-2">
-        <Button variant={timerRunning ? 'outline' : 'default'} size="xs" onClick={handleTimerToggle}>
-          {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
-          {timerRunning ? 'Pause timer' : 'Start timer'}
-        </Button>
-        <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
-          <IconCards size={14} />
-          Tiles ({remainingTileCount})
-        </Button>
-        <Button variant="outline" size="xs" onClick={handleEndGameClick}>
-          <IconFlag size={14} />
-          End game
-        </Button>
+        {isEditing ? (
+          <>
+            <Button variant="outline" size="xs" onClick={handleCancelEdit}>
+              <IconX size={14} />
+              Cancel
+            </Button>
+            <Button variant="default" size="xs" onClick={handleSaveEdit}>
+              Save edit
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant={timerRunning ? 'outline' : 'default'} size="xs" onClick={handleTimerToggle}>
+              {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+              {timerRunning ? 'Pause timer' : 'Start timer'}
+            </Button>
+            <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+              <IconCards size={14} />
+              Tiles ({remainingTileCount})
+            </Button>
+            <Button variant="outline" size="xs" onClick={handleEndGameClick}>
+              <IconFlag size={14} />
+              End game
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Pass confirmation dialog */}

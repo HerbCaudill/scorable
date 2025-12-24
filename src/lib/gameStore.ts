@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment } from './types'
+import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment, Move } from './types'
 import { createEmptyBoard, createPlayer } from './types'
 import { calculateMoveScore } from './calculateMoveScore'
 
@@ -50,6 +50,7 @@ type GameStore = {
   updateBoard: (board: BoardState) => void
   nextTurn: () => void
   commitMove: (move: GameMove) => void
+  updateMove: (moveIndex: number, newTiles: Move) => void
   updatePlayerTime: (playerIndex: number, timeRemainingMs: number) => void
 
   // Timer
@@ -231,6 +232,36 @@ export const useGameStore = create<GameStore>()(
             moves: newMoves,
             board: newBoard,
             currentPlayerIndex: nextPlayerIndex,
+            updatedAt: Date.now(),
+          },
+        })
+      },
+
+      updateMove: (moveIndex, newTiles) => {
+        const { currentGame } = get()
+        if (!currentGame) return
+        if (moveIndex < 0 || moveIndex >= currentGame.moves.length) return
+
+        // Update the move's tiles
+        const newMoves = [...currentGame.moves]
+        newMoves[moveIndex] = {
+          ...newMoves[moveIndex],
+          tilesPlaced: newTiles,
+        }
+
+        // Rebuild board from scratch by replaying all moves
+        const newBoard = createEmptyBoard()
+        for (const move of newMoves) {
+          for (const { row, col, tile } of move.tilesPlaced) {
+            newBoard[row][col] = tile
+          }
+        }
+
+        set({
+          currentGame: {
+            ...currentGame,
+            moves: newMoves,
+            board: newBoard,
             updatedAt: Date.now(),
           },
         })
