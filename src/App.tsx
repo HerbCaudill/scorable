@@ -26,6 +26,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-xl">
       {screen === 'home' && (
         <HomeScreen
           onNewGame={() => setScreen('player-setup')}
@@ -40,6 +41,7 @@ function App() {
       {screen === 'view-past-game' && viewingGameId && (
         <PastGameScreen gameId={viewingGameId} onBack={() => setScreen('home')} />
       )}
+      </div>
       <Toaster />
     </div>
   )
