@@ -5,7 +5,6 @@ import { PlayerSetupScreen } from './components/PlayerSetupScreen'
 import { GameScreen } from './components/GameScreen'
 import { PastGameScreen } from './components/PastGameScreen'
 import { useGameUrl } from './lib/useGameUrl'
-import { useGame } from './lib/useGame'
 import { Toaster } from '@/components/ui/sonner'
 
 type Screen = 'home' | 'player-setup' | 'game' | 'view-past-game'
@@ -14,14 +13,13 @@ function App() {
   const [screen, setScreen] = useState<Screen>('home')
   const [viewingGameUrl, setViewingGameUrl] = useState<AutomergeUrl | null>(null)
   const [gameUrl, setGameUrl] = useGameUrl()
-  const { game } = useGame(gameUrl)
 
-  // If URL has game hash and game is loaded, navigate to game screen
+  // Navigate to game screen when URL has game hash
   useEffect(() => {
-    if (gameUrl && game && game.status !== 'finished') {
+    if (gameUrl) {
       setScreen('game')
     }
-  }, [gameUrl, game])
+  }, [gameUrl])
 
   const handleResumeGame = (url: AutomergeUrl) => {
     setGameUrl(url)
