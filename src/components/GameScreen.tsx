@@ -30,6 +30,21 @@ const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIn
   return -1
 }
 
+/** Convert global move index to player's local move index */
+const getPlayerMoveIndex = (moves: GameMove[], globalIndex: number): { playerIndex: number; playerMoveIndex: number } | null => {
+  if (globalIndex < 0 || globalIndex >= moves.length) return null
+  const move = moves[globalIndex]
+  if (move.adjustment) return null
+
+  let count = 0
+  for (let i = 0; i < globalIndex; i++) {
+    if (moves[i].playerIndex === move.playerIndex && !moves[i].adjustment) {
+      count++
+    }
+  }
+  return { playerIndex: move.playerIndex, playerMoveIndex: count }
+}
+
 /** Build board state excluding a specific move's tiles */
 const getBoardExcludingMove = (moves: GameMove[], excludeIndex: number): BoardState => {
   const board = createEmptyBoard()
@@ -100,6 +115,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
 
   const { players, board, moves } = currentGame
   const isEditing = editingMoveIndex !== null
+  const editingMoveInfo = editingMoveIndex !== null ? getPlayerMoveIndex(moves, editingMoveIndex) : null
 
   // Board to display: when editing, exclude the move being edited
   const displayBoard = isEditing ? getBoardExcludingMove(moves, editingMoveIndex) : board
@@ -313,6 +329,7 @@ export const GameScreen = ({ onEndGame }: Props) => {
                   history={moveHistory}
                   onMoveClick={highlightTiles}
                   onMoveLongPress={playerMoveIndex => handleEditMove(index, playerMoveIndex)}
+                  editingIndex={editingMoveInfo?.playerIndex === index ? editingMoveInfo.playerMoveIndex : undefined}
                   className="p-2 text-[10px] [&_span:first-child]:font-mono"
                 />
               </div>

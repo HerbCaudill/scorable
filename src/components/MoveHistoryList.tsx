@@ -2,7 +2,7 @@ import type { MoveHistoryEntry } from '@/lib/getPlayerMoveHistory'
 import { cn } from '@/lib/utils'
 import { useLongPress } from '@/hooks/useLongPress'
 
-export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, className }: Props) => {
+export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editingIndex, className }: Props) => {
   return (
     <div className={cn('flex flex-col divide-y divide-neutral-200', className)}>
       {history.map((entry, i) => {
@@ -28,6 +28,7 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, classNa
             key={i}
             entry={entry}
             index={i}
+            isEditing={editingIndex === i}
             onMoveClick={onMoveClick}
             onMoveLongPress={onMoveLongPress}
           />
@@ -37,7 +38,7 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, classNa
   )
 }
 
-const MoveHistoryEntry = ({ entry, index, onMoveClick, onMoveLongPress }: MoveHistoryEntryProps) => {
+const MoveHistoryEntry = ({ entry, index, isEditing, onMoveClick, onMoveLongPress }: MoveHistoryEntryProps) => {
   const longPressHandlers = useLongPress({
     onLongPress: () => onMoveLongPress?.(index),
     onClick: () => onMoveClick(entry.tiles),
@@ -45,7 +46,10 @@ const MoveHistoryEntry = ({ entry, index, onMoveClick, onMoveLongPress }: MoveHi
 
   return (
     <div
-      className="flex cursor-pointer justify-between gap-2 py-1 text-neutral-600 select-none hover:bg-neutral-100 active:bg-neutral-200"
+      className={cn(
+        'flex cursor-pointer justify-between gap-2 py-1 select-none hover:bg-neutral-100 active:bg-neutral-200',
+        isEditing ? 'bg-teal-100 text-teal-800 font-medium' : 'text-neutral-600'
+      )}
       {...longPressHandlers}
     >
       <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
@@ -58,12 +62,14 @@ type Props = {
   history: MoveHistoryEntry[]
   onMoveClick: (tiles: Array<{ row: number; col: number }>) => void
   onMoveLongPress?: (playerMoveIndex: number) => void
+  editingIndex?: number
   className?: string
 }
 
 type MoveHistoryEntryProps = {
   entry: MoveHistoryEntry
   index: number
+  isEditing: boolean
   onMoveClick: (tiles: Array<{ row: number; col: number }>) => void
   onMoveLongPress?: (playerMoveIndex: number) => void
 }
