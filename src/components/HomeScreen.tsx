@@ -4,6 +4,7 @@ import { useDocuments } from '@automerge/automerge-repo-react-hooks'
 import type { AutomergeUrl } from '@automerge/automerge-repo'
 import type { GameDoc } from '@/lib/automergeTypes'
 import { formatDate } from '@/lib/formatDate'
+import { toAutomergeUrl } from '@/lib/useGameUrl'
 import { IconSparkles, IconPlayerPlay, IconTrophyFilled, IconLink } from '@tabler/icons-react'
 import { useState } from 'react'
 
@@ -47,9 +48,9 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
   }
 
   const handleJoinGame = () => {
-    const trimmed = joinUrl.trim()
-    if (trimmed.startsWith('automerge:')) {
-      onResumeGame(trimmed as AutomergeUrl)
+    const url = toAutomergeUrl(joinUrl)
+    if (url) {
+      onResumeGame(url)
       setJoinUrl('')
     }
   }
@@ -74,7 +75,7 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
             placeholder="Paste game URL to join..."
             className="flex-1 rounded border px-3 py-2 text-sm"
           />
-          <Button variant="outline" onClick={handleJoinGame} disabled={!joinUrl.trim().startsWith('automerge:')}>
+          <Button variant="outline" onClick={handleJoinGame} disabled={!joinUrl.trim()}>
             <IconLink size={16} />
             Join
           </Button>
