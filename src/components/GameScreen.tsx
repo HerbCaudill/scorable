@@ -309,6 +309,7 @@ export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
             onNewTilesChange={setNewTiles}
             editable
             highlightedTiles={highlightedTiles}
+            onEnter={handleEndTurn}
           />
         </div>
       </div>
