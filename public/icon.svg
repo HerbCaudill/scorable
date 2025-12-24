@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- White background -->
+  <rect width="100" height="100" fill="#f0edea"/>
+
+  <defs>
+    <clipPath id="tileClip">
+      <rect x="-31" y="-29" width="62" height="62"/>
+    </clipPath>
+  </defs>
+
+  <!-- 3D rotated tile group -->
+  <g transform="translate(50, 50)">
+    <!-- Apply 3D perspective rotation -->
+    <g transform="rotate(-12) skewX(-8) scale(0.9, 0.85)">
+      <!-- Tile shadow -->
+      <rect x="-31" y="-29" width="62" height="62" fill="#00000025" transform="translate(8, 10)"/>
+
+      <!-- Tile side (3D depth) - right edge -->
+      <polygon points="31,-29 35,-25 35,37 31,33" fill="#c9a86c"/>
+
+      <!-- Tile side (3D depth) - bottom edge -->
+      <polygon points="-31,33 31,33 35,37 -27,37" fill="#b8956a"/>
+
+      <!-- Tile face -->
+      <rect x="-31" y="-29" width="62" height="62" fill="#fef3c7"/>
+
+      <!-- Tile border (clipped to draw inside) -->
+      <g clip-path="url(#tileClip)">
+        <rect x="-31" y="-29" width="62" height="62" fill="none" stroke="#d4a574" stroke-width="2"/>
+      </g>
+
+      <!-- Letter S -->
+      <text x="0" y="16" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="bold" fill="#5c4a3d" text-anchor="middle">S</text>
+
+      <!-- Point value -->
+      <text x="22" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#8b7355" text-anchor="middle">1</text>
+    </g>
+  </g>
+</svg>

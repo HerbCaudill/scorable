@@ -1,10 +1,4 @@
 {
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["shadcn", "context7"],
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "superpowers@superpowers-marketplace": true
-  },
   "permissions": {
     "allow": [
       "Skill(superpowers:*)",
@@ -47,7 +41,17 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm test:*)",
-      "Bash(pnpm tsc:*)"
+      "Bash(pnpm tsc:*)",
+      "Bash(rsvg-convert:*)"
     ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn",
+    "context7"
+  ],
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true
   }
 }
