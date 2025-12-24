@@ -30,7 +30,6 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
   const [joinId, setJoinId] = useState('')
 
   // Load all known game documents
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [docs] = useDocuments<GameDoc>(knownGameIds as any)
 
   // Separate active and finished games
@@ -38,7 +37,6 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
   const finishedGames: Array<{ id: DocumentId; doc: GameDoc }> = []
 
   for (const id of knownGameIds) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const doc = docs.get(id as any)
     if (doc) {
       if (doc.status === 'finished') {
@@ -75,7 +73,7 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
             value={joinId}
             onChange={e => setJoinId(e.target.value)}
             placeholder="Paste game ID to join..."
-            className="flex-1 rounded border px-3 py-2 text-sm"
+            className="bg-white flex-1 rounded border px-3 py-2 text-sm"
           />
           <Button variant="outline" onClick={handleJoinGame} disabled={!joinId.trim()}>
             <IconLink size={16} />
@@ -96,9 +94,7 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
                 >
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
-                    <span className="text-xs text-gray-400">
-                      {doc.players.map(p => p.name).join(' vs ')}
-                    </span>
+                    <span className="text-xs text-gray-400">{doc.players.map(p => p.name).join(' vs ')}</span>
                   </div>
                   <Button variant="outline" size="sm">
                     <IconPlayerPlay size={16} />

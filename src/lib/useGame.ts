@@ -1,4 +1,5 @@
-import { useDocument } from '@automerge/automerge-repo-react-hooks'
+import { useState, useEffect } from 'react'
+import { useDocument, useDocHandle } from '@automerge/automerge-repo-react-hooks'
 import type { DocumentId } from '@automerge/automerge-repo'
 import type { GameDoc, GameMoveDoc } from './automergeTypes'
 import { useLocalStore } from './localStore'
@@ -44,6 +45,7 @@ const toAppGame = (doc: GameDoc, timerRunning: boolean): Game => {
 export type UseGameResult = {
   game: Game | null
   isLoading: boolean
+  isUnavailable: boolean
 
   // Timer state (ephemeral, not synced)
   timerRunning: boolean
@@ -63,7 +65,33 @@ export type UseGameResult = {
 
 export const useGame = (id: DocumentId | null): UseGameResult => {
   const [doc, changeDoc] = useDocument<GameDoc>(id ?? undefined)
+  const handle = useDocHandle<GameDoc>(id ?? undefined)
   const { timerRunning, setTimerRunning } = useLocalStore()
+
+  // Track handle state changes to detect unavailable documents
+  const [handleState, setHandleState] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!handle) {
+      setHandleState(null)
+      return
+    }
+
+    // Get initial state
+    setHandleState(handle.state)
+
+    // Listen for state changes
+    const onStateChange = () => {
+      setHandleState(handle.state)
+    }
+
+    // The handle emits events when state changes
+    handle.on('change', onStateChange)
+
+    return () => {
+      handle.off('change', onStateChange)
+    }
+  }, [handle])
 
   const commitMove = (move: GameMove) => {
     if (!doc) return
@@ -174,9 +202,14 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
   const startTimer = () => setTimerRunning(true)
   const stopTimer = () => setTimerRunning(false)
 
+  // Document is loading if we have an ID but no doc yet, and handle isn't in a terminal state
+  const isUnavailable = handleState === 'unavailable'
+  const isLoading = id !== null && doc === undefined && !isUnavailable
+
   return {
     game: doc ? toAppGame(doc, timerRunning) : null,
-    isLoading: id !== null && doc === undefined,
+    isLoading,
+    isUnavailable,
     timerRunning,
     setTimerRunning,
     startTimer,

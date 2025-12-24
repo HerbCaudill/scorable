@@ -75,6 +75,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   const {
     game: currentGame,
     isLoading,
+    isUnavailable,
     timerRunning,
     startTimer,
     stopTimer,
@@ -127,10 +128,13 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     )
   }
 
-  if (!currentGame) {
+  if (isUnavailable || !currentGame) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen flex-col items-center justify-center gap-4">
         <div className="text-gray-500">Game not found</div>
+        <Button variant="outline" onClick={onEndGame}>
+          Go home
+        </Button>
       </div>
     )
   }

@@ -10,7 +10,7 @@ import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { IconArrowLeft, IconHome, IconTrophyFilled } from '@tabler/icons-react'
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
-  const { game, isLoading } = useGame(gameId)
+  const { game, isLoading, isUnavailable } = useGame(gameId)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
 
   if (isLoading) {
@@ -21,7 +21,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
     )
   }
 
-  if (!game) {
+  if (isUnavailable || !game) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
         <p className="text-gray-500">Game not found</p>
