@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
 import { PlayerSetupPage } from '../pages/player-setup.page'
-import { clearStorage, seedStorage } from '../fixtures/storage-fixtures'
+import { GamePage } from '../pages/game.page'
+import { clearStorage } from '../fixtures/storage-fixtures'
 
 let homePage: HomePage
 let setupPage: PlayerSetupPage
@@ -35,15 +36,19 @@ test('enables Start Game with 2+ players', async ({ page }) => {
 })
 
 test('can select from previous players', async ({ page }) => {
-  // First, seed some player records
-  await page.goto('/')
-  await seedStorage(page, {
-    playerRecords: [
-      { name: 'Charlie', gamesPlayed: 5, lastPlayedAt: Date.now() },
-      { name: 'Diana', gamesPlayed: 3, lastPlayedAt: Date.now() },
-    ],
-  })
-  await page.reload()
+  const gamePage = new GamePage(page)
+
+  // First create a finished game to populate player records
+  await setupPage.addNewPlayer(0, 'Charlie')
+  await setupPage.addNewPlayer(1, 'Diana')
+  await setupPage.startGame()
+
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
+  await gamePage.clickEndGame()
+  await gamePage.confirmEndGame()
+
+  // Now start a new game
   await homePage.clickNewGame()
 
   // Open first player dropdown
@@ -91,15 +96,19 @@ test('can add up to 4 players', async ({ page }) => {
 })
 
 test('selected player is removed from other dropdowns', async ({ page }) => {
-  // Seed player records
-  await page.goto('/')
-  await seedStorage(page, {
-    playerRecords: [
-      { name: 'Charlie', gamesPlayed: 5, lastPlayedAt: Date.now() },
-      { name: 'Diana', gamesPlayed: 3, lastPlayedAt: Date.now() },
-    ],
-  })
-  await page.reload()
+  const gamePage = new GamePage(page)
+
+  // First create a finished game to populate player records
+  await setupPage.addNewPlayer(0, 'Charlie')
+  await setupPage.addNewPlayer(1, 'Diana')
+  await setupPage.startGame()
+
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
+  await gamePage.clickEndGame()
+  await gamePage.confirmEndGame()
+
+  // Now start a new game
   await homePage.clickNewGame()
 
   // Select Charlie for first slot

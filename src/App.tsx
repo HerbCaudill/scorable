@@ -14,12 +14,15 @@ function App() {
   const [viewingGameUrl, setViewingGameUrl] = useState<AutomergeUrl | null>(null)
   const [gameUrl, setGameUrl] = useGameUrl()
 
-  // Navigate to game screen when URL has game hash
+  // Navigate based on URL hash: game screen when hash present, home when cleared
   useEffect(() => {
     if (gameUrl) {
       setScreen('game')
+    } else if (screen === 'game') {
+      // Hash was cleared, go back to home
+      setScreen('home')
     }
-  }, [gameUrl])
+  }, [gameUrl, screen])
 
   const handleResumeGame = (url: AutomergeUrl) => {
     setGameUrl(url)

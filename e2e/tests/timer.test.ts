@@ -1,16 +1,21 @@
 import { test, expect } from '@playwright/test'
+import { HomePage } from '../pages/home.page'
+import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage, seedStorage } from '../fixtures/storage-fixtures'
-import { createTestGame } from '../fixtures/game-fixtures'
+import { clearStorage } from '../fixtures/storage-fixtures'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await clearStorage(page)
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
   await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
+
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
 })
 
 test('timer starts when Start Timer clicked', async ({ page }) => {

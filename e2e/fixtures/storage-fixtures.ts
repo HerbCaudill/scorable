@@ -10,8 +10,15 @@ export interface StorageState {
 }
 
 export async function clearStorage(page: Page) {
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     localStorage.clear()
+    // Also clear IndexedDB for Automerge data
+    const databases = await indexedDB.databases()
+    for (const db of databases) {
+      if (db.name) {
+        indexedDB.deleteDatabase(db.name)
+      }
+    }
   })
 }
 

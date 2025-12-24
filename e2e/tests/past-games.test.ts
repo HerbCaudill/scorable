@@ -1,20 +1,45 @@
 import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
+import { PlayerSetupPage } from '../pages/player-setup.page'
 import { PastGamePage } from '../pages/past-game.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage, seedStorage } from '../fixtures/storage-fixtures'
-import { createFinishedGame } from '../fixtures/game-fixtures'
+import { clearStorage } from '../fixtures/storage-fixtures'
+
+/** Helper to create and finish a game through the UI */
+async function createFinishedGameViaUI(
+  page: import('@playwright/test').Page,
+  playerNames: [string, string]
+) {
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
+  const gamePage = new GamePage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, playerNames[0])
+  await setupPage.addNewPlayer(1, playerNames[1])
+  await setupPage.startGame()
+
+  // Player 1 places CAT
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
+
+  // Player 2 places DOG
+  await gamePage.placeWord(8, 7, 'DOG')
+  await gamePage.endTurn()
+
+  // End game (early termination)
+  await gamePage.clickEndGame()
+  await gamePage.confirmEndGame()
+}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await clearStorage(page)
+  await page.reload()
 })
 
 test('can view past game details', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
-
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
   const homePage = new HomePage(page)
   await homePage.clickPastGame(0)
@@ -28,10 +53,7 @@ test('can view past game details', async ({ page }) => {
 })
 
 test('past game board shows tiles', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
-
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
   const homePage = new HomePage(page)
   await homePage.clickPastGame(0)
@@ -44,10 +66,7 @@ test('past game board shows tiles', async ({ page }) => {
 })
 
 test('past game board is read-only', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
-
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
   const homePage = new HomePage(page)
   await homePage.clickPastGame(0)
@@ -65,10 +84,7 @@ test('past game board is read-only', async ({ page }) => {
 })
 
 test('back button returns to home', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
-
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
   const homePage = new HomePage(page)
   await homePage.clickPastGame(0)
@@ -80,10 +96,7 @@ test('back button returns to home', async ({ page }) => {
 })
 
 test('shows scores for each player', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
-
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
   const homePage = new HomePage(page)
   await homePage.clickPastGame(0)
@@ -99,22 +112,19 @@ test('shows scores for each player', async ({ page }) => {
 })
 
 test('past games show winner indicator on home screen', async ({ page }) => {
-  const finishedGame = createFinishedGame(['Alice', 'Bob'])
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
-  await seedStorage(page, { pastGames: [finishedGame] })
-  await page.reload()
-
-  // The trophy icon should be visible next to the winner
-  // The winning player should have a trophy icon
-  await expect(page.locator('.text-amber-500')).toBeVisible()
+  // The trophy icon should be visible next to the winner(s)
+  // Note: Both players may have tied, so there could be multiple trophies
+  await expect(page.locator('.text-amber-500').first()).toBeVisible()
 })
 
 test('multiple past games are listed', async ({ page }) => {
-  const game1 = createFinishedGame(['Alice', 'Bob'])
-  const game2 = createFinishedGame(['Charlie', 'Diana'])
+  // Create first finished game
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
-  await seedStorage(page, { pastGames: [game1, game2] })
-  await page.reload()
+  // Create second finished game
+  await createFinishedGameViaUI(page, ['Charlie', 'Diana'])
 
   const homePage = new HomePage(page)
   const count = await homePage.getPastGamesCount()
@@ -122,21 +132,21 @@ test('multiple past games are listed', async ({ page }) => {
 })
 
 test('can navigate between different past games', async ({ page }) => {
-  const game1 = createFinishedGame(['Alice', 'Bob'])
-  const game2 = createFinishedGame(['Charlie', 'Diana'])
+  // Create first finished game
+  await createFinishedGameViaUI(page, ['Alice', 'Bob'])
 
-  await seedStorage(page, { pastGames: [game1, game2] })
-  await page.reload()
+  // Create second finished game
+  await createFinishedGameViaUI(page, ['Charlie', 'Diana'])
 
   const homePage = new HomePage(page)
   const pastGamePage = new PastGamePage(page)
 
-  // View first game
+  // View first game (most recent, so index 0 is Charlie/Diana)
   await homePage.clickPastGame(0)
-  await pastGamePage.expectPlayerName('Alice')
+  await pastGamePage.expectPlayerName('Charlie')
   await pastGamePage.goBack()
 
-  // View second game
+  // View second game (older one, index 1 is Alice/Bob)
   await homePage.clickPastGame(1)
-  await pastGamePage.expectPlayerName('Charlie')
+  await pastGamePage.expectPlayerName('Alice')
 })

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
 import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage, getStorageState } from '../fixtures/storage-fixtures'
+import { clearStorage } from '../fixtures/storage-fixtures'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
@@ -28,14 +28,17 @@ test('game state persists across page reload', async ({ page }) => {
   // Verify score
   expect(await gamePage.getPlayerScore(0)).toBe(10)
 
-  // Reload page
+  // Wait for IndexedDB to flush before reload
+  await page.waitForTimeout(500)
+
+  // Reload page - game should auto-resume via URL hash
   await page.reload()
 
-  // Should have Resume Game option
-  await expect(page.getByRole('button', { name: 'Resume game' })).toBeVisible()
+  // Wait for Automerge to reload from IndexedDB
+  await page.waitForTimeout(1000)
 
-  // Resume and verify state
-  await homePage.clickResumeGame()
+  // Game screen should still be visible (auto-navigated via URL hash)
+  await gamePage.expectOnGameScreen()
 
   // CAT should still be on board
   await gamePage.expectTileAt(7, 7, 'C')
@@ -97,10 +100,9 @@ test('finished games appear in past games list', async ({ page }) => {
   // Past games section should be visible
   await expect(page.getByText('Past games')).toBeVisible()
 
-  // Verify storage
-  const state = await getStorageState(page)
-  expect(state.pastGames.length).toBe(1)
-  expect(state.pastGames[0].status).toBe('finished')
+  // Verify past game count via UI
+  const count = await homePage.getPastGamesCount()
+  expect(count).toBe(1)
 })
 
 test('multiple games accumulate in history', async ({ page }) => {
@@ -129,11 +131,11 @@ test('multiple games accumulate in history', async ({ page }) => {
   await gamePage.confirmEndGame()
 
   // Should have 2 past games
-  const state = await getStorageState(page)
-  expect(state.pastGames.length).toBe(2)
+  const count = await homePage.getPastGamesCount()
+  expect(count).toBe(2)
 })
 
-test('current game replaces previous unfinished game', async ({ page }) => {
+test('active game shown on home screen after navigating away', async ({ page }) => {
   const homePage = new HomePage(page)
   const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
@@ -146,21 +148,16 @@ test('current game replaces previous unfinished game', async ({ page }) => {
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
 
-  // Go back to home and start new game
-  await page.goto('/')
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Charlie')
-  await setupPage.addNewPlayer(1, 'Diana')
-  await setupPage.startGame()
+  // Navigate to home by clearing hash
+  await page.evaluate(() => {
+    window.location.hash = ''
+  })
+  await expect(page.getByRole('button', { name: 'New game' })).toBeVisible()
 
-  // Current game should now be Charlie/Diana
-  await expect(page.getByText('Charlie')).toBeVisible()
-  await expect(page.getByText('Diana')).toBeVisible()
-
-  // Verify in storage
-  const state = await getStorageState(page)
-  expect(state.currentGame).not.toBeNull()
-  expect(state.currentGame?.players[0].name).toBe('Charlie')
+  // Active games section should show the game
+  await expect(page.getByText('Active games')).toBeVisible()
+  await expect(page.getByText('Alice')).toBeVisible()
+  await expect(page.getByText('Bob')).toBeVisible()
 })
 
 test('timer state persists across reload', async ({ page }) => {
@@ -177,14 +174,18 @@ test('timer state persists across reload', async ({ page }) => {
   await gamePage.toggleTimer() // Start timer
   await page.waitForTimeout(1000)
 
-  // Reload
-  await page.reload()
-  await homePage.clickResumeGame()
+  // Get time before reload
+  const timerBefore = gamePage.getPlayerTimer(0)
+  const timeBefore = await timerBefore.getAttribute('aria-label')
 
-  // Timer should still be running (or at least time should have decreased)
-  // Note: The timer running state may or may not persist depending on implementation
-  // But the time remaining should have decreased
-  const timer = gamePage.getPlayerTimer(0)
-  const timerLabel = await timer.getAttribute('aria-label')
-  expect(timerLabel).not.toBe('30:00 remaining') // Should be less than initial time
+  // Reload - game auto-resumes via URL hash
+  await page.reload()
+  await gamePage.expectOnGameScreen()
+
+  // The time remaining should have been persisted (though timer running state may reset)
+  const timerAfter = gamePage.getPlayerTimer(0)
+  const timeAfter = await timerAfter.getAttribute('aria-label')
+
+  // Time should be less than or equal to initial 30:00
+  expect(timeAfter).not.toBe('30:00 remaining')
 })

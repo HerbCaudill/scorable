@@ -1,21 +1,31 @@
 import { test, expect } from '@playwright/test'
 import { GamePage } from '../pages/game.page'
-import { clearStorage, seedStorage } from '../fixtures/storage-fixtures'
-import { createTestGame, createGameWithMoves } from '../fixtures/game-fixtures'
+import { HomePage } from '../pages/home.page'
+import { PlayerSetupPage } from '../pages/player-setup.page'
+import { clearStorage } from '../fixtures/storage-fixtures'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await clearStorage(page)
+  await page.reload()
 })
 
-test('first move must include center square', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
+async function startNewGame(page: import('@playwright/test').Page): Promise<GamePage> {
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
 
   const gamePage = new GamePage(page)
+  await gamePage.expectOnGameScreen()
+  return gamePage
+}
+
+test('first move must include center square', async ({ page }) => {
+  const gamePage = await startNewGame(page)
 
   // Place word NOT on center
   await gamePage.placeWord(0, 0, 'CAT')
@@ -26,13 +36,7 @@ test('first move must include center square', async ({ page }) => {
 })
 
 test('first move on center square succeeds', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
-  const gamePage = new GamePage(page)
+  const gamePage = await startNewGame(page)
 
   // Place word on center
   await gamePage.placeWord(7, 7, 'CAT')
@@ -44,24 +48,13 @@ test('first move on center square succeeds', async ({ page }) => {
 })
 
 test('subsequent moves must connect to existing tiles', async ({ page }) => {
-  const gameWithMove = createGameWithMoves(['Alice', 'Bob'], [
-    {
-      playerIndex: 0,
-      tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
-      ],
-    },
-  ])
+  const gamePage = await startNewGame(page)
 
-  await seedStorage(page, { currentGame: gameWithMove })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
+  // First move on center
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
 
-  const gamePage = new GamePage(page)
-
-  // Place word not connected to existing tiles
+  // Second player places word not connected to existing tiles
   await gamePage.placeWord(0, 0, 'DOG')
   await gamePage.endTurn()
 
@@ -70,22 +63,11 @@ test('subsequent moves must connect to existing tiles', async ({ page }) => {
 })
 
 test('connected word succeeds', async ({ page }) => {
-  const gameWithMove = createGameWithMoves(['Alice', 'Bob'], [
-    {
-      playerIndex: 0,
-      tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
-      ],
-    },
-  ])
+  const gamePage = await startNewGame(page)
 
-  await seedStorage(page, { currentGame: gameWithMove })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
-  const gamePage = new GamePage(page)
+  // First move on center
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
 
   // Place word connected to existing tiles (add S below A to make AS)
   await gamePage.clickCell(8, 8)
@@ -98,13 +80,7 @@ test('connected word succeeds', async ({ page }) => {
 })
 
 test('tiles must be in single line', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
-  const gamePage = new GamePage(page)
+  const gamePage = await startNewGame(page)
 
   // Place tiles in L-shape (not in a line)
   await gamePage.clickCell(7, 7)
@@ -120,13 +96,7 @@ test('tiles must be in single line', async ({ page }) => {
 })
 
 test('word cannot have gaps', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
-  const gamePage = new GamePage(page)
+  const gamePage = await startNewGame(page)
 
   // Place tiles with a gap
   await gamePage.clickCell(7, 7)
@@ -140,13 +110,7 @@ test('word cannot have gaps', async ({ page }) => {
 })
 
 test('short word on first turn is valid', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
-  const gamePage = new GamePage(page)
+  const gamePage = await startNewGame(page)
 
   // Place a short word (2 letters) on center - this is allowed in scrabble
   await gamePage.placeWord(7, 7, 'AT')

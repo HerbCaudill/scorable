@@ -1,21 +1,24 @@
 import { test, expect } from '@playwright/test'
+import { HomePage } from '../pages/home.page'
+import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage, seedStorage } from '../fixtures/storage-fixtures'
-import { createTestGame, createGameWithMoves } from '../fixtures/game-fixtures'
+import { clearStorage } from '../fixtures/storage-fixtures'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await clearStorage(page)
+  await page.reload()
 })
 
 test('applies double word score for center square', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
 
   // CAT at center: C=3, A=1, T=1 = 5 * 2 (DW) = 10
   await gamePage.placeWord(7, 7, 'CAT')
@@ -25,22 +28,18 @@ test('applies double word score for center square', async ({ page }) => {
 })
 
 test('basic word scoring without multipliers', async ({ page }) => {
-  const gameWithMove = createGameWithMoves(['Alice', 'Bob'], [
-    {
-      playerIndex: 0,
-      tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
-      ],
-    },
-  ])
-
-  await seedStorage(page, { currentGame: gameWithMove })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
+
+  // Alice places CAT at center
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
 
   // Bob adds S below A: S is on DL square, so S(1)*2 + A(1) = 3
   await gamePage.clickCell(8, 8)
@@ -52,28 +51,21 @@ test('basic word scoring without multipliers', async ({ page }) => {
 })
 
 test('cross-word scoring', async ({ page }) => {
-  const gameWithMove = createGameWithMoves(['Alice', 'Bob'], [
-    {
-      playerIndex: 0,
-      tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
-      ],
-    },
-  ])
-
-  await seedStorage(page, { currentGame: gameWithMove })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
 
-  // Bob places "BA" vertically, connecting to make "BAT"
-  // B at 6,9, A at 7,9 (where T already is - skip), so actually:
-  // Place B above T and S below T to make "BTS" vertically
-  await gamePage.clickCell(6, 9)
-  await gamePage.clickCell(6, 9) // Toggle to vertical
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
+
+  // Alice places CAT at center
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
+
+  // Bob places "O" above T and "S" below T to make "OTS" vertically
+  await gamePage.setCursorDirection(6, 9, 'vertical')
   await gamePage.typeLetters('O')
   await gamePage.clickCell(8, 9)
   await gamePage.typeLetters('S')
@@ -84,16 +76,15 @@ test('cross-word scoring', async ({ page }) => {
 })
 
 test('bingo bonus for 7 tiles', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
 
-  // QUILTED (7 letters) at center - Q=10, U=1, I=1, L=1, T=1, E=1, D=2 = 18 * 2 = 36 + 50 = 86
-  // Actually let's use a simpler 7-letter word
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
+
   // RETAINS: R=1, E=1, T=1, A=1, I=1, N=1, S=1 = 7 * 2 = 14 + 50 = 64
   await gamePage.placeWord(7, 4, 'RETAINS')
   await gamePage.endTurn()
@@ -104,13 +95,14 @@ test('bingo bonus for 7 tiles', async ({ page }) => {
 })
 
 test('blank tile scores 0 points', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
 
   // Place C_T where _ is a blank representing A
   // C=3, blank=0, T=1 = 4 * 2 = 8
@@ -125,43 +117,38 @@ test('blank tile scores 0 points', async ({ page }) => {
 })
 
 test('double letter square', async ({ page }) => {
-  // The DL squares are at specific positions
-  // Position (6,6) is a DL square
-  const gameWithMove = createGameWithMoves(['Alice', 'Bob'], [
-    {
-      playerIndex: 0,
-      tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
-      ],
-    },
-  ])
-
-  await seedStorage(page, { currentGame: gameWithMove })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
 
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
+
+  // Alice places CAT at center
+  await gamePage.placeWord(7, 7, 'CAT')
+  await gamePage.endTurn()
+
   // Place a word that uses a DL square
-  // (6,6) is DL - place "DC" vertically to connect
+  // (6,7) should connect to C - place "O" above C
   await gamePage.clickCell(6, 7)
   await gamePage.typeLetters('O')
   await gamePage.endTurn()
 
-  // O at DL = 1*2 = 2, plus C from cross = 3, total "OC" = 2+3 = 5
+  // O at some position + C from cross
   expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
 })
 
 test('scores update after each valid move', async ({ page }) => {
-  await seedStorage(page, {
-    currentGame: createTestGame(['Alice', 'Bob']),
-  })
-  await page.reload()
-  await page.getByRole('button', { name: 'Resume game' }).click()
-
+  const homePage = new HomePage(page)
+  const setupPage = new PlayerSetupPage(page)
   const gamePage = new GamePage(page)
+
+  await homePage.clickNewGame()
+  await setupPage.addNewPlayer(0, 'Alice')
+  await setupPage.addNewPlayer(1, 'Bob')
+  await setupPage.startGame()
 
   // Initial scores should be 0
   expect(await gamePage.getPlayerScore(0)).toBe(0)
