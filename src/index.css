@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -49,7 +49,6 @@
   --color-khaki-900: oklch(25.16% 0.012 67.24);
   --color-khaki-950: oklch(17.13% 0.007 55.91);
   --color-khaki: var(--color-khaki-500);
-
 }
 
 @theme inline {
@@ -101,10 +100,10 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --primary: var(--color-teal-600);
+  --primary-foreground: white;
+  --secondary: var(--color-khaki-700);
+  --secondary-foreground: white;
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
