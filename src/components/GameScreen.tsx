@@ -17,7 +17,7 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
-import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX } from '@tabler/icons-react'
+import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX, IconShare } from '@tabler/icons-react'
 
 /** Convert player's move index to global index in moves array */
 const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIndex: number): number => {
@@ -275,6 +275,29 @@ export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
     else startTimer()
   }
 
+  const handleShare = async () => {
+    const url = window.location.href
+    const playerNames = players.map(p => p.name).join(' vs ')
+
+    // Use native share only on mobile (iOS/Android), not on macOS
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
+    if (isMobile && navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Scrabble Game',
+          text: `Join my Scrabble game: ${playerNames}`,
+          url,
+        })
+      } catch {
+        // User cancelled or share failed - ignore
+      }
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success('Link copied to clipboard')
+    }
+  }
+
   const handleConfirmPass = () => {
     commitMove({
       playerIndex: currentPlayerIndex,
@@ -403,6 +426,10 @@ export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
             <Button variant="outline" size="xs" onClick={handleEndGameClick}>
               <IconFlag size={14} />
               End game
+            </Button>
+            <Button variant="outline" size="xs" onClick={handleShare}>
+              <IconShare size={14} />
+              Share
             </Button>
           </>
         )}
