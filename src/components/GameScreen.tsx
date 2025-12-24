@@ -343,7 +343,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
       {/* Player panels + history - scroll together horizontally */}
       <div className="flex-1 overflow-x-auto overflow-y-auto ">
-        <div className="flex w-full gap-3 py-2">
+        <div className="flex w-full gap-3 px-1 py-2">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
             const score = getPlayerScore(currentGame, index)
