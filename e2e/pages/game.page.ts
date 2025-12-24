@@ -38,13 +38,32 @@ export class GamePage {
     await this.page.keyboard.press(key)
   }
 
+  /** Click cell until cursor has desired direction */
+  async setCursorDirection(row: number, col: number, direction: 'horizontal' | 'vertical') {
+    await this.clickCell(row, col)
+    const currentDirection = await this.getCursorDirection()
+    if (currentDirection !== direction) {
+      await this.clickCell(row, col) // Toggle direction
+    }
+  }
+
+  /** Get the cursor direction from the selected cell */
+  async getCursorDirection(): Promise<'horizontal' | 'vertical' | null> {
+    const selectedCell = this.page.locator('[aria-selected="true"]')
+    if (!(await selectedCell.isVisible())) return null
+    const direction = await selectedCell.getAttribute('data-cursor-direction')
+    return direction as 'horizontal' | 'vertical' | null
+  }
+
+  /** Expect cursor to have specific direction */
+  async expectCursorDirection(direction: 'horizontal' | 'vertical') {
+    const selectedCell = this.page.locator('[aria-selected="true"]')
+    await expect(selectedCell).toHaveAttribute('data-cursor-direction', direction)
+  }
+
   /** Place a word starting at a position */
   async placeWord(startRow: number, startCol: number, word: string, direction: 'horizontal' | 'vertical' = 'horizontal') {
-    await this.clickCell(startRow, startCol)
-    // If we need vertical, click again to toggle direction
-    if (direction === 'vertical') {
-      await this.clickCell(startRow, startCol)
-    }
+    await this.setCursorDirection(startRow, startCol, direction)
     await this.typeLetters(word)
   }
 
@@ -256,5 +275,48 @@ export class GamePage {
   async expectPlayerEndedGame(playerName: string) {
     const playerSection = this.getPlayerSection(playerName)
     await expect(playerSection).toContainText('ended the game')
+  }
+
+  // Move Correction methods
+
+  /** Get the move history entries for a player */
+  private getPlayerMoveHistory(playerName: string) {
+    const panel = this.page.locator('[role="region"][data-player]').filter({ hasText: playerName })
+    return panel.locator('.divide-y > div')
+  }
+
+  /** Long-press on a move in a player's history to enter edit mode */
+  async longPressMove(playerName: string, moveIndex: number) {
+    const entries = this.getPlayerMoveHistory(playerName)
+    const entry = entries.nth(moveIndex)
+    // Simulate long press: touchstart, wait 600ms, touchend
+    await entry.dispatchEvent('touchstart')
+    await this.page.waitForTimeout(600)
+    await entry.dispatchEvent('touchend')
+  }
+
+  /** Expect the app to be in edit mode */
+  async expectInEditMode() {
+    await expect(this.page.getByText('Editing move')).toBeVisible()
+  }
+
+  /** Expect the app to not be in edit mode */
+  async expectNotInEditMode() {
+    await expect(this.page.getByText('Editing move')).not.toBeVisible()
+  }
+
+  /** Click cancel button during edit mode */
+  async cancelEdit() {
+    await this.page.getByRole('button', { name: 'Cancel' }).click()
+  }
+
+  /** Click save edit button */
+  async saveEdit() {
+    await this.page.getByRole('button', { name: 'Save edit' }).click()
+  }
+
+  /** Get the current URL hash */
+  async getUrlHash(): Promise<string> {
+    return this.page.evaluate(() => window.location.hash)
   }
 }

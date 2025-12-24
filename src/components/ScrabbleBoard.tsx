@@ -380,6 +380,7 @@ const ScrabbleBoard = ({
                 aria-selected={hasCursor}
                 data-has-tile={hasTile || undefined}
                 data-tile-state={isNewTile ? 'new' : hasTile ? 'existing' : undefined}
+                data-cursor-direction={hasCursor ? cursor?.direction : undefined}
                 onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
                   'relative flex aspect-square items-center justify-center overflow-visible',

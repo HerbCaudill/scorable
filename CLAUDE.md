@@ -4,13 +4,13 @@ An app for keeping score during Scrabble games.
 
 ## Quick reference
 
-| Command           | Purpose               |
-| ----------------- | --------------------- |
-| `pnpm dev`        | Start dev server      |
-| `pnpm test`       | Run Vitest tests      |
-| `pnpm test:e2e`   | Run Playwright tests  |
-| `pnpm storybook`  | Component development |
-| `pnpm build`      | Production build      |
+| Command          | Purpose               |
+| ---------------- | --------------------- |
+| `pnpm dev`       | Start dev server      |
+| `pnpm test`      | Run Vitest tests      |
+| `pnpm test:e2e`  | Run Playwright tests  |
+| `pnpm storybook` | Component development |
+| `pnpm build`     | Production build      |
 
 ## Project structure
 
@@ -114,6 +114,7 @@ Long-press on a move in the history to edit it. The board shows the state before
 ## End game flow
 
 When a player goes out or the game ends:
+
 1. Enter remaining tiles on each player's rack
 2. System validates racks against remaining tiles
 3. Final adjustments: player who went out gets sum of opponents' rack values
