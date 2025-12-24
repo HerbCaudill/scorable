@@ -128,6 +128,8 @@ const ScrabbleBoard = ({
     : newTiles
 
   // Find next empty position in current direction
+  // When skipExisting is true, skip cells that have tiles in the base `tiles` prop (not newTiles)
+  // This allows cursor to advance over pre-populated newTiles when editing a move
   const findNextPosition = useCallback(
     (fromRow: number, fromCol: number, direction: CursorDirection, skipExisting: boolean): Cursor | null => {
       let row = fromRow
@@ -136,7 +138,8 @@ const ScrabbleBoard = ({
       if (direction === 'horizontal') {
         col++
         while (col < 15) {
-          if (!skipExisting || allTiles[row][col] === null) {
+          // Only skip cells with existing tiles (from `tiles` prop), not newTiles
+          if (!skipExisting || !tiles || tiles[row][col] === null) {
             return { row, col, direction }
           }
 
@@ -145,7 +148,8 @@ const ScrabbleBoard = ({
       } else {
         row++
         while (row < 15) {
-          if (!skipExisting || allTiles[row][col] === null) {
+          // Only skip cells with existing tiles (from `tiles` prop), not newTiles
+          if (!skipExisting || !tiles || tiles[row][col] === null) {
             return { row, col, direction }
           }
 
@@ -155,7 +159,7 @@ const ScrabbleBoard = ({
 
       return null // Off the board
     },
-    [allTiles]
+    [tiles]
   )
 
   // Handle keyboard input
