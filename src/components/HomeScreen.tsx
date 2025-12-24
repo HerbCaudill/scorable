@@ -5,25 +5,9 @@ import type { DocumentId } from '@automerge/automerge-repo'
 import type { GameDoc } from '@/lib/automergeTypes'
 import { formatDate } from '@/lib/formatDate'
 import { toDocumentId } from '@/lib/useGameId'
+import { getPlayerScoreFromDoc } from '@/lib/getPlayerScoreFromDoc'
 import { IconSparkles, IconPlayerPlay, IconTrophyFilled, IconLink } from '@tabler/icons-react'
 import { useState } from 'react'
-
-/** Calculate player score from moves - simplified version for display */
-const getPlayerScoreFromDoc = (doc: GameDoc, playerIndex: number): number => {
-  // This is a simplified calculation for display purposes
-  // The full calculation with multipliers happens when viewing the game
-  let score = 0
-  for (const move of doc.moves) {
-    if (move.playerIndex === playerIndex) {
-      // Just count tiles * 1 as rough estimate for display
-      score += move.tilesPlaced.length
-      if (move.adjustment) {
-        score += move.adjustment.deduction + move.adjustment.bonus
-      }
-    }
-  }
-  return score
-}
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { knownGameIds } = useLocalStore()
