@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { useLocalStore } from '@/lib/localStore'
 import { useDocuments } from '@automerge/automerge-repo-react-hooks'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import type { GameDoc } from '@/lib/automergeTypes'
 import { formatDate } from '@/lib/formatDate'
-import { toAutomergeUrl } from '@/lib/useGameUrl'
+import { toDocumentId } from '@/lib/useGameId'
 import { IconSparkles, IconPlayerPlay, IconTrophyFilled, IconLink } from '@tabler/icons-react'
 import { useState } from 'react'
 
@@ -26,32 +26,34 @@ const getPlayerScoreFromDoc = (doc: GameDoc, playerIndex: number): number => {
 }
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
-  const { knownGameUrls } = useLocalStore()
-  const [joinUrl, setJoinUrl] = useState('')
+  const { knownGameIds } = useLocalStore()
+  const [joinId, setJoinId] = useState('')
 
   // Load all known game documents
-  const [docs] = useDocuments<GameDoc>(knownGameUrls)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [docs] = useDocuments<GameDoc>(knownGameIds as any)
 
   // Separate active and finished games
-  const activeGames: Array<{ url: AutomergeUrl; doc: GameDoc }> = []
-  const finishedGames: Array<{ url: AutomergeUrl; doc: GameDoc }> = []
+  const activeGames: Array<{ id: DocumentId; doc: GameDoc }> = []
+  const finishedGames: Array<{ id: DocumentId; doc: GameDoc }> = []
 
-  for (const url of knownGameUrls) {
-    const doc = docs.get(url)
+  for (const id of knownGameIds) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const doc = docs.get(id as any)
     if (doc) {
       if (doc.status === 'finished') {
-        finishedGames.push({ url, doc })
+        finishedGames.push({ id, doc })
       } else {
-        activeGames.push({ url, doc })
+        activeGames.push({ id, doc })
       }
     }
   }
 
   const handleJoinGame = () => {
-    const url = toAutomergeUrl(joinUrl)
-    if (url) {
-      onResumeGame(url)
-      setJoinUrl('')
+    const id = toDocumentId(joinId)
+    if (id) {
+      onResumeGame(id)
+      setJoinId('')
     }
   }
 
@@ -66,16 +68,16 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
           </Button>
         </div>
 
-        {/* Join game by URL */}
+        {/* Join game by ID */}
         <div className="flex gap-2">
           <input
             type="text"
-            value={joinUrl}
-            onChange={e => setJoinUrl(e.target.value)}
-            placeholder="Paste game URL to join..."
+            value={joinId}
+            onChange={e => setJoinId(e.target.value)}
+            placeholder="Paste game ID to join..."
             className="flex-1 rounded border px-3 py-2 text-sm"
           />
-          <Button variant="outline" onClick={handleJoinGame} disabled={!joinUrl.trim()}>
+          <Button variant="outline" onClick={handleJoinGame} disabled={!joinId.trim()}>
             <IconLink size={16} />
             Join
           </Button>
@@ -86,10 +88,10 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
           <div className="flex flex-col gap-3">
             <h2 className="text-sm font-medium text-gray-500">Active games</h2>
             <div className="flex flex-col gap-2">
-              {activeGames.map(({ url, doc }) => (
+              {activeGames.map(({ id, doc }) => (
                 <div
-                  key={url}
-                  onClick={() => onResumeGame(url)}
+                  key={id}
+                  onClick={() => onResumeGame(id)}
                   className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
                 >
                   <div className="flex flex-col">
@@ -113,13 +115,13 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
           <div className="flex flex-col gap-3">
             <h2 className="text-sm font-medium text-gray-500">Past games</h2>
             <div className="flex flex-col gap-2">
-              {finishedGames.map(({ url, doc }) => {
+              {finishedGames.map(({ id, doc }) => {
                 const scores = doc.players.map((_, i) => getPlayerScoreFromDoc(doc, i))
                 const maxScore = Math.max(...scores)
                 return (
                   <div
-                    key={url}
-                    onClick={() => onViewPastGame(url)}
+                    key={id}
+                    onClick={() => onViewPastGame(id)}
                     className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
                   >
                     <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
@@ -149,6 +151,6 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
 
 type Props = {
   onNewGame: () => void
-  onResumeGame: (url: AutomergeUrl) => void
-  onViewPastGame: (url: AutomergeUrl) => void
+  onResumeGame: (id: DocumentId) => void
+  onViewPastGame: (id: DocumentId) => void
 }

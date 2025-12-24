@@ -1,5 +1,5 @@
 import { useRepo } from '@automerge/automerge-repo-react-hooks'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import { PlayerSetup } from './PlayerSetup'
 import { useLocalStore } from '@/lib/localStore'
 import { createEmptyBoardDoc, type GameDoc } from '@/lib/automergeTypes'
@@ -8,7 +8,7 @@ import { IconArrowLeft } from '@tabler/icons-react'
 
 export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   const repo = useRepo()
-  const { addGameUrl, addPlayerRecord, getPlayerNames } = useLocalStore()
+  const { addGameId, addPlayerRecord, getPlayerNames } = useLocalStore()
   const previousPlayers = getPlayerNames()
 
   const handleStartGame = (playerNames: string[]) => {
@@ -31,14 +31,14 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
       })
 
       // Save to local bookmarks
-      addGameUrl(handle.url)
+      addGameId(handle.documentId)
 
       // Update player records
       for (const name of playerNames) {
         addPlayerRecord(name)
       }
 
-      onGameCreated(handle.url)
+      onGameCreated(handle.documentId)
     } catch (error) {
       console.error('Failed to create game:', error)
       alert(`Failed to create game: ${error instanceof Error ? error.message : String(error)}`)
@@ -66,6 +66,6 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
 }
 
 type Props = {
-  onGameCreated: (url: AutomergeUrl) => void
+  onGameCreated: (id: DocumentId) => void
   onBack: () => void
 }

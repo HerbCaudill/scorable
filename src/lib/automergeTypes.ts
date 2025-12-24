@@ -1,4 +1,4 @@
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 
 /** Automerge-compatible player state */
 export type PlayerDoc = {
@@ -50,4 +50,4 @@ export const createEmptyBoardDoc = (): string[][] => {
   return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => ''))
 }
 
-export type { AutomergeUrl }
+export type { DocumentId }

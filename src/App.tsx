@@ -1,46 +1,46 @@
 import { useState, useEffect } from 'react'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import { HomeScreen } from './components/HomeScreen'
 import { PlayerSetupScreen } from './components/PlayerSetupScreen'
 import { GameScreen } from './components/GameScreen'
 import { PastGameScreen } from './components/PastGameScreen'
-import { useGameUrl } from './lib/useGameUrl'
+import { useGameId } from './lib/useGameId'
 import { Toaster } from '@/components/ui/sonner'
 
 type Screen = 'home' | 'player-setup' | 'game' | 'view-past-game'
 
 function App() {
   const [screen, setScreen] = useState<Screen>('home')
-  const [viewingGameUrl, setViewingGameUrl] = useState<AutomergeUrl | null>(null)
-  const [gameUrl, setGameUrl] = useGameUrl()
+  const [viewingGameId, setViewingGameId] = useState<DocumentId | null>(null)
+  const [gameId, setGameId] = useGameId()
 
   // Navigate based on URL hash: game screen when hash present, home when cleared
   useEffect(() => {
-    if (gameUrl) {
+    if (gameId) {
       setScreen('game')
     } else if (screen === 'game') {
       // Hash was cleared, go back to home
       setScreen('home')
     }
-  }, [gameUrl, screen])
+  }, [gameId, screen])
 
-  const handleResumeGame = (url: AutomergeUrl) => {
-    setGameUrl(url)
+  const handleResumeGame = (id: DocumentId) => {
+    setGameId(id)
     setScreen('game')
   }
 
-  const handleViewPastGame = (url: AutomergeUrl) => {
-    setViewingGameUrl(url)
+  const handleViewPastGame = (id: DocumentId) => {
+    setViewingGameId(id)
     setScreen('view-past-game')
   }
 
-  const handleGameCreated = (url: AutomergeUrl) => {
-    setGameUrl(url)
+  const handleGameCreated = (id: DocumentId) => {
+    setGameId(id)
     setScreen('game')
   }
 
   const handleEndGame = () => {
-    setGameUrl(null)
+    setGameId(null)
     setScreen('home')
   }
 
@@ -57,9 +57,9 @@ function App() {
         {screen === 'player-setup' && (
           <PlayerSetupScreen onGameCreated={handleGameCreated} onBack={() => setScreen('home')} />
         )}
-        {screen === 'game' && gameUrl && <GameScreen gameUrl={gameUrl} onEndGame={handleEndGame} />}
-        {screen === 'view-past-game' && viewingGameUrl && (
-          <PastGameScreen gameUrl={viewingGameUrl} onBack={() => setScreen('home')} />
+        {screen === 'game' && gameId && <GameScreen gameId={gameId} onEndGame={handleEndGame} />}
+        {screen === 'view-past-game' && viewingGameId && (
+          <PastGameScreen gameId={viewingGameId} onBack={() => setScreen('home')} />
         )}
       </div>
       <Toaster />

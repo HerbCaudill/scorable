@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import { useGame } from '@/lib/useGame'
 import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
@@ -71,7 +71,7 @@ const moveToBoardState = (tilesPlaced: GameMove['tilesPlaced']): BoardState => {
   return board
 }
 
-export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
+export const GameScreen = ({ gameId, onEndGame }: Props) => {
   const {
     game: currentGame,
     isLoading,
@@ -83,7 +83,7 @@ export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
     updatePlayerTime,
     endGame,
     endGameWithAdjustments,
-  } = useGame(gameUrl)
+  } = useGame(gameId)
 
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
@@ -486,6 +486,6 @@ export const GameScreen = ({ gameUrl, onEndGame }: Props) => {
 }
 
 type Props = {
-  gameUrl: AutomergeUrl
+  gameId: DocumentId
   onEndGame: () => void
 }

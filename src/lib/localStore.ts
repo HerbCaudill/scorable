@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import type { PlayerRecord } from './types'
 
 type LocalStore = {
-  // Known game URLs (bookmarks)
-  knownGameUrls: AutomergeUrl[]
-  addGameUrl: (url: AutomergeUrl) => void
-  removeGameUrl: (url: AutomergeUrl) => void
+  // Known game IDs (bookmarks)
+  knownGameIds: DocumentId[]
+  addGameId: (id: DocumentId) => void
+  removeGameId: (id: DocumentId) => void
 
   // Player records for autocomplete
   playerRecords: PlayerRecord[]
@@ -22,17 +22,17 @@ type LocalStore = {
 export const useLocalStore = create<LocalStore>()(
   persist(
     (set, get) => ({
-      knownGameUrls: [],
+      knownGameIds: [],
 
-      addGameUrl: url => {
-        const { knownGameUrls } = get()
-        if (!knownGameUrls.includes(url)) {
-          set({ knownGameUrls: [url, ...knownGameUrls] })
+      addGameId: id => {
+        const { knownGameIds } = get()
+        if (!knownGameIds.includes(id)) {
+          set({ knownGameIds: [id, ...knownGameIds] })
         }
       },
 
-      removeGameUrl: url => {
-        set({ knownGameUrls: get().knownGameUrls.filter(u => u !== url) })
+      removeGameId: id => {
+        set({ knownGameIds: get().knownGameIds.filter(i => i !== id) })
       },
 
       playerRecords: [],
@@ -82,7 +82,7 @@ export const useLocalStore = create<LocalStore>()(
     {
       name: 'scrabble-local-storage',
       partialize: state => ({
-        knownGameUrls: state.knownGameUrls,
+        knownGameIds: state.knownGameIds,
         playerRecords: state.playerRecords,
       }),
     }

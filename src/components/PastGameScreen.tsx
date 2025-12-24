@@ -1,4 +1,4 @@
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import { useGame } from '@/lib/useGame'
 import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
@@ -9,8 +9,8 @@ import { MoveHistoryList } from './MoveHistoryList'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { IconArrowLeft, IconHome, IconTrophyFilled } from '@tabler/icons-react'
 
-export const PastGameScreen = ({ gameUrl, onBack }: Props) => {
-  const { game, isLoading } = useGame(gameUrl)
+export const PastGameScreen = ({ gameId, onBack }: Props) => {
+  const { game, isLoading } = useGame(gameId)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
 
   if (isLoading) {
@@ -105,6 +105,6 @@ export const PastGameScreen = ({ gameUrl, onBack }: Props) => {
 }
 
 type Props = {
-  gameUrl: AutomergeUrl
+  gameId: DocumentId
   onBack: () => void
 }

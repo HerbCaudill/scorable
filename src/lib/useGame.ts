@@ -1,5 +1,5 @@
 import { useDocument } from '@automerge/automerge-repo-react-hooks'
-import type { AutomergeUrl } from '@automerge/automerge-repo'
+import type { DocumentId } from '@automerge/automerge-repo'
 import type { GameDoc, GameMoveDoc } from './automergeTypes'
 import { useLocalStore } from './localStore'
 import type { BoardState, Game, GameMove, Move, Adjustment } from './types'
@@ -61,8 +61,8 @@ export type UseGameResult = {
   endGameWithAdjustments: (adjustments: Array<{ playerIndex: number } & Adjustment>) => void
 }
 
-export const useGame = (url: AutomergeUrl | null): UseGameResult => {
-  const [doc, changeDoc] = useDocument<GameDoc>(url ?? undefined)
+export const useGame = (id: DocumentId | null): UseGameResult => {
+  const [doc, changeDoc] = useDocument<GameDoc>(id ?? undefined)
   const { timerRunning, setTimerRunning } = useLocalStore()
 
   const commitMove = (move: GameMove) => {
@@ -176,7 +176,7 @@ export const useGame = (url: AutomergeUrl | null): UseGameResult => {
 
   return {
     game: doc ? toAppGame(doc, timerRunning) : null,
-    isLoading: url !== null && doc === undefined,
+    isLoading: id !== null && doc === undefined,
     timerRunning,
     setTimerRunning,
     startTimer,
