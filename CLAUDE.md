@@ -8,7 +8,7 @@ An app for keeping score during Scrabble games.
 | ---------------- | --------------------- |
 | `pnpm dev`       | Start dev server      |
 | `pnpm test`      | Run Vitest tests      |
-| `pnpm test:e2e`  | Run Playwright tests  |
+| `pnpm pw`        | Run Playwright tests  |
 | `pnpm storybook` | Component development |
 | `pnpm build`     | Production build      |
 
@@ -124,4 +124,4 @@ When a player goes out or the game ends:
 - **Unit tests**: `src/lib/*.test.ts` - scoring, validation, end game adjustments
 - **E2E tests**: `e2e/tests/*.test.ts` - game flow, persistence, score verification against GCG files
 
-Run `pnpm test` for unit tests, `pnpm test:e2e` for Playwright.
+Run `pnpm test` for unit tests, `pnpm pw` for Playwright.
