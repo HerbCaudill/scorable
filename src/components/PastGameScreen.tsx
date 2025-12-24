@@ -94,7 +94,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
                 key={index}
                 history={moveHistory}
                 onMoveClick={highlightTiles}
-                className="flex-1 p-2 text-xs"
+                className="flex-1 p-1 text-xs"
               />
             )
           })}

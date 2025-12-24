@@ -13,7 +13,7 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editing
           return (
             <div
               key={i}
-              className="flex justify-between gap-2 py-1 text-neutral-500 italic"
+              className="flex justify-between gap-2 px-1 py-1.5 text-neutral-500 italic"
             >
               <span className="truncate">Final</span>
               <span className={cn('font-medium', scoreClass)}>
@@ -47,7 +47,7 @@ const MoveHistoryEntry = ({ entry, index, isEditing, onMoveClick, onMoveLongPres
   return (
     <div
       className={cn(
-        'flex cursor-pointer justify-between gap-2 py-1 select-none hover:bg-neutral-100 active:bg-neutral-200',
+        'flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200',
         isEditing ? 'bg-teal-100 text-teal-800 font-medium' : 'text-neutral-600'
       )}
       {...longPressHandlers}

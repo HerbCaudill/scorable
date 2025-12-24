@@ -397,7 +397,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                   onMoveClick={highlightTiles}
                   onMoveLongPress={playerMoveIndex => handleEditMove(index, playerMoveIndex)}
                   editingIndex={editingMoveInfo?.playerIndex === index ? editingMoveInfo.playerMoveIndex : undefined}
-                  className="p-2 text-[10px] [&_span:first-child]:font-mono"
+                  className="p-1 text-[10px] [&_span:first-child]:font-mono"
                 />
               </div>
             )
