@@ -45,7 +45,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-khaki-100">
       <div className="mx-auto max-w-xl">
         {screen === 'home' && (
           <HomeScreen
