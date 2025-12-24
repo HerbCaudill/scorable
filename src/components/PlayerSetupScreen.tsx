@@ -12,33 +12,42 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   const previousPlayers = getPlayerNames()
 
   const handleStartGame = (playerNames: string[]) => {
-    // Create new automerge document
-    const handle = repo.create<GameDoc>()
+    try {
+      // Create new automerge document
+      const handle = repo.create<GameDoc>()
 
-    handle.change(d => {
-      d.id = crypto.randomUUID()
-      d.players = playerNames.map((name, i) => ({
-        name,
-        timeRemainingMs: DEFAULT_TIME_MS,
-        color: PLAYER_COLORS[i % PLAYER_COLORS.length],
-      }))
-      d.currentPlayerIndex = 0
-      d.board = createEmptyBoardDoc()
-      d.moves = []
-      d.status = 'playing'
-      d.createdAt = Date.now()
-      d.updatedAt = Date.now()
-    })
+      handle.change(d => {
+        // crypto.randomUUID() requires secure context (HTTPS), so use fallback for HTTP
+        d.id =
+          typeof crypto.randomUUID === 'function'
+            ? crypto.randomUUID()
+            : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+        d.players = playerNames.map((name, i) => ({
+          name,
+          timeRemainingMs: DEFAULT_TIME_MS,
+          color: PLAYER_COLORS[i % PLAYER_COLORS.length],
+        }))
+        d.currentPlayerIndex = 0
+        d.board = createEmptyBoardDoc()
+        d.moves = []
+        d.status = 'playing'
+        d.createdAt = Date.now()
+        d.updatedAt = Date.now()
+      })
 
-    // Save to local bookmarks
-    addGameUrl(handle.url)
+      // Save to local bookmarks
+      addGameUrl(handle.url)
 
-    // Update player records
-    for (const name of playerNames) {
-      addPlayerRecord(name)
+      // Update player records
+      for (const name of playerNames) {
+        addPlayerRecord(name)
+      }
+
+      onGameCreated(handle.url)
+    } catch (error) {
+      console.error('Failed to create game:', error)
+      alert(`Failed to create game: ${error instanceof Error ? error.message : String(error)}`)
     }
-
-    onGameCreated(handle.url)
   }
 
   return (
