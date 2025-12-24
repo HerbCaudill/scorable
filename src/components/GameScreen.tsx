@@ -406,7 +406,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-center gap-2 border-t bg-white px-2 py-4">
+      <div className="flex justify-center gap-2 rounded-t-xl border-t bg-white px-2 py-4">
         {isEditing ? (
           <>
             <Button variant="outline" size="xs" onClick={handleCancelEdit}>
