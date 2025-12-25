@@ -84,8 +84,8 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
               <span className="text-sm font-medium">{player.name}</span>
               <span className="text-2xl font-bold">{score}</span>
               {isWinner && (
-                <span className="text-amber-500">
-                  <IconTrophyFilled size={16} className="text-amber-500" />
+                <span className="flex items-center gap-1 text-amber-500">
+                  <IconTrophyFilled size={16} />
                   Winner
                 </span>
               )}
