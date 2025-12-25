@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment, Move } from './types'
+import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment, Move, TimerEvent } from './types'
 import { createEmptyBoard, createPlayer } from './types'
 import { calculateMoveScore } from './calculateMoveScore'
 
@@ -83,8 +83,8 @@ export const useGameStore = create<GameStore>()(
           currentPlayerIndex: 0,
           board: createEmptyBoard(),
           moves: [],
+          timerEvents: [],
           status: 'playing',
-          timerRunning: false,
           createdAt: Date.now(),
           updatedAt: Date.now(),
         }
@@ -127,7 +127,6 @@ export const useGameStore = create<GameStore>()(
           ...currentGame,
           moves: [...currentGame.moves, ...adjustmentMoves],
           status: 'finished',
-          timerRunning: false,
           updatedAt: Date.now(),
         }
 
@@ -141,11 +140,16 @@ export const useGameStore = create<GameStore>()(
         const { currentGame } = get()
         if (!currentGame || currentGame.status !== 'playing') return
 
+        const pauseEvent: TimerEvent = {
+          type: 'pause',
+          timestamp: Date.now(),
+          playerIndex: currentGame.currentPlayerIndex,
+        }
         set({
           currentGame: {
             ...currentGame,
             status: 'paused',
-            timerRunning: false,
+            timerEvents: [...currentGame.timerEvents, pauseEvent],
             updatedAt: Date.now(),
           },
         })
@@ -289,10 +293,15 @@ export const useGameStore = create<GameStore>()(
         const { currentGame } = get()
         if (!currentGame) return
 
+        const startEvent: TimerEvent = {
+          type: 'start',
+          timestamp: Date.now(),
+          playerIndex: currentGame.currentPlayerIndex,
+        }
         set({
           currentGame: {
             ...currentGame,
-            timerRunning: true,
+            timerEvents: [...currentGame.timerEvents, startEvent],
             updatedAt: Date.now(),
           },
         })
@@ -302,10 +311,15 @@ export const useGameStore = create<GameStore>()(
         const { currentGame } = get()
         if (!currentGame) return
 
+        const pauseEvent: TimerEvent = {
+          type: 'pause',
+          timestamp: Date.now(),
+          playerIndex: currentGame.currentPlayerIndex,
+        }
         set({
           currentGame: {
             ...currentGame,
-            timerRunning: false,
+            timerEvents: [...currentGame.timerEvents, pauseEvent],
             updatedAt: Date.now(),
           },
         })

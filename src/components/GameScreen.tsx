@@ -18,7 +18,6 @@ import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
 import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX, IconShare } from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
 
 /** Convert player's move index to global index in moves array */
 const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIndex: number): number => {
