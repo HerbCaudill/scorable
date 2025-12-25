@@ -389,7 +389,7 @@ const ScrabbleBoard = ({
   return (
     <div
       ref={boardRef}
-      className="@container w-full outline-none relative p-[2cqw]"
+      className="@container w-full outline-none relative p-1"
       role="grid"
       aria-label="Scrabble board"
     >
