@@ -18,7 +18,12 @@ export class PlayerSetupPage {
   /** Add a new player by name */
   async addNewPlayer(slotIndex: number, playerName: string) {
     await this.clickPlayerSlot(slotIndex)
-    await this.page.getByRole('menuitem', { name: 'New...' }).click()
+    // If no previous players are available, the input is shown directly
+    // Otherwise, we need to click "New..." first
+    const newMenuItem = this.page.getByRole('menuitem', { name: 'New...' })
+    if (await newMenuItem.isVisible()) {
+      await newMenuItem.click()
+    }
     await this.page.getByPlaceholder('Enter name...').fill(playerName)
     await this.page.getByRole('button', { name: 'Add' }).click()
   }

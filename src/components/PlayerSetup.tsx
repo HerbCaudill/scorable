@@ -67,6 +67,10 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const handleDropdownOpenChange = (index: number, open: boolean) => {
     if (open) {
       setActiveDropdown(index)
+      // Auto-show new player input if no previous players are available
+      if (availablePlayers.length === 0) {
+        setIsAddingNew(true)
+      }
     } else {
       setActiveDropdown(null)
       setIsAddingNew(false)
