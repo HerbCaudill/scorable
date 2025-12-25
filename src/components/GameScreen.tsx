@@ -316,9 +316,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-x-hidden p-2">
-      {/* Sticky header: Board + Player panels */}
-      <div className="sticky top-0 z-10 bg-khaki-100">
+    <div className="flex flex-col gap-3 p-2">
+      {/*  Board + Player panels */}
+      <div className=" ">
         {/* Edit mode banner */}
         {isEditing && <div className="font-bold text-center text-sm">Editing move</div>}
 
@@ -336,7 +336,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Player panels + history - scroll together horizontally */}
-      <div className="flex-1 overflow-x-auto overflow-y-auto ">
+      <div className="flex-1 overflow-x-auto -m-2 p-2 ">
         <div className="flex w-full gap-3">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
@@ -356,7 +356,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 aria-label={`${player.name}'s score panel`}
                 aria-current={isActive ? 'true' : undefined}
                 data-player={player.name}
-                className="flex min-w-32 flex-1 flex-col overflow-hidden rounded-lg bg-white"
+                className="flex min-w-40 flex-1 flex-col rounded-lg bg-white"
                 style={{
                   boxShadow: isActive ? `0 0 0 3px ${player.color}` : `0 0 0 1px ${player.color}40`,
                 }}
@@ -397,45 +397,45 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             )
           })}
         </div>
+      </div>
 
-        {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
-        <div className="flex gap-2">
-          {isEditing ? (
-            <>
-              <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>
-                <IconX size={14} />
-                Cancel
-              </Button>
-              <Button className="flex-1" variant="default" size="xs" onClick={handleSaveEdit}>
-                Save edit
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                className="flex-1"
-                variant={timerRunning ? 'outline' : 'default'}
-                size="xs"
-                onClick={handleTimerToggle}
-              >
-                {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
-                {timerRunning ? 'Pause timer' : 'Start timer'}
-              </Button>
-              <Button className="flex-1" variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
-                <IconCards size={14} />
-                Tiles ({remainingTileCount})
-              </Button>
-              <Button className="flex-1" variant="outline" size="xs" onClick={handleEndGameClick}>
-                <IconFlag size={14} />
-                End game
-              </Button>
-              <Button className="flex-1" variant="outline" size="xs" onClick={handleShare}>
-                <IconShare size={14} />
-                Share
-              </Button>
-            </>
-          )}
-        </div>
+      {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
+      <div className="flex gap-2">
+        {isEditing ? (
+          <>
+            <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>
+              <IconX size={14} />
+              Cancel
+            </Button>
+            <Button className="flex-1" variant="default" size="xs" onClick={handleSaveEdit}>
+              Save edit
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              className="flex-1"
+              variant={timerRunning ? 'outline' : 'default'}
+              size="xs"
+              onClick={handleTimerToggle}
+            >
+              {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+              {timerRunning ? 'Pause timer' : 'Start timer'}
+            </Button>
+            <Button className="flex-1" variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+              <IconCards size={14} />
+              Tiles ({remainingTileCount})
+            </Button>
+            <Button className="flex-1" variant="outline" size="xs" onClick={handleEndGameClick}>
+              <IconFlag size={14} />
+              End game
+            </Button>
+            <Button className="flex-1" variant="outline" size="xs" onClick={handleShare}>
+              <IconShare size={14} />
+              Share
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Pass confirmation dialog */}

@@ -52,7 +52,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
   return (
     <div className="flex h-screen flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b bg-khaki-100 p-4">
+      <div className="flex items-center justify-between border-b p-2">
         <Button variant="outline" size="sm" onClick={onBack}>
           <IconArrowLeft size={16} />
           Back
@@ -61,7 +61,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
       </div>
 
       {/* Board - read-only */}
-      <div className="flex flex-col items-center p-4 pb-2">
+      <div className="flex flex-col items-center p-2 pb-2">
         <ScrabbleBoard tiles={board} highlightedTiles={highlightedTiles} />
       </div>
 
@@ -84,7 +84,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
               <span className="text-sm font-medium">{player.name}</span>
               <span className="text-2xl font-bold">{score}</span>
               {isWinner && (
-                <span className="flex items-center gap-1 text-amber-500">
+                <span className="flex items-center gap-1 text-xs text-amber-500">
                   <IconTrophyFilled size={16} />
                   Winner
                 </span>
@@ -92,6 +92,18 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
             </div>
           )
         })}
+      </div>
+
+      {/* Delete button */}
+      <div className="px-4 py-2">
+        <Button
+          variant="outline"
+          className="w-full text-red-600 hover:bg-red-50 hover:text-red-700"
+          onClick={() => setShowDeleteConfirm(true)}
+        >
+          <IconTrash size={16} />
+          Delete game
+        </Button>
       </div>
 
       {/* Game history */}
@@ -110,18 +122,6 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
           })}
         </div>
       )}
-
-      {/* Delete button */}
-      <div className="mt-auto border-t p-4">
-        <Button
-          variant="outline"
-          className="w-full text-red-600 hover:bg-red-50 hover:text-red-700"
-          onClick={() => setShowDeleteConfirm(true)}
-        >
-          <IconTrash size={16} />
-          Delete game
-        </Button>
-      </div>
 
       <ConfirmDialog
         open={showDeleteConfirm}
