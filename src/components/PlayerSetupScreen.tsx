@@ -25,6 +25,7 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
         d.currentPlayerIndex = 0
         d.board = createEmptyBoardDoc()
         d.moves = []
+        d.timerEvents = []
         d.status = 'playing'
         d.createdAt = Date.now()
         d.updatedAt = Date.now()

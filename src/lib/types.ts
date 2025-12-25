@@ -40,14 +40,28 @@ export type BoardState = Array<Array<string | null>>
 /** Game status  */
 export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
 
+/** Timer event for tracking timer state changes */
+export type TimerEvent = {
+  type: 'start' | 'pause' | 'switch'
+  timestamp: number
+  playerIndex: number
+}
+
+/** Computed timer state derived from timer events */
+export type TimerState = {
+  timeRemaining: number[] // ms remaining per player
+  activePlayerIndex: number | null // whose timer is running, or null if paused
+  isRunning: boolean
+}
+
 /** Complete game state  */
 export type Game = {
   players: Player[]
   currentPlayerIndex: number
   board: BoardState
   moves: GameMove[]
+  timerEvents: TimerEvent[]
   status: GameStatus
-  timerRunning: boolean
   createdAt: number
   updatedAt: number
 }
@@ -76,3 +90,37 @@ export const createPlayer = (name: string, colorIndex: number): Player => ({
   timeRemainingMs: DEFAULT_TIME_MS,
   color: PLAYER_COLORS[colorIndex % PLAYER_COLORS.length],
 })
+
+/** Compute current timer state from timer events */
+export const computeTimerState = (events: TimerEvent[], playerCount: number): TimerState => {
+  const timeRemaining = Array.from({ length: playerCount }, () => DEFAULT_TIME_MS)
+  let activePlayerIndex: number | null = null
+  let lastEventTime = 0
+
+  for (const event of events) {
+    // Deduct elapsed time from the active player since the last event
+    if (activePlayerIndex !== null) {
+      timeRemaining[activePlayerIndex] -= event.timestamp - lastEventTime
+    }
+
+    // Apply the event
+    if (event.type === 'pause') {
+      activePlayerIndex = null
+    } else {
+      activePlayerIndex = event.playerIndex
+    }
+    lastEventTime = event.timestamp
+  }
+
+  // If timer is running, deduct time since the last event
+  const now = Date.now()
+  if (activePlayerIndex !== null) {
+    timeRemaining[activePlayerIndex] -= now - lastEventTime
+  }
+
+  return {
+    timeRemaining: timeRemaining.map(t => Math.max(0, t)),
+    activePlayerIndex,
+    isRunning: activePlayerIndex !== null,
+  }
+}

@@ -67,20 +67,22 @@ test('timer pauses during moves', async ({ page }) => {
   // Start timer
   await gamePage.toggleTimer()
 
-  // Get time before pause
-  const timer = gamePage.getPlayerTimer(0)
+  // Let timer run a bit
   await page.waitForTimeout(500)
-  const labelBeforePause = await timer.getAttribute('aria-label')
 
   // Pause timer
   await gamePage.toggleTimer()
 
+  // Get time immediately after pause
+  const timer = gamePage.getPlayerTimer(0)
+  const labelAfterPause = await timer.getAttribute('aria-label')
+
   // Wait a bit
   await page.waitForTimeout(1000)
 
-  // Time should not have changed
-  const labelAfterPause = await timer.getAttribute('aria-label')
-  expect(labelAfterPause).toBe(labelBeforePause)
+  // Time should not have changed while paused
+  const labelAfterWait = await timer.getAttribute('aria-label')
+  expect(labelAfterWait).toBe(labelAfterPause)
 })
 
 test('timer continues for next player after turn', async ({ page }) => {

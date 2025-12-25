@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type { DocumentId } from '@automerge/automerge-repo'
 import { useGame } from '@/lib/useGame'
 import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
-import { createEmptyBoard, type BoardState, type GameMove } from '@/lib/types'
+import { createEmptyBoard, computeTimerState, type BoardState, type GameMove } from '@/lib/types'
 import { validateMove } from '@/lib/validateMove'
 import { boardStateToMove } from '@/lib/boardStateToMove'
 import { checkTileOveruse, type TileOveruseWarning } from '@/lib/checkTileOveruse'
@@ -76,12 +76,10 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     game: currentGame,
     isLoading,
     isUnavailable,
-    timerRunning,
     startTimer,
     stopTimer,
     commitMove,
     updateMove,
-    updatePlayerTime,
     endGame,
     endGameWithAdjustments,
   } = useGame(gameId)
@@ -98,27 +96,27 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
 
-  // Timer interval - decrement current player's time every second
-  const lastTickRef = useRef<number>(Date.now())
+  // Force re-render every 100ms to update timer display when running
+  const [, setTick] = useState(0)
   const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
 
-  useEffect(() => {
-    if (!timerRunning || !currentGame) return
+  // Compute timer state from events (called on each render when timer running)
+  const timerState = currentGame
+    ? computeTimerState(currentGame.timerEvents, currentGame.players.length)
+    : { timeRemaining: [], activePlayerIndex: null, isRunning: false }
 
-    lastTickRef.current = Date.now()
+  const timerRunning = timerState.isRunning
+
+  // Trigger re-renders when timer is running to update display
+  useEffect(() => {
+    if (!timerRunning) return
 
     const interval = setInterval(() => {
-      const now = Date.now()
-      const elapsed = now - lastTickRef.current
-      lastTickRef.current = now
-
-      const currentTime = currentGame.players[currentPlayerIndex].timeRemainingMs
-      const newTime = Math.max(0, currentTime - elapsed)
-      updatePlayerTime(currentPlayerIndex, newTime)
-    }, 100) // Update frequently for smooth display
+      setTick(t => t + 1)
+    }, 100)
 
     return () => clearInterval(interval)
-  }, [timerRunning, currentPlayerIndex, currentGame, updatePlayerTime])
+  }, [timerRunning])
 
   if (isLoading) {
     return (
@@ -373,7 +371,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                   onClick={handlePlayerClick}
                 >
                   <Timer
-                    timeRemainingMs={player.timeRemainingMs}
+                    timeRemainingMs={timerState.timeRemaining[index] ?? player.timeRemainingMs}
                     color={player.color}
                     isActive={isActive}
                     isPaused={!timerRunning}

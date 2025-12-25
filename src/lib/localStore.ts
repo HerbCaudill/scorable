@@ -13,10 +13,6 @@ type LocalStore = {
   playerRecords: PlayerRecord[]
   addPlayerRecord: (name: string) => void
   getPlayerNames: () => string[]
-
-  // Ephemeral UI state (not persisted)
-  timerRunning: boolean
-  setTimerRunning: (running: boolean) => void
 }
 
 export const useLocalStore = create<LocalStore>()(
@@ -74,10 +70,6 @@ export const useLocalStore = create<LocalStore>()(
           })
           .map(r => r.name)
       },
-
-      timerRunning: false,
-
-      setTimerRunning: running => set({ timerRunning: running }),
     }),
     {
       name: 'scrabble-local-storage',

@@ -31,6 +31,13 @@ export type GameMoveDoc = {
 /** Game status */
 export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
 
+/** Timer event for syncing timer state across devices */
+export type TimerEventDoc = {
+  type: 'start' | 'pause' | 'switch'
+  timestamp: number
+  playerIndex: number
+}
+
 /**
  * Automerge-compatible game document.
  * Note: board uses "" instead of null for empty cells since automerge handles strings well.
@@ -40,6 +47,7 @@ export type GameDoc = {
   currentPlayerIndex: number
   board: string[][] // 15x15, empty string for unoccupied
   moves: GameMoveDoc[]
+  timerEvents: TimerEventDoc[]
   status: GameStatus
   createdAt: number
   updatedAt: number

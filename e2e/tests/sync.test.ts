@@ -274,4 +274,91 @@ test.describe('multi-tab sync', () => {
     expect(await gamePage1.getPlayerScore(0)).toBe(10)
     expect(await gamePage2.getPlayerScore(0)).toBe(10)
   })
+
+  test('timer state syncs between tabs', async () => {
+    const homePage1 = new HomePage(page1)
+    const setupPage1 = new PlayerSetupPage(page1)
+    const gamePage1 = new GamePage(page1)
+    const gamePage2 = new GamePage(page2)
+
+    // Create game in tab 1
+    await homePage1.clickNewGame()
+    await setupPage1.addNewPlayer(0, 'Alice')
+    await setupPage1.addNewPlayer(1, 'Bob')
+    await setupPage1.startGame()
+
+    // Tab 2 joins
+    const gameUrl = await page1.evaluate(() => window.location.href)
+    await page2.goto(gameUrl)
+    await gamePage2.expectOnGameScreen()
+
+    // Initially both should show "Start timer"
+    await expect(page1.getByRole('button', { name: 'Start timer' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Start timer' })).toBeVisible()
+
+    // Tab 1 starts the timer
+    await gamePage1.toggleTimer()
+    await expect(page1.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+
+    // Wait for sync
+    await page2.waitForTimeout(500)
+
+    // Tab 2 should also show timer as running
+    await expect(page2.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+
+    // Tab 2 pauses the timer
+    await gamePage2.toggleTimer()
+    await expect(page2.getByRole('button', { name: 'Start timer' })).toBeVisible()
+
+    // Wait for sync
+    await page1.waitForTimeout(500)
+
+    // Tab 1 should also show timer as paused
+    await expect(page1.getByRole('button', { name: 'Start timer' })).toBeVisible()
+  })
+
+  test('timer switches to next player on move across tabs', async () => {
+    const homePage1 = new HomePage(page1)
+    const setupPage1 = new PlayerSetupPage(page1)
+    const gamePage1 = new GamePage(page1)
+    const gamePage2 = new GamePage(page2)
+
+    // Create game
+    await homePage1.clickNewGame()
+    await setupPage1.addNewPlayer(0, 'Alice')
+    await setupPage1.addNewPlayer(1, 'Bob')
+    await setupPage1.startGame()
+
+    // Tab 2 joins
+    const gameUrl = await page1.evaluate(() => window.location.href)
+    await page2.goto(gameUrl)
+    await gamePage2.expectOnGameScreen()
+
+    // Tab 1 starts timer (Alice's turn)
+    await gamePage1.toggleTimer()
+
+    // Wait a bit for timer to run
+    await page1.waitForTimeout(500)
+
+    // Tab 1 makes a move - timer should switch to Bob
+    await gamePage1.placeWord(7, 7, 'CAT')
+    await gamePage1.endTurn()
+
+    // Wait for sync
+    await page2.waitForTimeout(500)
+
+    // Timer should still be running in both tabs
+    await expect(page1.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+
+    // Get Alice's timer - should have decreased
+    const aliceTimer1 = gamePage1.getPlayerTimer(0)
+    const aliceLabel1 = await aliceTimer1.getAttribute('aria-label')
+    expect(aliceLabel1).not.toBe('30:00 remaining')
+
+    // Tab 2 should see same timer value (approximately)
+    const aliceTimer2 = gamePage2.getPlayerTimer(0)
+    const aliceLabel2 = await aliceTimer2.getAttribute('aria-label')
+    expect(aliceLabel2).toBe(aliceLabel1)
+  })
 })
