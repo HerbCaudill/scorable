@@ -381,6 +381,7 @@ const ScrabbleBoard = ({
         <input
           ref={hiddenInputRef}
           type="text"
+          enterKeyHint="go"
           autoCapitalize="characters"
           autoComplete="off"
           autoCorrect="off"
