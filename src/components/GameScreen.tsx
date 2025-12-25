@@ -317,7 +317,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   return (
     <div className="flex h-screen flex-col overflow-x-hidden">
       {/* Sticky header: Board + Player panels */}
-      <div className="sticky top-0 z-10 bg-white">
+      <div className="sticky top-0 z-10 bg-khaki-100">
         {/* Edit mode banner */}
         {isEditing && <div className="font-bold px-3 py-1 text-center text-sm ">Editing move</div>}
 
