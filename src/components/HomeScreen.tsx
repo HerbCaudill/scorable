@@ -4,14 +4,11 @@ import { useDocuments } from '@automerge/automerge-repo-react-hooks'
 import type { DocumentId } from '@automerge/automerge-repo'
 import type { GameDoc } from '@/lib/automergeTypes'
 import { formatDate } from '@/lib/formatDate'
-import { toDocumentId } from '@/lib/useGameId'
 import { getPlayerScoreFromDoc } from '@/lib/getPlayerScoreFromDoc'
-import { IconSparkles, IconPlayerPlay, IconTrophyFilled, IconLink } from '@tabler/icons-react'
-import { useState } from 'react'
+import { IconSparkles, IconPlayerPlay, IconTrophyFilled } from '@tabler/icons-react'
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { knownGameIds } = useLocalStore()
-  const [joinId, setJoinId] = useState('')
 
   // Load all known game documents
   const [docs] = useDocuments<GameDoc>(knownGameIds as any)
@@ -31,14 +28,6 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
     }
   }
 
-  const handleJoinGame = () => {
-    const id = toDocumentId(joinId)
-    if (id) {
-      onResumeGame(id)
-      setJoinId('')
-    }
-  }
-
   return (
     <div className="flex min-h-screen flex-col p-4">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6">
@@ -47,21 +36,6 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
           <Button size="lg" onClick={onNewGame} className="w-full">
             <IconSparkles size={20} />
             New game
-          </Button>
-        </div>
-
-        {/* Join game by ID */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={joinId}
-            onChange={e => setJoinId(e.target.value)}
-            placeholder="Paste game ID to join..."
-            className="bg-white flex-1 rounded border px-3 py-2 text-sm"
-          />
-          <Button variant="outline" onClick={handleJoinGame} disabled={!joinId.trim()}>
-            <IconLink size={16} />
-            Join
           </Button>
         </div>
 
