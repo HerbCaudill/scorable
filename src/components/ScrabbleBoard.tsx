@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { boardLayout } from '@/lib/boardLayout'
 import { type SquareType, type BoardState } from '@/lib/types'
 import { createEmptyBoard } from '@/lib/createEmptyBoard'
 import { tileValues } from '@/lib/tileValues'
 import { cx } from '@/lib/cx'
 import { Tile } from './Tile'
+import { calculateMoveScore } from '@/lib/calculateMoveScore'
+import { boardStateToMove } from '@/lib/boardStateToMove'
 
 const ScrabbleBoard = ({
   tiles,
@@ -297,6 +299,14 @@ const ScrabbleBoard = ({
   const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
   const isHighlighted = (row: number, col: number) =>
     highlightedTiles.some(t => t.row === row && t.col === col)
+
+  // Calculate the current move score
+  const currentMoveScore = useMemo(() => {
+    const move = boardStateToMove(newTiles)
+    if (move.length === 0) return null
+    const board = tiles ?? createEmptyBoard()
+    return calculateMoveScore({ move, board })
+  }, [newTiles, tiles])
   // Dots component for multipliers - sized relative to container
   const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
     return (
@@ -366,13 +376,20 @@ const ScrabbleBoard = ({
     />
   )
 
+  // Score badge component - shows current move score at cursor
+  const ScoreBadge = ({ score }: { score: number }) => (
+    <div className="absolute -top-[1cqw] -right-[1cqw] z-30 bg-teal-600 text-white text-[2cqw] font-bold rounded-full min-w-[4cqw] h-[4cqw] flex items-center justify-center px-[0.8cqw] shadow-md">
+      {score}
+    </div>
+  )
+
   // Convert column index to letter (A-O)
   const colToLetter = (col: number) => String.fromCharCode(65 + col)
 
   return (
     <div
       ref={boardRef}
-      className="@container w-full outline-none relative"
+      className="@container w-full outline-none relative p-[2cqw]"
       role="grid"
       aria-label="Scrabble board"
     >
@@ -430,6 +447,7 @@ const ScrabbleBoard = ({
                   <>
                     <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
                     {cursor && <CursorArrow direction={cursor.direction} />}
+                    {currentMoveScore !== null && <ScoreBadge score={currentMoveScore} />}
                   </>
                 )}
                 {highlighted && (
