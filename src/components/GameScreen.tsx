@@ -399,7 +399,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         </div>
 
         {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
-        <div className="flex gap-2 px-2 py-3">
+        <div className="flex gap-2">
           {isEditing ? (
             <>
               <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>
