@@ -52,7 +52,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
   return (
     <div className="flex h-screen flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b bg-white p-4">
+      <div className="flex items-center justify-between border-b bg-khaki-100 p-4">
         <Button variant="outline" size="sm" onClick={onBack}>
           <IconArrowLeft size={16} />
           Back
