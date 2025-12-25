@@ -100,16 +100,23 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     // Get initial state
     setHandleState(handle.state)
 
-    // Listen for state changes
-    const onStateChange = () => {
-      setHandleState(handle.state)
-    }
-
-    // The handle emits events when state changes
-    handle.on('change', onStateChange)
+    // Poll handle state since 'change' event only fires on document content changes,
+    // not on state transitions (e.g., to 'unavailable')
+    const pollInterval = setInterval(() => {
+      setHandleState(prevState => {
+        if (handle.state !== prevState) {
+          return handle.state
+        }
+        return prevState
+      })
+      // Stop polling once we reach a terminal state
+      if (handle.state === 'ready' || handle.state === 'unavailable' || handle.state === 'deleted') {
+        clearInterval(pollInterval)
+      }
+    }, 100)
 
     return () => {
-      handle.off('change', onStateChange)
+      clearInterval(pollInterval)
     }
   }, [handle])
 
