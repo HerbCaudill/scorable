@@ -80,16 +80,17 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     // Get initial state
     setHandleState(handle.state)
 
-    // Listen for state changes
-    const onStateChange = () => {
+    // Listen for state changes - DocHandle emits 'ready' and 'unavailable' events
+    const updateState = () => {
       setHandleState(handle.state)
     }
 
-    // The handle emits events when state changes
-    handle.on('change', onStateChange)
+    handle.on('ready', updateState)
+    handle.on('unavailable', updateState)
 
     return () => {
-      handle.off('change', onStateChange)
+      handle.off('ready', updateState)
+      handle.off('unavailable', updateState)
     }
   }, [handle])
 
