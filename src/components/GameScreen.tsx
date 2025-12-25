@@ -317,11 +317,11 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-x-hidden">
+    <div className="flex h-screen flex-col overflow-x-hidden p-1">
       {/* Sticky header: Board + Player panels */}
       <div className="sticky top-0 z-10 bg-white">
         {/* Edit mode banner */}
-        {isEditing && <div className="font-bold px-3 py-1 text-center text-sm ">Editing move</div>}
+        {isEditing && <div className="font-bold py-1 text-center text-sm ">Editing move</div>}
 
         {/* Board area */}
         <div className="flex flex-col items-center w-full">
@@ -338,7 +338,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
       {/* Player panels + history - scroll together horizontally */}
       <div className="flex-1 overflow-x-auto overflow-y-auto ">
-        <div className="flex w-full gap-3 px-1 py-2">
+        <div className="flex w-full gap-3 pt-2">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
             const score = getPlayerScore(currentGame, index)
@@ -400,7 +400,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         </div>
 
         {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
-        <div className="flex justify-center gap-2 px-2 py-3">
+        <div className="flex justify-center gap-2 py-3">
           {isEditing ? (
             <>
               <Button variant="outline" size="xs" onClick={handleCancelEdit}>
