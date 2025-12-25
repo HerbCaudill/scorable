@@ -1,17 +1,27 @@
+import { useState } from 'react'
 import type { DocumentId } from '@automerge/automerge-repo'
 import { useGame } from '@/lib/useGame'
+import { useLocalStore } from '@/lib/localStore'
 import { getPlayerScore } from '@/lib/getPlayerScore'
 import ScrabbleBoard from './ScrabbleBoard'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from './ConfirmDialog'
 import { formatDate } from '@/lib/formatDate'
 import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
 import { MoveHistoryList } from './MoveHistoryList'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
-import { IconArrowLeft, IconHome, IconTrophyFilled } from '@tabler/icons-react'
+import { IconArrowLeft, IconHome, IconTrash, IconTrophyFilled } from '@tabler/icons-react'
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { game, isLoading, isUnavailable } = useGame(gameId)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
+  const removeGameId = useLocalStore(s => s.removeGameId)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  const handleDelete = () => {
+    removeGameId(gameId)
+    onBack()
+  }
 
   if (isLoading) {
     return (
@@ -100,6 +110,28 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
           })}
         </div>
       )}
+
+      {/* Delete button */}
+      <div className="mt-auto border-t p-4">
+        <Button
+          variant="outline"
+          className="w-full text-red-600 hover:bg-red-50 hover:text-red-700"
+          onClick={() => setShowDeleteConfirm(true)}
+        >
+          <IconTrash size={16} />
+          Delete game
+        </Button>
+      </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Delete game?"
+        description="This game will be removed from your history. This cannot be undone."
+        confirmText="Delete"
+        confirmClassName="bg-red-600 hover:bg-red-700"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }
