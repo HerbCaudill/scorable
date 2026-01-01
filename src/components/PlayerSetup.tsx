@@ -20,7 +20,10 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
 
   useEffect(() => {
     if (isAddingNew && inputRef.current) {
-      inputRef.current.focus()
+      // Use requestAnimationFrame to focus after Radix's focus management settles
+      requestAnimationFrame(() => {
+        inputRef.current?.focus()
+      })
     }
   }, [isAddingNew])
 
