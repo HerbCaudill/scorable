@@ -58,39 +58,36 @@ test.describe("End game", () => {
     await expect(bobSection).not.toContainText("ended the game")
   })
 
-  test("can enter rack tiles and see deduction", async () => {
+  test("auto-populates rack with remaining tiles for 2-player game", async () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Alice ended the game, enter some common tiles for Bob
-    // Using I, N, N (which are remaining based on the original game ending)
-    await gamePage.enterRackTiles("Bob", "INN")
-
-    // I=1, N=1, N=1 = -3 deduction
+    // For 2-player games, Bob's rack should be auto-populated with remaining tiles
+    // The remaining tiles are I, N, N, R, T, U (values: 1+1+1+1+1+1 = 6)
     const adjustment = await gamePage.getPlayerAdjustment("Bob")
-    expect(adjustment).toBe("-3")
+    expect(adjustment).toBe("-6")
   })
 
   test("player who ended game gets bonus", async () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Alice ended the game, enter tiles for Bob
-    await gamePage.enterRackTiles("Bob", "INN")
-
-    // Alice should get +3 bonus (Bob's tiles: I=1, N=1, N=1)
+    // For 2-player games, Bob's rack is auto-populated with remaining tiles
+    // Alice (who ended) should get bonus equal to Bob's remaining tile values
+    // The remaining tiles are I, N, N, R, T, U (values: 1+1+1+1+1+1 = 6)
     const aliceAdjustment = await gamePage.getPlayerAdjustment("Alice")
-    expect(aliceAdjustment).toBe("+3")
+    expect(aliceAdjustment).toBe("+6")
   })
 
   test("validates rack tiles against remaining", async () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Try to enter too many Q tiles (Q was already played in the game)
+    // For 2-player games, Bob's rack is auto-populated with remaining tiles
+    // Now try to enter a Q tile (which was already played in the game)
     await gamePage.enterRackTiles("Bob", "Q")
 
-    // Should show error since Q was already used
+    // Should show error since Q was already used (it's now in rack via typing)
     await gamePage.expectRackError("Bob", "Too many Q")
 
     // Apply button should be disabled
@@ -111,8 +108,8 @@ test.describe("End game", () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Alice ended, Bob has INN (3 points) - tiles remaining from the game
-    await gamePage.enterRackTiles("Bob", "INN")
+    // For 2-player games, Bob's rack is auto-populated with remaining tiles
+    // Just click apply - the rack is already populated correctly
     await gamePage.applyAndEndGame()
 
     // Should return to home screen
@@ -123,13 +120,31 @@ test.describe("End game", () => {
     await gamePage.clickEndGame()
     await gamePage.expectOnEndGameScreen()
 
-    // Enter INN, then remove one
-    await gamePage.enterRackTiles("Bob", "INN")
+    // For 2-player games, Bob's rack is auto-populated with remaining tiles
+    // The remaining tiles are I, N, N, R, T, U (values: 1+1+1+1+1+1 = 6)
     let adjustment = await gamePage.getPlayerAdjustment("Bob")
-    expect(adjustment).toBe("-3") // I=1, N=1, N=1
+    expect(adjustment).toBe("-6")
 
+    // Remove one tile
     await gamePage.clearRackTiles("Bob", 1)
     adjustment = await gamePage.getPlayerAdjustment("Bob")
-    expect(adjustment).toBe("-2") // I=1, N=1
+    expect(adjustment).toBe("-5") // One less tile (value 1)
+  })
+
+  test("can override auto-populated rack tiles", async () => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // For 2-player games, Bob's rack starts auto-populated with 6 tiles
+    let adjustment = await gamePage.getPlayerAdjustment("Bob")
+    expect(adjustment).toBe("-6")
+
+    // Clear all tiles - when rack is empty, deduction shows nothing (not "0")
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Enter just 3 tiles - now the adjustment should show
+    await gamePage.enterRackTiles("Bob", "INN")
+    adjustment = await gamePage.getPlayerAdjustment("Bob")
+    expect(adjustment).toBe("-3") // I=1, N=1, N=1
   })
 })

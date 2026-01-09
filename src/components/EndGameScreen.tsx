@@ -9,25 +9,68 @@ import { IconArrowLeft } from "@tabler/icons-react"
 import type { Game, Adjustment } from "@/lib/types"
 
 export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
+  const { players } = game
+
+  // Memoize remaining tiles to prevent unnecessary re-renders
+  const remainingTiles = useMemo(() => getRemainingTiles(game), [game])
+
+  // Convert to sorted list for consistent ordering
+  const remainingTilesList = useMemo(
+    () =>
+      Object.entries(remainingTiles)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .flatMap(([tile, count]) => Array(count).fill(tile)),
+    [remainingTiles],
+  )
+
   // Default: last player to make a move ended the game
   const lastMovePlayerIndex = game.moves.length ? game.moves[game.moves.length - 1].playerIndex : 0
 
   const [playerWhoEndedGame, setPlayerWhoEndedGame] = useState<number | null>(lastMovePlayerIndex)
 
-  // Initialize racks - player who ended the game has empty rack
-  const [playerRacks, setPlayerRacks] = useState<string[][]>(() =>
-    game.players.map((_, i) => (i === lastMovePlayerIndex ? [] : [])),
-  )
+  // Initialize racks
+  // - Player who ended the game has empty rack
+  // - For 2-player games, auto-populate the other player's rack with remaining tiles
+  const [playerRacks, setPlayerRacks] = useState<string[][]>(() => {
+    const isTwoPlayerGame = game.players.length === 2
+    const initialRemainingTiles = getRemainingTiles(game)
+    const initialTilesList = Object.entries(initialRemainingTiles)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([tile, count]) => Array(count).fill(tile))
 
-  // When playerWhoEndedGame changes, clear their rack
+    return game.players.map((_, i) => {
+      if (i === lastMovePlayerIndex) {
+        return [] // Player who ended has empty rack
+      }
+      if (isTwoPlayerGame) {
+        return initialTilesList // Other player gets all remaining tiles
+      }
+      return [] // Empty for 3+ player games
+    })
+  })
+
+  // When playerWhoEndedGame changes:
+  // - Clear the rack of the player who ended the game
+  // - For 2-player games, auto-populate the other player's rack with remaining tiles
   useEffect(() => {
     if (playerWhoEndedGame !== null) {
-      setPlayerRacks(prev => prev.map((rack, i) => (i === playerWhoEndedGame ? [] : rack)))
-    }
-  }, [playerWhoEndedGame])
+      const isTwoPlayerGame = players.length === 2
 
-  const { players } = game
-  const remainingTiles = getRemainingTiles(game)
+      setPlayerRacks(prev =>
+        prev.map((rack, i) => {
+          if (i === playerWhoEndedGame) {
+            return [] // Player who ended has empty rack
+          }
+          if (isTwoPlayerGame) {
+            return remainingTilesList // Other player gets all remaining tiles
+          }
+          return rack // Keep existing rack for 3+ player games
+        }),
+      )
+    }
+    // Only re-run when playerWhoEndedGame changes, not on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerWhoEndedGame])
 
   // Validate racks
   const validation = useMemo(

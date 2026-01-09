@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef } from "react"
 import { Tile } from "./Tile"
 import { cx } from "@/lib/cx"
 
@@ -12,31 +12,22 @@ export const RackTileInput = ({
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Handle keyboard input
-  useEffect(() => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only respond if this component is focused
-      if (!containerRef.current?.contains(document.activeElement)) return
-
-      if (e.key === "Backspace") {
-        e.preventDefault()
-        if (tiles.length > 0) {
-          onChange(tiles.slice(0, -1))
-        }
-      } else if (e.key === " ") {
-        e.preventDefault()
-        onChange([...tiles, " "]) // blank tile
-      } else if (/^[a-zA-Z]$/.test(e.key)) {
-        e.preventDefault()
-        onChange([...tiles, e.key.toUpperCase()])
+    if (e.key === "Backspace") {
+      e.preventDefault()
+      if (tiles.length > 0) {
+        onChange(tiles.slice(0, -1))
       }
+    } else if (e.key === " ") {
+      e.preventDefault()
+      onChange([...tiles, " "]) // blank tile
+    } else if (/^[a-zA-Z]$/.test(e.key)) {
+      e.preventDefault()
+      onChange([...tiles, e.key.toUpperCase()])
     }
-
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [tiles, onChange, disabled])
+  }
 
   const handleFocus = () => {
     containerRef.current?.focus()
@@ -48,6 +39,7 @@ export const RackTileInput = ({
         ref={containerRef}
         tabIndex={disabled ? -1 : 0}
         onClick={handleFocus}
+        onKeyDown={handleKeyDown}
         className={cx(
           "flex min-h-10 cursor-text items-center gap-1 rounded-lg border-2 px-2 py-1 outline-none transition-colors",
           disabled ? "cursor-default bg-neutral-100" : "focus:ring-2 focus:ring-offset-1",

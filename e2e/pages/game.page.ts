@@ -142,10 +142,12 @@ export class GamePage {
     await this.page.getByRole("button", { name: "Pass" }).click()
   }
 
-  /** Confirm the end game dialog */
+  /** Confirm the end game dialog and complete the EndGameScreen flow */
   async confirmEndGame() {
-    // In the dialog, click the "End game" button
+    // In the early-end dialog, click the "End game" button
     await this.page.getByRole("alertdialog").getByRole("button", { name: "End game" }).click()
+    // This takes us to the EndGameScreen - click apply to complete the flow
+    await this.applyAndEndGame()
   }
 
   /** Cancel a dialog */
@@ -263,8 +265,11 @@ export class GamePage {
   /** Clear rack tiles for a player using backspace */
   async clearRackTiles(playerName: string, count: number) {
     const playerSection = this.getPlayerSection(playerName)
-    // Click somewhere in the input area (the focusable container)
-    await playerSection.locator('[tabindex="0"]').click()
+    // Click on the focusable container to give it focus
+    const input = playerSection.locator('[tabindex="0"]')
+    await input.click()
+    // Wait for focus to be established
+    await input.focus()
     for (let i = 0; i < count; i++) {
       await this.page.keyboard.press("Backspace")
     }

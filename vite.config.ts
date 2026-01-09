@@ -14,7 +14,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB to accommodate Automerge WASM
+        maximumFileSizeToCacheInBytes: 35 * 1024 * 1024, // 35 MB to accommodate Automerge WASM + word list
       },
       manifest: {
         name: "Scrabble Scorekeeper",

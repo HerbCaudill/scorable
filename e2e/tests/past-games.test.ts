@@ -104,12 +104,15 @@ test.describe("Past games", () => {
 
     const pastGamePage = new PastGamePage(page)
 
-    // Scores should be visible (both should have scored)
+    // Scores should be visible and Bob should win
+    // (Bob ended the game, so Alice gets auto-populated with remaining tiles and gets deduction)
     const aliceScore = await pastGamePage.getPlayerScore(0)
     const bobScore = await pastGamePage.getPlayerScore(1)
 
-    expect(aliceScore).toBeGreaterThan(0)
+    // Bob should have a positive score (his word score + Alice's remaining tile bonus)
     expect(bobScore).toBeGreaterThan(0)
+    // Bob should have higher score than Alice (Alice got the big deduction)
+    expect(bobScore).toBeGreaterThan(aliceScore)
   })
 
   test("past games show winner indicator on home screen", async ({ page }) => {
