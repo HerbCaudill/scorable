@@ -12,7 +12,8 @@
     "test:pw": "playwright test",
     "test:pw:ui": "playwright test --ui",
     "test:pw:headed": "playwright test --headed",
-    "generate-icons": "rsvg-convert -w 192 -h 192 public/icon.svg -o public/icon-192.png && rsvg-convert -w 512 -h 512 public/icon.svg -o public/icon-512.png && rsvg-convert -w 180 -h 180 public/icon.svg -o public/apple-touch-icon.png"
+    "generate-icons": "rsvg-convert -w 192 -h 192 public/icon.svg -o public/icon-192.png && rsvg-convert -w 512 -h 512 public/icon.svg -o public/icon-512.png && rsvg-convert -w 180 -h 180 public/icon.svg -o public/apple-touch-icon.png",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@automerge/automerge": "^3.2.1",
@@ -52,6 +53,7 @@
     "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.1",
     "express": "^5.2.1",
+    "prettier": "^3.7.4",
     "storybook": "^10.1.10",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.21.0",
