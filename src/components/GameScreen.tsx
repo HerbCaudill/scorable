@@ -385,8 +385,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
   const handleConfirmEndGame = () => {
     setShowEndGameConfirm(false)
-    endGame()
-    onEndGame()
+    stopTimer()
+    setShowEndGameScreen(true)
   }
 
   const handleTimerToggle = () => {
