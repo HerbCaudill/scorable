@@ -7,7 +7,7 @@ import { clearStorage } from "../fixtures/storage-fixtures"
 let homePage: HomePage
 let setupPage: PlayerSetupPage
 
-test.describe("Player Setup", () => {
+test.describe("Player setup", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)

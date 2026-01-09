@@ -3,7 +3,7 @@ import { HomePage } from "../pages/home.page"
 import { GamePage } from "../pages/game.page"
 import { seedNearEndGame } from "../fixtures/seed-game"
 
-test.describe("End Game", () => {
+test.describe("End game", () => {
   let gamePage: GamePage
 
   test.beforeEach(async ({ page }) => {

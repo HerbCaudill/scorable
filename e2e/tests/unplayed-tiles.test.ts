@@ -3,7 +3,7 @@ import { GamePage } from "../pages/game.page"
 
 import { seedTwoPlayerGame } from "../fixtures/seed-game"
 
-test.describe("Unplayed Tiles", () => {
+test.describe("Unplayed tiles", () => {
   let gamePage: GamePage
 
   test.beforeEach(async ({ page }) => {

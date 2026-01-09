@@ -58,7 +58,7 @@ const gcgFiles = [
   "anno57741.gcg",
 ]
 
-test.describe("Score Verification", () => {
+test.describe("Score verification", () => {
   for (const gcgFile of gcgFiles) {
     test(`verifies final scores for ${gcgFile}`, async ({ page }) => {
       const gcg = loadGcgGame(gcgFile)

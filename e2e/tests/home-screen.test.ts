@@ -4,7 +4,7 @@ import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
 import { clearStorage } from "../fixtures/storage-fixtures"
 
-test.describe("Home Screen", () => {
+test.describe("Home screen", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)

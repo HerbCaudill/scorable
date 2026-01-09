@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
   gamePage = new GamePage(page)
 })
 
-test.describe("move correction", () => {
+test.describe("Move correction", () => {
   test("long-press on move enters edit mode", async () => {
     await gamePage.placeWord(7, 7, "CAT")
     await gamePage.endTurn()

@@ -32,7 +32,7 @@ async function createFinishedGameViaUI(
   await gamePage.confirmEndGame()
 }
 
-test.describe("Past Games", () => {
+test.describe("Past games", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)

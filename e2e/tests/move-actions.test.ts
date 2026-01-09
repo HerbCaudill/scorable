@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 import { GamePage } from "../pages/game.page"
 import { seedTwoPlayerGame, seedGameWithMoves } from "../fixtures/seed-game"
 
-test.describe("Move Actions", () => {
+test.describe("Move actions", () => {
   test.describe("Undo", () => {
     test("undoes the last move and restores board state", async ({ page }) => {
       // Seed a game with one move already played

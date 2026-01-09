@@ -9,7 +9,7 @@ import { replayGcgGame } from "../fixtures/replay-game"
  * The test replays a game from a GCG file up to (total moves - 1),
  * then pauses so you can manually interact with the UI.
  */
-test.describe("Manual End Game Testing", () => {
+test.describe("Manual end game testing", () => {
   // Increase timeout since replaying a full game takes time
   test.setTimeout(120_000)
 

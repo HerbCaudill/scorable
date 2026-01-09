@@ -17,7 +17,7 @@ import { clearStorage } from "../fixtures/storage-fixtures"
  * the WebSocket server roundtrip, which is slow and flaky.
  */
 
-test.describe("multi-tab sync", () => {
+test.describe("Multi-tab sync", () => {
   let context: BrowserContext
   let page1: Page
   let page2: Page

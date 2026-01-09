@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 import { GamePage } from "../pages/game.page"
 import { seedTwoPlayerGame } from "../fixtures/seed-game"
 
-test.describe("Move Validation", () => {
+test.describe("Move validation", () => {
   let gamePage: GamePage
 
   test.beforeEach(async ({ page }) => {

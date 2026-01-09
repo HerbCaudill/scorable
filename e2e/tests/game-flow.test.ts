@@ -4,7 +4,7 @@ import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
 import { clearStorage } from "../fixtures/storage-fixtures"
 
-test.describe("Game Flow", () => {
+test.describe("Game flow", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)
