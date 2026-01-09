@@ -13,12 +13,9 @@ test.describe("Manual end game testing", () => {
   // Increase timeout since replaying a full game takes time
   test.setTimeout(120_000)
 
-  test("replay game and pause before last move", async ({ page }) => {
-    // Replay all but the last move from the GCG file
-    // The near-end-game.gcg has 24 play moves
-    const { gamePage } = await replayGcgGame(page, "near-end-game.gcg", {
-      stopAfterMoves: 23, // Stop one move before the end
-    })
+  test("replay game and pause after last move", async ({ page }) => {
+    // Replay the complete game from the GCG file
+    const { gamePage } = await replayGcgGame(page, "near-end-game.gcg")
 
     await gamePage.expectOnGameScreen()
 
