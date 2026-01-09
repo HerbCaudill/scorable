@@ -27,8 +27,22 @@ const ROWS = [
 export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
   const handleKeyPress = (key: string) => (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     // Prevent duplicate events - only handle touchStart OR mouseDown, not both
     if (e.type === "mousedown" && "ontouchstart" in window) return
+
+    // For Enter key, block ghost clicks that could hit elements underneath
+    if (key === "Enter") {
+      const blockClick = (clickEvent: MouseEvent) => {
+        clickEvent.preventDefault()
+        clickEvent.stopPropagation()
+      }
+      // Capture phase to block before any handlers run
+      document.addEventListener("click", blockClick, { capture: true, once: true })
+      // Clean up after the ghost click window (~400ms)
+      setTimeout(() => document.removeEventListener("click", blockClick, { capture: true }), 400)
+    }
+
     onKeyPress(key)
   }
 
