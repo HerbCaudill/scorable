@@ -14,7 +14,7 @@ import { UnplayedTilesScreen } from "./TileBagScreen"
 import { EndGameScreen } from "./EndGameScreen"
 import { ConfirmDialog } from "./ConfirmDialog"
 import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
-import { isValidWord } from "@/lib/wordList"
+import { isValidWord, getWordDefinition } from "@/lib/wordList"
 import { getWordsFromMove } from "@/lib/getWordsFromMove"
 import { Timer } from "./Timer"
 import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
@@ -266,13 +266,17 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         if (invalidWords.length > 0) {
           // Challenge successful - remove the move, challenged player passes
           challengeMove(globalIndex, true)
-          toast.error(
-            `Challenge successful! Invalid word${invalidWords.length > 1 ? "s" : ""}: ${invalidWords.join(", ")}`,
-          )
+          const invalidList = invalidWords.map(w => w.toUpperCase()).join(", ")
+          toast.error(`${invalidList} ${invalidWords.length > 1 ? "are" : "is"} not valid`)
         } else {
           // Challenge failed - challenger loses their turn
           challengeMove(globalIndex, false)
-          toast.success(`Challenge failed - all words are valid: ${words.join(", ")}`)
+          const wordDefinitions = words.map(word => {
+            const entry = getWordDefinition(word)
+            const def = entry?.definitions[0]?.text ?? "no definition"
+            return `${word.toUpperCase()}: ${def}`
+          })
+          toast.success(`All words are valid: ${wordDefinitions.join("; ")}`)
         }
         break
       }
