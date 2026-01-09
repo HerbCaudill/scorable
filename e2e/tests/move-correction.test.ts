@@ -1,27 +1,20 @@
 import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
+
+let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
+
+  await seedTwoPlayerGame(page)
+
+  gamePage = new GamePage(page)
+  
 })
 
 test.describe('move correction', () => {
-  test('long-press on move enters edit mode', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    // Start a game and make a move
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('long-press on move enters edit mode', async () => {
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
 
@@ -30,16 +23,7 @@ test.describe('move correction', () => {
     await gamePage.expectInEditMode()
   })
 
-  test('cancel edit returns to normal mode', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('cancel edit returns to normal mode', async () => {
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
 
@@ -50,16 +34,7 @@ test.describe('move correction', () => {
     await gamePage.expectNotInEditMode()
   })
 
-  test('edited move updates score', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('edited move updates score', async () => {
     // Play CAT (C=3, A=1, T=1 = 5 * 2 center = 10)
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
@@ -92,15 +67,6 @@ test.describe('move correction', () => {
   })
 
   test('edited move persists after reload', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
 
@@ -119,9 +85,7 @@ test.describe('move correction', () => {
 
     // Reload - the app auto-navigates via URL hash
     await page.reload()
-
-    // Should already be on game screen (auto-navigation via URL hash)
-    await gamePage.expectOnGameScreen()
+    await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
 
     // Should show CATS and score persisted
     await gamePage.expectTileAt(7, 7, 'C')
@@ -131,16 +95,7 @@ test.describe('move correction', () => {
     expect(await gamePage.getPlayerScore(0)).toBe(12)
   })
 
-  test('cannot enter edit mode with tiles in progress', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('cannot enter edit mode with tiles in progress', async () => {
     // Alice plays CAT
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
@@ -158,16 +113,7 @@ test.describe('move correction', () => {
     await gamePage.expectErrorToast('Clear current move first')
   })
 
-  test('cursor advances when typing during edit mode', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('cursor advances when typing during edit mode', async () => {
     // Alice plays CAT
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()
@@ -203,16 +149,7 @@ test.describe('move correction', () => {
     await gamePage.expectTileAt(7, 9, 'G')
   })
 
-  test('editing move shows only that moves tiles on board', async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
-    const gamePage = new GamePage(page)
-
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, 'Alice')
-    await setupPage.addNewPlayer(1, 'Bob')
-    await setupPage.startGame()
-
+  test('editing move shows only that moves tiles on board', async () => {
     // Alice plays CAT
     await gamePage.placeWord(7, 7, 'CAT')
     await gamePage.endTurn()

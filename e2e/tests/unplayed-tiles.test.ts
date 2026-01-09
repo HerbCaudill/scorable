@@ -1,32 +1,25 @@
 import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
 
-test.beforeEach(async ({ page }) => {
-  const homePage = new HomePage(page)
-  await homePage.goto()
-  await homePage.clickNewGame()
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
 
-  const playerSetup = new PlayerSetupPage(page)
-  await playerSetup.addNewPlayer(0, 'Alice')
-  await playerSetup.addNewPlayer(1, 'Bob')
-  await playerSetup.startGame()
+let gamePage: GamePage
+
+test.beforeEach(async ({ page }) => {
+
+  await seedTwoPlayerGame(page)
+
+  gamePage = new GamePage(page)
+  
 })
 
 test('opens unplayed tiles screen from game', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-
   await gamePage.openTileBag()
 
   await expect(page.getByRole('heading', { name: 'Unplayed Tiles' })).toBeVisible()
 })
 
 test('shows remaining and played tile counts', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-
   await gamePage.openTileBag()
 
   // At start of game, all 100 tiles are remaining, 0 played
@@ -35,9 +28,6 @@ test('shows remaining and played tile counts', async ({ page }) => {
 })
 
 test('updates counts after tiles are played', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-
   // Play a 4-letter word: CATS at center
   await gamePage.placeWord(7, 7, 'CATS')
   await gamePage.endTurn()
@@ -50,9 +40,6 @@ test('updates counts after tiles are played', async ({ page }) => {
 })
 
 test('back button returns to game screen', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-
   await gamePage.openTileBag()
   await expect(page.getByRole('heading', { name: 'Unplayed Tiles' })).toBeVisible()
 
@@ -60,13 +47,10 @@ test('back button returns to game screen', async ({ page }) => {
   await page.getByRole('button', { name: 'Back' }).click()
 
   // Should be back on game screen
-  await gamePage.expectOnGameScreen()
+  await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
 })
 
 test('displays all tile letters', async ({ page }) => {
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-
   await gamePage.openTileBag()
 
   // Check that common letters are visible (at least the first tile of each)

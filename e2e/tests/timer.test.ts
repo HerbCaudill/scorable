@@ -1,26 +1,19 @@
 import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
+
+let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
 
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
+  await seedTwoPlayerGame(page)
 
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
+  gamePage = new GamePage(page)
+  
 })
 
 test('timers are hidden until first started', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Timer elements should not be visible initially
   const aliceTimer = gamePage.getPlayerTimer(0)
   const bobTimer = gamePage.getPlayerTimer(1)
@@ -36,8 +29,6 @@ test('timers are hidden until first started', async ({ page }) => {
 })
 
 test('timers stay visible after pausing', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer
   await gamePage.toggleTimer()
 
@@ -52,8 +43,6 @@ test('timers stay visible after pausing', async ({ page }) => {
 })
 
 test('timer starts when Start Timer clicked', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Initially should show "Timer" button (timer never used)
   await expect(page.getByRole('button', { name: 'Timer' })).toBeVisible()
 
@@ -65,8 +54,6 @@ test('timer starts when Start Timer clicked', async ({ page }) => {
 })
 
 test('timer pauses when Pause Timer clicked', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer
   await gamePage.toggleTimer()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
@@ -79,8 +66,6 @@ test('timer pauses when Pause Timer clicked', async ({ page }) => {
 })
 
 test('timer countdown decrements over time', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer first (timers are hidden until started)
   await gamePage.toggleTimer()
 
@@ -97,8 +82,6 @@ test('timer countdown decrements over time', async ({ page }) => {
 })
 
 test('timer pauses during moves', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer
   await gamePage.toggleTimer()
 
@@ -121,8 +104,6 @@ test('timer pauses during moves', async ({ page }) => {
 })
 
 test('timer continues for next player after turn', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer
   await gamePage.toggleTimer()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
@@ -136,8 +117,6 @@ test('timer continues for next player after turn', async ({ page }) => {
 })
 
 test('each player has independent timer', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer first (timers are hidden until started)
   await gamePage.toggleTimer()
 
@@ -159,8 +138,6 @@ test('each player has independent timer', async ({ page }) => {
 })
 
 test('board is editable while timer is running', async ({ page }) => {
-  const gamePage = new GamePage(page)
-
   // Start timer
   await gamePage.toggleTimer()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()

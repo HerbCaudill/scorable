@@ -1,32 +1,20 @@
 import { test, expect } from '@playwright/test'
 import { GamePage } from '../pages/game.page'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
+
+let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
+
+  await seedTwoPlayerGame(page)
+
+  gamePage = new GamePage(page)
+  
 })
 
-async function startNewGame(page: import('@playwright/test').Page): Promise<GamePage> {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
-  const gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
-  return gamePage
-}
-
 test('first move must include center square', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // Place word NOT on center
   await gamePage.placeWord(0, 0, 'CAT')
   await gamePage.endTurn()
@@ -36,8 +24,7 @@ test('first move must include center square', async ({ page }) => {
 })
 
 test('first move on center square succeeds', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // Place word on center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -48,8 +35,7 @@ test('first move on center square succeeds', async ({ page }) => {
 })
 
 test('subsequent moves must connect to existing tiles', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // First move on center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -63,8 +49,7 @@ test('subsequent moves must connect to existing tiles', async ({ page }) => {
 })
 
 test('connected word succeeds', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // First move on center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -80,8 +65,7 @@ test('connected word succeeds', async ({ page }) => {
 })
 
 test('tiles must be in single line', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // Place tiles in L-shape (not in a line)
   await gamePage.clickCell(7, 7)
   await gamePage.typeLetters('C')
@@ -96,8 +80,7 @@ test('tiles must be in single line', async ({ page }) => {
 })
 
 test('word cannot have gaps', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // Place tiles with a gap
   await gamePage.clickCell(7, 7)
   await gamePage.typeLetters('C')
@@ -110,8 +93,7 @@ test('word cannot have gaps', async ({ page }) => {
 })
 
 test('short word on first turn is valid', async ({ page }) => {
-  const gamePage = await startNewGame(page)
-
+  
   // Place a short word (2 letters) on center - this is allowed in scrabble
   await gamePage.placeWord(7, 7, 'AT')
   await gamePage.endTurn()

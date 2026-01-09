@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { GamePage } from '../pages/game.page'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
 
 // This test file specifically tests the keyboard input functionality
 // which is used by both the physical keyboard and the custom mobile keyboard
@@ -10,21 +9,11 @@ import { clearStorage } from '../fixtures/storage-fixtures'
 let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
 
-  // Start a new game via UI
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
+  await seedTwoPlayerGame(page)
 
   gamePage = new GamePage(page)
-  await gamePage.expectOnGameScreen()
+  
 })
 
 test.describe('Keyboard input', () => {

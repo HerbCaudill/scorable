@@ -1,25 +1,19 @@
 import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
+
+let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
+
+  await seedTwoPlayerGame(page)
+
+  gamePage = new GamePage(page)
+  
 })
 
-test('applies double word score for center square', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('applies double word score for center square', async () => {
   // CAT at center: C=3, A=1, T=1 = 5 * 2 (DW) = 10
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -27,16 +21,7 @@ test('applies double word score for center square', async ({ page }) => {
   expect(await gamePage.getPlayerScore(0)).toBe(10)
 })
 
-test('basic word scoring without multipliers', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('basic word scoring without multipliers', async () => {
   // Alice places CAT at center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -50,16 +35,7 @@ test('basic word scoring without multipliers', async ({ page }) => {
   expect(await gamePage.getPlayerScore(1)).toBe(3)
 })
 
-test('cross-word scoring', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('cross-word scoring', async () => {
   // Alice places CAT at center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -75,16 +51,7 @@ test('cross-word scoring', async ({ page }) => {
   expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
 })
 
-test('bingo bonus for 7 tiles', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('bingo bonus for 7 tiles', async () => {
   // RETAINS: R=1, E=1, T=1, A=1, I=1, N=1, S=1 = 7 * 2 = 14 + 50 = 64
   await gamePage.placeWord(7, 4, 'RETAINS')
   await gamePage.endTurn()
@@ -94,16 +61,7 @@ test('bingo bonus for 7 tiles', async ({ page }) => {
   expect(score).toBeGreaterThanOrEqual(64) // Base + bingo
 })
 
-test('blank tile scores 0 points', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('blank tile scores 0 points', async () => {
   // Place C_T where _ is a blank representing A
   // C=3, blank=0, T=1 = 4 * 2 = 8
   await gamePage.clickCell(7, 7)
@@ -116,16 +74,7 @@ test('blank tile scores 0 points', async ({ page }) => {
   expect(await gamePage.getPlayerScore(0)).toBe(8)
 })
 
-test('double letter square', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('double letter square', async () => {
   // Alice places CAT at center
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -140,16 +89,7 @@ test('double letter square', async ({ page }) => {
   expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
 })
 
-test('scores update after each valid move', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('scores update after each valid move', async () => {
   // Initial scores should be 0
   expect(await gamePage.getPlayerScore(0)).toBe(0)
   expect(await gamePage.getPlayerScore(1)).toBe(0)

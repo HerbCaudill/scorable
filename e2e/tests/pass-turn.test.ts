@@ -1,26 +1,19 @@
 import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
 import { GamePage } from '../pages/game.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+
+import { seedTwoPlayerGame } from '../fixtures/seed-game'
+
+let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
+
+  await seedTwoPlayerGame(page)
+
+  gamePage = new GamePage(page)
+  
 })
 
-test('shows confirmation dialog when passing with no tiles', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('shows confirmation dialog when passing with no tiles', async () => {
   // Press Enter without placing tiles
   await gamePage.clickCell(7, 7) // Need to focus the board first
   await gamePage.endTurn()
@@ -29,17 +22,7 @@ test('shows confirmation dialog when passing with no tiles', async ({ page }) =>
   await gamePage.expectDialogWithTitle('Pass turn?')
 })
 
-test('confirming pass advances turn', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game and make first move
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('confirming pass advances turn', async () => {
   // Alice places first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -56,17 +39,7 @@ test('confirming pass advances turn', async ({ page }) => {
   expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
 })
 
-test('canceling pass dialog keeps same player', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game and make first move
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('canceling pass dialog keeps same player', async () => {
   // Alice places first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -83,17 +56,7 @@ test('canceling pass dialog keeps same player', async ({ page }) => {
   expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 })
 
-test('passing does not change score', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game and make first move
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('passing does not change score', async () => {
   // Alice places first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -116,16 +79,6 @@ test('passing does not change score', async ({ page }) => {
 })
 
 test('pass is recorded in move history', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game and make first move
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
   // Alice places first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
@@ -139,17 +92,7 @@ test('pass is recorded in move history', async ({ page }) => {
   await expect(page.getByText('(pass)')).toBeVisible()
 })
 
-test('clicking player panel without tiles shows pass dialog', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a game and make first move
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
+test('clicking player panel without tiles shows pass dialog', async () => {
   // Alice places first word
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()

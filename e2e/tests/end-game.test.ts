@@ -1,20 +1,15 @@
 import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page'
 import { GamePage } from '../pages/game.page'
-import { replayGcgGame } from '../fixtures/replay-game'
-
-test.setTimeout(120000) // 2 minutes for replaying moves
+import { seedNearEndGame } from '../fixtures/seed-game'
 
 let gamePage: GamePage
 
 test.beforeEach(async ({ page }) => {
-  // Replay the near-end game through the UI
-  const result = await replayGcgGame(page, 'near-end-game.gcg', {
-    playerNames: ['Alice', 'Bob'],
-  })
-  gamePage = result.gamePage
+  await seedNearEndGame(page)
+  gamePage = new GamePage(page)
 
-  // Verify tiles remaining is low (should be < 7 for 2 players to show EndGameScreen)
+  // Verify tiles remaining is low (should be 7 for 2 players to show EndGameScreen)
   const tilesButton = page.getByRole('button', { name: /Tiles/ })
   const tilesText = await tilesButton.textContent()
   const tilesMatch = tilesText?.match(/Tiles \((\d+)\)/)
@@ -24,15 +19,13 @@ test.beforeEach(async ({ page }) => {
   }
 })
 
-test('shows EndGameScreen when tiles <= threshold', async ({ page }) => {
-  await gamePage.expectOnGameScreen()
-
+test('shows EndGameScreen when tiles <= threshold', async () => {
   // Click End Game - should show EndGameScreen, not simple dialog
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 })
 
-test('defaults to last player as who ended the game', async ({ page }) => {
+test('defaults to last player as who ended the game', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
@@ -40,7 +33,7 @@ test('defaults to last player as who ended the game', async ({ page }) => {
   await gamePage.expectPlayerEndedGame('Alice')
 })
 
-test('can change who ended the game', async ({ page }) => {
+test('can change who ended the game', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
@@ -62,7 +55,7 @@ test('can select nobody for blocked game', async ({ page }) => {
   await expect(bobSection).not.toContainText('ended the game')
 })
 
-test('can enter rack tiles and see deduction', async ({ page }) => {
+test('can enter rack tiles and see deduction', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
@@ -75,7 +68,7 @@ test('can enter rack tiles and see deduction', async ({ page }) => {
   expect(adjustment).toBe('-3')
 })
 
-test('player who ended game gets bonus', async ({ page }) => {
+test('player who ended game gets bonus', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
@@ -87,7 +80,7 @@ test('player who ended game gets bonus', async ({ page }) => {
   expect(aliceAdjustment).toBe('+3')
 })
 
-test('validates rack tiles against remaining', async ({ page }) => {
+test('validates rack tiles against remaining', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
@@ -106,7 +99,7 @@ test('can cancel and return to game', async ({ page }) => {
   await gamePage.expectOnEndGameScreen()
 
   await gamePage.cancelEndGame()
-  await gamePage.expectOnGameScreen()
+  await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
 })
 
 test('apply creates adjustment moves and ends game', async ({ page }) => {
@@ -123,7 +116,7 @@ test('apply creates adjustment moves and ends game', async ({ page }) => {
   await homePage.expectOnHomeScreen()
 })
 
-test('backspace removes tiles from rack input', async ({ page }) => {
+test('backspace removes tiles from rack input', async () => {
   await gamePage.clickEndGame()
   await gamePage.expectOnEndGameScreen()
 
