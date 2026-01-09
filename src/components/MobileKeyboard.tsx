@@ -18,7 +18,7 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
   return (
     <div
       className={cx(
-        'fixed inset-x-0 bottom-0 z-50 bg-neutral-200 p-2 pb-safe transition-transform duration-200',
+        'fixed inset-x-0 bottom-0 z-50 bg-neutral-200 p-4 pb-safe transition-transform duration-200',
         visible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
       )}
     >
