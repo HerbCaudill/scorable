@@ -232,6 +232,9 @@ const ScrabbleBoard = ({
         event.preventDefault()
         const { row, col, direction } = cursor
 
+        // Don't place tile on existing tile
+        if (tiles && tiles[row][col] !== null) return
+
         // Place blank tile
         setNewTiles(prev => {
           const updated = prev.map(r => [...r])
@@ -275,6 +278,9 @@ const ScrabbleBoard = ({
       const letter = value.slice(-1)
       if (letter.length === 1 && letter in tileValues && letter !== ' ') {
         const { row, col, direction } = cursor
+
+        // Don't place tile on existing tile
+        if (tiles && tiles[row][col] !== null) return
 
         // Place the letter
         setNewTiles(prev => {
