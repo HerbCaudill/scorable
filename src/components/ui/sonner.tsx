@@ -28,6 +28,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
+          "--success-bg": "oklch(0.95 0.1 145)",
+          "--success-text": "oklch(0.35 0.1 145)",
+          "--success-border": "oklch(0.7 0.15 145)",
+          "--error-bg": "oklch(0.95 0.05 25)",
+          "--error-text": "oklch(0.4 0.15 25)",
+          "--error-border": "oklch(0.7 0.15 25)",
           "--border-radius": "var(--radius)",
         } as React.CSSProperties
       }
