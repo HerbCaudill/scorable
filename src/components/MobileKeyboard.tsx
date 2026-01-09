@@ -1,5 +1,22 @@
-import { IconBackspace, IconArrowRight, IconArrowDown } from "@tabler/icons-react"
+import { IconBackspace } from "@tabler/icons-react"
 import { cx } from "@/lib/cx"
+
+/** Direction indicator that mirrors the cursor style on the board */
+const DirectionIndicator = ({ direction }: { direction: "horizontal" | "vertical" }) => (
+  <div className="relative size-5 ring-[2.5px] ring-teal-600 ring-inset">
+    {/* Triangle pointer */}
+    <div
+      className={cx(
+        "absolute w-0 h-0 border-solid",
+        direction === "horizontal" ?
+          // Right-pointing triangle
+          "left-full top-1/2 -translate-y-1/2 border-t-[5px] border-b-[5px] border-l-[6px] border-t-transparent border-b-transparent border-l-teal-600"
+          // Down-pointing triangle
+        : "top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-teal-600",
+      )}
+    />
+  </div>
+)
 
 const ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -82,9 +99,7 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
           onTouchStart={handleKeyPress("ToggleDirection")}
           onMouseDown={handleKeyPress("ToggleDirection")}
         >
-          {direction === "horizontal" ?
-            <IconArrowRight size={22} />
-          : <IconArrowDown size={22} />}
+          <DirectionIndicator direction={direction ?? "horizontal"} />
         </button>
         <button
           type="button"
