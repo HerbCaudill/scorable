@@ -1,4 +1,4 @@
-import type { BoardState, Move } from './types'
+import type { BoardState, Move } from "./types"
 
 export type ValidationResult = { valid: true } | { valid: false; error: string }
 
@@ -12,7 +12,11 @@ export type ValidationResult = { valid: true } | { valid: false; error: string }
  * - Subsequent moves must connect to existing tiles
  * - No gaps allowed in the word
  */
-export const validateMove = (move: Move, board: BoardState, isFirstMove: boolean): ValidationResult => {
+export const validateMove = (
+  move: Move,
+  board: BoardState,
+  isFirstMove: boolean,
+): ValidationResult => {
   // Empty move is valid (player passes)
   if (move.length === 0) {
     return { valid: true }
@@ -25,14 +29,14 @@ export const validateMove = (move: Move, board: BoardState, isFirstMove: boolean
   const isVertical = cols.size === 1
 
   if (!isHorizontal && !isVertical) {
-    return { valid: false, error: 'Tiles must be in a single row or column' }
+    return { valid: false, error: "Tiles must be in a single row or column" }
   }
 
   // First move must include center square (7,7)
   if (isFirstMove) {
     const includesCenter = move.some(t => t.row === 7 && t.col === 7)
     if (!includesCenter) {
-      return { valid: false, error: 'First word must include the center square' }
+      return { valid: false, error: "First word must include the center square" }
     }
     // First move is valid if it includes center and has more than one tile
     // (or connects to nothing, which is fine for the first move)
@@ -55,7 +59,7 @@ export const validateMove = (move: Move, board: BoardState, isFirstMove: boolean
   })
 
   if (!connectsToExisting) {
-    return { valid: false, error: 'Word must connect to existing tiles' }
+    return { valid: false, error: "Word must connect to existing tiles" }
   }
 
   // Check for gaps in the word
@@ -79,7 +83,7 @@ const checkForGaps = (move: Move, board: BoardState, isHorizontal: boolean): Val
 
     for (let c = minCol; c <= maxCol; c++) {
       if (tempBoard[row][c] === null) {
-        return { valid: false, error: 'Word cannot have gaps' }
+        return { valid: false, error: "Word cannot have gaps" }
       }
     }
   } else {
@@ -89,7 +93,7 @@ const checkForGaps = (move: Move, board: BoardState, isHorizontal: boolean): Val
 
     for (let r = minRow; r <= maxRow; r++) {
       if (tempBoard[r][col] === null) {
-        return { valid: false, error: 'Word cannot have gaps' }
+        return { valid: false, error: "Word cannot have gaps" }
       }
     }
   }

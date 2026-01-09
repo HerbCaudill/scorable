@@ -1,6 +1,6 @@
-import { createEmptyBoard, type GameMove } from './types'
-import { getWordsFromMove } from './getWordsFromMove'
-import { calculateMoveScore } from './calculateMoveScore'
+import { createEmptyBoard, type GameMove } from "./types"
+import { getWordsFromMove } from "./getWordsFromMove"
+import { calculateMoveScore } from "./calculateMoveScore"
 
 export type MoveHistoryEntry = {
   words: string[]
@@ -22,7 +22,7 @@ type Options = {
 export const getPlayerMoveHistory = (
   moves: GameMove[],
   playerIndex: number,
-  options: Options = {}
+  options: Options = {},
 ): MoveHistoryEntry[] => {
   const { newestFirst = false } = options
   let boardState = createEmptyBoard()

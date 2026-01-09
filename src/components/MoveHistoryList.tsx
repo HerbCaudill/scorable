@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import type { MoveHistoryEntry } from '@/lib/getPlayerMoveHistory'
-import { cn } from '@/lib/utils'
+import { useState } from "react"
+import type { MoveHistoryEntry } from "@/lib/getPlayerMoveHistory"
+import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { IconPencil, IconArrowBackUp, IconAlertTriangle } from '@tabler/icons-react'
+} from "@/components/ui/dropdown-menu"
+import { IconPencil, IconArrowBackUp, IconAlertTriangle } from "@tabler/icons-react"
 
-export type MoveAction = 'correct' | 'undo' | 'challenge'
+export type MoveAction = "correct" | "undo" | "challenge"
 
 export const MoveHistoryList = ({
   history,
@@ -20,19 +20,19 @@ export const MoveHistoryList = ({
   className,
 }: Props) => {
   return (
-    <div className={cn('flex flex-col divide-y divide-neutral-200', className)}>
+    <div className={cn("flex flex-col divide-y divide-neutral-200", className)}>
       {history.map((entry, i) => {
         if (entry.isAdjustment) {
           // Display adjustment entry (not editable)
-          const scoreClass = entry.score > 0 ? 'text-green-600' : entry.score < 0 ? 'text-red-600' : ''
-          const scorePrefix = entry.score > 0 ? '+' : ''
+          const scoreClass =
+            entry.score > 0 ? "text-green-600"
+            : entry.score < 0 ? "text-red-600"
+            : ""
+          const scorePrefix = entry.score > 0 ? "+" : ""
           return (
-            <div
-              key={i}
-              className="flex justify-between gap-2 px-1 py-1.5 text-neutral-500 italic"
-            >
+            <div key={i} className="flex justify-between gap-2 px-1 py-1.5 text-neutral-500 italic">
               <span className="truncate">Final</span>
-              <span className={cn('font-medium', scoreClass)}>
+              <span className={cn("font-medium", scoreClass)}>
                 {scorePrefix}
                 {entry.score}
               </span>
@@ -81,30 +81,32 @@ const MoveHistoryEntry = ({
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            'flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200',
-            isEditing ? 'bg-teal-100 text-teal-800 font-medium' : 'text-neutral-600'
+            "flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200",
+            isEditing ? "bg-teal-100 text-teal-800 font-medium" : "text-neutral-600",
           )}
           onClick={() => onMoveClick(entry.tiles)}
         >
           <span className="truncate">
-            {entry.words.length > 0 ? entry.words.join(', ') : <em className="text-neutral-400">(pass)</em>}
+            {entry.words.length > 0 ?
+              entry.words.join(", ")
+            : <em className="text-neutral-400">(pass)</em>}
           </span>
           <span className="font-medium">{entry.score}</span>
         </div>
       </DropdownMenuTrigger>
       {!isPass && (
         <DropdownMenuContent align="start" side="right">
-          <DropdownMenuItem onClick={() => handleAction('correct')}>
+          <DropdownMenuItem onClick={() => handleAction("correct")}>
             <IconPencil size={16} />
             Correct
           </DropdownMenuItem>
           {isLastMove && (
             <>
-              <DropdownMenuItem onClick={() => handleAction('undo')}>
+              <DropdownMenuItem onClick={() => handleAction("undo")}>
                 <IconArrowBackUp size={16} />
                 Undo
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAction('challenge')}>
+              <DropdownMenuItem onClick={() => handleAction("challenge")}>
                 <IconAlertTriangle size={16} />
                 Challenge
               </DropdownMenuItem>

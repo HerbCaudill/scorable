@@ -130,8 +130,8 @@ test.describe("Move Actions", () => {
       expect(await gamePage.cellHasTile(7, 8)).toBe(false)
       expect(await gamePage.cellHasTile(7, 9)).toBe(false)
 
-      // It should be Alice's turn again
-      expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
+      // Alice loses her turn (passes), so it should be Bob's turn
+      expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
     })
 
     test("failed challenge shows error toast", async ({ page }) => {
@@ -165,8 +165,8 @@ test.describe("Move Actions", () => {
       await gamePage.expectTileAt(7, 8, "A")
       await gamePage.expectTileAt(7, 9, "T")
 
-      // It should still be Bob's turn
-      expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+      // Bob loses his turn for failed challenge, so it should be Alice's turn
+      expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
     })
 
     test("challenge option only appears for the last move", async ({ page }) => {

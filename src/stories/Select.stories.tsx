@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from "@storybook/react"
 import {
   Select,
   SelectContent,
@@ -7,15 +7,15 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 
 const meta = {
-  title: 'UI/Select',
+  title: "UI/Select",
   component: Select,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 } satisfies Meta<typeof Select>
 
 export default meta
@@ -38,7 +38,7 @@ export const Default: Story = {
 }
 
 export const WithGroups: Story = {
-  name: 'With groups',
+  name: "With groups",
   render: () => (
     <Select>
       <SelectTrigger className="w-[180px]">

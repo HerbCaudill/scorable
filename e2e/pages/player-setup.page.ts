@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test'
+import { Page, expect } from "@playwright/test"
 
 export class PlayerSetupPage {
   constructor(private page: Page) {}
@@ -6,13 +6,13 @@ export class PlayerSetupPage {
   /** Click on a player slot to open the dropdown */
   async clickPlayerSlot(slotIndex: number) {
     // Player slots have "1. player name", "2. player name", etc.
-    await this.page.locator('.border-dashed, .border-solid').nth(slotIndex).click()
+    await this.page.locator(".border-dashed, .border-solid").nth(slotIndex).click()
   }
 
   /** Select an existing player from the dropdown */
   async selectExistingPlayer(slotIndex: number, playerName: string) {
     await this.clickPlayerSlot(slotIndex)
-    await this.page.getByRole('menuitem', { name: playerName }).click()
+    await this.page.getByRole("menuitem", { name: playerName }).click()
   }
 
   /** Add a new player by name */
@@ -20,32 +20,32 @@ export class PlayerSetupPage {
     await this.clickPlayerSlot(slotIndex)
     // If no previous players are available, the input is shown directly
     // Otherwise, we need to click "New..." first
-    const newMenuItem = this.page.getByRole('menuitem', { name: 'New...' })
+    const newMenuItem = this.page.getByRole("menuitem", { name: "New..." })
     if (await newMenuItem.isVisible()) {
       await newMenuItem.click()
     }
-    await this.page.getByPlaceholder('Enter name...').fill(playerName)
-    await this.page.getByRole('button', { name: 'Add' }).click()
+    await this.page.getByPlaceholder("Enter name...").fill(playerName)
+    await this.page.getByRole("button", { name: "Add" }).click()
   }
 
   /** Clear a selected player */
   async clearPlayer(slotIndex: number) {
-    await this.page.getByLabel('Clear player').nth(slotIndex).click()
+    await this.page.getByLabel("Clear player").nth(slotIndex).click()
   }
 
   /** Click the start game button */
   async startGame() {
-    await this.page.getByRole('button', { name: 'Start game' }).click()
+    await this.page.getByRole("button", { name: "Start game" }).click()
   }
 
   /** Check if start game button is enabled */
   async isStartGameEnabled() {
-    return this.page.getByRole('button', { name: 'Start game' }).isEnabled()
+    return this.page.getByRole("button", { name: "Start game" }).isEnabled()
   }
 
   /** Go back to home screen */
   async goBack() {
-    await this.page.getByRole('button', { name: 'Back' }).click()
+    await this.page.getByRole("button", { name: "Back" }).click()
   }
 
   /** Verify player is shown in a slot */

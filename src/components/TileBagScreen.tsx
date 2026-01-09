@@ -1,11 +1,11 @@
-import { getSortedTileEntries } from '@/lib/getSortedTileEntries'
-import { getRemainingTileCount } from '@/lib/getRemainingTileCount'
-import { getRemainingTiles } from '@/lib/getRemainingTiles'
-import { TILE_DISTRIBUTION, TOTAL_TILES } from '@/lib/constants'
-import { Button } from '@/components/ui/button'
-import { IconArrowLeft } from '@tabler/icons-react'
-import { Tile } from './Tile'
-import type { Game } from '@/lib/types'
+import { getSortedTileEntries } from "@/lib/getSortedTileEntries"
+import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
+import { getRemainingTiles } from "@/lib/getRemainingTiles"
+import { TILE_DISTRIBUTION, TOTAL_TILES } from "@/lib/constants"
+import { Button } from "@/components/ui/button"
+import { IconArrowLeft } from "@tabler/icons-react"
+import { Tile } from "./Tile"
+import type { Game } from "@/lib/types"
 
 export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
   const remainingTiles = getRemainingTiles(game)

@@ -1,12 +1,12 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'IBM Plex Serif', ui-serif, Georgia, serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
   /* https://www.tints.dev/orange/b36d1e */
   --color-orange-50: oklch(96.08% 0.019 67.6);

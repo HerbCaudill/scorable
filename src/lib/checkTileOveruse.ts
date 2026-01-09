@@ -1,8 +1,11 @@
-import { TILE_DISTRIBUTION } from './constants'
-import { getPlayedTiles } from './getPlayedTiles'
-import type { Game } from './types'
+import { TILE_DISTRIBUTION } from "./constants"
+import { getPlayedTiles } from "./getPlayedTiles"
+import type { Game } from "./types"
 
-export const checkTileOveruse = (game: Game, newTiles: Array<{ tile: string }>): TileOveruseWarning[] => {
+export const checkTileOveruse = (
+  game: Game,
+  newTiles: Array<{ tile: string }>,
+): TileOveruseWarning[] => {
   const played = getPlayedTiles(game)
   const warnings: TileOveruseWarning[] = []
 
@@ -21,7 +24,7 @@ export const checkTileOveruse = (game: Game, newTiles: Array<{ tile: string }>):
 
     if (totalUsed > available) {
       warnings.push({
-        tile: letter === ' ' ? 'blank' : letter,
+        tile: letter === " " ? "blank" : letter,
         used: totalUsed,
         available,
       })

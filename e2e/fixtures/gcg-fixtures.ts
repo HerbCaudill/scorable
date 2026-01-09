@@ -1,16 +1,16 @@
-import * as fs from 'fs'
-import * as path from 'path'
-import { fileURLToPath } from 'url'
-import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/parseGcg'
-import type { BoardState } from '../../src/lib/types'
+import * as fs from "fs"
+import * as path from "path"
+import { fileURLToPath } from "url"
+import { parseGcg, type GcgGame, type GcgPlayMove } from "../../src/lib/parseGcg"
+import type { BoardState } from "../../src/lib/types"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /** Load and parse a GCG file from the e2e/games directory */
 export const loadGcgGame = (filename: string): GcgGame => {
-  const filePath = path.join(__dirname, '..', 'games', filename)
-  const content = fs.readFileSync(filePath, 'utf-8')
+  const filePath = path.join(__dirname, "..", "games", filename)
+  const content = fs.readFileSync(filePath, "utf-8")
   return parseGcg(content)
 }
 
@@ -26,19 +26,19 @@ const createEmptyBoard = (): BoardState => {
  */
 export const getNewTiles = (
   move: GcgPlayMove,
-  board: BoardState
+  board: BoardState,
 ): Array<{ row: number; col: number; tile: string }> => {
   const { position, word } = move
   const tiles: Array<{ row: number; col: number; tile: string }> = []
 
   for (let i = 0; i < word.length; i++) {
-    const row = position.direction === 'vertical' ? position.row + i : position.row
-    const col = position.direction === 'horizontal' ? position.col + i : position.col
+    const row = position.direction === "vertical" ? position.row + i : position.row
+    const col = position.direction === "horizontal" ? position.col + i : position.col
 
     // Bounds check
     if (row < 0 || row > 14 || col < 0 || col > 14) {
       throw new Error(
-        `Position out of bounds: row=${row}, col=${col} for word "${word}" at position (${position.row}, ${position.col}) direction=${position.direction}`
+        `Position out of bounds: row=${row}, col=${col} for word "${word}" at position (${position.row}, ${position.col}) direction=${position.direction}`,
       )
     }
 
@@ -46,7 +46,7 @@ export const getNewTiles = (
     if (board[row][col] === null) {
       // Lowercase letters in GCG are blanks - we represent them as spaces
       const letter = word[i]
-      const tile = letter === letter.toLowerCase() ? ' ' : letter
+      const tile = letter === letter.toLowerCase() ? " " : letter
       tiles.push({ row, col, tile })
     }
   }
@@ -62,8 +62,8 @@ export const applyMoveToBoard = (move: GcgPlayMove, board: BoardState): BoardSta
   const { position, word } = move
 
   for (let i = 0; i < word.length; i++) {
-    const row = position.direction === 'vertical' ? position.row + i : position.row
-    const col = position.direction === 'horizontal' ? position.col + i : position.col
+    const row = position.direction === "vertical" ? position.row + i : position.row
+    const col = position.direction === "horizontal" ? position.col + i : position.col
 
     // Only place tile if position is empty
     if (newBoard[row][col] === null) {
@@ -94,7 +94,7 @@ export const simulateGame = (gcg: GcgGame): BoardState => {
   let board = createEmptyBoard()
 
   for (const move of gcg.moves) {
-    if (move.type === 'play') {
+    if (move.type === "play") {
       board = applyMoveToBoard(move, board)
     }
   }

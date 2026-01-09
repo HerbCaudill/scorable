@@ -1,4 +1,4 @@
-import { tileValues } from './tileValues'
+import { tileValues } from "./tileValues"
 
 export type RackEntry = {
   playerIndex: number
@@ -22,11 +22,11 @@ export type Adjustment = {
  */
 export const calculateEndGameAdjustments = (
   racks: RackEntry[],
-  playerWhoEndedGame: number | null
+  playerWhoEndedGame: number | null,
 ): Adjustment[] => {
   // Calculate tile value for each player's rack
   const rackValues = racks.map(({ tiles }) =>
-    tiles.reduce((sum, tile) => sum + (tileValues[tile.toUpperCase()] ?? 0), 0)
+    tiles.reduce((sum, tile) => sum + (tileValues[tile.toUpperCase()] ?? 0), 0),
   )
 
   // Total value of all racks (for bonus calculation)

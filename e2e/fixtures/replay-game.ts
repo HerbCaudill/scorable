@@ -1,10 +1,10 @@
-import { Page } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
-import { GamePage } from '../pages/game.page'
-import { loadGcgGame, getNewTiles, applyMoveToBoard, getPlayerNames } from './gcg-fixtures'
-import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/parseGcg'
-import type { BoardState } from '../../src/lib/types'
+import { Page } from "@playwright/test"
+import { HomePage } from "../pages/home.page"
+import { PlayerSetupPage } from "../pages/player-setup.page"
+import { GamePage } from "../pages/game.page"
+import { loadGcgGame, getNewTiles, applyMoveToBoard, getPlayerNames } from "./gcg-fixtures"
+import { parseGcg, type GcgGame, type GcgPlayMove } from "../../src/lib/parseGcg"
+import type { BoardState } from "../../src/lib/types"
 
 const createEmptyBoard = (): BoardState => {
   return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => null))
@@ -24,7 +24,7 @@ export type ReplayOptions = {
 export async function replayGcgGame(
   page: Page,
   gcgFilename: string,
-  options: ReplayOptions = {}
+  options: ReplayOptions = {},
 ): Promise<{ gamePage: GamePage; board: BoardState }> {
   const gcg = loadGcgGame(gcgFilename)
   return replayGcgFromParsed(page, gcg, options)
@@ -37,7 +37,7 @@ export async function replayGcgGame(
 export async function replayGcgContent(
   page: Page,
   gcgContent: string,
-  options: ReplayOptions = {}
+  options: ReplayOptions = {},
 ): Promise<{ gamePage: GamePage; board: BoardState }> {
   const gcg = parseGcg(gcgContent)
   return replayGcgFromParsed(page, gcg, options)
@@ -49,7 +49,7 @@ export async function replayGcgContent(
 export async function replayGcgFromParsed(
   page: Page,
   gcg: GcgGame,
-  options: ReplayOptions = {}
+  options: ReplayOptions = {},
 ): Promise<{ gamePage: GamePage; board: BoardState }> {
   const { stopAfterMoves, playerNames } = options
 
@@ -76,7 +76,7 @@ export async function replayGcgFromParsed(
   for (let i = 0; i < gcg.moves.length - 1; i++) {
     const move = gcg.moves[i]
     const nextMove = gcg.moves[i + 1]
-    if (move.type === 'play' && nextMove.type === 'challenge' && move.player === nextMove.player) {
+    if (move.type === "play" && nextMove.type === "challenge" && move.player === nextMove.player) {
       challengedOffIndices.add(i)
     }
   }
@@ -98,7 +98,7 @@ export async function replayGcgFromParsed(
       continue
     }
 
-    if (move.type === 'play') {
+    if (move.type === "play") {
       const playMove = move as GcgPlayMove
       const newTiles = getNewTiles(playMove, board)
 
@@ -113,13 +113,13 @@ export async function replayGcgFromParsed(
           await gamePage.clickCell(tile.row, tile.col)
 
           // On first tile, set direction if vertical
-          if (i === 0 && direction === 'vertical') {
+          if (i === 0 && direction === "vertical") {
             await gamePage.clickCell(tile.row, tile.col) // Toggle to vertical
           }
 
           // Type the tile letter
-          if (tile.tile === ' ') {
-            await gamePage.pressKey(' ') // Blank tile
+          if (tile.tile === " ") {
+            await gamePage.pressKey(" ") // Blank tile
           } else {
             await gamePage.typeLetters(tile.tile)
           }
@@ -132,14 +132,14 @@ export async function replayGcgFromParsed(
         board = applyMoveToBoard(playMove, board)
         playedMoves++
       }
-    } else if (move.type === 'exchange' || move.type === 'challenge') {
+    } else if (move.type === "exchange" || move.type === "challenge") {
       // Treat as pass - click on current player panel to trigger pass dialog
       await gamePage.endTurn()
       // Wait for and confirm the pass dialog
       await page.waitForSelector('[role="alertdialog"]', { timeout: 5000 })
       await gamePage.confirmPass()
       // Wait for dialog to close
-      await page.waitForSelector('[role="alertdialog"]', { state: 'detached', timeout: 5000 })
+      await page.waitForSelector('[role="alertdialog"]', { state: "detached", timeout: 5000 })
       playedMoves++
     }
     // Skip 'end' type moves (end-game scoring)

@@ -1,5 +1,5 @@
-import { IconPlayerPauseFilled } from '@tabler/icons-react'
-import { DEFAULT_TIME_MS } from '@/lib/types'
+import { IconPlayerPauseFilled } from "@tabler/icons-react"
+import { DEFAULT_TIME_MS } from "@/lib/types"
 
 type Props = {
   timeRemainingMs: number
@@ -11,7 +11,7 @@ type Props = {
 const formatTime = (ms: number) => {
   const minutes = Math.floor(ms / 60_000)
   const seconds = Math.floor((ms % 60_000) / 1000)
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
 export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = false }: Props) => {

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import type { DocumentId } from '@automerge/automerge-repo'
+import { useState, useEffect, useCallback } from "react"
+import type { DocumentId } from "@automerge/automerge-repo"
 
 /** Convert a string to a DocumentId */
 export const toDocumentId = (input: string): DocumentId | null => {
@@ -20,8 +20,8 @@ export const useGameId = (): [DocumentId | null, (id: DocumentId | null) => void
     const handleHashChange = () => {
       setGameIdState(getIdFromHash())
     }
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
   const setGameId = useCallback((id: DocumentId | null) => {
@@ -29,7 +29,7 @@ export const useGameId = (): [DocumentId | null, (id: DocumentId | null) => void
       window.location.hash = id
     } else {
       // Remove hash without triggering navigation
-      history.pushState('', document.title, window.location.pathname + window.location.search)
+      history.pushState("", document.title, window.location.pathname + window.location.search)
     }
     setGameIdState(id)
   }, [])

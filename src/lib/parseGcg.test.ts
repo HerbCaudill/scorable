@@ -1,51 +1,51 @@
-import { describe, expect, it } from 'vitest'
-import { parseGcg, parsePosition } from './parseGcg'
+import { describe, expect, it } from "vitest"
+import { parseGcg, parsePosition } from "./parseGcg"
 
-describe('parsePosition', () => {
-  it('parses vertical position (letter-number format)', () => {
+describe("parsePosition", () => {
+  it("parses vertical position (letter-number format)", () => {
     // H4 = vertical, column H (index 7), starting row 4 (index 3)
-    expect(parsePosition('H4')).toEqual({ row: 3, col: 7, direction: 'vertical' })
+    expect(parsePosition("H4")).toEqual({ row: 3, col: 7, direction: "vertical" })
   })
 
-  it('parses horizontal position (number-letter format)', () => {
+  it("parses horizontal position (number-letter format)", () => {
     // 4H = horizontal, row 4 (index 3), starting column H (index 7)
-    expect(parsePosition('4H')).toEqual({ row: 3, col: 7, direction: 'horizontal' })
+    expect(parsePosition("4H")).toEqual({ row: 3, col: 7, direction: "horizontal" })
   })
 
-  it('parses position at row 1, column A', () => {
+  it("parses position at row 1, column A", () => {
     // A1 = vertical at column A, row 1
-    expect(parsePosition('A1')).toEqual({ row: 0, col: 0, direction: 'vertical' })
+    expect(parsePosition("A1")).toEqual({ row: 0, col: 0, direction: "vertical" })
     // 1A = horizontal at row 1, column A
-    expect(parsePosition('1A')).toEqual({ row: 0, col: 0, direction: 'horizontal' })
+    expect(parsePosition("1A")).toEqual({ row: 0, col: 0, direction: "horizontal" })
   })
 
-  it('parses position at row 15, column O', () => {
+  it("parses position at row 15, column O", () => {
     // O15 = vertical at column O, row 15
-    expect(parsePosition('O15')).toEqual({ row: 14, col: 14, direction: 'vertical' })
+    expect(parsePosition("O15")).toEqual({ row: 14, col: 14, direction: "vertical" })
     // 15O = horizontal at row 15, column O
-    expect(parsePosition('15O')).toEqual({ row: 14, col: 14, direction: 'horizontal' })
+    expect(parsePosition("15O")).toEqual({ row: 14, col: 14, direction: "horizontal" })
   })
 
-  it('parses double-digit rows', () => {
+  it("parses double-digit rows", () => {
     // A10 = vertical at column A, row 10
-    expect(parsePosition('A10')).toEqual({ row: 9, col: 0, direction: 'vertical' })
+    expect(parsePosition("A10")).toEqual({ row: 9, col: 0, direction: "vertical" })
     // 10A = horizontal at row 10, column A
-    expect(parsePosition('10A')).toEqual({ row: 9, col: 0, direction: 'horizontal' })
+    expect(parsePosition("10A")).toEqual({ row: 9, col: 0, direction: "horizontal" })
   })
 })
 
-describe('parseGcg', () => {
-  it('parses player pragmas', () => {
+describe("parseGcg", () => {
+  it("parses player pragmas", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta`
 
     const result = parseGcg(gcg)
 
-    expect(result.player1).toEqual({ nickname: 'Yorra', name: 'Wayne Yorra' })
-    expect(result.player2).toEqual({ nickname: 'Cresta', name: 'Michael Cresta' })
+    expect(result.player1).toEqual({ nickname: "Yorra", name: "Wayne Yorra" })
+    expect(result.player2).toEqual({ nickname: "Cresta", name: "Michael Cresta" })
   })
 
-  it('parses title and description', () => {
+  it("parses title and description", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 #title 830 point club game
@@ -53,11 +53,11 @@ describe('parseGcg', () => {
 
     const result = parseGcg(gcg)
 
-    expect(result.title).toBe('830 point club game')
-    expect(result.description).toBe('Oct 12, 2006 - Lexington MA Club game')
+    expect(result.title).toBe("830 point club game")
+    expect(result.description).toBe("Oct 12, 2006 - Lexington MA Club game")
   })
 
-  it('parses a simple play move', () => {
+  it("parses a simple play move", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Yorra: DEJOSTU H4 JOUSTED +96 96`
@@ -68,17 +68,17 @@ describe('parseGcg', () => {
     // H4 = vertical at column H (index 7), starting row 4 (index 3)
     // JOUSTED covers rows 4-10 (indices 3-9), passing through center at row 8 (index 7)
     expect(result.moves[0]).toEqual({
-      player: 'Yorra',
-      rack: 'DEJOSTU',
-      type: 'play',
-      position: { row: 3, col: 7, direction: 'vertical' },
-      word: 'JOUSTED',
+      player: "Yorra",
+      rack: "DEJOSTU",
+      type: "play",
+      position: { row: 3, col: 7, direction: "vertical" },
+      word: "JOUSTED",
       score: 96,
       cumulative: 96,
     })
   })
 
-  it('parses a horizontal play move', () => {
+  it("parses a horizontal play move", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Yorra: ADIKLLY 9A LADYLIKE +73 169`
@@ -87,13 +87,13 @@ describe('parseGcg', () => {
 
     // 9A = horizontal at row 9 (index 8), starting column A (index 0)
     const move = result.moves[0]
-    expect(move.type).toBe('play')
-    if (move.type === 'play') {
-      expect(move.position).toEqual({ row: 8, col: 0, direction: 'horizontal' })
+    expect(move.type).toBe("play")
+    if (move.type === "play") {
+      expect(move.position).toEqual({ row: 8, col: 0, direction: "horizontal" })
     }
   })
 
-  it('parses an exchange move', () => {
+  it("parses an exchange move", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Cresta: E - +0 0`
@@ -101,15 +101,15 @@ describe('parseGcg', () => {
     const result = parseGcg(gcg)
 
     expect(result.moves[0]).toEqual({
-      player: 'Cresta',
-      rack: 'E',
-      type: 'exchange',
+      player: "Cresta",
+      rack: "E",
+      type: "exchange",
       score: 0,
       cumulative: 0,
     })
   })
 
-  it('parses a move with a blank tile (lowercase)', () => {
+  it("parses a move with a blank tile (lowercase)", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Yorra: ACEMRT? 7H SCAMsTER +65 285`
@@ -118,17 +118,17 @@ describe('parseGcg', () => {
 
     // 7H = horizontal at row 7 (index 6), starting column H (index 7)
     expect(result.moves[0]).toEqual({
-      player: 'Yorra',
-      rack: 'ACEMRT?',
-      type: 'play',
-      position: { row: 6, col: 7, direction: 'horizontal' },
-      word: 'SCAMsTER',
+      player: "Yorra",
+      rack: "ACEMRT?",
+      type: "play",
+      position: { row: 6, col: 7, direction: "horizontal" },
+      word: "SCAMsTER",
       score: 65,
       cumulative: 285,
     })
   })
 
-  it('parses challenge withdrawal (double dash)', () => {
+  it("parses challenge withdrawal (double dash)", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Yorra: ELNNOSS -- -70 455`
@@ -136,15 +136,15 @@ describe('parseGcg', () => {
     const result = parseGcg(gcg)
 
     expect(result.moves[0]).toEqual({
-      player: 'Yorra',
-      rack: 'ELNNOSS',
-      type: 'challenge',
+      player: "Yorra",
+      rack: "ELNNOSS",
+      type: "challenge",
       score: -70,
       cumulative: 455,
     })
   })
 
-  it('parses end-game scoring with tiles in parentheses', () => {
+  it("parses end-game scoring with tiles in parentheses", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Cresta" (LN) +4 830`
@@ -152,15 +152,15 @@ describe('parseGcg', () => {
     const result = parseGcg(gcg)
 
     expect(result.moves[0]).toEqual({
-      player: 'Cresta',
-      type: 'end',
-      tiles: 'LN',
+      player: "Cresta",
+      type: "end",
+      tiles: "LN",
       score: 4,
       cumulative: 830,
     })
   })
 
-  it('parses multiple moves in sequence', () => {
+  it("parses multiple moves in sequence", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Yorra: DEJOSTU H4 JOUSTED +96 96
@@ -170,12 +170,12 @@ describe('parseGcg', () => {
     const result = parseGcg(gcg)
 
     expect(result.moves).toHaveLength(3)
-    expect(result.moves[0].player).toBe('Yorra')
-    expect(result.moves[1].player).toBe('Cresta')
-    expect(result.moves[2].player).toBe('Yorra')
+    expect(result.moves[0].player).toBe("Yorra")
+    expect(result.moves[1].player).toBe("Cresta")
+    expect(result.moves[2].player).toBe("Yorra")
   })
 
-  it('ignores #note lines', () => {
+  it("ignores #note lines", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 >Cresta: E - +0 0
@@ -186,7 +186,7 @@ describe('parseGcg', () => {
     expect(result.moves).toHaveLength(1)
   })
 
-  it('parses the full Cresta-Yorra game', () => {
+  it("parses the full Cresta-Yorra game", () => {
     const gcg = `#player1 Yorra Wayne Yorra
 #player2 Cresta Michael Cresta
 #title 830 point club game
@@ -230,9 +230,9 @@ describe('parseGcg', () => {
 
     const result = parseGcg(gcg)
 
-    expect(result.player1.name).toBe('Wayne Yorra')
-    expect(result.player2.name).toBe('Michael Cresta')
-    expect(result.title).toBe('830 point club game')
+    expect(result.player1.name).toBe("Wayne Yorra")
+    expect(result.player2.name).toBe("Michael Cresta")
+    expect(result.title).toBe("830 point club game")
 
     // Check final move
     const lastMove = result.moves[result.moves.length - 1]

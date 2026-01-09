@@ -1,4 +1,4 @@
-import type { DocumentId } from '@automerge/automerge-repo'
+import type { DocumentId } from "@automerge/automerge-repo"
 
 /** Automerge-compatible player state */
 export type PlayerDoc = {
@@ -29,11 +29,11 @@ export type GameMoveDoc = {
 }
 
 /** Game status */
-export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
+export type GameStatus = "setup" | "playing" | "paused" | "finished"
 
 /** Timer event for syncing timer state across devices */
 export type TimerEventDoc = {
-  type: 'start' | 'pause' | 'switch'
+  type: "start" | "pause" | "switch"
   timestamp: number
   playerIndex: number
 }
@@ -55,7 +55,7 @@ export type GameDoc = {
 
 /** Create an empty 15x15 board with empty strings */
 export const createEmptyBoardDoc = (): string[][] => {
-  return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => ''))
+  return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => ""))
 }
 
 export type { DocumentId }

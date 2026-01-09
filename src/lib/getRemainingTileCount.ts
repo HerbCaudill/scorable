@@ -1,5 +1,5 @@
-import { getRemainingTiles } from './getRemainingTiles'
-import type { Game } from './types'
+import { getRemainingTiles } from "./getRemainingTiles"
+import type { Game } from "./types"
 
 /** Get total count of remaining tiles */
 

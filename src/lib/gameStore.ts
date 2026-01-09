@@ -1,8 +1,17 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { Game, PlayerRecord, BoardState, GameMove, Player, Adjustment, Move, TimerEvent } from './types'
-import { createEmptyBoard, createPlayer } from './types'
-import { calculateMoveScore } from './calculateMoveScore'
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+import type {
+  Game,
+  PlayerRecord,
+  BoardState,
+  GameMove,
+  Player,
+  Adjustment,
+  Move,
+  TimerEvent,
+} from "./types"
+import { createEmptyBoard, createPlayer } from "./types"
+import { calculateMoveScore } from "./calculateMoveScore"
 
 /** Calculate a player's total score from all their moves */
 export const getPlayerScore = (game: Game, playerIndex: number): number => {
@@ -84,7 +93,7 @@ export const useGameStore = create<GameStore>()(
           board: createEmptyBoard(),
           moves: [],
           timerEvents: [],
-          status: 'playing',
+          status: "playing",
           createdAt: Date.now(),
           updatedAt: Date.now(),
         }
@@ -98,7 +107,7 @@ export const useGameStore = create<GameStore>()(
 
         const finishedGame: Game = {
           ...currentGame,
-          status: 'finished',
+          status: "finished",
           updatedAt: Date.now(),
         }
 
@@ -126,7 +135,7 @@ export const useGameStore = create<GameStore>()(
         const finishedGame: Game = {
           ...currentGame,
           moves: [...currentGame.moves, ...adjustmentMoves],
-          status: 'finished',
+          status: "finished",
           updatedAt: Date.now(),
         }
 
@@ -138,17 +147,17 @@ export const useGameStore = create<GameStore>()(
 
       pauseGame: () => {
         const { currentGame } = get()
-        if (!currentGame || currentGame.status !== 'playing') return
+        if (!currentGame || currentGame.status !== "playing") return
 
         const pauseEvent: TimerEvent = {
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: currentGame.currentPlayerIndex,
         }
         set({
           currentGame: {
             ...currentGame,
-            status: 'paused',
+            status: "paused",
             timerEvents: [...currentGame.timerEvents, pauseEvent],
             updatedAt: Date.now(),
           },
@@ -157,12 +166,12 @@ export const useGameStore = create<GameStore>()(
 
       resumeGame: () => {
         const { currentGame } = get()
-        if (!currentGame || currentGame.status !== 'paused') return
+        if (!currentGame || currentGame.status !== "paused") return
 
         set({
           currentGame: {
             ...currentGame,
-            status: 'playing',
+            status: "playing",
             updatedAt: Date.now(),
           },
         })
@@ -294,7 +303,7 @@ export const useGameStore = create<GameStore>()(
         if (!currentGame) return
 
         const startEvent: TimerEvent = {
-          type: 'start',
+          type: "start",
           timestamp: Date.now(),
           playerIndex: currentGame.currentPlayerIndex,
         }
@@ -312,7 +321,7 @@ export const useGameStore = create<GameStore>()(
         if (!currentGame) return
 
         const pauseEvent: TimerEvent = {
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: currentGame.currentPlayerIndex,
         }
@@ -327,7 +336,9 @@ export const useGameStore = create<GameStore>()(
 
       addPlayerRecord: name => {
         const { playerRecords } = get()
-        const existingIndex = playerRecords.findIndex(r => r.name.toLowerCase() === name.toLowerCase())
+        const existingIndex = playerRecords.findIndex(
+          r => r.name.toLowerCase() === name.toLowerCase(),
+        )
 
         if (existingIndex >= 0) {
           // Update existing record
@@ -367,7 +378,7 @@ export const useGameStore = create<GameStore>()(
       },
     }),
     {
-      name: 'scrabble-game-storage',
+      name: "scrabble-game-storage",
       version: 2,
       partialize: state => ({
         currentGame: state.currentGame,
@@ -386,6 +397,6 @@ export const useGameStore = create<GameStore>()(
         }
         return state as GameStore
       },
-    }
-  )
+    },
+  ),
 )

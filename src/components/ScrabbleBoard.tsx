@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { boardLayout } from '@/lib/boardLayout'
-import { type SquareType, type BoardState } from '@/lib/types'
-import { createEmptyBoard } from '@/lib/createEmptyBoard'
-import { tileValues } from '@/lib/tileValues'
-import { cx } from '@/lib/cx'
-import { Tile } from './Tile'
-import { calculateMoveScore } from '@/lib/calculateMoveScore'
-import { boardStateToMove } from '@/lib/boardStateToMove'
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { boardLayout } from "@/lib/boardLayout"
+import { type SquareType, type BoardState } from "@/lib/types"
+import { createEmptyBoard } from "@/lib/createEmptyBoard"
+import { tileValues } from "@/lib/tileValues"
+import { cx } from "@/lib/cx"
+import { Tile } from "./Tile"
+import { calculateMoveScore } from "@/lib/calculateMoveScore"
+import { boardStateToMove } from "@/lib/boardStateToMove"
 
 const ScrabbleBoard = ({
   tiles,
@@ -28,19 +28,19 @@ const ScrabbleBoard = ({
   const setNewTiles = useCallback(
     (updatedTiles: BoardState | ((prev: BoardState) => BoardState)) => {
       if (onNewTilesChange) {
-        const resolved = typeof updatedTiles === 'function' ? updatedTiles(newTiles) : updatedTiles
+        const resolved = typeof updatedTiles === "function" ? updatedTiles(newTiles) : updatedTiles
         onNewTilesChange(resolved)
       } else {
         setInternalNewTiles(updatedTiles)
       }
     },
-    [onNewTilesChange, newTiles]
+    [onNewTilesChange, newTiles],
   )
 
   // Determine the best cursor direction based on surrounding tiles
   const inferCursorDirection = useCallback(
     (row: number, col: number): CursorDirection => {
-      if (!tiles) return cursor?.direction ?? 'horizontal'
+      if (!tiles) return cursor?.direction ?? "horizontal"
 
       // Find closest tile in each direction
       let closestLeft = Infinity
@@ -82,22 +82,22 @@ const ScrabbleBoard = ({
 
       // If only one direction has tiles, use that
       if (closestVertical < Infinity && closestHorizontal === Infinity) {
-        return 'vertical'
+        return "vertical"
       }
       if (closestHorizontal < Infinity && closestVertical === Infinity) {
-        return 'horizontal'
+        return "horizontal"
       }
       // Both directions have tiles: prefer the closer one
       if (closestVertical < closestHorizontal) {
-        return 'vertical'
+        return "vertical"
       }
       if (closestHorizontal < closestVertical) {
-        return 'horizontal'
+        return "horizontal"
       }
       // Equal distance or no tiles: keep current direction or default to horizontal
-      return cursor?.direction ?? 'horizontal'
+      return cursor?.direction ?? "horizontal"
     },
-    [tiles, cursor?.direction]
+    [tiles, cursor?.direction],
   )
 
   // Handle square click - set cursor position
@@ -109,32 +109,39 @@ const ScrabbleBoard = ({
       if (cursor && cursor.row === row && cursor.col === col) {
         setCursor({
           ...cursor,
-          direction: cursor.direction === 'horizontal' ? 'vertical' : 'horizontal',
+          direction: cursor.direction === "horizontal" ? "vertical" : "horizontal",
         })
       } else {
         // Set cursor to clicked position with intelligently inferred direction
         const direction = inferCursorDirection(row, col)
         setCursor({ row, col, direction })
       }
-
     },
-    [editable, cursor, inferCursorDirection]
+    [editable, cursor, inferCursorDirection],
   )
 
   // Combined view of all tiles (existing + new)
-  const allTiles = tiles
-    ? tiles.map((row, rowIndex) => row.map((tile, colIndex) => newTiles[rowIndex][colIndex] ?? tile))
+  const allTiles =
+    tiles ?
+      tiles.map((row, rowIndex) =>
+        row.map((tile, colIndex) => newTiles[rowIndex][colIndex] ?? tile),
+      )
     : newTiles
 
   // Find next empty position in current direction
   // When skipExisting is true, skip cells that have tiles in the base `tiles` prop (not newTiles)
   // This allows cursor to advance over pre-populated newTiles when editing a move
   const findNextPosition = useCallback(
-    (fromRow: number, fromCol: number, direction: CursorDirection, skipExisting: boolean): Cursor | null => {
+    (
+      fromRow: number,
+      fromCol: number,
+      direction: CursorDirection,
+      skipExisting: boolean,
+    ): Cursor | null => {
       let row = fromRow
       let col = fromCol
 
-      if (direction === 'horizontal') {
+      if (direction === "horizontal") {
         col++
         while (col < 15) {
           // Only skip cells with existing tiles (from `tiles` prop), not newTiles
@@ -158,7 +165,7 @@ const ScrabbleBoard = ({
 
       return null // Off the board
     },
-    [tiles]
+    [tiles],
   )
 
   // Process a key press (shared by keyboard events and external onKeyPress)
@@ -167,7 +174,7 @@ const ScrabbleBoard = ({
       if (!editable || !cursor) return
 
       // Handle backspace - delete current tile and move back
-      if (key === 'Backspace') {
+      if (key === "Backspace") {
         const { row, col, direction } = cursor
 
         // If current cell has a new tile, just delete it
@@ -179,8 +186,8 @@ const ScrabbleBoard = ({
           })
         } else {
           // Move back and delete previous tile
-          const prevRow = direction === 'vertical' ? row - 1 : row
-          const prevCol = direction === 'horizontal' ? col - 1 : col
+          const prevRow = direction === "vertical" ? row - 1 : row
+          const prevCol = direction === "horizontal" ? col - 1 : col
 
           if (prevRow >= 0 && prevCol >= 0 && newTiles[prevRow][prevCol] !== null) {
             setNewTiles(prev => {
@@ -196,28 +203,28 @@ const ScrabbleBoard = ({
       }
 
       // Handle arrow keys for cursor movement
-      if (key === 'ArrowUp' && cursor.row > 0) {
+      if (key === "ArrowUp" && cursor.row > 0) {
         setCursor({ ...cursor, row: cursor.row - 1 })
         return
       }
 
-      if (key === 'ArrowDown' && cursor.row < 14) {
+      if (key === "ArrowDown" && cursor.row < 14) {
         setCursor({ ...cursor, row: cursor.row + 1 })
         return
       }
 
-      if (key === 'ArrowLeft' && cursor.col > 0) {
+      if (key === "ArrowLeft" && cursor.col > 0) {
         setCursor({ ...cursor, col: cursor.col - 1 })
         return
       }
 
-      if (key === 'ArrowRight' && cursor.col < 14) {
+      if (key === "ArrowRight" && cursor.col < 14) {
         setCursor({ ...cursor, col: cursor.col + 1 })
         return
       }
 
       // Handle space for blank tile
-      if (key === ' ') {
+      if (key === " ") {
         const { row, col, direction } = cursor
 
         // Don't place tile on existing tile
@@ -226,7 +233,7 @@ const ScrabbleBoard = ({
         // Place blank tile
         setNewTiles(prev => {
           const updated = prev.map(r => [...r])
-          updated[row][col] = ' '
+          updated[row][col] = " "
           return updated
         })
 
@@ -240,23 +247,23 @@ const ScrabbleBoard = ({
       }
 
       // Handle Escape key to clear cursor and hide keyboard
-      if (key === 'Escape') {
+      if (key === "Escape") {
         setCursor(null)
         return
       }
 
       // Handle Enter key to end turn
-      if (key === 'Enter') {
+      if (key === "Enter") {
         setCursor(null) // Clear cursor to hide keyboard
         onEnter?.()
         return
       }
 
       // Handle direction toggle (for mobile keyboard)
-      if (key === 'ToggleDirection') {
+      if (key === "ToggleDirection") {
         setCursor({
           ...cursor,
-          direction: cursor.direction === 'horizontal' ? 'vertical' : 'horizontal',
+          direction: cursor.direction === "horizontal" ? "vertical" : "horizontal",
         })
         return
       }
@@ -287,7 +294,7 @@ const ScrabbleBoard = ({
         return
       }
     },
-    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter]
+    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter],
   )
 
   // Store processKey in a ref so we can access the latest version without re-renders
@@ -304,7 +311,7 @@ const ScrabbleBoard = ({
 
   // Notify parent when cursor changes
   useEffect(() => {
-    onCursorChange?.(cursor !== null, cursor?.direction ?? 'horizontal')
+    onCursorChange?.(cursor !== null, cursor?.direction ?? "horizontal")
   }, [cursor, onCursorChange])
 
   // Global keyboard listener
@@ -319,28 +326,32 @@ const ScrabbleBoard = ({
 
       // Don't intercept other inputs
       const activeEl = document.activeElement
-      if (activeEl?.tagName === 'INPUT' || activeEl?.tagName === 'TEXTAREA') {
+      if (activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA") {
         return
       }
 
       // Handle Escape to clear cursor
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         event.preventDefault()
         setCursor(null)
         return
       }
 
       // For other keys, delegate to processKey
-      if (event.key === 'Backspace' || event.key === 'Enter' ||
-          event.key.startsWith('Arrow') || event.key === ' ' ||
-          (event.key.length === 1 && /^[a-zA-Z]$/.test(event.key))) {
+      if (
+        event.key === "Backspace" ||
+        event.key === "Enter" ||
+        event.key.startsWith("Arrow") ||
+        event.key === " " ||
+        (event.key.length === 1 && /^[a-zA-Z]$/.test(event.key))
+      ) {
         event.preventDefault()
         processKeyRef.current(event.key)
       }
     }
 
-    window.addEventListener('keydown', handleGlobalKeyDown)
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+    window.addEventListener("keydown", handleGlobalKeyDown)
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown)
   }, [editable, cursor])
 
   const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
@@ -355,11 +366,22 @@ const ScrabbleBoard = ({
     return calculateMoveScore({ move, board })
   }, [newTiles, tiles])
   // Dots component for multipliers - sized relative to container
-  const Dots = ({ count, light = false, rotation }: { count: number; light?: boolean; rotation: string }) => {
+  const Dots = ({
+    count,
+    light = false,
+    rotation,
+  }: {
+    count: number
+    light?: boolean
+    rotation: string
+  }) => {
     return (
-      <div className={cx('flex gap-[0.9cqw]', rotation)}>
+      <div className={cx("flex gap-[0.9cqw]", rotation)}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className={cx('size-[0.8cqw] rounded-full', light ? 'bg-khaki-800' : 'bg-white')} />
+          <div
+            key={i}
+            className={cx("size-[0.8cqw] rounded-full", light ? "bg-khaki-800" : "bg-white")}
+          />
         ))}
       </div>
     )
@@ -378,47 +400,46 @@ const ScrabbleBoard = ({
     const center = 7
     // Get rotation angle based on position relative to center
     const rotation =
-      row === center && col === center
-        ? 'rotate-0' // Center
-        : row === center
-        ? 'rotate-0' // Center row - horizontal
-        : col === center
-        ? 'rotate-90' // Center column - vertical
-        : row < center && col < center
-        ? 'rotate-45' // Top-left quadrant
-        : row < center && col > center
-        ? 'rotate-[135deg]' // Top-right quadrant
-        : row > center && col < center
-        ? '-rotate-45' // Bottom-left quadrant
-        : '-rotate-[135deg]' // Bottom-right quadrant
+      row === center && col === center ?
+        "rotate-0" // Center
+      : row === center ?
+        "rotate-0" // Center row - horizontal
+      : col === center ?
+        "rotate-90" // Center column - vertical
+      : row < center && col < center ?
+        "rotate-45" // Top-left quadrant
+      : row < center && col > center ?
+        "rotate-[135deg]" // Top-right quadrant
+      : row > center && col < center ?
+        "-rotate-45" // Bottom-left quadrant
+      : "-rotate-[135deg]" // Bottom-right quadrant
 
     switch (squareType) {
-      case 'DL':
+      case "DL":
         return <Dots count={2} light rotation={rotation} />
-      case 'TL':
+      case "TL":
         return <Dots count={3} light rotation={rotation} />
-      case 'DW':
+      case "DW":
         return <Dots count={2} rotation={rotation} />
-      case 'TW':
+      case "TW":
         return <Dots count={3} rotation={rotation} />
-      case 'ST':
+      case "ST":
         return <BullsEye />
       default:
         return null
     }
   }
 
-
   // Cursor arrow component - triangle positioned outside the box
   const CursorArrow = ({ direction }: { direction: CursorDirection }) => (
     <div
       className={cx(
-        'absolute w-0 h-0 border-solid z-20',
-        direction === 'horizontal'
-          ? // Right-pointing triangle, positioned to the right of the box
-            'left-full top-1/2 -translate-y-1/2  border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-teal-600'
-          : // Down-pointing triangle, positioned below the box
-            'top-full left-1/2 -translate-x-1/2  border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-teal-600'
+        "absolute w-0 h-0 border-solid z-20",
+        direction === "horizontal" ?
+          // Right-pointing triangle, positioned to the right of the box
+          "left-full top-1/2 -translate-y-1/2  border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-teal-600"
+          // Down-pointing triangle, positioned below the box
+        : "top-full left-1/2 -translate-x-1/2  border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-teal-600",
       )}
     />
   )
@@ -457,21 +478,26 @@ const ScrabbleBoard = ({
                 aria-label={cellLabel}
                 aria-selected={hasCursor}
                 data-has-tile={hasTile || undefined}
-                data-tile-state={isNewTile ? 'new' : hasTile ? 'existing' : undefined}
+                data-tile-state={
+                  isNewTile ? "new"
+                  : hasTile ?
+                    "existing"
+                  : undefined
+                }
                 data-cursor-direction={hasCursor ? cursor?.direction : undefined}
                 onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
-                  'relative flex aspect-square items-center justify-center overflow-visible',
-                  squareType === 'DW' || squareType === 'TW' || squareType === 'ST' ? 'bg-khaki-500' : 'bg-khaki-200',
-                  editable && 'cursor-pointer hover:opacity-80',
-                  hasCursor && 'z-10'
+                  "relative flex aspect-square items-center justify-center overflow-visible",
+                  squareType === "DW" || squareType === "TW" || squareType === "ST" ?
+                    "bg-khaki-500"
+                  : "bg-khaki-200",
+                  editable && "cursor-pointer hover:opacity-80",
+                  hasCursor && "z-10",
                 )}
               >
-                {hasTile ? (
-                  <Tile letter={tile} variant={isNewTile ? 'new' : 'existing'} />
-                ) : (
-                  renderSquareContent(squareType, rowIndex, colIndex)
-                )}
+                {hasTile ?
+                  <Tile letter={tile} variant={isNewTile ? "new" : "existing"} />
+                : renderSquareContent(squareType, rowIndex, colIndex)}
                 {hasCursor && (
                   <>
                     <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
@@ -484,7 +510,7 @@ const ScrabbleBoard = ({
                 )}
               </div>
             )
-          })
+          }),
         )}
       </div>
     </div>
@@ -493,7 +519,7 @@ const ScrabbleBoard = ({
 
 export default ScrabbleBoard
 
-type CursorDirection = 'horizontal' | 'vertical'
+type CursorDirection = "horizontal" | "vertical"
 
 type Cursor = {
   row: number
@@ -517,5 +543,5 @@ type Props = {
   /** Callback that receives the key handler function for external keyboards */
   onKeyPress?: (handler: (key: string) => void) => void
   /** Callback when cursor changes (appears/disappears or direction changes) */
-  onCursorChange?: (hasCursor: boolean, direction: 'horizontal' | 'vertical') => void
+  onCursorChange?: (hasCursor: boolean, direction: "horizontal" | "vertical") => void
 }

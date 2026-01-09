@@ -1,12 +1,12 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { RackTileInput } from './RackTileInput'
-import { getRemainingTiles } from '@/lib/getRemainingTiles'
-import { validateRackTiles } from '@/lib/validateRackTiles'
-import { calculateEndGameAdjustments } from '@/lib/calculateEndGameAdjustments'
-import { cx } from '@/lib/cx'
-import { IconArrowLeft } from '@tabler/icons-react'
-import type { Game, Adjustment } from '@/lib/types'
+import { useState, useMemo, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { RackTileInput } from "./RackTileInput"
+import { getRemainingTiles } from "@/lib/getRemainingTiles"
+import { validateRackTiles } from "@/lib/validateRackTiles"
+import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
+import { cx } from "@/lib/cx"
+import { IconArrowLeft } from "@tabler/icons-react"
+import type { Game, Adjustment } from "@/lib/types"
 
 export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   // Default: last player to make a move ended the game
@@ -16,7 +16,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
 
   // Initialize racks - player who ended the game has empty rack
   const [playerRacks, setPlayerRacks] = useState<string[][]>(() =>
-    game.players.map((_, i) => (i === lastMovePlayerIndex ? [] : []))
+    game.players.map((_, i) => (i === lastMovePlayerIndex ? [] : [])),
   )
 
   // When playerWhoEndedGame changes, clear their rack
@@ -30,7 +30,10 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   const remainingTiles = getRemainingTiles(game)
 
   // Validate racks
-  const validation = useMemo(() => validateRackTiles(playerRacks, remainingTiles), [playerRacks, remainingTiles])
+  const validation = useMemo(
+    () => validateRackTiles(playerRacks, remainingTiles),
+    [playerRacks, remainingTiles],
+  )
 
   // Calculate adjustments
   const adjustments = useMemo(() => {
@@ -44,7 +47,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     const playerTiles = playerRacks[playerIndex]
     for (const error of validation.errors) {
       if (playerTiles.some(t => t.toUpperCase() === error.tile)) {
-        return `Too many ${error.tile === ' ' ? 'blank' : error.tile} tiles (${error.entered} entered, ${error.available} available)`
+        return `Too many ${error.tile === " " ? "blank" : error.tile} tiles (${error.entered} entered, ${error.available} available)`
       }
     }
     return undefined
@@ -87,10 +90,10 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                 key={index}
                 onClick={() => setPlayerWhoEndedGame(index)}
                 className={cx(
-                  'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                  playerWhoEndedGame === index
-                    ? 'text-white'
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                  "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                  playerWhoEndedGame === index ? "text-white" : (
+                    "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                  ),
                 )}
                 style={{
                   backgroundColor: playerWhoEndedGame === index ? player.color : undefined,
@@ -102,10 +105,10 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
             <button
               onClick={() => setPlayerWhoEndedGame(null)}
               className={cx(
-                'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                playerWhoEndedGame === null
-                  ? 'bg-neutral-800 text-white'
-                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                playerWhoEndedGame === null ?
+                  "bg-neutral-800 text-white"
+                : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
               )}
             >
               Nobody (blocked)
@@ -125,7 +128,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                 <div className="mb-2 flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full" style={{ backgroundColor: player.color }} />
                   <span className="font-medium">{player.name}</span>
-                  {isPlayerWhoEnded && <span className="text-sm text-neutral-500">(ended the game)</span>}
+                  {isPlayerWhoEnded && (
+                    <span className="text-sm text-neutral-500">(ended the game)</span>
+                  )}
                 </div>
 
                 <RackTileInput

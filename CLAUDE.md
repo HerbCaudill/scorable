@@ -4,14 +4,14 @@ An app for keeping score during Scrabble games.
 
 ## Quick reference
 
-| Command          | Purpose               |
-| ---------------- | --------------------- |
-| `pnpm dev`       | Start dev server      |
-| `pnpm test`      | Run Vitest tests      |
-| `pnpm test:pw`   | Run Playwright tests  |
-| `pnpm storybook` | Component development |
-| `pnpm build`     | Production build      |
-| `pnpm format`    | Format code (Prettier)|
+| Command          | Purpose                |
+| ---------------- | ---------------------- |
+| `pnpm dev`       | Start dev server       |
+| `pnpm test`      | Run Vitest tests       |
+| `pnpm test:pw`   | Run Playwright tests   |
+| `pnpm storybook` | Component development  |
+| `pnpm build`     | Production build       |
+| `pnpm format`    | Format code (Prettier) |
 
 ## Project structure
 

@@ -1,6 +1,6 @@
-import { getSquareType } from './getSquareType'
-import { tileValues } from './tileValues'
-import type { BoardState, Move, SquareType } from './types'
+import { getSquareType } from "./getSquareType"
+import { tileValues } from "./tileValues"
+import type { BoardState, Move, SquareType } from "./types"
 
 export const BINGO_BONUS = 50
 
@@ -46,7 +46,12 @@ export const calculateMoveScore = ({ move, board }: { move: Move; board: BoardSt
 /**
  * Score the main word formed by the move
  */
-const scoreMainWord = (move: Move, board: BoardState, newTilePositions: Set<string>, isHorizontal: boolean): number => {
+const scoreMainWord = (
+  move: Move,
+  board: BoardState,
+  newTilePositions: Set<string>,
+  isHorizontal: boolean,
+): number => {
   if (move.length === 0) return 0
 
   // For a single tile, we need to find which direction forms the main word
@@ -87,7 +92,7 @@ const scoreCrossWords = (
   move: Move,
   board: BoardState,
   newTilePositions: Set<string>,
-  isHorizontal: boolean
+  isHorizontal: boolean,
 ): number => {
   let score = 0
 
@@ -124,7 +129,7 @@ export const getWordAt = (
   row: number,
   col: number,
   board: BoardState,
-  horizontal: boolean
+  horizontal: boolean,
 ): Array<{ row: number; col: number; tile: string }> => {
   const word: Array<{ row: number; col: number; tile: string }> = []
 
@@ -158,7 +163,10 @@ export const getWordAt = (
 /**
  * Calculate the score for a word, applying multipliers for newly placed tiles
  */
-const scoreWord = (word: Array<{ row: number; col: number; tile: string }>, newTilePositions: Set<string>): number => {
+const scoreWord = (
+  word: Array<{ row: number; col: number; tile: string }>,
+  newTilePositions: Set<string>,
+): number => {
   let wordScore = 0
   let wordMultiplier = 1
 
@@ -187,14 +195,14 @@ const scoreWord = (word: Array<{ row: number; col: number; tile: string }>, newT
  */
 const getMultipliers = (squareType: SquareType): { letterMultiplier: number; wordMult: number } => {
   switch (squareType) {
-    case 'DL':
+    case "DL":
       return { letterMultiplier: 2, wordMult: 1 }
-    case 'TL':
+    case "TL":
       return { letterMultiplier: 3, wordMult: 1 }
-    case 'DW':
-    case 'ST': // Center star acts as double word
+    case "DW":
+    case "ST": // Center star acts as double word
       return { letterMultiplier: 1, wordMult: 2 }
-    case 'TW':
+    case "TW":
       return { letterMultiplier: 1, wordMult: 3 }
     default:
       return { letterMultiplier: 1, wordMult: 1 }

@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { useDocument, useDocHandle } from '@automerge/automerge-repo-react-hooks'
-import type { DocumentId } from '@automerge/automerge-repo'
-import type { GameDoc, GameMoveDoc, TimerEventDoc } from './automergeTypes'
-import type { BoardState, Game, GameMove, Move, Adjustment, TimerEvent } from './types'
+import { useState, useEffect } from "react"
+import { useDocument, useDocHandle } from "@automerge/automerge-repo-react-hooks"
+import type { DocumentId } from "@automerge/automerge-repo"
+import type { GameDoc, GameMoveDoc, TimerEventDoc } from "./automergeTypes"
+import type { BoardState, Game, GameMove, Move, Adjustment, TimerEvent } from "./types"
 
 /** Convert automerge board (empty strings) to app board (nulls) */
 const toAppBoard = (board: string[][]): BoardState => {
-  return board.map(row => row.map(cell => (cell === '' ? null : cell)))
+  return board.map(row => row.map(cell => (cell === "" ? null : cell)))
 }
 
 /** Convert automerge timer events to app timer events */
@@ -36,8 +36,9 @@ const toAppGame = (doc: GameDoc): Game => {
         col: t.col,
         tile: t.tile,
       })),
-      adjustment: m.adjustment
-        ? {
+      adjustment:
+        m.adjustment ?
+          {
             rackTiles: [...m.adjustment.rackTiles],
             deduction: m.adjustment.deduction,
             bonus: m.adjustment.bonus,
@@ -65,6 +66,9 @@ export type UseGameResult = {
   updateMove: (moveIndex: number, newTiles: Move) => void
   undoLastMove: () => void
   removeMove: (moveIndex: number) => void
+  /** Handle challenge result - successful removes move and skips challenged player's turn,
+   *  failed skips challenger's turn */
+  challengeMove: (moveIndex: number, successful: boolean) => void
   pauseGame: () => void
   resumeGame: () => void
   endGame: () => void
@@ -75,14 +79,14 @@ export type UseGameResult = {
 const isTimerRunning = (events: TimerEventDoc[] | undefined): boolean => {
   if (!events || events.length === 0) return false
   const lastEvent = events[events.length - 1]
-  return lastEvent.type !== 'pause'
+  return lastEvent.type !== "pause"
 }
 
 /** Helper to get the active player index from timer events */
 const getActivePlayerIndex = (events: TimerEventDoc[] | undefined): number | null => {
   if (!events || events.length === 0) return null
   const lastEvent = events[events.length - 1]
-  if (lastEvent.type === 'pause') return null
+  if (lastEvent.type === "pause") return null
   return lastEvent.playerIndex
 }
 
@@ -112,7 +116,11 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
         return prevState
       })
       // Stop polling once we reach a terminal state
-      if (handle.state === 'ready' || handle.state === 'unavailable' || handle.state === 'deleted') {
+      if (
+        handle.state === "ready" ||
+        handle.state === "unavailable" ||
+        handle.state === "deleted"
+      ) {
         clearInterval(pollInterval)
       }
     }, 100)
@@ -148,7 +156,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'switch',
+          type: "switch",
           timestamp: Date.now(),
           playerIndex: nextPlayerIndex,
         })
@@ -173,7 +181,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       // Rebuild board from scratch
       for (let r = 0; r < 15; r++) {
         for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ''
+          d.board[r][c] = ""
         }
       }
       for (const move of d.moves) {
@@ -204,7 +212,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       // Rebuild board from scratch
       for (let r = 0; r < 15; r++) {
         for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ''
+          d.board[r][c] = ""
         }
       }
       for (const move of d.moves) {
@@ -220,10 +228,85 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'switch',
+          type: "switch",
           timestamp: Date.now(),
           playerIndex: removedMove.playerIndex,
         })
+      }
+
+      d.updatedAt = Date.now()
+    })
+  }
+
+  const challengeMove = (moveIndex: number, successful: boolean) => {
+    if (!doc) return
+    if (moveIndex < 0 || moveIndex >= doc.moves.length) return
+
+    changeDoc(d => {
+      const challengedMove = d.moves[moveIndex]
+      const challengedPlayerIndex = challengedMove.playerIndex
+      const playerCount = d.players.length
+
+      if (successful) {
+        // Challenge successful: remove the move, challenged player passes (loses turn)
+        // Remove the move
+        d.moves.splice(moveIndex, 1)
+
+        // Rebuild board from scratch
+        for (let r = 0; r < 15; r++) {
+          for (let c = 0; c < 15; c++) {
+            d.board[r][c] = ""
+          }
+        }
+        for (const move of d.moves) {
+          for (const { row, col, tile } of move.tilesPlaced) {
+            d.board[row][col] = tile
+          }
+        }
+
+        // Add a pass move for the challenged player
+        d.moves.push({
+          playerIndex: challengedPlayerIndex,
+          tilesPlaced: [],
+        })
+
+        // Move to the next player after the challenged player
+        const nextPlayerIndex = (challengedPlayerIndex + 1) % playerCount
+        d.currentPlayerIndex = nextPlayerIndex
+
+        // If timer is running, switch to next player
+        if (isTimerRunning(d.timerEvents)) {
+          if (!d.timerEvents) d.timerEvents = []
+          d.timerEvents.push({
+            type: "switch",
+            timestamp: Date.now(),
+            playerIndex: nextPlayerIndex,
+          })
+        }
+      } else {
+        // Challenge failed: challenger (current player) loses their turn
+        // The current player is the one who challenged
+        const challengerIndex = d.currentPlayerIndex
+
+        // Add a pass move for the challenger
+        d.moves.push({
+          playerIndex: challengerIndex,
+          tilesPlaced: [],
+        })
+
+        // Move to the next player
+        const nextPlayerIndex = (challengerIndex + 1) % playerCount
+        d.currentPlayerIndex = nextPlayerIndex
+
+        // If timer is running, switch to next player
+        if (isTimerRunning(d.timerEvents)) {
+          if (!d.timerEvents) d.timerEvents = []
+          d.timerEvents.push({
+            type: "switch",
+            timestamp: Date.now(),
+            playerIndex: nextPlayerIndex,
+          })
+        }
       }
 
       d.updatedAt = Date.now()
@@ -237,12 +320,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: d.currentPlayerIndex,
         })
       }
-      d.status = 'paused'
+      d.status = "paused"
       d.updatedAt = Date.now()
     })
   }
@@ -250,7 +333,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
   const resumeGame = () => {
     if (!doc) return
     changeDoc(d => {
-      d.status = 'playing'
+      d.status = "playing"
       d.updatedAt = Date.now()
     })
   }
@@ -262,12 +345,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: d.currentPlayerIndex,
         })
       }
-      d.status = 'finished'
+      d.status = "finished"
       d.updatedAt = Date.now()
     })
   }
@@ -279,7 +362,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: d.currentPlayerIndex,
         })
@@ -297,7 +380,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
         }
         d.moves.push(moveDoc)
       }
-      d.status = 'finished'
+      d.status = "finished"
       d.updatedAt = Date.now()
     })
   }
@@ -307,7 +390,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     changeDoc(d => {
       if (!d.timerEvents) d.timerEvents = []
       d.timerEvents.push({
-        type: 'start',
+        type: "start",
         timestamp: Date.now(),
         playerIndex: d.currentPlayerIndex,
       })
@@ -321,7 +404,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       if (isTimerRunning(d.timerEvents)) {
         if (!d.timerEvents) d.timerEvents = []
         d.timerEvents.push({
-          type: 'pause',
+          type: "pause",
           timestamp: Date.now(),
           playerIndex: getActivePlayerIndex(d.timerEvents) ?? d.currentPlayerIndex,
         })
@@ -331,7 +414,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
   }
 
   // Document is loading if we have an ID but no doc yet, and handle isn't in a terminal state
-  const isUnavailable = handleState === 'unavailable'
+  const isUnavailable = handleState === "unavailable"
   const isLoading = id !== null && doc === undefined && !isUnavailable
 
   return {
@@ -344,6 +427,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     updateMove,
     undoLastMove,
     removeMove,
+    challengeMove,
     pauseGame,
     resumeGame,
     endGame,

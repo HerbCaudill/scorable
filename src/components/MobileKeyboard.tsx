@@ -82,7 +82,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
           onTouchStart={handleKeyPress("ToggleDirection")}
           onMouseDown={handleKeyPress("ToggleDirection")}
         >
-          {direction === "horizontal" ? <IconArrowRight size={22} /> : <IconArrowDown size={22} />}
+          {direction === "horizontal" ?
+            <IconArrowRight size={22} />
+          : <IconArrowDown size={22} />}
         </button>
         <button
           type="button"

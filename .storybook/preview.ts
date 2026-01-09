@@ -1,12 +1,12 @@
-import type { Preview } from '@storybook/react-vite'
-import { INITIAL_VIEWPORTS } from 'storybook/viewport'
-import '../src/index.css'
+import type { Preview } from "@storybook/react-vite"
+import { INITIAL_VIEWPORTS } from "storybook/viewport"
+import "../src/index.css"
 
 const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ['UI', 'Components', '*'],
+        order: ["UI", "Components", "*"],
       },
     },
     viewport: {
@@ -20,7 +20,7 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
-    viewport: { value: 'iphone14promax', isRotated: false },
+    viewport: { value: "iphone14promax", isRotated: false },
   },
 }
 

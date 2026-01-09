@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback } from "react"
 
 export const useLongPress = ({ onLongPress, onClick, duration = 500 }: Options) => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)

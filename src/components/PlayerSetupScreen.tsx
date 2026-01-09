@@ -1,10 +1,10 @@
-import { useRepo } from '@automerge/automerge-repo-react-hooks'
-import type { DocumentId } from '@automerge/automerge-repo'
-import { PlayerSetup } from './PlayerSetup'
-import { useLocalStore } from '@/lib/localStore'
-import { createEmptyBoardDoc, type GameDoc } from '@/lib/automergeTypes'
-import { PLAYER_COLORS, DEFAULT_TIME_MS } from '@/lib/types'
-import { IconArrowLeft } from '@tabler/icons-react'
+import { useRepo } from "@automerge/automerge-repo-react-hooks"
+import type { DocumentId } from "@automerge/automerge-repo"
+import { PlayerSetup } from "./PlayerSetup"
+import { useLocalStore } from "@/lib/localStore"
+import { createEmptyBoardDoc, type GameDoc } from "@/lib/automergeTypes"
+import { PLAYER_COLORS, DEFAULT_TIME_MS } from "@/lib/types"
+import { IconArrowLeft } from "@tabler/icons-react"
 
 export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   const repo = useRepo()
@@ -26,7 +26,7 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
         d.board = createEmptyBoardDoc()
         d.moves = []
         d.timerEvents = []
-        d.status = 'playing'
+        d.status = "playing"
         d.createdAt = Date.now()
         d.updatedAt = Date.now()
       })
@@ -41,7 +41,7 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
 
       onGameCreated(handle.documentId)
     } catch (error) {
-      console.error('Failed to create game:', error)
+      console.error("Failed to create game:", error)
       alert(`Failed to create game: ${error instanceof Error ? error.message : String(error)}`)
     }
   }

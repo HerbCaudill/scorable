@@ -1,5 +1,5 @@
-import csw21 from '@herbcaudill/scrabble-words/csw21'
-import type { Word } from '@herbcaudill/scrabble-words'
+import csw21 from "@herbcaudill/scrabble-words/csw21"
+import type { Word } from "@herbcaudill/scrabble-words"
 
 // Build a Set for O(1) word lookups
 const validWords = new Set<string>((csw21 as Word[]).map(w => w.word.toUpperCase()))

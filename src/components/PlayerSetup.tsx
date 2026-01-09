@@ -1,17 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { IconPlus, IconX, IconCheck, IconPlayerPlay } from '@tabler/icons-react'
+import React, { useState, useRef, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { IconPlus, IconX, IconCheck, IconPlayerPlay } from "@tabler/icons-react"
 
 export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const [players, setPlayers] = useState<Array<string | null>>([null, null, null, null])
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
-  const [newNameInput, setNewNameInput] = useState('')
+  const [newNameInput, setNewNameInput] = useState("")
   const [isAddingNew, setIsAddingNew] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const enteredPlayers = players.filter((p): p is string => p !== null && p.trim() !== '')
+  const enteredPlayers = players.filter((p): p is string => p !== null && p.trim() !== "")
   const canStartGame = enteredPlayers.length >= 2
 
   // Sort previous players by frequency (assuming they're already sorted)
@@ -33,7 +38,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
     setPlayers(newPlayers)
     setActiveDropdown(null)
     setIsAddingNew(false)
-    setNewNameInput('')
+    setNewNameInput("")
   }
 
   const handleNewClick = () => {
@@ -47,11 +52,11 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   }
 
   const handleNewNameKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleNewNameSubmit(index)
-    } else if (event.key === 'Escape') {
+    } else if (event.key === "Escape") {
       setIsAddingNew(false)
-      setNewNameInput('')
+      setNewNameInput("")
     }
   }
 
@@ -77,7 +82,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
     } else {
       setActiveDropdown(null)
       setIsAddingNew(false)
-      setNewNameInput('')
+      setNewNameInput("")
     }
   }
 
@@ -98,16 +103,14 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                 cursor-pointer
                 transition-colors
                 ${
-                  player
-                    ? 'border-solid border-black bg-white'
-                    : activeDropdown === index
-                    ? 'border-solid border-black bg-white'
-                    : 'border-dashed border-gray-400 bg-white'
+                  player ? "border-solid border-black bg-white"
+                  : activeDropdown === index ? "border-solid border-black bg-white"
+                  : "border-dashed border-gray-400 bg-white"
                 }
               `}
             >
-              <span className={player ? 'text-black' : 'text-gray-400'}>
-                {index + 1}. {player ?? 'player name'}
+              <span className={player ? "text-black" : "text-gray-400"}>
+                {index + 1}. {player ?? "player name"}
               </span>
               {player && (
                 <button
@@ -125,7 +128,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
-            {isAddingNew ? (
+            {isAddingNew ?
               <div className="p-2">
                 <Input
                   ref={inputRef}
@@ -136,7 +139,11 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   placeholder="Enter name..."
                 />
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" onClick={() => handleNewNameSubmit(index)} disabled={!newNameInput.trim()}>
+                  <Button
+                    size="sm"
+                    onClick={() => handleNewNameSubmit(index)}
+                    disabled={!newNameInput.trim()}
+                  >
                     <IconCheck size={16} />
                     Add
                   </Button>
@@ -145,7 +152,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                     variant="secondary"
                     onClick={() => {
                       setIsAddingNew(false)
-                      setNewNameInput('')
+                      setNewNameInput("")
                     }}
                   >
                     <IconX size={16} />
@@ -153,8 +160,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   </Button>
                 </div>
               </div>
-            ) : (
-              <>
+            : <>
                 {availablePlayers.map(name => (
                   <DropdownMenuItem key={name} onSelect={() => handleSelectPlayer(index, name)}>
                     {name}
@@ -171,7 +177,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   New...
                 </DropdownMenuItem>
               </>
-            )}
+            }
           </DropdownMenuContent>
         </DropdownMenu>
       ))}
@@ -182,7 +188,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
         disabled={!canStartGame}
         className={`
           mt-4 w-full
-          ${canStartGame ? '' : 'opacity-50 cursor-not-allowed'}
+          ${canStartGame ? "" : "opacity-50 cursor-not-allowed"}
         `}
       >
         <IconPlayerPlay size={20} />

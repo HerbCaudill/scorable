@@ -1,4 +1,4 @@
-import type { Game } from './types'
+import type { Game } from "./types"
 
 /** Count tiles that have been played in the game */
 

@@ -27,7 +27,7 @@ export const TILE_DISTRIBUTION: Record<string, number> = {
   X: 1,
   Y: 2,
   Z: 1,
-  ' ': 2, // Blank tiles
+  " ": 2, // Blank tiles
 }
 /** Total number of tiles in a standard Scrabble game */
 

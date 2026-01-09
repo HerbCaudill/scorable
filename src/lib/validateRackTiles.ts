@@ -15,7 +15,7 @@ export type RackValidationResult = {
  */
 export const validateRackTiles = (
   allRacks: string[][],
-  remainingTiles: Record<string, number>
+  remainingTiles: Record<string, number>,
 ): RackValidationResult => {
   // Count all tiles across all racks
   const totalCounts: Record<string, number> = {}

@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button'
-import { useLocalStore } from '@/lib/localStore'
-import { useDocuments } from '@automerge/automerge-repo-react-hooks'
-import type { DocumentId } from '@automerge/automerge-repo'
-import type { GameDoc } from '@/lib/automergeTypes'
-import { formatDate } from '@/lib/formatDate'
-import { getPlayerScoreFromDoc } from '@/lib/getPlayerScoreFromDoc'
-import { IconSparkles, IconPlayerPlay, IconTrophyFilled } from '@tabler/icons-react'
+import { Button } from "@/components/ui/button"
+import { useLocalStore } from "@/lib/localStore"
+import { useDocuments } from "@automerge/automerge-repo-react-hooks"
+import type { DocumentId } from "@automerge/automerge-repo"
+import type { GameDoc } from "@/lib/automergeTypes"
+import { formatDate } from "@/lib/formatDate"
+import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
+import { IconSparkles, IconPlayerPlay, IconTrophyFilled } from "@tabler/icons-react"
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
   const { knownGameIds } = useLocalStore()
@@ -20,7 +20,7 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
   for (const id of knownGameIds) {
     const doc = docs.get(id as any)
     if (doc) {
-      if (doc.status === 'finished') {
+      if (doc.status === "finished") {
         finishedGames.push({ id, doc })
       } else {
         activeGames.push({ id, doc })
@@ -52,7 +52,9 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
                 >
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
-                    <span className="text-xs text-gray-400">{doc.players.map(p => p.name).join(' vs ')}</span>
+                    <span className="text-xs text-gray-400">
+                      {doc.players.map(p => p.name).join(" vs ")}
+                    </span>
                   </div>
                   <Button variant="outline" size="sm">
                     <IconPlayerPlay size={16} />

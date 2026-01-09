@@ -1,7 +1,7 @@
-import type { Game, Player, BoardState, GameMove } from '../../src/lib/types'
+import type { Game, Player, BoardState, GameMove } from "../../src/lib/types"
 
 const DEFAULT_TIME_MS = 30 * 60 * 1000
-const PLAYER_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B']
+const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"]
 
 function createEmptyBoard(): BoardState {
   return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => null))
@@ -21,7 +21,7 @@ export function createTestGame(playerNames: string[], options: Partial<Game> = {
     currentPlayerIndex: 0,
     board: createEmptyBoard(),
     moves: [],
-    status: 'playing',
+    status: "playing",
     timerRunning: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -31,7 +31,10 @@ export function createTestGame(playerNames: string[], options: Partial<Game> = {
 
 export function createGameWithMoves(
   playerNames: string[],
-  moves: Array<{ playerIndex: number; tilesPlaced: Array<{ row: number; col: number; tile: string }> }>
+  moves: Array<{
+    playerIndex: number
+    tilesPlaced: Array<{ row: number; col: number; tile: string }>
+  }>,
 ): Game {
   const game = createTestGame(playerNames)
   game.moves = moves as GameMove[]
@@ -56,19 +59,19 @@ export function createFinishedGame(playerNames: string[]): Game {
     {
       playerIndex: 0,
       tilesPlaced: [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: 'A' },
-        { row: 7, col: 9, tile: 'T' },
+        { row: 7, col: 7, tile: "C" },
+        { row: 7, col: 8, tile: "A" },
+        { row: 7, col: 9, tile: "T" },
       ],
     },
     {
       playerIndex: 1,
       tilesPlaced: [
-        { row: 6, col: 8, tile: 'B' },
-        { row: 8, col: 8, tile: 'S' },
+        { row: 6, col: 8, tile: "B" },
+        { row: 8, col: 8, tile: "S" },
       ],
     },
   ])
-  game.status = 'finished'
+  game.status = "finished"
   return game
 }

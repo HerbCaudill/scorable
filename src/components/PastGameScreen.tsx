@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import type { DocumentId } from '@automerge/automerge-repo'
-import { useGame } from '@/lib/useGame'
-import { useLocalStore } from '@/lib/localStore'
-import { getPlayerScore } from '@/lib/getPlayerScore'
-import ScrabbleBoard from './ScrabbleBoard'
-import { Button } from '@/components/ui/button'
-import { ConfirmDialog } from './ConfirmDialog'
-import { formatDate } from '@/lib/formatDate'
-import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
-import { MoveHistoryList } from './MoveHistoryList'
-import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
-import { IconArrowLeft, IconHome, IconTrash, IconTrophyFilled } from '@tabler/icons-react'
+import { useState } from "react"
+import type { DocumentId } from "@automerge/automerge-repo"
+import { useGame } from "@/lib/useGame"
+import { useLocalStore } from "@/lib/localStore"
+import { getPlayerScore } from "@/lib/getPlayerScore"
+import ScrabbleBoard from "./ScrabbleBoard"
+import { Button } from "@/components/ui/button"
+import { ConfirmDialog } from "./ConfirmDialog"
+import { formatDate } from "@/lib/formatDate"
+import { getPlayerMoveHistory } from "@/lib/getPlayerMoveHistory"
+import { MoveHistoryList } from "./MoveHistoryList"
+import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
+import { IconArrowLeft, IconHome, IconTrash, IconTrophyFilled } from "@tabler/icons-react"
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { game, isLoading, isUnavailable } = useGame(gameId)
@@ -57,7 +57,9 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
           <IconArrowLeft size={16} />
           Back
         </Button>
-        <span className="text-sm text-gray-500">{formatDate(game.createdAt, { includeYear: true })}</span>
+        <span className="text-sm text-gray-500">
+          {formatDate(game.createdAt, { includeYear: true })}
+        </span>
       </div>
 
       {/* Board - read-only */}
@@ -76,9 +78,9 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
               key={index}
               className="flex flex-1 flex-col items-center rounded-lg p-3"
               style={{
-                backgroundColor: isWinner ? `${player.color}20` : 'transparent',
+                backgroundColor: isWinner ? `${player.color}20` : "transparent",
                 borderWidth: 2,
-                borderColor: isWinner ? player.color : 'transparent',
+                borderColor: isWinner ? player.color : "transparent",
               }}
             >
               <span className="text-sm font-medium">{player.name}</span>

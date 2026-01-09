@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useEffect } from 'react'
-import { HomeScreen } from '@/components/HomeScreen'
-import { useGameStore } from '@/lib/gameStore'
-import { createEmptyBoard, createPlayer, type Game } from '@/lib/types'
+import type { Meta, StoryObj } from "@storybook/react"
+import { useEffect } from "react"
+import { HomeScreen } from "@/components/HomeScreen"
+import { useGameStore } from "@/lib/gameStore"
+import { createEmptyBoard, createPlayer, type Game } from "@/lib/types"
 
 // Helper to create a finished game with some moves for score calculation
 const createFinishedGame = (
   playerNames: string[],
-  moves: Game['moves'],
-  createdAt: number
+  moves: Game["moves"],
+  createdAt: number,
 ): Game => {
   const board = createEmptyBoard()
   for (const move of moves) {
@@ -22,7 +22,7 @@ const createFinishedGame = (
     board,
     moves,
     timerEvents: [],
-    status: 'finished',
+    status: "finished",
     createdAt,
     updatedAt: createdAt,
   }
@@ -40,10 +40,10 @@ const useStoreSetup = (state: { currentGame: Game | null; pastGames: Game[] }) =
 }
 
 const meta = {
-  title: 'Screens/HomeScreen',
+  title: "Screens/HomeScreen",
   component: HomeScreen,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
   args: {
     onNewGame: () => {},
@@ -56,7 +56,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Empty: Story = {
-  name: 'No past games',
+  name: "No past games",
   decorators: [
     Story => {
       useStoreSetup({ currentGame: null, pastGames: [] })
@@ -66,26 +66,38 @@ export const Empty: Story = {
 }
 
 export const WithPastGames: Story = {
-  name: 'With past games',
+  name: "With past games",
   decorators: [
     Story => {
       useStoreSetup({
         currentGame: null,
         pastGames: [
           createFinishedGame(
-            ['Herb', 'Lynne'],
+            ["Herb", "Lynne"],
             [
-              { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'H' }, { row: 7, col: 8, tile: 'I' }] },
-              { playerIndex: 1, tilesPlaced: [{ row: 8, col: 7, tile: 'A' }] },
+              {
+                playerIndex: 0,
+                tilesPlaced: [
+                  { row: 7, col: 7, tile: "H" },
+                  { row: 7, col: 8, tile: "I" },
+                ],
+              },
+              { playerIndex: 1, tilesPlaced: [{ row: 8, col: 7, tile: "A" }] },
             ],
-            Date.now() - 86_400_000
+            Date.now() - 86_400_000,
           ),
           createFinishedGame(
-            ['Mike', 'Nolan'],
+            ["Mike", "Nolan"],
             [
-              { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'G' }, { row: 7, col: 8, tile: 'O' }] },
+              {
+                playerIndex: 0,
+                tilesPlaced: [
+                  { row: 7, col: 7, tile: "G" },
+                  { row: 7, col: 8, tile: "O" },
+                ],
+              },
             ],
-            Date.now() - 172_800_000
+            Date.now() - 172_800_000,
           ),
         ],
       })
@@ -95,27 +107,33 @@ export const WithPastGames: Story = {
 }
 
 export const WithCurrentGame: Story = {
-  name: 'With resumable game',
+  name: "With resumable game",
   decorators: [
     Story => {
       useStoreSetup({
         currentGame: {
-          players: [createPlayer('Herb', 0), createPlayer('Lynne', 1)],
+          players: [createPlayer("Herb", 0), createPlayer("Lynne", 1)],
           currentPlayerIndex: 0,
           board: createEmptyBoard(),
           moves: [],
           timerEvents: [],
-          status: 'playing',
+          status: "playing",
           createdAt: Date.now(),
           updatedAt: Date.now(),
         },
         pastGames: [
           createFinishedGame(
-            ['Herb', 'Lynne'],
+            ["Herb", "Lynne"],
             [
-              { playerIndex: 0, tilesPlaced: [{ row: 7, col: 7, tile: 'H' }, { row: 7, col: 8, tile: 'I' }] },
+              {
+                playerIndex: 0,
+                tilesPlaced: [
+                  { row: 7, col: 7, tile: "H" },
+                  { row: 7, col: 8, tile: "I" },
+                ],
+              },
             ],
-            Date.now() - 86_400_000
+            Date.now() - 86_400_000,
           ),
         ],
       })

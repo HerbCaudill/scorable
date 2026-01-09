@@ -1,4 +1,4 @@
-import type { BoardState, Move } from './types'
+import type { BoardState, Move } from "./types"
 
 /**
  * Convert a BoardState grid to a Move array

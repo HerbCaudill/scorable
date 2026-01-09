@@ -1,7 +1,7 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { DocumentId } from '@automerge/automerge-repo'
-import type { PlayerRecord } from './types'
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+import type { DocumentId } from "@automerge/automerge-repo"
+import type { PlayerRecord } from "./types"
 
 type LocalStore = {
   // Known game IDs (bookmarks)
@@ -35,7 +35,9 @@ export const useLocalStore = create<LocalStore>()(
 
       addPlayerRecord: name => {
         const { playerRecords } = get()
-        const existingIndex = playerRecords.findIndex(r => r.name.toLowerCase() === name.toLowerCase())
+        const existingIndex = playerRecords.findIndex(
+          r => r.name.toLowerCase() === name.toLowerCase(),
+        )
 
         if (existingIndex >= 0) {
           const updated = [...playerRecords]
@@ -72,11 +74,11 @@ export const useLocalStore = create<LocalStore>()(
       },
     }),
     {
-      name: 'scrabble-local-storage',
+      name: "scrabble-local-storage",
       partialize: state => ({
         knownGameIds: state.knownGameIds,
         playerRecords: state.playerRecords,
       }),
-    }
-  )
+    },
+  ),
 )

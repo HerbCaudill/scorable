@@ -1,29 +1,40 @@
-import { useState, useEffect, useCallback } from 'react'
-import type { DocumentId } from '@automerge/automerge-repo'
-import { useGame } from '@/lib/useGame'
-import { getPlayerScore } from '@/lib/getPlayerScore'
-import ScrabbleBoard from './ScrabbleBoard'
-import { Button } from '@/components/ui/button'
-import { createEmptyBoard, computeTimerState, type BoardState, type GameMove } from '@/lib/types'
-import { validateMove } from '@/lib/validateMove'
-import { boardStateToMove } from '@/lib/boardStateToMove'
-import { checkTileOveruse, type TileOveruseWarning } from '@/lib/checkTileOveruse'
-import { getRemainingTileCount } from '@/lib/getRemainingTileCount'
-import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
-import { UnplayedTilesScreen } from './TileBagScreen'
-import { EndGameScreen } from './EndGameScreen'
-import { ConfirmDialog } from './ConfirmDialog'
-import { MoveHistoryList, type MoveAction } from './MoveHistoryList'
-import { isValidWord } from '@/lib/wordList'
-import { getWordsFromMove } from '@/lib/getWordsFromMove'
-import { Timer } from './Timer'
-import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
-import { toast } from 'sonner'
-import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX, IconShare } from '@tabler/icons-react'
-import { MobileKeyboard } from './MobileKeyboard'
+import { useState, useEffect, useCallback } from "react"
+import type { DocumentId } from "@automerge/automerge-repo"
+import { useGame } from "@/lib/useGame"
+import { getPlayerScore } from "@/lib/getPlayerScore"
+import ScrabbleBoard from "./ScrabbleBoard"
+import { Button } from "@/components/ui/button"
+import { createEmptyBoard, computeTimerState, type BoardState, type GameMove } from "@/lib/types"
+import { validateMove } from "@/lib/validateMove"
+import { boardStateToMove } from "@/lib/boardStateToMove"
+import { checkTileOveruse, type TileOveruseWarning } from "@/lib/checkTileOveruse"
+import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
+import { getPlayerMoveHistory } from "@/lib/getPlayerMoveHistory"
+import { UnplayedTilesScreen } from "./TileBagScreen"
+import { EndGameScreen } from "./EndGameScreen"
+import { ConfirmDialog } from "./ConfirmDialog"
+import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
+import { isValidWord } from "@/lib/wordList"
+import { getWordsFromMove } from "@/lib/getWordsFromMove"
+import { Timer } from "./Timer"
+import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
+import { toast } from "sonner"
+import {
+  IconFlag,
+  IconCards,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconX,
+  IconShare,
+} from "@tabler/icons-react"
+import { MobileKeyboard } from "./MobileKeyboard"
 
 /** Convert player's move index to global index in moves array */
-const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIndex: number): number => {
+const getGlobalMoveIndex = (
+  moves: GameMove[],
+  playerIndex: number,
+  playerMoveIndex: number,
+): number => {
   let count = 0
   for (let i = 0; i < moves.length; i++) {
     const move = moves[i]
@@ -38,7 +49,7 @@ const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIn
 /** Convert global move index to player's local move index */
 const getPlayerMoveIndex = (
   moves: GameMove[],
-  globalIndex: number
+  globalIndex: number,
 ): { playerIndex: number; playerMoveIndex: number } | null => {
   if (globalIndex < 0 || globalIndex >= moves.length) return null
   const move = moves[globalIndex]
@@ -66,7 +77,7 @@ const getBoardExcludingMove = (moves: GameMove[], excludeIndex: number): BoardSt
 }
 
 /** Convert Move to BoardState for editing */
-const moveToBoardState = (tilesPlaced: GameMove['tilesPlaced']): BoardState => {
+const moveToBoardState = (tilesPlaced: GameMove["tilesPlaced"]): BoardState => {
   const board = createEmptyBoard()
   for (const { row, col, tile } of tilesPlaced) {
     board[row][col] = tile
@@ -84,7 +95,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     commitMove,
     updateMove,
     undoLastMove,
-    removeMove,
+    challengeMove,
     endGame,
     endGameWithAdjustments,
   } = useGame(gameId)
@@ -102,28 +113,32 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   } | null>(null)
 
   // Mobile keyboard support
-  const [isMobile] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0)
+  const [isMobile] = useState(() => "ontouchstart" in window || navigator.maxTouchPoints > 0)
   const [keyHandler, setKeyHandler] = useState<((key: string) => void) | null>(null)
   const [hasCursor, setHasCursor] = useState(false)
-  const [cursorDirection, setCursorDirection] = useState<'horizontal' | 'vertical'>('horizontal')
+  const [cursorDirection, setCursorDirection] = useState<"horizontal" | "vertical">("horizontal")
 
   // Stable callbacks for ScrabbleBoard to avoid infinite re-render loops
   const handleKeyPressCallback = useCallback((handler: (key: string) => void) => {
     setKeyHandler(() => handler)
   }, [])
 
-  const handleCursorChangeCallback = useCallback((cursor: boolean, direction: 'horizontal' | 'vertical') => {
-    setHasCursor(cursor)
-    setCursorDirection(direction)
-  }, [])
+  const handleCursorChangeCallback = useCallback(
+    (cursor: boolean, direction: "horizontal" | "vertical") => {
+      setHasCursor(cursor)
+      setCursorDirection(direction)
+    },
+    [],
+  )
 
   // Force re-render every 100ms to update timer display when running
   const [, setTick] = useState(0)
   const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
 
   // Compute timer state from events (called on each render when timer running)
-  const timerState = currentGame
-    ? computeTimerState(currentGame.timerEvents, currentGame.players.length)
+  const timerState =
+    currentGame ?
+      computeTimerState(currentGame.timerEvents, currentGame.players.length)
     : { timeRemaining: [], activePlayerIndex: null, isRunning: false }
 
   const timerRunning = timerState.isRunning
@@ -178,14 +193,16 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
   const { players, board, moves } = currentGame
   const isEditing = editingMoveIndex !== null
-  const editingMoveInfo = editingMoveIndex !== null ? getPlayerMoveIndex(moves, editingMoveIndex) : null
+  const editingMoveInfo =
+    editingMoveIndex !== null ? getPlayerMoveIndex(moves, editingMoveIndex) : null
 
   // Board to display: when editing, exclude the move being edited
   const displayBoard = isEditing ? getBoardExcludingMove(moves, editingMoveIndex) : board
 
   // For validation: first move = no tiles placed before this point
-  const isFirstMove = isEditing
-    ? !moves.slice(0, editingMoveIndex).some(m => m.tilesPlaced.length > 0)
+  const isFirstMove =
+    isEditing ?
+      !moves.slice(0, editingMoveIndex).some(m => m.tilesPlaced.length > 0)
     : board.every(row => row.every(cell => cell === null))
 
   // Handle entering edit mode
@@ -193,7 +210,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     // Block if tiles are in progress
     const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
     if (hasTilesInProgress) {
-      toast.error('Clear current move first')
+      toast.error("Clear current move first")
       return
     }
 
@@ -212,29 +229,29 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     // Block if tiles are in progress
     const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
     if (hasTilesInProgress) {
-      toast.error('Clear current move first')
+      toast.error("Clear current move first")
       return
     }
 
     switch (action) {
-      case 'correct':
+      case "correct":
         handleEditMove(playerIndex, playerMoveIndex)
         break
 
-      case 'undo':
+      case "undo":
         // Only allow undo of the last move
         if (globalIndex === moves.length - 1) {
           undoLastMove()
-          toast.success('Move undone')
+          toast.success("Move undone")
         } else {
-          toast.error('Can only undo the most recent move')
+          toast.error("Can only undo the most recent move")
         }
         break
 
-      case 'challenge': {
+      case "challenge": {
         // Only allow challenge of the last move
         if (globalIndex !== moves.length - 1) {
-          toast.error('Can only challenge the most recent move')
+          toast.error("Can only challenge the most recent move")
           return
         }
 
@@ -247,14 +264,15 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         const invalidWords = words.filter(word => !isValidWord(word))
 
         if (invalidWords.length > 0) {
-          // Challenge successful - remove the move
-          removeMove(globalIndex)
+          // Challenge successful - remove the move, challenged player passes
+          challengeMove(globalIndex, true)
           toast.success(
-            `Challenge successful! Invalid word${invalidWords.length > 1 ? 's' : ''}: ${invalidWords.join(', ')}`
+            `Challenge successful! Invalid word${invalidWords.length > 1 ? "s" : ""}: ${invalidWords.join(", ")}`,
           )
         } else {
-          // Challenge failed - all words are valid
-          toast.error(`Challenge failed - all words are valid: ${words.join(', ')}`)
+          // Challenge failed - challenger loses their turn
+          challengeMove(globalIndex, false)
+          toast.error(`Challenge failed - all words are valid: ${words.join(", ")}`)
         }
         break
       }
@@ -376,7 +394,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       }
     } else {
       await navigator.clipboard.writeText(url)
-      toast.success('Link copied to clipboard')
+      toast.success("Link copied to clipboard")
     }
   }
 
@@ -440,7 +458,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 key={index}
                 role="region"
                 aria-label={`${player.name}'s score panel`}
-                aria-current={isActive ? 'true' : undefined}
+                aria-current={isActive ? "true" : undefined}
                 data-player={player.name}
                 className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
                 style={{
@@ -451,7 +469,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 <div
                   className="shrink-0 flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
                   style={{
-                    backgroundColor: isActive ? `${player.color}20` : 'transparent',
+                    backgroundColor: isActive ? `${player.color}20` : "transparent",
                     borderBottomWidth: 2,
                     borderBottomColor: isActive ? player.color : `${player.color}20`,
                   }}
@@ -477,8 +495,14 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 <MoveHistoryList
                   history={moveHistory}
                   onMoveClick={highlightTiles}
-                  onMoveAction={(playerMoveIndex, action) => handleMoveAction(index, playerMoveIndex, action)}
-                  editingIndex={editingMoveInfo?.playerIndex === index ? editingMoveInfo.playerMoveIndex : undefined}
+                  onMoveAction={(playerMoveIndex, action) =>
+                    handleMoveAction(index, playerMoveIndex, action)
+                  }
+                  editingIndex={
+                    editingMoveInfo?.playerIndex === index ?
+                      editingMoveInfo.playerMoveIndex
+                    : undefined
+                  }
                   isLastMove={playerMoveIndex => isLastMoveForPlayer(index, playerMoveIndex)}
                   className="min-h-0 flex-1 overflow-y-auto p-1 text-[10px] [&_span:first-child]:font-mono"
                 />
@@ -490,7 +514,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
       {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
       <div className="shrink-0 flex gap-2 relative z-60">
-        {isEditing ? (
+        {isEditing ?
           <>
             <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>
               <IconX size={14} />
@@ -500,25 +524,30 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               Save edit
             </Button>
           </>
-        ) : (
-          <>
-            {timerEverUsed ? (
+        : <>
+            {timerEverUsed ?
               <Button
                 className="flex-1"
-                variant={timerRunning ? 'outline' : 'default'}
+                variant={timerRunning ? "outline" : "default"}
                 size="xs"
                 onClick={handleTimerToggle}
               >
-                {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
-                {timerRunning ? 'Pause' : 'Resume'}
+                {timerRunning ?
+                  <IconPlayerPause size={14} />
+                : <IconPlayerPlay size={14} />}
+                {timerRunning ? "Pause" : "Resume"}
               </Button>
-            ) : (
-              <Button className="flex-1" variant="outline" size="xs" onClick={handleTimerToggle}>
+            : <Button className="flex-1" variant="outline" size="xs" onClick={handleTimerToggle}>
                 <IconPlayerPlay size={14} />
                 Timer
               </Button>
-            )}
-            <Button className="flex-1" variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+            }
+            <Button
+              className="flex-1"
+              variant="outline"
+              size="xs"
+              onClick={() => setShowTileBag(true)}
+            >
               <IconCards size={14} />
               Tiles ({remainingTileCount})
             </Button>
@@ -531,7 +560,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               Share
             </Button>
           </>
-        )}
+        }
       </div>
 
       {/* Pass confirmation dialog */}
@@ -583,11 +612,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
       {/* Mobile keyboard - floating overlay */}
       {isMobile && keyHandler && (
-        <MobileKeyboard
-          onKeyPress={keyHandler}
-          direction={cursorDirection}
-          visible={hasCursor}
-        />
+        <MobileKeyboard onKeyPress={keyHandler} direction={cursorDirection} visible={hasCursor} />
       )}
     </div>
   )

@@ -1,5 +1,5 @@
-import type { BoardState, Move } from './types'
-import { getWordAt } from './calculateMoveScore'
+import type { BoardState, Move } from "./types"
+import { getWordAt } from "./calculateMoveScore"
 
 /**
  * Extract all words formed by a move
@@ -54,5 +54,5 @@ export const getWordsFromMove = (move: Move, board: BoardState): string[] => {
  * Convert word tiles to string, showing blanks as underscore
  */
 const wordToString = (word: Array<{ row: number; col: number; tile: string }>): string => {
-  return word.map(t => (t.tile === ' ' ? '_' : t.tile)).join('')
+  return word.map(t => (t.tile === " " ? "_" : t.tile)).join("")
 }

@@ -1,11 +1,13 @@
-import type { GameDoc } from './automergeTypes'
-import type { BoardState, Move } from './types'
-import { calculateMoveScore } from './calculateMoveScore'
+import type { GameDoc } from "./automergeTypes"
+import type { BoardState, Move } from "./types"
+import { calculateMoveScore } from "./calculateMoveScore"
 
 /** Calculate a player's total score from all their moves in a GameDoc */
 export const getPlayerScoreFromDoc = (doc: GameDoc, playerIndex: number): number => {
   let score = 0
-  let boardState: BoardState = Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => null))
+  let boardState: BoardState = Array.from({ length: 15 }, () =>
+    Array.from({ length: 15 }, () => null),
+  )
 
   for (const move of doc.moves) {
     // Convert TilePlacement[] to Move type

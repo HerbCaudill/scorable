@@ -1,6 +1,6 @@
-import type { Game } from './types'
-import { createEmptyBoard } from './types'
-import { calculateMoveScore } from './calculateMoveScore'
+import type { Game } from "./types"
+import { createEmptyBoard } from "./types"
+import { calculateMoveScore } from "./calculateMoveScore"
 
 /** Calculate a player's total score from all their moves */
 export const getPlayerScore = (game: Game, playerIndex: number): number => {

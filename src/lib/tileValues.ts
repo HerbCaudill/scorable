@@ -26,5 +26,5 @@ export const tileValues: Record<string, number> = {
   X: 8,
   Y: 4,
   Z: 10,
-  ' ': 0, // Blank tile
+  " ": 0, // Blank tile
 }

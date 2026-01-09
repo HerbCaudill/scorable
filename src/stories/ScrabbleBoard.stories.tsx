@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
-import ScrabbleBoard from '@/components/ScrabbleBoard'
-import { type BoardState } from '@/lib/types'
-import { createEmptyBoard } from '@/lib/createEmptyBoard'
+import type { Meta, StoryObj } from "@storybook/react"
+import { useState } from "react"
+import ScrabbleBoard from "@/components/ScrabbleBoard"
+import { type BoardState } from "@/lib/types"
+import { createEmptyBoard } from "@/lib/createEmptyBoard"
 
 const meta = {
-  title: 'Components/ScrabbleBoard',
+  title: "Components/ScrabbleBoard",
   component: ScrabbleBoard,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     Story => (
       <div className="w-[min(90vw,512px)]">
@@ -28,7 +28,7 @@ export const Default: Story = {}
 // Create a board with some tiles placed (showing "HELLO" horizontally from center)
 const boardWithHello = (): BoardState => {
   const board = createEmptyBoard()
-  const word = 'HELLO'
+  const word = "HELLO"
   const startCol = 5
   const row = 7 // Center row
   for (let i = 0; i < word.length; i++) {
@@ -39,7 +39,7 @@ const boardWithHello = (): BoardState => {
 }
 
 export const WithTiles: Story = {
-  name: 'With tiles',
+  name: "With tiles",
   args: {
     tiles: boardWithHello(),
   },
@@ -50,13 +50,13 @@ const boardWithMultipleWords = (): BoardState => {
   const board = createEmptyBoard()
 
   // HELLO horizontally
-  const hello = 'HELLO'
+  const hello = "HELLO"
   for (let i = 0; i < hello.length; i++) {
     board[7][5 + i] = hello[i]
   }
 
   // WORLD vertically, intersecting at the L
-  const world = 'WORLD'
+  const world = "WORLD"
   for (let i = 0; i < world.length; i++) {
     board[6 + i][9] = world[i]
   }
@@ -65,7 +65,7 @@ const boardWithMultipleWords = (): BoardState => {
 }
 
 export const WithMultipleWords: Story = {
-  name: 'With multiple words',
+  name: "With multiple words",
   args: {
     tiles: boardWithMultipleWords(),
   },
@@ -78,8 +78,8 @@ const EditableBoardWrapper = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-neutral-600">
-        Click any square to place the cursor, then type letters. Click the cursor to toggle direction. Use arrow keys to
-        move, backspace to delete.
+        Click any square to place the cursor, then type letters. Click the cursor to toggle
+        direction. Use arrow keys to move, backspace to delete.
       </p>
       <ScrabbleBoard newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
     </div>
@@ -98,16 +98,21 @@ const EditableWithTilesWrapper = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-neutral-600">
-        Board with existing tiles (shown in amber). New tiles you type appear in teal. When typing, the cursor skips
-        over existing tiles.
+        Board with existing tiles (shown in amber). New tiles you type appear in teal. When typing,
+        the cursor skips over existing tiles.
       </p>
-      <ScrabbleBoard tiles={existingTiles} newTiles={newTiles} onNewTilesChange={setNewTiles} editable />
+      <ScrabbleBoard
+        tiles={existingTiles}
+        newTiles={newTiles}
+        onNewTilesChange={setNewTiles}
+        editable
+      />
     </div>
   )
 }
 
 export const EditableWithExistingTiles: Story = {
-  name: 'Editable with existing tiles',
+  name: "Editable with existing tiles",
   render: () => <EditableWithTilesWrapper />,
 }
 
@@ -115,15 +120,15 @@ export const EditableWithExistingTiles: Story = {
 const boardWithBlank = (): BoardState => {
   const board = createEmptyBoard()
   // QUIZ with blank used as U
-  board[7][5] = 'Q'
-  board[7][6] = ' ' // Blank tile
-  board[7][7] = 'I'
-  board[7][8] = 'Z'
+  board[7][5] = "Q"
+  board[7][6] = " " // Blank tile
+  board[7][7] = "I"
+  board[7][8] = "Z"
   return board
 }
 
 export const WithBlankTile: Story = {
-  name: 'With blank tile',
+  name: "With blank tile",
   args: {
     tiles: boardWithBlank(),
   },

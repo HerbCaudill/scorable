@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest'
-import { calculateMoveScore } from './calculateMoveScore'
-import type { BoardState, Move } from './types'
-import { createEmptyBoard } from './types'
+import { describe, expect, it } from "vitest"
+import { calculateMoveScore } from "./calculateMoveScore"
+import type { BoardState, Move } from "./types"
+import { createEmptyBoard } from "./types"
 
-describe('calculateMoveScore', () => {
-  describe('basic scoring', () => {
-    it('scores a single tile extending an existing word', () => {
+describe("calculateMoveScore", () => {
+  describe("basic scoring", () => {
+    it("scores a single tile extending an existing word", () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -45,7 +45,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(6)
     })
 
-    it('scores a simple horizontal word', () => {
+    it("scores a simple horizontal word", () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -71,7 +71,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(10)
     })
 
-    it('scores a simple vertical word', () => {
+    it("scores a simple vertical word", () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -98,8 +98,8 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('letter multipliers', () => {
-    it('applies double letter score', () => {
+  describe("letter multipliers", () => {
+    it("applies double letter score", () => {
       // DL is at (0, 3)
       const board = parseBoard(`
         ⏺︎ · · ○ O G · ⏺︎ · · · ○ · · ⏺︎
@@ -141,7 +141,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(7)
     })
 
-    it('applies triple letter score', () => {
+    it("applies triple letter score", () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ I · · ○ · · · ⏺︎ ·
@@ -183,8 +183,8 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('word multipliers', () => {
-    it('applies double word score', () => {
+  describe("word multipliers", () => {
+    it("applies double word score", () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -208,7 +208,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(10)
     })
 
-    it('applies triple word score', () => {
+    it("applies triple word score", () => {
       // TW is at (0, 0)
       const board = createEmptyBoard()
       const move = parseMove(`
@@ -233,7 +233,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(15)
     })
 
-    it('applies multiple word multipliers', () => {
+    it("applies multiple word multipliers", () => {
       // DW at (4,4) and (4,10)
       const board = createEmptyBoard()
       const move = parseMove(`
@@ -258,7 +258,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(114) // 16 doubled twice = 64, plus 50 for bingo
     })
 
-    it('applies multiple triple word multipliers (9x)', () => {
+    it("applies multiple triple word multipliers (9x)", () => {
       // TW at (7,0) and (14,0) - playing FLATFISH vertically down left edge
       const board = createEmptyBoard()
       const move = parseMove(`
@@ -287,8 +287,8 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('cross words', () => {
-    it('scores perpendicular words formed by the move', () => {
+  describe("cross words", () => {
+    it("scores perpendicular words formed by the move", () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -328,7 +328,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(7)
     })
 
-    it('scores cross words', () => {
+    it("scores cross words", () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -369,7 +369,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(9)
     })
 
-    it('applies letter multipliers to cross words', () => {
+    it("applies letter multipliers to cross words", () => {
       // DL at (6, 6)
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -411,7 +411,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(6)
     })
 
-    it('applies word multipliers only to new words', () => {
+    it("applies word multipliers only to new words", () => {
       // Play 'C' at center (7,7) which is DW, forming "CAT"
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -452,7 +452,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(5)
     })
 
-    it('handles multiple cross words', () => {
+    it("handles multiple cross words", () => {
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
         · ⏺︎ · · · ○ · · · ○ · · · ⏺︎ ·
@@ -493,14 +493,14 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('blank tiles', () => {
-    it('scores blank tiles as 0 points', () => {
+  describe("blank tiles", () => {
+    it("scores blank tiles as 0 points", () => {
       const board = createEmptyBoard()
       // Note: using space ' ' for blank tile in the move
       const move: Move = [
-        { row: 7, col: 7, tile: 'C' },
-        { row: 7, col: 8, tile: ' ' }, // Blank
-        { row: 7, col: 9, tile: 'T' },
+        { row: 7, col: 7, tile: "C" },
+        { row: 7, col: 8, tile: " " }, // Blank
+        { row: 7, col: 9, tile: "T" },
       ]
 
       const score = calculateMoveScore({ move, board })
@@ -509,8 +509,8 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('bingo bonus', () => {
-    it('adds 50 points for using all 7 tiles', () => {
+  describe("bingo bonus", () => {
+    it("adds 50 points for using all 7 tiles", () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -538,8 +538,8 @@ describe('calculateMoveScore', () => {
     })
   })
 
-  describe('edge cases', () => {
-    it('returns 0 for empty move', () => {
+  describe("edge cases", () => {
+    it("returns 0 for empty move", () => {
       const board = createEmptyBoard()
       const move = parseMove(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -563,7 +563,7 @@ describe('calculateMoveScore', () => {
       expect(score).toBe(0)
     })
 
-    it('handles single tile extending existing word', () => {
+    it("handles single tile extending existing word", () => {
       // "CAT" exists, add 'S' to make "CATS"
       const board = parseBoard(`
         ⏺︎ · · ○ · · · ⏺︎ · · · ○ · · ⏺︎
@@ -611,8 +611,11 @@ describe('calculateMoveScore', () => {
 // HELPERS
 
 /** Parse a visual grid string and call a handler for each tile found */
-const parseGrid = (gridStr: string, onTile: (row: number, col: number, tile: string) => void): void => {
-  const lines = gridStr.trim().split('\n')
+const parseGrid = (
+  gridStr: string,
+  onTile: (row: number, col: number, tile: string) => void,
+): void => {
+  const lines = gridStr.trim().split("\n")
   for (let row = 0; row < lines.length; row++) {
     const cells = lines[row].trim().split(/\s+/)
     for (let col = 0; col < cells.length; col++) {

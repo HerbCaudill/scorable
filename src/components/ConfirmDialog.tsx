@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog"
 
 type Props = {
   open: boolean
@@ -31,8 +31,8 @@ export const ConfirmDialog = ({
   onOpenChange,
   title,
   description,
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
+  cancelText = "Cancel",
+  confirmText = "Confirm",
   onConfirm,
   confirmClassName,
   secondaryText,
@@ -44,18 +44,16 @@ export const ConfirmDialog = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription asChild={typeof description !== 'string'}>
-            {typeof description === 'string' ? description : <div>{description}</div>}
+          <AlertDialogDescription asChild={typeof description !== "string"}>
+            {typeof description === "string" ? description : <div>{description}</div>}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {onSecondary ? (
+          {onSecondary ?
             <AlertDialogAction onClick={onSecondary} className={secondaryClassName}>
               {secondaryText}
             </AlertDialogAction>
-          ) : (
-            <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          )}
+          : <AlertDialogCancel>{cancelText}</AlertDialogCancel>}
           <AlertDialogAction onClick={onConfirm} className={confirmClassName} autoFocus>
             {confirmText}
           </AlertDialogAction>

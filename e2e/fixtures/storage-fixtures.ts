@@ -1,7 +1,7 @@
-import { Page } from '@playwright/test'
-import type { Game, PlayerRecord } from '../../src/lib/types'
+import { Page } from "@playwright/test"
+import type { Game, PlayerRecord } from "../../src/lib/types"
 
-const STORAGE_KEY = 'scrabble-game-storage'
+const STORAGE_KEY = "scrabble-game-storage"
 
 export interface StorageState {
   currentGame: Game | null
@@ -36,7 +36,7 @@ export async function seedStorage(page: Page, state: Partial<StorageState>) {
     ([key, data]) => {
       localStorage.setItem(key, JSON.stringify(data))
     },
-    [STORAGE_KEY, fullState] as const
+    [STORAGE_KEY, fullState] as const,
   )
 }
 

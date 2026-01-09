@@ -1,4 +1,4 @@
-export type SquareType = 'TW' | 'DW' | 'TL' | 'DL' | 'ST' | null
+export type SquareType = "TW" | "DW" | "TL" | "DL" | "ST" | null
 
 /** Board position  */
 export type Position = {
@@ -38,11 +38,11 @@ export type Player = {
 export type BoardState = Array<Array<string | null>>
 
 /** Game status  */
-export type GameStatus = 'setup' | 'playing' | 'paused' | 'finished'
+export type GameStatus = "setup" | "playing" | "paused" | "finished"
 
 /** Timer event for tracking timer state changes */
 export type TimerEvent = {
-  type: 'start' | 'pause' | 'switch'
+  type: "start" | "pause" | "switch"
   timestamp: number
   playerIndex: number
 }
@@ -77,7 +77,7 @@ export type PlayerRecord = {
 export const DEFAULT_TIME_MS = 30 * 60 * 1000
 
 /** Player colors  */
-export const PLAYER_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B'] // blue, red, green, amber
+export const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"] // blue, red, green, amber
 
 /** Create an empty 15x15 board  */
 export const createEmptyBoard = (): BoardState => {
@@ -104,7 +104,7 @@ export const computeTimerState = (events: TimerEvent[], playerCount: number): Ti
     }
 
     // Apply the event
-    if (event.type === 'pause') {
+    if (event.type === "pause") {
       activePlayerIndex = null
     } else {
       activePlayerIndex = event.playerIndex

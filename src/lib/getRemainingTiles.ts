@@ -1,6 +1,6 @@
-import { TILE_DISTRIBUTION } from './constants'
-import { getPlayedTiles } from './getPlayedTiles'
-import type { Game } from './types'
+import { TILE_DISTRIBUTION } from "./constants"
+import { getPlayedTiles } from "./getPlayedTiles"
+import type { Game } from "./types"
 
 /** Get remaining unplayed tiles */
 

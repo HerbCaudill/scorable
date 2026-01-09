@@ -1,5 +1,5 @@
-import type { Game } from './types'
-import { getPlayerScore } from './getPlayerScore'
+import type { Game } from "./types"
+import { getPlayerScore } from "./getPlayerScore"
 
 export type PlayerScore = {
   name: string

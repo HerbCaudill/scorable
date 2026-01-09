@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef } from "react"
 
 type TilePosition = { row: number; col: number }
 
@@ -19,7 +19,7 @@ export const useHighlightedTiles = (duration = 1500) => {
         timeoutRef.current = null
       }, duration)
     },
-    [duration]
+    [duration],
   )
 
   return { highlightedTiles, highlightTiles }

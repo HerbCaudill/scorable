@@ -1,8 +1,8 @@
-import type { Game, GameMove, BoardState, Player } from '../../src/lib/types'
-import { parseGcg, type GcgGame, type GcgPlayMove } from '../../src/lib/parseGcg'
+import type { Game, GameMove, BoardState, Player } from "../../src/lib/types"
+import { parseGcg, type GcgGame, type GcgPlayMove } from "../../src/lib/parseGcg"
 
 const DEFAULT_TIME_MS = 30 * 60 * 1000
-const PLAYER_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B']
+const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"]
 
 function createEmptyBoard(): BoardState {
   return Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => null))
@@ -11,25 +11,25 @@ function createEmptyBoard(): BoardState {
 /** Convert a GCG word with dots (for through-tiles) to individual tile placements */
 function wordToTiles(
   word: string,
-  position: { row: number; col: number; direction: 'horizontal' | 'vertical' },
-  board: BoardState
+  position: { row: number; col: number; direction: "horizontal" | "vertical" },
+  board: BoardState,
 ): Array<{ row: number; col: number; tile: string }> {
   const tiles: Array<{ row: number; col: number; tile: string }> = []
   let { row, col } = position
   const { direction } = position
 
   for (const char of word) {
-    if (char === '.') {
+    if (char === ".") {
       // This is a through-tile (already on board), skip it
     } else {
       // This is a new tile being placed
       // Lowercase letters represent blanks playing as that letter
-      const tile = char === char.toLowerCase() ? ' ' : char
+      const tile = char === char.toLowerCase() ? " " : char
       tiles.push({ row, col, tile })
     }
 
     // Move to next position
-    if (direction === 'horizontal') {
+    if (direction === "horizontal") {
       col++
     } else {
       row++
@@ -42,7 +42,7 @@ function wordToTiles(
 /** Convert a parsed GCG game to our Game type, optionally stopping before the last N moves */
 export function gcgToGame(
   gcgGame: GcgGame,
-  options: { stopBeforeEnd?: number; playerNames?: [string, string] } = {}
+  options: { stopBeforeEnd?: number; playerNames?: [string, string] } = {},
 ): Game {
   const { stopBeforeEnd = 0, playerNames } = options
 
@@ -69,7 +69,7 @@ export function gcgToGame(
   }
 
   // Filter to only play moves (not exchanges, challenges, or end-game)
-  const playMoves = gcgGame.moves.filter((m): m is GcgPlayMove => m.type === 'play')
+  const playMoves = gcgGame.moves.filter((m): m is GcgPlayMove => m.type === "play")
 
   // Stop before the last N moves if requested
   const movesToProcess = stopBeforeEnd > 0 ? playMoves.slice(0, -stopBeforeEnd) : playMoves
@@ -98,7 +98,7 @@ export function gcgToGame(
     currentPlayerIndex,
     board,
     moves,
-    status: 'playing',
+    status: "playing",
     timerRunning: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -108,7 +108,7 @@ export function gcgToGame(
 /** Parse a GCG string and convert to Game type */
 export function parseGcgToGame(
   gcgContent: string,
-  options: { stopBeforeEnd?: number; playerNames?: [string, string] } = {}
+  options: { stopBeforeEnd?: number; playerNames?: [string, string] } = {},
 ): Game {
   const gcgGame = parseGcg(gcgContent)
   return gcgToGame(gcgGame, options)
