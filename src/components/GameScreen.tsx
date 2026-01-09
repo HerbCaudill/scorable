@@ -266,13 +266,13 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         if (invalidWords.length > 0) {
           // Challenge successful - remove the move, challenged player passes
           challengeMove(globalIndex, true)
-          toast.success(
+          toast.error(
             `Challenge successful! Invalid word${invalidWords.length > 1 ? "s" : ""}: ${invalidWords.join(", ")}`,
           )
         } else {
           // Challenge failed - challenger loses their turn
           challengeMove(globalIndex, false)
-          toast.error(`Challenge failed - all words are valid: ${words.join(", ")}`)
+          toast.success(`Challenge failed - all words are valid: ${words.join(", ")}`)
         }
         break
       }
