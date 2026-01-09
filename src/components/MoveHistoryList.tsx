@@ -52,7 +52,9 @@ const MoveHistoryEntry = ({ entry, index, isEditing, onMoveClick, onMoveLongPres
       )}
       {...longPressHandlers}
     >
-      <span className="truncate">{entry.words.join(', ') || '(pass)'}</span>
+      <span className="truncate">
+        {entry.words.length > 0 ? entry.words.join(', ') : <em className="text-neutral-400">(pass)</em>}
+      </span>
       <span className="font-medium">{entry.score}</span>
     </div>
   )
