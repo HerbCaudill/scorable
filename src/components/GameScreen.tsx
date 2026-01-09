@@ -343,6 +343,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               setHasCursor(cursor)
               setCursorDirection(direction)
             }}
+            useNativeKeyboard={!isMobile}
           />
         </div>
       </div>

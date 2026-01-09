@@ -17,6 +17,7 @@ const ScrabbleBoard = ({
   onEnter,
   onKeyPress,
   onCursorChange,
+  useNativeKeyboard = true,
 }: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
@@ -118,10 +119,12 @@ const ScrabbleBoard = ({
         setCursor({ row, col, direction })
       }
 
-      // Focus the hidden input for keyboard input (needed for iOS to show keyboard)
-      hiddenInputRef.current?.focus()
+      // Focus the hidden input for keyboard input (only when using native keyboard)
+      if (useNativeKeyboard) {
+        hiddenInputRef.current?.focus()
+      }
     },
-    [editable, cursor, inferCursorDirection]
+    [editable, cursor, inferCursorDirection, useNativeKeyboard]
   )
 
   // Combined view of all tiles (existing + new)
@@ -340,12 +343,12 @@ const ScrabbleBoard = ({
   }, [cursor, onCursorChange])
 
 
-  // Focus hidden input when cursor is set (needed for iOS to show keyboard)
+  // Focus hidden input when cursor is set (only when using native keyboard)
   useEffect(() => {
-    if (cursor && hiddenInputRef.current) {
+    if (useNativeKeyboard && cursor && hiddenInputRef.current) {
       hiddenInputRef.current.focus()
     }
-  }, [cursor])
+  }, [cursor, useNativeKeyboard])
 
   const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
   const isHighlighted = (row: number, col: number) =>
@@ -540,4 +543,6 @@ type Props = {
   onKeyPress?: (handler: (key: string) => void) => void
   /** Callback when cursor changes (appears/disappears or direction changes) */
   onCursorChange?: (hasCursor: boolean, direction: 'horizontal' | 'vertical') => void
+  /** Whether to use native keyboard (focus hidden input). Set to false for custom keyboard. */
+  useNativeKeyboard?: boolean
 }
