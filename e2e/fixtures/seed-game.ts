@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import type { GcgGame, GcgPlayMove } from '../../src/lib/parseGcg'
 
 const PLAYER_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B']
 const DEFAULT_TIME_MS = 30 * 60 * 1000
@@ -219,4 +220,77 @@ export async function seedNearEndGame(page: Page) {
     moves: NEAR_END_GAME_MOVES,
     status: 'playing',
   })
+}
+
+/**
+ * Convert a GCG game to seed format moves.
+ * Handles challenged-off moves and extracts only the new tiles for each play.
+ */
+export function convertGcgToSeedMoves(gcg: GcgGame): {
+  playerNames: [string, string]
+  moves: Array<{
+    playerIndex: number
+    tilesPlaced: Array<{ row: number; col: number; tile: string }>
+  }>
+} {
+  const playerNames: [string, string] = [gcg.player1.name, gcg.player2.name]
+
+  // Build set of move indices that were challenged off
+  const challengedOffIndices = new Set<number>()
+  for (let i = 0; i < gcg.moves.length - 1; i++) {
+    const move = gcg.moves[i]
+    const nextMove = gcg.moves[i + 1]
+    if (move.type === 'play' && nextMove.type === 'challenge' && move.player === nextMove.player) {
+      challengedOffIndices.add(i)
+    }
+  }
+
+  // Track board state to determine new tiles
+  const board: (string | null)[][] = Array.from({ length: 15 }, () => Array(15).fill(null))
+
+  const moves: Array<{
+    playerIndex: number
+    tilesPlaced: Array<{ row: number; col: number; tile: string }>
+  }> = []
+
+  for (let i = 0; i < gcg.moves.length; i++) {
+    const move = gcg.moves[i]
+
+    // Skip non-play moves and challenged-off plays
+    if (move.type !== 'play' || challengedOffIndices.has(i)) continue
+
+    const playMove = move as GcgPlayMove
+    const playerIndex = move.player === gcg.player1.nickname ? 0 : 1
+
+    const tilesPlaced: Array<{ row: number; col: number; tile: string }> = []
+
+    for (let j = 0; j < playMove.word.length; j++) {
+      const row = playMove.position.direction === 'vertical' ? playMove.position.row + j : playMove.position.row
+      const col = playMove.position.direction === 'horizontal' ? playMove.position.col + j : playMove.position.col
+
+      // Only include new tiles
+      if (board[row][col] === null) {
+        const letter = playMove.word[j]
+        // Lowercase = blank tile, represent as space
+        const tile = letter === letter.toLowerCase() ? ' ' : letter
+        tilesPlaced.push({ row, col, tile })
+        board[row][col] = letter.toUpperCase()
+      }
+    }
+
+    if (tilesPlaced.length > 0) {
+      moves.push({ playerIndex, tilesPlaced })
+    }
+  }
+
+  return { playerNames, moves }
+}
+
+/**
+ * Seed a game from a parsed GCG file.
+ * Much faster than playing through the UI.
+ */
+export async function seedGameFromGcg(page: Page, gcg: GcgGame) {
+  const { playerNames, moves } = convertGcgToSeedMoves(gcg)
+  return seedGame(page, { playerNames, moves })
 }
