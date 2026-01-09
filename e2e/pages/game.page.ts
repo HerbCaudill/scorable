@@ -83,12 +83,15 @@ export class GamePage {
 
   /** Toggle the timer (start/pause) */
   async toggleTimer() {
-    // Button text changes between "Start timer" and "Pause timer"
-    const startButton = this.page.getByRole('button', { name: 'Start timer' })
-    const pauseButton = this.page.getByRole('button', { name: 'Pause timer' })
+    // Button text: "Timer" (never used) -> "Pause" (running) -> "Resume" (paused)
+    const timerButton = this.page.getByRole('button', { name: 'Timer' })
+    const pauseButton = this.page.getByRole('button', { name: 'Pause' })
+    const resumeButton = this.page.getByRole('button', { name: 'Resume' })
 
-    if (await startButton.isVisible()) {
-      await startButton.click()
+    if (await timerButton.isVisible()) {
+      await timerButton.click()
+    } else if (await resumeButton.isVisible()) {
+      await resumeButton.click()
     } else {
       await pauseButton.click()
     }
@@ -96,7 +99,7 @@ export class GamePage {
 
   /** Check if timer is running */
   async isTimerRunning() {
-    return this.page.getByRole('button', { name: 'Pause timer' }).isVisible()
+    return this.page.getByRole('button', { name: 'Pause' }).isVisible()
   }
 
   /** Open the tile bag screen */

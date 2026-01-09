@@ -292,29 +292,29 @@ test.describe('multi-tab sync', () => {
     await page2.goto(gameUrl)
     await gamePage2.expectOnGameScreen()
 
-    // Initially both should show "Start timer"
-    await expect(page1.getByRole('button', { name: 'Start timer' })).toBeVisible()
-    await expect(page2.getByRole('button', { name: 'Start timer' })).toBeVisible()
+    // Initially both should show "Timer" button (never used)
+    await expect(page1.getByRole('button', { name: 'Timer' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Timer' })).toBeVisible()
 
     // Tab 1 starts the timer
     await gamePage1.toggleTimer()
-    await expect(page1.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+    await expect(page1.getByRole('button', { name: 'Pause' })).toBeVisible()
 
     // Wait for sync
     await page2.waitForTimeout(500)
 
     // Tab 2 should also show timer as running
-    await expect(page2.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Pause' })).toBeVisible()
 
     // Tab 2 pauses the timer
     await gamePage2.toggleTimer()
-    await expect(page2.getByRole('button', { name: 'Start timer' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Resume' })).toBeVisible()
 
     // Wait for sync
     await page1.waitForTimeout(500)
 
     // Tab 1 should also show timer as paused
-    await expect(page1.getByRole('button', { name: 'Start timer' })).toBeVisible()
+    await expect(page1.getByRole('button', { name: 'Resume' })).toBeVisible()
   })
 
   test('timer switches to next player on move across tabs', async () => {
@@ -348,8 +348,8 @@ test.describe('multi-tab sync', () => {
     await page2.waitForTimeout(500)
 
     // Timer should still be running in both tabs
-    await expect(page1.getByRole('button', { name: 'Pause timer' })).toBeVisible()
-    await expect(page2.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+    await expect(page1.getByRole('button', { name: 'Pause' })).toBeVisible()
+    await expect(page2.getByRole('button', { name: 'Pause' })).toBeVisible()
 
     // Get Alice's timer - should have decreased
     const aliceTimer1 = gamePage1.getPlayerTimer(0)

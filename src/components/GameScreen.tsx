@@ -106,6 +106,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     : { timeRemaining: [], activePlayerIndex: null, isRunning: false }
 
   const timerRunning = timerState.isRunning
+  const timerEverUsed = currentGame ? currentGame.timerEvents.length > 0 : false
 
   // Trigger re-renders when timer is running to update display
   useEffect(() => {
@@ -370,12 +371,14 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                   }}
                   onClick={handlePlayerClick}
                 >
-                  <Timer
-                    timeRemainingMs={timerState.timeRemaining[index] ?? player.timeRemainingMs}
-                    color={player.color}
-                    isActive={isActive}
-                    isPaused={!timerRunning}
-                  />
+                  {timerEverUsed && (
+                    <Timer
+                      timeRemainingMs={timerState.timeRemaining[index] ?? player.timeRemainingMs}
+                      color={player.color}
+                      isActive={isActive}
+                      isPaused={!timerRunning}
+                    />
+                  )}
 
                   {/* Player name and score */}
                   <div className="flex flex-col">
@@ -412,15 +415,22 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
           </>
         ) : (
           <>
-            <Button
-              className="flex-1"
-              variant={timerRunning ? 'outline' : 'default'}
-              size="xs"
-              onClick={handleTimerToggle}
-            >
-              {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
-              {timerRunning ? 'Pause timer' : 'Start timer'}
-            </Button>
+            {timerEverUsed ? (
+              <Button
+                className="flex-1"
+                variant={timerRunning ? 'outline' : 'default'}
+                size="xs"
+                onClick={handleTimerToggle}
+              >
+                {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+                {timerRunning ? 'Pause' : 'Resume'}
+              </Button>
+            ) : (
+              <Button className="flex-1" variant="outline" size="xs" onClick={handleTimerToggle}>
+                <IconPlayerPlay size={14} />
+                Timer
+              </Button>
+            )}
             <Button className="flex-1" variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
               <IconCards size={14} />
               Tiles ({remainingTileCount})

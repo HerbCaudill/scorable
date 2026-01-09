@@ -18,17 +18,50 @@ test.beforeEach(async ({ page }) => {
   await setupPage.startGame()
 })
 
-test('timer starts when Start Timer clicked', async ({ page }) => {
+test('timers are hidden until first started', async ({ page }) => {
   const gamePage = new GamePage(page)
 
-  // Initially should show "Start timer"
-  await expect(page.getByRole('button', { name: 'Start timer' })).toBeVisible()
+  // Timer elements should not be visible initially
+  const aliceTimer = gamePage.getPlayerTimer(0)
+  const bobTimer = gamePage.getPlayerTimer(1)
+  await expect(aliceTimer).not.toBeVisible()
+  await expect(bobTimer).not.toBeVisible()
 
   // Start timer
   await gamePage.toggleTimer()
 
-  // Should now show "Pause timer"
-  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+  // Now timers should be visible
+  await expect(aliceTimer).toBeVisible()
+  await expect(bobTimer).toBeVisible()
+})
+
+test('timers stay visible after pausing', async ({ page }) => {
+  const gamePage = new GamePage(page)
+
+  // Start timer
+  await gamePage.toggleTimer()
+
+  // Pause timer
+  await gamePage.toggleTimer()
+
+  // Timers should still be visible
+  const aliceTimer = gamePage.getPlayerTimer(0)
+  const bobTimer = gamePage.getPlayerTimer(1)
+  await expect(aliceTimer).toBeVisible()
+  await expect(bobTimer).toBeVisible()
+})
+
+test('timer starts when Start Timer clicked', async ({ page }) => {
+  const gamePage = new GamePage(page)
+
+  // Initially should show "Timer" button (timer never used)
+  await expect(page.getByRole('button', { name: 'Timer' })).toBeVisible()
+
+  // Start timer
+  await gamePage.toggleTimer()
+
+  // Should now show "Pause" button
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 })
 
 test('timer pauses when Pause Timer clicked', async ({ page }) => {
@@ -36,24 +69,26 @@ test('timer pauses when Pause Timer clicked', async ({ page }) => {
 
   // Start timer
   await gamePage.toggleTimer()
-  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 
   // Pause timer
   await gamePage.toggleTimer()
 
-  // Should show "Start timer" again
-  await expect(page.getByRole('button', { name: 'Start timer' })).toBeVisible()
+  // Should show "Resume" button
+  await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible()
 })
 
 test('timer countdown decrements over time', async ({ page }) => {
   const gamePage = new GamePage(page)
 
+  // Start timer first (timers are hidden until started)
+  await gamePage.toggleTimer()
+
   // Get initial time display from the timer element
   const timer = gamePage.getPlayerTimer(0)
   const initialLabel = await timer.getAttribute('aria-label')
 
-  // Start timer and wait
-  await gamePage.toggleTimer()
+  // Wait for time to decrease
   await page.waitForTimeout(1500)
 
   // Time should have decreased
@@ -90,18 +125,21 @@ test('timer continues for next player after turn', async ({ page }) => {
 
   // Start timer
   await gamePage.toggleTimer()
-  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 
   // Make a move
   await gamePage.placeWord(7, 7, 'CAT')
   await gamePage.endTurn()
 
   // Timer should still be running (now for Bob)
-  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 })
 
 test('each player has independent timer', async ({ page }) => {
   const gamePage = new GamePage(page)
+
+  // Start timer first (timers are hidden until started)
+  await gamePage.toggleTimer()
 
   // Get initial times for both players
   const aliceTimer = gamePage.getPlayerTimer(0)
@@ -109,8 +147,7 @@ test('each player has independent timer', async ({ page }) => {
   const aliceInitialLabel = await aliceTimer.getAttribute('aria-label')
   const bobInitialLabel = await bobTimer.getAttribute('aria-label')
 
-  // Start timer (Alice's turn)
-  await gamePage.toggleTimer()
+  // Wait for time to decrease (Alice's turn)
   await page.waitForTimeout(1500)
 
   // Alice's time should have decreased, Bob's should be the same
@@ -126,7 +163,7 @@ test('board is editable while timer is running', async ({ page }) => {
 
   // Start timer
   await gamePage.toggleTimer()
-  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 
   // Wait for timer to run for a bit (several interval ticks)
   await page.waitForTimeout(500)
