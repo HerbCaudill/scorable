@@ -26,10 +26,18 @@ export class GamePage {
   /** Click on a board cell */
   async clickCell(row: number, col: number) {
     await this.getCell(row, col).click()
+    // Wait for React to process the click and focus the hidden input
+    await this.page.waitForTimeout(100)
   }
 
   /** Type letters (places tiles at cursor position) */
   async typeLetters(letters: string) {
+    // Ensure the board's hidden input is focused before typing
+    const hiddenInput = this.page.locator('input[aria-hidden="true"]')
+    if (await hiddenInput.count() > 0) {
+      await hiddenInput.focus()
+      await this.page.waitForTimeout(50)
+    }
     await this.page.keyboard.type(letters)
   }
 

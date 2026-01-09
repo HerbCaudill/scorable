@@ -15,6 +15,8 @@ const ScrabbleBoard = ({
   editable = false,
   highlightedTiles = [],
   onEnter,
+  onKeyPress,
+  onCursorChange,
 }: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
@@ -162,19 +164,13 @@ const ScrabbleBoard = ({
     [tiles]
   )
 
-  // Handle keyboard input
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
+  // Process a key press (shared by keyboard events and external onKeyPress)
+  const processKey = useCallback(
+    (key: string) => {
       if (!editable || !cursor) return
-
-      // Stop propagation to prevent Storybook shortcuts from triggering
-      event.stopPropagation()
-
-      const { key } = event
 
       // Handle backspace - delete current tile and move back
       if (key === 'Backspace') {
-        event.preventDefault()
         const { row, col, direction } = cursor
 
         // If current cell has a new tile, just delete it
@@ -204,32 +200,27 @@ const ScrabbleBoard = ({
 
       // Handle arrow keys for cursor movement
       if (key === 'ArrowUp' && cursor.row > 0) {
-        event.preventDefault()
         setCursor({ ...cursor, row: cursor.row - 1 })
         return
       }
 
       if (key === 'ArrowDown' && cursor.row < 14) {
-        event.preventDefault()
         setCursor({ ...cursor, row: cursor.row + 1 })
         return
       }
 
       if (key === 'ArrowLeft' && cursor.col > 0) {
-        event.preventDefault()
         setCursor({ ...cursor, col: cursor.col - 1 })
         return
       }
 
       if (key === 'ArrowRight' && cursor.col < 14) {
-        event.preventDefault()
         setCursor({ ...cursor, col: cursor.col + 1 })
         return
       }
 
       // Handle space for blank tile
       if (key === ' ') {
-        event.preventDefault()
         const { row, col, direction } = cursor
 
         // Don't place tile on existing tile
@@ -253,15 +244,22 @@ const ScrabbleBoard = ({
 
       // Handle Enter key to end turn
       if (key === 'Enter') {
-        event.preventDefault()
         onEnter?.()
         return
       }
 
-      // Handle letter input directly from keydown (for desktop browsers)
+      // Handle direction toggle (for mobile keyboard)
+      if (key === 'ToggleDirection') {
+        setCursor({
+          ...cursor,
+          direction: cursor.direction === 'horizontal' ? 'vertical' : 'horizontal',
+        })
+        return
+      }
+
+      // Handle letter input
       // Single letter keys that are valid Scrabble tiles
       if (key.length === 1 && /^[a-zA-Z]$/.test(key)) {
-        event.preventDefault()
         const letter = key.toUpperCase()
         if (letter in tileValues) {
           const { row, col, direction } = cursor
@@ -287,6 +285,59 @@ const ScrabbleBoard = ({
     },
     [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter]
   )
+
+  // Handle keyboard input from the hidden input
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (!editable || !cursor) return
+
+      // Stop propagation to prevent Storybook shortcuts from triggering
+      event.stopPropagation()
+
+      // Only handle non-letter keys here (letters are handled by onInput for iOS compatibility)
+      const key = event.key
+      if (key.length === 1 && /^[a-zA-Z]$/.test(key)) {
+        // Let onInput handle letters
+        return
+      }
+
+      event.preventDefault()
+      processKey(key)
+    },
+    [editable, cursor, processKey]
+  )
+
+  // Handle text input for letter keys (more compatible with iOS virtual keyboard)
+  const handleInput = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      if (!editable || !cursor) return
+
+      const input = event.currentTarget
+      const value = input.value.toUpperCase()
+
+      // Clear the input immediately
+      input.value = ''
+
+      // Process only the last character if multiple were typed
+      const letter = value.slice(-1)
+      if (letter.length === 1 && /^[A-Z]$/.test(letter)) {
+        processKey(letter)
+      }
+    },
+    [editable, cursor, processKey]
+  )
+
+  // Expose processKey to parent via onKeyPress callback
+  useEffect(() => {
+    if (onKeyPress) {
+      onKeyPress(processKey)
+    }
+  }, [onKeyPress, processKey])
+
+  // Notify parent when cursor changes
+  useEffect(() => {
+    onCursorChange?.(cursor !== null, cursor?.direction ?? 'horizontal')
+  }, [cursor, onCursorChange])
 
 
   // Focus hidden input when cursor is set (needed for iOS to show keyboard)
@@ -393,7 +444,7 @@ const ScrabbleBoard = ({
       role="grid"
       aria-label="Scrabble board"
     >
-      {/* Hidden input to capture keyboard events and trigger iOS keyboard */}
+      {/* Hidden input to capture keyboard events - positioned off-screen but visible for better webkit compatibility */}
       {editable && (
         <input
           ref={hiddenInputRef}
@@ -403,9 +454,10 @@ const ScrabbleBoard = ({
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
-          className="absolute opacity-0 w-0 h-0 pointer-events-none"
+          className="absolute -left-[9999px] top-0 w-px h-px opacity-1"
           style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
           onKeyDown={handleKeyDown}
+          onInput={handleInput}
           aria-hidden="true"
           tabIndex={-1}
         />
@@ -484,4 +536,8 @@ type Props = {
   highlightedTiles?: Array<{ row: number; col: number }>
   /** Callback when Enter key is pressed */
   onEnter?: () => void
+  /** Callback that receives the key handler function for external keyboards */
+  onKeyPress?: (handler: (key: string) => void) => void
+  /** Callback when cursor changes (appears/disappears or direction changes) */
+  onCursorChange?: (hasCursor: boolean, direction: 'horizontal' | 'vertical') => void
 }

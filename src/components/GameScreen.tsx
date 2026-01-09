@@ -18,6 +18,7 @@ import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
 import { IconFlag, IconCards, IconPlayerPause, IconPlayerPlay, IconX, IconShare } from '@tabler/icons-react'
+import { MobileKeyboard } from './MobileKeyboard'
 
 /** Convert player's move index to global index in moves array */
 const getGlobalMoveIndex = (moves: GameMove[], playerIndex: number, playerMoveIndex: number): number => {
@@ -95,6 +96,12 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     warnings: TileOveruseWarning[]
     pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
+
+  // Mobile keyboard support
+  const [isMobile] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0)
+  const [keyHandler, setKeyHandler] = useState<((key: string) => void) | null>(null)
+  const [hasCursor, setHasCursor] = useState(false)
+  const [cursorDirection, setCursorDirection] = useState<'horizontal' | 'vertical'>('horizontal')
 
   // Force re-render every 100ms to update timer display when running
   const [, setTick] = useState(0)
@@ -331,6 +338,11 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             editable
             highlightedTiles={highlightedTiles}
             onEnter={handleEndTurn}
+            onKeyPress={handler => setKeyHandler(() => handler)}
+            onCursorChange={(cursor, direction) => {
+              setHasCursor(cursor)
+              setCursorDirection(direction)
+            }}
           />
         </div>
       </div>
@@ -493,6 +505,15 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         confirmText="Fix move"
         onConfirm={() => setTileOveruseConfirm(null)}
       />
+
+      {/* Mobile keyboard - floating overlay */}
+      {isMobile && keyHandler && (
+        <MobileKeyboard
+          onKeyPress={keyHandler}
+          direction={cursorDirection}
+          visible={hasCursor}
+        />
+      )}
     </div>
   )
 }
