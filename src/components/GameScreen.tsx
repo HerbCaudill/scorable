@@ -363,7 +363,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               >
                 {/* Player panel header */}
                 <div
-                  className="shrink-0 flex cursor-pointer items-center gap-3 p-1 transition-colors hover:opacity-80"
+                  className="shrink-0 flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : 'transparent',
                     borderBottomWidth: 2,
