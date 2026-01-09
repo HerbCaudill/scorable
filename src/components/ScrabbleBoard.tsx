@@ -19,7 +19,7 @@ const ScrabbleBoard = ({
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
-  const hiddenInputRef = useRef<HTMLInputElement>(null)
+  const hiddenInputRef = useRef<HTMLDivElement>(null)
 
   // Use external newTiles if provided (controlled mode), otherwise internal state
   const newTiles = externalNewTiles ?? internalNewTiles
@@ -258,45 +258,100 @@ const ScrabbleBoard = ({
         return
       }
 
-      // Letter input is handled by onInput for iOS compatibility
+      // Handle letter input directly from keydown (for desktop browsers)
+      // Single letter keys that are valid Scrabble tiles
+      if (key.length === 1 && /^[a-zA-Z]$/.test(key)) {
+        event.preventDefault()
+        const letter = key.toUpperCase()
+        if (letter in tileValues) {
+          const { row, col, direction } = cursor
+
+          // Don't place tile on existing tile
+          if (tiles && tiles[row][col] !== null) return
+
+          // Place the letter
+          setNewTiles(prev => {
+            const updated = prev.map(r => [...r])
+            updated[row][col] = letter
+            return updated
+          })
+
+          // Move to next position, skipping existing tiles
+          const next = findNextPosition(row, col, direction, true)
+          if (next) {
+            setCursor(next)
+          }
+        }
+        return
+      }
     },
-    [editable, cursor, newTiles, setNewTiles, onEnter]
+    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter]
   )
 
-  // Handle input from the hidden input (more reliable on iOS for letter input)
+  // Helper to place a letter at current cursor position
+  const placeLetter = useCallback(
+    (letter: string) => {
+      if (!cursor) return
+
+      const { row, col, direction } = cursor
+
+      // Don't place tile on existing tile
+      if (tiles && tiles[row][col] !== null) return
+
+      // Place the letter
+      setNewTiles(prev => {
+        const updated = prev.map(r => [...r])
+        updated[row][col] = letter
+        return updated
+      })
+
+      // Move to next position, skipping existing tiles
+      const next = findNextPosition(row, col, direction, true)
+      if (next) {
+        setCursor(next)
+      }
+    },
+    [cursor, tiles, setNewTiles, findNextPosition]
+  )
+
+  // Handle beforeinput from contentEditable (captures text before insertion on iOS)
+  const handleBeforeInput = useCallback(
+    (event: React.FormEvent<HTMLDivElement>) => {
+      const inputEvent = event.nativeEvent as InputEvent
+      if (!editable || !cursor) return
+
+      // Prevent the default insertion into the contentEditable
+      event.preventDefault()
+
+      const data = inputEvent.data
+      if (!data) return
+
+      const letter = data.toUpperCase().slice(-1)
+      if (letter.length === 1 && letter in tileValues && letter !== ' ') {
+        placeLetter(letter)
+      }
+    },
+    [editable, cursor, placeLetter]
+  )
+
+  // Fallback onInput handler for browsers/tests where beforeInput doesn't fire or isn't prevented
   const handleInput = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
+    (event: React.FormEvent<HTMLDivElement>) => {
       if (!editable || !cursor) return
 
       const input = event.currentTarget
-      const value = input.value.toUpperCase()
+      const value = (input.textContent ?? '').toUpperCase()
 
-      // Clear the input immediately
-      input.value = ''
+      // Clear the contentEditable immediately
+      input.textContent = ''
 
       // Process only the last character if multiple were typed
       const letter = value.slice(-1)
       if (letter.length === 1 && letter in tileValues && letter !== ' ') {
-        const { row, col, direction } = cursor
-
-        // Don't place tile on existing tile
-        if (tiles && tiles[row][col] !== null) return
-
-        // Place the letter
-        setNewTiles(prev => {
-          const updated = prev.map(r => [...r])
-          updated[row][col] = letter
-          return updated
-        })
-
-        // Move to next position, skipping existing tiles
-        const next = findNextPosition(row, col, direction, true)
-        if (next) {
-          setCursor(next)
-        }
+        placeLetter(letter)
       }
     },
-    [editable, cursor, setNewTiles, findNextPosition]
+    [editable, cursor, placeLetter]
   )
 
   // Focus hidden input when cursor is set (needed for iOS to show keyboard)
@@ -403,22 +458,23 @@ const ScrabbleBoard = ({
       role="grid"
       aria-label="Scrabble board"
     >
-      {/* Hidden input to trigger iOS keyboard */}
+      {/* Hidden contentEditable div to trigger iOS keyboard without accessory bar */}
       {editable && (
-        <input
+        <div
           ref={hiddenInputRef}
-          type="text"
-          enterKeyHint="go"
+          contentEditable
+          inputMode="text"
           autoCapitalize="characters"
-          autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
-          className="absolute opacity-0 w-0 h-0 pointer-events-none"
+          className="absolute opacity-0 w-0 h-0 pointer-events-none caret-transparent"
           style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
           onKeyDown={handleKeyDown}
+          onBeforeInput={handleBeforeInput}
           onInput={handleInput}
           aria-hidden="true"
           tabIndex={-1}
+          suppressContentEditableWarning
         />
       )}
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
