@@ -56,7 +56,7 @@ export const ConfirmDialog = ({
           ) : (
             <AlertDialogCancel>{cancelText}</AlertDialogCancel>
           )}
-          <AlertDialogAction onClick={onConfirm} className={confirmClassName}>
+          <AlertDialogAction onClick={onConfirm} className={confirmClassName} autoFocus>
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
