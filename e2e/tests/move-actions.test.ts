@@ -122,8 +122,8 @@ test.describe("Move Actions", () => {
       // Challenge the move
       await gamePage.challengeMove("Alice", 0)
 
-      // Wait for the success toast
-      await expect(page.getByText(/Challenge successful/)).toBeVisible()
+      // Wait for the toast indicating invalid word
+      await expect(page.getByText(/XYZ is not valid/)).toBeVisible()
 
       // Board should be empty
       expect(await gamePage.cellHasTile(7, 7)).toBe(false)
@@ -157,8 +157,10 @@ test.describe("Move Actions", () => {
       // Challenge the move
       await gamePage.challengeMove("Alice", 0)
 
-      // Wait for the failure toast (includes the word CAT in the message)
-      await expect(page.getByText(/Challenge failed.*CAT/)).toBeVisible()
+      // Wait for the toast showing all words are valid with definitions
+      const toast = page.getByLabel("Notifications alt+T")
+      await expect(toast.getByText(/All words are valid/)).toBeVisible()
+      await expect(toast.getByText(/CAT/)).toBeVisible()
 
       // Board should still have the word
       await gamePage.expectTileAt(7, 7, "C")
@@ -243,8 +245,8 @@ test.describe("Move Actions", () => {
       // Challenge the move
       await gamePage.challengeMove("Bob", 0)
 
-      // Wait for the success toast
-      await expect(page.getByText(/Challenge successful/)).toBeVisible()
+      // Wait for the toast indicating invalid word
+      await expect(page.getByText(/is not valid/)).toBeVisible()
 
       // Bob's tiles should be removed but CAT should remain
       await gamePage.expectTileAt(7, 7, "C")
