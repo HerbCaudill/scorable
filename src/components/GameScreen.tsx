@@ -271,12 +271,22 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         } else {
           // Challenge failed - challenger loses their turn
           challengeMove(globalIndex, false)
-          const wordDefinitions = words.map(word => {
-            const entry = getWordDefinition(word)
-            const def = entry?.definitions[0]?.text ?? "no definition"
-            return `${word.toUpperCase()}: ${def}`
-          })
-          toast.success(`All words are valid: ${wordDefinitions.join("; ")}`)
+          toast.success(
+            <div>
+              <div className="font-medium">All words are valid:</div>
+              <ul className="mt-1 list-disc pl-4">
+                {words.map(word => {
+                  const entry = getWordDefinition(word)
+                  const def = entry?.definitions[0]?.text ?? "no definition"
+                  return (
+                    <li key={word}>
+                      <strong>{word.toUpperCase()}</strong>: {def}
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>,
+          )
         }
         break
       }
