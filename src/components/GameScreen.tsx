@@ -350,7 +350,6 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             onEnter={handleEndTurn}
             onKeyPress={handleKeyPressCallback}
             onCursorChange={handleCursorChangeCallback}
-            useNativeKeyboard={!isMobile}
           />
         </div>
       </div>

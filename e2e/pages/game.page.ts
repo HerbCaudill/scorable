@@ -26,29 +26,29 @@ export class GamePage {
   /** Click on a board cell */
   async clickCell(row: number, col: number) {
     await this.getCell(row, col).click()
-    // Wait for React to process the click and focus the hidden input
+    // Wait for React to process the click
     await this.page.waitForTimeout(100)
   }
 
   /** Type letters (places tiles at cursor position) */
   async typeLetters(letters: string) {
-    // Ensure the board's hidden input is focused before typing
-    const hiddenInput = this.page.locator('input[aria-hidden="true"]')
-    if (await hiddenInput.count() > 0) {
-      await hiddenInput.focus()
-      await this.page.waitForTimeout(50)
-    }
+    // Blur any focused element so global keyboard listener receives events
+    await this.page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
+    })
     await this.page.keyboard.type(letters)
   }
 
   /** Press a specific key */
   async pressKey(key: string) {
-    // Ensure the board's hidden input is focused before pressing keys
-    const hiddenInput = this.page.locator('input[aria-hidden="true"]')
-    if (await hiddenInput.count() > 0) {
-      await hiddenInput.focus()
-      await this.page.waitForTimeout(50)
-    }
+    // Blur any focused element so global keyboard listener receives events
+    await this.page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
+    })
     await this.page.keyboard.press(key)
   }
 
@@ -97,6 +97,8 @@ export class GamePage {
 
   /** Toggle the timer (start/pause) */
   async toggleTimer() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey('Escape')
     // Button text: "Timer" (never used) -> "Pause" (running) -> "Resume" (paused)
     const timerButton = this.page.getByRole('button', { name: 'Timer' })
     const pauseButton = this.page.getByRole('button', { name: 'Pause' })
@@ -118,11 +120,15 @@ export class GamePage {
 
   /** Open the tile bag screen */
   async openTileBag() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey('Escape')
     await this.page.getByRole('button', { name: /Tiles/ }).click()
   }
 
   /** Click the end game button */
   async clickEndGame() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey('Escape')
     await this.page.getByRole('button', { name: 'End game' }).click()
   }
 
@@ -324,11 +330,15 @@ export class GamePage {
 
   /** Click cancel button during edit mode */
   async cancelEdit() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey('Escape')
     await this.page.getByRole('button', { name: 'Cancel' }).click()
   }
 
   /** Click save edit button */
   async saveEdit() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey('Escape')
     await this.page.getByRole('button', { name: 'Save edit' }).click()
   }
 

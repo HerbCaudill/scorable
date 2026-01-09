@@ -17,12 +17,10 @@ const ScrabbleBoard = ({
   onEnter,
   onKeyPress,
   onCursorChange,
-  useNativeKeyboard = true,
 }: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
   const boardRef = useRef<HTMLDivElement>(null)
-  const hiddenInputRef = useRef<HTMLInputElement>(null)
 
   // Use external newTiles if provided (controlled mode), otherwise internal state
   const newTiles = externalNewTiles ?? internalNewTiles
@@ -119,12 +117,8 @@ const ScrabbleBoard = ({
         setCursor({ row, col, direction })
       }
 
-      // Focus the hidden input for keyboard input (only when using native keyboard)
-      if (useNativeKeyboard) {
-        hiddenInputRef.current?.focus()
-      }
     },
-    [editable, cursor, inferCursorDirection, useNativeKeyboard]
+    [editable, cursor, inferCursorDirection]
   )
 
   // Combined view of all tiles (existing + new)
@@ -296,47 +290,6 @@ const ScrabbleBoard = ({
     [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter]
   )
 
-  // Handle keyboard input from the hidden input
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (!editable || !cursor) return
-
-      // Stop propagation to prevent Storybook shortcuts from triggering
-      event.stopPropagation()
-
-      // Only handle non-letter keys here (letters are handled by onInput for iOS compatibility)
-      const key = event.key
-      if (key.length === 1 && /^[a-zA-Z]$/.test(key)) {
-        // Let onInput handle letters
-        return
-      }
-
-      event.preventDefault()
-      processKey(key)
-    },
-    [editable, cursor, processKey]
-  )
-
-  // Handle text input for letter keys (more compatible with iOS virtual keyboard)
-  const handleInput = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
-      if (!editable || !cursor) return
-
-      const input = event.currentTarget
-      const value = input.value.toUpperCase()
-
-      // Clear the input immediately
-      input.value = ''
-
-      // Process only the last character if multiple were typed
-      const letter = value.slice(-1)
-      if (letter.length === 1 && /^[A-Z]$/.test(letter)) {
-        processKey(letter)
-      }
-    },
-    [editable, cursor, processKey]
-  )
-
   // Store processKey in a ref so we can access the latest version without re-renders
   const processKeyRef = useRef(processKey)
   processKeyRef.current = processKey
@@ -354,13 +307,36 @@ const ScrabbleBoard = ({
     onCursorChange?.(cursor !== null, cursor?.direction ?? 'horizontal')
   }, [cursor, onCursorChange])
 
-
-  // Focus hidden input when cursor is set (only when using native keyboard)
+  // Global keyboard listener
   useEffect(() => {
-    if (useNativeKeyboard && cursor && hiddenInputRef.current) {
-      hiddenInputRef.current.focus()
+    if (!editable || !cursor) return
+
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      // Don't intercept other inputs
+      const activeEl = document.activeElement
+      if (activeEl?.tagName === 'INPUT' || activeEl?.tagName === 'TEXTAREA') {
+        return
+      }
+
+      // Handle Escape to clear cursor
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setCursor(null)
+        return
+      }
+
+      // For other keys, delegate to processKey
+      if (event.key === 'Backspace' || event.key === 'Enter' ||
+          event.key.startsWith('Arrow') || event.key === ' ' ||
+          (event.key.length === 1 && /^[a-zA-Z]$/.test(event.key))) {
+        event.preventDefault()
+        processKeyRef.current(event.key)
+      }
     }
-  }, [cursor, useNativeKeyboard])
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [editable, cursor])
 
   const isCursorAt = (row: number, col: number) => cursor?.row === row && cursor?.col === col
   const isHighlighted = (row: number, col: number) =>
@@ -459,24 +435,6 @@ const ScrabbleBoard = ({
       role="grid"
       aria-label="Scrabble board"
     >
-      {/* Hidden input to capture keyboard events - positioned off-screen but visible for better webkit compatibility */}
-      {editable && (
-        <input
-          ref={hiddenInputRef}
-          type="text"
-          enterKeyHint="go"
-          autoCapitalize="characters"
-          autoComplete="off"
-          autoCorrect="off"
-          spellCheck={false}
-          className="absolute -left-[9999px] top-0 w-px h-px opacity-1"
-          style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
-          onKeyDown={handleKeyDown}
-          onInput={handleInput}
-          aria-hidden="true"
-          tabIndex={-1}
-        />
-      )}
       <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
@@ -555,6 +513,4 @@ type Props = {
   onKeyPress?: (handler: (key: string) => void) => void
   /** Callback when cursor changes (appears/disappears or direction changes) */
   onCursorChange?: (hasCursor: boolean, direction: 'horizontal' | 'vertical') => void
-  /** Whether to use native keyboard (focus hidden input). Set to false for custom keyboard. */
-  useNativeKeyboard?: boolean
 }
