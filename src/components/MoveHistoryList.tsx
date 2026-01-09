@@ -95,7 +95,7 @@ const MoveHistoryEntry = ({
         </div>
       </DropdownMenuTrigger>
       {!isPass && (
-        <DropdownMenuContent align="start" side="right">
+        <DropdownMenuContent align="start" side="bottom">
           <DropdownMenuItem onClick={() => handleAction("correct")}>
             <IconPencil size={16} />
             Correct
