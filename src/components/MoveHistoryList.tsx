@@ -1,8 +1,24 @@
+import { useState } from 'react'
 import type { MoveHistoryEntry } from '@/lib/getPlayerMoveHistory'
 import { cn } from '@/lib/utils'
-import { useLongPress } from '@/hooks/useLongPress'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { IconPencil, IconArrowBackUp, IconAlertTriangle } from '@tabler/icons-react'
 
-export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editingIndex, className }: Props) => {
+export type MoveAction = 'correct' | 'undo' | 'challenge'
+
+export const MoveHistoryList = ({
+  history,
+  onMoveClick,
+  onMoveAction,
+  editingIndex,
+  isLastMove,
+  className,
+}: Props) => {
   return (
     <div className={cn('flex flex-col divide-y divide-neutral-200', className)}>
       {history.map((entry, i) => {
@@ -17,11 +33,14 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editing
             >
               <span className="truncate">Final</span>
               <span className={cn('font-medium', scoreClass)}>
-                {scorePrefix}{entry.score}
+                {scorePrefix}
+                {entry.score}
               </span>
             </div>
           )
         }
+
+        const isLast = isLastMove?.(i) ?? false
 
         return (
           <MoveHistoryEntry
@@ -29,8 +48,9 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editing
             entry={entry}
             index={i}
             isEditing={editingIndex === i}
+            isLastMove={isLast}
             onMoveClick={onMoveClick}
-            onMoveLongPress={onMoveLongPress}
+            onMoveAction={onMoveAction}
           />
         )
       })}
@@ -38,33 +58,71 @@ export const MoveHistoryList = ({ history, onMoveClick, onMoveLongPress, editing
   )
 }
 
-const MoveHistoryEntry = ({ entry, index, isEditing, onMoveClick, onMoveLongPress }: MoveHistoryEntryProps) => {
-  const longPressHandlers = useLongPress({
-    onLongPress: () => onMoveLongPress?.(index),
-    onClick: () => onMoveClick(entry.tiles),
-  })
+const MoveHistoryEntry = ({
+  entry,
+  index,
+  isEditing,
+  isLastMove,
+  onMoveClick,
+  onMoveAction,
+}: MoveHistoryEntryProps) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
+  const handleAction = (action: MoveAction) => {
+    setDropdownOpen(false)
+    onMoveAction?.(index, action)
+  }
+
+  // For passes (no tiles placed), don't show any actions
+  const isPass = entry.tiles.length === 0
 
   return (
-    <div
-      className={cn(
-        'flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200',
-        isEditing ? 'bg-teal-100 text-teal-800 font-medium' : 'text-neutral-600'
+    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+      <DropdownMenuTrigger asChild>
+        <div
+          className={cn(
+            'flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200',
+            isEditing ? 'bg-teal-100 text-teal-800 font-medium' : 'text-neutral-600'
+          )}
+          onClick={() => onMoveClick(entry.tiles)}
+        >
+          <span className="truncate">
+            {entry.words.length > 0 ? entry.words.join(', ') : <em className="text-neutral-400">(pass)</em>}
+          </span>
+          <span className="font-medium">{entry.score}</span>
+        </div>
+      </DropdownMenuTrigger>
+      {!isPass && (
+        <DropdownMenuContent align="start" side="right">
+          <DropdownMenuItem onClick={() => handleAction('correct')}>
+            <IconPencil size={16} />
+            Correct
+          </DropdownMenuItem>
+          {isLastMove && (
+            <>
+              <DropdownMenuItem onClick={() => handleAction('undo')}>
+                <IconArrowBackUp size={16} />
+                Undo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAction('challenge')}>
+                <IconAlertTriangle size={16} />
+                Challenge
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
       )}
-      {...longPressHandlers}
-    >
-      <span className="truncate">
-        {entry.words.length > 0 ? entry.words.join(', ') : <em className="text-neutral-400">(pass)</em>}
-      </span>
-      <span className="font-medium">{entry.score}</span>
-    </div>
+    </DropdownMenu>
   )
 }
 
 type Props = {
   history: MoveHistoryEntry[]
   onMoveClick: (tiles: Array<{ row: number; col: number }>) => void
-  onMoveLongPress?: (playerMoveIndex: number) => void
+  onMoveAction?: (playerMoveIndex: number, action: MoveAction) => void
   editingIndex?: number
+  /** Function to check if a move at index is the last move in the game */
+  isLastMove?: (playerMoveIndex: number) => boolean
   className?: string
 }
 
@@ -72,6 +130,7 @@ type MoveHistoryEntryProps = {
   entry: MoveHistoryEntry
   index: number
   isEditing: boolean
+  isLastMove: boolean
   onMoveClick: (tiles: Array<{ row: number; col: number }>) => void
-  onMoveLongPress?: (playerMoveIndex: number) => void
+  onMoveAction?: (playerMoveIndex: number, action: MoveAction) => void
 }

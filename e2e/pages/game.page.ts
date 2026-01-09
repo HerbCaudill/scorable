@@ -308,14 +308,29 @@ export class GamePage {
     return panel.locator('.divide-y > div')
   }
 
-  /** Long-press on a move in a player's history to enter edit mode */
+  /** Click on a move in a player's history to open the action menu, then select Correct */
   async longPressMove(playerName: string, moveIndex: number) {
+    await this.openMoveMenu(playerName, moveIndex)
+    await this.page.getByRole('menuitem', { name: 'Correct' }).click()
+  }
+
+  /** Open the action menu for a move */
+  async openMoveMenu(playerName: string, moveIndex: number) {
     const entries = this.getPlayerMoveHistory(playerName)
     const entry = entries.nth(moveIndex)
-    // Simulate long press: touchstart, wait 600ms, touchend
-    await entry.dispatchEvent('touchstart')
-    await this.page.waitForTimeout(600)
-    await entry.dispatchEvent('touchend')
+    await entry.click()
+  }
+
+  /** Select undo from the move action menu */
+  async undoMove(playerName: string, moveIndex: number) {
+    await this.openMoveMenu(playerName, moveIndex)
+    await this.page.getByRole('menuitem', { name: 'Undo' }).click()
+  }
+
+  /** Select challenge from the move action menu */
+  async challengeMove(playerName: string, moveIndex: number) {
+    await this.openMoveMenu(playerName, moveIndex)
+    await this.page.getByRole('menuitem', { name: 'Challenge' }).click()
   }
 
   /** Expect the app to be in edit mode */

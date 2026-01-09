@@ -26,6 +26,9 @@ importers:
       '@automerge/automerge-repo-storage-indexeddb':
         specifier: ^2.5.1
         version: 2.5.1
+      '@herbcaudill/scrabble-words':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -1037,6 +1040,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@herbcaudill/scrabble-words@1.0.2':
+    resolution: {integrity: sha512-1xlpS7Z4rW6diEZRjstBCfmB4iHENTPKv6McTMJQVs2hzMnMFVX9htFuMSAoqvpmHkqHWhIpQ7/B53bqrlOfLg==}
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -4630,6 +4636,8 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@herbcaudill/scrabble-words@1.0.2': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 

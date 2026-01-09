@@ -13,7 +13,9 @@ import { getPlayerMoveHistory } from '@/lib/getPlayerMoveHistory'
 import { UnplayedTilesScreen } from './TileBagScreen'
 import { EndGameScreen } from './EndGameScreen'
 import { ConfirmDialog } from './ConfirmDialog'
-import { MoveHistoryList } from './MoveHistoryList'
+import { MoveHistoryList, type MoveAction } from './MoveHistoryList'
+import { isValidWord } from '@/lib/wordList'
+import { getWordsFromMove } from '@/lib/getWordsFromMove'
 import { Timer } from './Timer'
 import { useHighlightedTiles } from '@/hooks/useHighlightedTiles'
 import { toast } from 'sonner'
@@ -81,6 +83,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     stopTimer,
     commitMove,
     updateMove,
+    undoLastMove,
+    removeMove,
     endGame,
     endGameWithAdjustments,
   } = useGame(gameId)
@@ -198,6 +202,69 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
     setEditingMoveIndex(globalIndex)
     setNewTiles(moveToBoardState(moves[globalIndex].tilesPlaced))
+  }
+
+  // Handle move actions from dropdown menu
+  const handleMoveAction = (playerIndex: number, playerMoveIndex: number, action: MoveAction) => {
+    const globalIndex = getGlobalMoveIndex(moves, playerIndex, playerMoveIndex)
+    if (globalIndex === -1) return
+
+    // Block if tiles are in progress
+    const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
+    if (hasTilesInProgress) {
+      toast.error('Clear current move first')
+      return
+    }
+
+    switch (action) {
+      case 'correct':
+        handleEditMove(playerIndex, playerMoveIndex)
+        break
+
+      case 'undo':
+        // Only allow undo of the last move
+        if (globalIndex === moves.length - 1) {
+          undoLastMove()
+          toast.success('Move undone')
+        } else {
+          toast.error('Can only undo the most recent move')
+        }
+        break
+
+      case 'challenge': {
+        // Only allow challenge of the last move
+        if (globalIndex !== moves.length - 1) {
+          toast.error('Can only challenge the most recent move')
+          return
+        }
+
+        const move = moves[globalIndex]
+        // Build board state before this move to check words
+        const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
+        const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
+
+        // Check each word against the dictionary
+        const invalidWords = words.filter(word => !isValidWord(word))
+
+        if (invalidWords.length > 0) {
+          // Challenge successful - remove the move
+          removeMove(globalIndex)
+          toast.success(
+            `Challenge successful! Invalid word${invalidWords.length > 1 ? 's' : ''}: ${invalidWords.join(', ')}`
+          )
+        } else {
+          // Challenge failed - all words are valid
+          toast.error(`Challenge failed - all words are valid: ${words.join(', ')}`)
+        }
+        break
+      }
+    }
+  }
+
+  // Check if a player's move at index is the last move in the game
+  const isLastMoveForPlayer = (playerIndex: number, playerMoveIndex: number): boolean => {
+    const globalIndex = getGlobalMoveIndex(moves, playerIndex, playerMoveIndex)
+    return globalIndex === moves.length - 1
   }
 
   // Cancel edit mode
@@ -410,8 +477,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 <MoveHistoryList
                   history={moveHistory}
                   onMoveClick={highlightTiles}
-                  onMoveLongPress={playerMoveIndex => handleEditMove(index, playerMoveIndex)}
+                  onMoveAction={(playerMoveIndex, action) => handleMoveAction(index, playerMoveIndex, action)}
                   editingIndex={editingMoveInfo?.playerIndex === index ? editingMoveInfo.playerMoveIndex : undefined}
+                  isLastMove={playerMoveIndex => isLastMoveForPlayer(index, playerMoveIndex)}
                   className="min-h-0 flex-1 overflow-y-auto p-1 text-[10px] [&_span:first-child]:font-mono"
                 />
               </div>

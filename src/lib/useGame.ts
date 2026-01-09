@@ -63,6 +63,8 @@ export type UseGameResult = {
   // Game actions
   commitMove: (move: GameMove) => void
   updateMove: (moveIndex: number, newTiles: Move) => void
+  undoLastMove: () => void
+  removeMove: (moveIndex: number) => void
   pauseGame: () => void
   resumeGame: () => void
   endGame: () => void
@@ -183,6 +185,51 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     })
   }
 
+  const undoLastMove = () => {
+    if (!doc || doc.moves.length === 0) return
+    removeMove(doc.moves.length - 1)
+  }
+
+  const removeMove = (moveIndex: number) => {
+    if (!doc) return
+    if (moveIndex < 0 || moveIndex >= doc.moves.length) return
+
+    changeDoc(d => {
+      // Get the move being removed to determine whose turn it was
+      const removedMove = d.moves[moveIndex]
+
+      // Remove the move
+      d.moves.splice(moveIndex, 1)
+
+      // Rebuild board from scratch
+      for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+          d.board[r][c] = ''
+        }
+      }
+      for (const move of d.moves) {
+        for (const { row, col, tile } of move.tilesPlaced) {
+          d.board[row][col] = tile
+        }
+      }
+
+      // Set current player back to the player whose move was removed
+      d.currentPlayerIndex = removedMove.playerIndex
+
+      // If timer is running, switch it back to that player
+      if (isTimerRunning(d.timerEvents)) {
+        if (!d.timerEvents) d.timerEvents = []
+        d.timerEvents.push({
+          type: 'switch',
+          timestamp: Date.now(),
+          playerIndex: removedMove.playerIndex,
+        })
+      }
+
+      d.updatedAt = Date.now()
+    })
+  }
+
   const pauseGame = () => {
     if (!doc) return
     changeDoc(d => {
@@ -295,6 +342,8 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     stopTimer,
     commitMove,
     updateMove,
+    undoLastMove,
+    removeMove,
     pauseGame,
     resumeGame,
     endGame,
