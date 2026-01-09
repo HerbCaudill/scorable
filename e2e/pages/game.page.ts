@@ -43,6 +43,12 @@ export class GamePage {
 
   /** Press a specific key */
   async pressKey(key: string) {
+    // Ensure the board's hidden input is focused before pressing keys
+    const hiddenInput = this.page.locator('input[aria-hidden="true"]')
+    if (await hiddenInput.count() > 0) {
+      await hiddenInput.focus()
+      await this.page.waitForTimeout(50)
+    }
     await this.page.keyboard.press(key)
   }
 

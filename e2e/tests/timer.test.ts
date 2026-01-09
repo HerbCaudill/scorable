@@ -174,6 +174,11 @@ test('board is editable while timer is running', async ({ page }) => {
   await gamePage.expectCellSelected(7, 7)
 
   // Type a word slowly to ensure timer interval has time to fire between keystrokes
+  // Focus the hidden input first for mobile compatibility
+  const hiddenInput = page.locator('input[aria-hidden="true"]')
+  if (await hiddenInput.count() > 0) {
+    await hiddenInput.focus()
+  }
   await page.keyboard.type('CAT', { delay: 150 })
 
   // All tiles should be placed
