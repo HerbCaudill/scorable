@@ -245,6 +245,12 @@ const ScrabbleBoard = ({
         return
       }
 
+      // Handle Escape key to clear cursor and hide keyboard
+      if (key === 'Escape') {
+        setCursor(null)
+        return
+      }
+
       // Handle Enter key to end turn
       if (key === 'Enter') {
         setCursor(null) // Clear cursor to hide keyboard
