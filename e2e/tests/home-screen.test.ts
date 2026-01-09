@@ -1,133 +1,135 @@
-import { test, expect } from '@playwright/test'
-import { HomePage } from '../pages/home.page'
-import { PlayerSetupPage } from '../pages/player-setup.page'
-import { GamePage } from '../pages/game.page'
-import { clearStorage } from '../fixtures/storage-fixtures'
+import { test, expect } from "@playwright/test"
+import { HomePage } from "../pages/home.page"
+import { PlayerSetupPage } from "../pages/player-setup.page"
+import { GamePage } from "../pages/game.page"
+import { clearStorage } from "../fixtures/storage-fixtures"
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/')
-  await clearStorage(page)
-  await page.reload()
-})
-
-test('shows New Game button', async ({ page }) => {
-  await expect(page.getByRole('button', { name: 'New game' })).toBeVisible()
-})
-
-test('does not show active games when none exist', async ({ page }) => {
-  // No active games section should be visible
-  await expect(page.getByText('Active games')).not.toBeVisible()
-})
-
-test('navigates to player setup on New Game click', async ({ page }) => {
-  const homePage = new HomePage(page)
-  await homePage.clickNewGame()
-
-  await expect(page.getByRole('button', { name: 'Start game' })).toBeVisible()
-})
-
-test('shows active game after creating one', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a new game
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-  await gamePage.expectOnGameScreen()
-
-  // Navigate to home by clearing the hash (without full page reload)
-  await page.evaluate(() => {
-    window.location.hash = ''
+test.describe("Home Screen", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/")
+    await clearStorage(page)
+    await page.reload()
   })
-  // Wait for app to react to hash change and show home screen
-  await expect(page.getByRole('button', { name: 'New game' })).toBeVisible()
 
-  // Should show active games section
-  await expect(page.getByText('Active games')).toBeVisible()
-  await expect(page.getByText('Alice')).toBeVisible()
-  await expect(page.getByText('Bob')).toBeVisible()
-})
-
-test('shows past games after finishing one', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create and play a game to completion
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-
-  // Make a move and end the game (early termination - many tiles left)
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
-  await gamePage.clickEndGame()
-  await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
-
-  // Should be back on home screen with past games section
-  await expect(page.getByText('Past games')).toBeVisible()
-})
-
-test('can click on active game to resume', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
-
-  // Create a new game
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
-  await gamePage.expectOnGameScreen()
-
-  // Make a move
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
-
-  // Navigate to home by clearing the hash (without full page reload)
-  await page.evaluate(() => {
-    window.location.hash = ''
+  test("shows New Game button", async ({ page }) => {
+    await expect(page.getByRole("button", { name: "New game" })).toBeVisible()
   })
-  // Wait for app to react to hash change and show home screen
-  await expect(page.getByRole('button', { name: 'New game' })).toBeVisible()
 
-  // Wait for home screen and active games to load
-  await expect(page.getByText('Active games')).toBeVisible()
+  test("does not show active games when none exist", async ({ page }) => {
+    // No active games section should be visible
+    await expect(page.getByText("Active games")).not.toBeVisible()
+  })
 
-  // Click on the Resume button in the game card
-  await page.getByRole('button', { name: 'Resume' }).click()
+  test("navigates to player setup on New Game click", async ({ page }) => {
+    const homePage = new HomePage(page)
+    await homePage.clickNewGame()
 
-  // Should see the game screen with the board and previously placed tiles
-  await gamePage.expectOnGameScreen()
-  await gamePage.expectTileAt(7, 7, 'C')
-})
+    await expect(page.getByRole("button", { name: "Start game" })).toBeVisible()
+  })
 
-test('can navigate to past game', async ({ page }) => {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
-  const gamePage = new GamePage(page)
+  test("shows active game after creating one", async ({ page }) => {
+    const homePage = new HomePage(page)
+    const setupPage = new PlayerSetupPage(page)
+    const gamePage = new GamePage(page)
 
-  // Create and finish a game (early termination - many tiles left)
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, 'Alice')
-  await setupPage.addNewPlayer(1, 'Bob')
-  await setupPage.startGame()
+    // Create a new game
+    await homePage.clickNewGame()
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+    await gamePage.expectOnGameScreen()
 
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
-  await gamePage.clickEndGame()
-  await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
+    // Navigate to home by clearing the hash (without full page reload)
+    await page.evaluate(() => {
+      window.location.hash = ""
+    })
+    // Wait for app to react to hash change and show home screen
+    await expect(page.getByRole("button", { name: "New game" })).toBeVisible()
 
-  // Should be on home screen with past games
-  await expect(page.getByText('Past games')).toBeVisible()
+    // Should show active games section
+    await expect(page.getByText("Active games")).toBeVisible()
+    await expect(page.getByText("Alice")).toBeVisible()
+    await expect(page.getByText("Bob")).toBeVisible()
+  })
 
-  // Click on past game
-  await homePage.clickPastGame(0)
+  test("shows past games after finishing one", async ({ page }) => {
+    const homePage = new HomePage(page)
+    const setupPage = new PlayerSetupPage(page)
+    const gamePage = new GamePage(page)
 
-  // Should see the past game view with Back button
-  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+    // Create and play a game to completion
+    await homePage.clickNewGame()
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+
+    // Make a move and end the game (early termination - many tiles left)
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+    await gamePage.clickEndGame()
+    await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
+
+    // Should be back on home screen with past games section
+    await expect(page.getByText("Past games")).toBeVisible()
+  })
+
+  test("can click on active game to resume", async ({ page }) => {
+    const homePage = new HomePage(page)
+    const setupPage = new PlayerSetupPage(page)
+    const gamePage = new GamePage(page)
+
+    // Create a new game
+    await homePage.clickNewGame()
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+    await gamePage.expectOnGameScreen()
+
+    // Make a move
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Navigate to home by clearing the hash (without full page reload)
+    await page.evaluate(() => {
+      window.location.hash = ""
+    })
+    // Wait for app to react to hash change and show home screen
+    await expect(page.getByRole("button", { name: "New game" })).toBeVisible()
+
+    // Wait for home screen and active games to load
+    await expect(page.getByText("Active games")).toBeVisible()
+
+    // Click on the Resume button in the game card
+    await page.getByRole("button", { name: "Resume" }).click()
+
+    // Should see the game screen with the board and previously placed tiles
+    await gamePage.expectOnGameScreen()
+    await gamePage.expectTileAt(7, 7, "C")
+  })
+
+  test("can navigate to past game", async ({ page }) => {
+    const homePage = new HomePage(page)
+    const setupPage = new PlayerSetupPage(page)
+    const gamePage = new GamePage(page)
+
+    // Create and finish a game (early termination - many tiles left)
+    await homePage.clickNewGame()
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+    await gamePage.clickEndGame()
+    await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
+
+    // Should be on home screen with past games
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Click on past game
+    await homePage.clickPastGame(0)
+
+    // Should see the past game view with Back button
+    await expect(page.getByRole("button", { name: "Back" })).toBeVisible()
+  })
 })

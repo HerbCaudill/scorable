@@ -1,105 +1,103 @@
-import { test, expect } from '@playwright/test'
-import { GamePage } from '../pages/game.page'
+import { test, expect } from "@playwright/test"
+import { GamePage } from "../pages/game.page"
+import { seedTwoPlayerGame } from "../fixtures/seed-game"
 
-import { seedTwoPlayerGame } from '../fixtures/seed-game'
+test.describe("Pass Turn", () => {
+  let gamePage: GamePage
 
-let gamePage: GamePage
+  test.beforeEach(async ({ page }) => {
+    await seedTwoPlayerGame(page)
+    gamePage = new GamePage(page)
+  })
 
-test.beforeEach(async ({ page }) => {
+  test("shows confirmation dialog when passing with no tiles", async () => {
+    // Press Enter without placing tiles
+    await gamePage.clickCell(7, 7) // Need to focus the board first
+    await gamePage.endTurn()
 
-  await seedTwoPlayerGame(page)
+    // Should show pass confirmation
+    await gamePage.expectDialogWithTitle("Pass turn?")
+  })
 
-  gamePage = new GamePage(page)
-  
-})
+  test("confirming pass advances turn", async () => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
 
-test('shows confirmation dialog when passing with no tiles', async () => {
-  // Press Enter without placing tiles
-  await gamePage.clickCell(7, 7) // Need to focus the board first
-  await gamePage.endTurn()
+    // Bob's turn (index 1)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 
-  // Should show pass confirmation
-  await gamePage.expectDialogWithTitle('Pass turn?')
-})
+    // Pass turn
+    await gamePage.clickCell(0, 0) // Focus board
+    await gamePage.endTurn()
+    await gamePage.confirmPass()
 
-test('confirming pass advances turn', async () => {
-  // Alice places first word
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
+    // Should now be Alice's turn (index 0)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
+  })
 
-  // Bob's turn (index 1)
-  expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+  test("canceling pass dialog keeps same player", async () => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
 
-  // Pass turn
-  await gamePage.clickCell(0, 0) // Focus board
-  await gamePage.endTurn()
-  await gamePage.confirmPass()
+    // Bob's turn (index 1)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 
-  // Should now be Alice's turn (index 0)
-  expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
-})
+    // Try to pass but cancel
+    await gamePage.clickCell(0, 0)
+    await gamePage.endTurn()
+    await gamePage.cancelDialog()
 
-test('canceling pass dialog keeps same player', async () => {
-  // Alice places first word
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
+    // Should still be Bob's turn
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+  })
 
-  // Bob's turn (index 1)
-  expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+  test("passing does not change score", async () => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
 
-  // Try to pass but cancel
-  await gamePage.clickCell(0, 0)
-  await gamePage.endTurn()
-  await gamePage.cancelDialog()
+    const scoreBefore = await gamePage.getPlayerScore(1)
 
-  // Should still be Bob's turn
-  expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
-})
+    // Pass turn
+    await gamePage.clickCell(0, 0)
+    await gamePage.endTurn()
+    await gamePage.confirmPass()
 
-test('passing does not change score', async () => {
-  // Alice places first word
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
+    // After passing, check score on next turn
+    await gamePage.clickCell(0, 0)
+    await gamePage.endTurn()
+    await gamePage.confirmPass()
 
-  const scoreBefore = await gamePage.getPlayerScore(1)
+    // Bob's score should still be 0
+    const scoreAfter = await gamePage.getPlayerScore(1)
+    expect(scoreAfter).toBe(scoreBefore)
+  })
 
-  // Pass turn
-  await gamePage.clickCell(0, 0)
-  await gamePage.endTurn()
-  await gamePage.confirmPass()
+  test("pass is recorded in move history", async ({ page }) => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
 
-  // After passing, check score on next turn
-  await gamePage.clickCell(0, 0)
-  await gamePage.endTurn()
-  await gamePage.confirmPass()
+    // Bob passes
+    await gamePage.clickCell(0, 0)
+    await gamePage.endTurn()
+    await gamePage.confirmPass()
 
-  // Bob's score should still be 0
-  const scoreAfter = await gamePage.getPlayerScore(1)
-  expect(scoreAfter).toBe(scoreBefore)
-})
+    // "(pass)" should appear in move history
+    await expect(page.getByText("(pass)")).toBeVisible()
+  })
 
-test('pass is recorded in move history', async ({ page }) => {
-  // Alice places first word
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
+  test("clicking player panel without tiles shows pass dialog", async () => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
 
-  // Bob passes
-  await gamePage.clickCell(0, 0)
-  await gamePage.endTurn()
-  await gamePage.confirmPass()
+    // Click on the next player's panel (or current player's panel) to end turn
+    await gamePage.clickPlayerPanel(0) // Click Alice's panel (next player)
 
-  // "(pass)" should appear in move history
-  await expect(page.getByText('(pass)')).toBeVisible()
-})
-
-test('clicking player panel without tiles shows pass dialog', async () => {
-  // Alice places first word
-  await gamePage.placeWord(7, 7, 'CAT')
-  await gamePage.endTurn()
-
-  // Click on the next player's panel (or current player's panel) to end turn
-  await gamePage.clickPlayerPanel(0) // Click Alice's panel (next player)
-
-  // Should show pass confirmation
-  await gamePage.expectDialogWithTitle('Pass turn?')
+    // Should show pass confirmation
+    await gamePage.expectDialogWithTitle("Pass turn?")
+  })
 })
