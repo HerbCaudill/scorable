@@ -315,9 +315,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex flex-col gap-3 p-2">
+    <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2">
       {/*  Board + Player panels */}
-      <div className=" ">
+      <div className="shrink-0">
         {/* Edit mode banner */}
         {isEditing && <div className="font-bold text-center text-sm">Editing move</div>}
 
@@ -334,9 +334,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         </div>
       </div>
 
-      {/* Player panels + history - scroll together horizontally */}
-      <div className="flex-1 overflow-x-auto -m-2 p-2 ">
-        <div className="flex w-full gap-3">
+      {/* Player panels + history - scroll together horizontally, each panel scrolls vertically */}
+      <div className="min-h-0 flex-1 overflow-x-auto -mx-2 px-2">
+        <div className="flex h-full w-full gap-3">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
             const score = getPlayerScore(currentGame, index)
@@ -355,14 +355,14 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 aria-label={`${player.name}'s score panel`}
                 aria-current={isActive ? 'true' : undefined}
                 data-player={player.name}
-                className="flex min-w-40 flex-1 flex-col rounded-lg bg-white"
+                className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
                 style={{
                   boxShadow: isActive ? `0 0 0 3px ${player.color}` : `0 0 0 1px ${player.color}40`,
                 }}
               >
-                {/* Player panel */}
+                {/* Player panel header */}
                 <div
-                  className="flex cursor-pointer items-center gap-3 p-1 transition-colors hover:opacity-80"
+                  className="shrink-0 flex cursor-pointer items-center gap-3 p-1 transition-colors hover:opacity-80"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : 'transparent',
                     borderBottomWidth: 2,
@@ -384,13 +384,13 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                   </div>
                 </div>
 
-                {/* Move history for this player */}
+                {/* Move history for this player - scrolls independently */}
                 <MoveHistoryList
                   history={moveHistory}
                   onMoveClick={highlightTiles}
                   onMoveLongPress={playerMoveIndex => handleEditMove(index, playerMoveIndex)}
                   editingIndex={editingMoveInfo?.playerIndex === index ? editingMoveInfo.playerMoveIndex : undefined}
-                  className="p-1 text-[10px] [&_span:first-child]:font-mono"
+                  className="min-h-0 flex-1 overflow-y-auto p-1 text-[10px] [&_span:first-child]:font-mono"
                 />
               </div>
             )
@@ -399,7 +399,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
-      <div className="flex gap-2">
+      <div className="shrink-0 flex gap-2">
         {isEditing ? (
           <>
             <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>
