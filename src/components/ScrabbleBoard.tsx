@@ -247,6 +247,7 @@ const ScrabbleBoard = ({
 
       // Handle Enter key to end turn
       if (key === 'Enter') {
+        setCursor(null) // Clear cursor to hide keyboard
         onEnter?.()
         return
       }
