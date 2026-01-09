@@ -201,32 +201,32 @@ const NEAR_END_GAME_MOVES = [
     playerIndex: 0,
     tilesPlaced: [
       { row: 4, col: 7, tile: "C" },
-      { row: 4, col: 8, tile: "H" },
-      { row: 4, col: 9, tile: "A" },
-      { row: 4, col: 11, tile: "N" },
-      { row: 4, col: 12, tile: "E" },
-      { row: 4, col: 13, tile: "R" },
-      { row: 4, col: 14, tile: "S" },
+      { row: 5, col: 7, tile: "H" },
+      { row: 6, col: 7, tile: "A" },
+      { row: 8, col: 7, tile: "N" },
+      { row: 9, col: 7, tile: "E" },
+      { row: 10, col: 7, tile: "R" },
+      { row: 11, col: 7, tile: "S" },
     ],
   },
   {
     playerIndex: 1,
     tilesPlaced: [
       { row: 6, col: 9, tile: "G" },
-      { row: 6, col: 10, tile: "E" },
-      { row: 6, col: 11, tile: "A" },
-      { row: 6, col: 12, tile: "R" },
-      { row: 6, col: 13, tile: "I" },
-      { row: 6, col: 14, tile: "N" },
-      { row: 7, col: 14, tile: "G" },
+      { row: 7, col: 9, tile: "E" },
+      { row: 8, col: 9, tile: "A" },
+      { row: 9, col: 9, tile: "R" },
+      { row: 10, col: 9, tile: "I" },
+      { row: 11, col: 9, tile: "N" },
+      { row: 12, col: 9, tile: "G" },
     ],
   },
   {
     playerIndex: 0,
     tilesPlaced: [
-      { row: 5, col: 7, tile: "C" },
-      { row: 6, col: 7, tile: "U" },
-      { row: 8, col: 7, tile: "P" },
+      { row: 7, col: 5, tile: "C" },
+      { row: 8, col: 5, tile: "U" },
+      { row: 9, col: 5, tile: "P" },
     ],
   },
   {
@@ -253,24 +253,24 @@ const NEAR_END_GAME_MOVES = [
     playerIndex: 1,
     tilesPlaced: [
       { row: 8, col: 4, tile: "M" },
-      { row: 8, col: 5, tile: "O" },
-      { row: 8, col: 6, tile: "A" },
-      { row: 8, col: 8, tile: "I" },
+      { row: 9, col: 4, tile: "O" },
+      { row: 10, col: 4, tile: "A" },
+      { row: 11, col: 4, tile: "I" },
     ],
   },
   {
     playerIndex: 0,
     tilesPlaced: [
       { row: 11, col: 3, tile: "B" },
-      { row: 11, col: 4, tile: "Y" },
+      { row: 12, col: 3, tile: "Y" },
     ],
   },
   {
     playerIndex: 1,
     tilesPlaced: [
       { row: 10, col: 2, tile: "D" },
-      { row: 10, col: 3, tile: "O" },
-      { row: 10, col: 4, tile: "F" },
+      { row: 11, col: 2, tile: "O" },
+      { row: 12, col: 2, tile: "F" },
     ],
   },
   {
@@ -285,28 +285,28 @@ const NEAR_END_GAME_MOVES = [
     playerIndex: 1,
     tilesPlaced: [
       { row: 10, col: 12, tile: "A" },
-      { row: 10, col: 13, tile: "J" },
-      { row: 10, col: 14, tile: "E" },
-      { row: 11, col: 14, tile: "E" },
+      { row: 11, col: 12, tile: "J" },
+      { row: 12, col: 12, tile: "E" },
+      { row: 13, col: 12, tile: "E" },
     ],
   },
   {
     playerIndex: 0,
     tilesPlaced: [
-      { row: 1, col: 4, tile: "P" },
-      { row: 2, col: 4, tile: "O" },
-      { row: 3, col: 4, tile: "U" },
-      { row: 4, col: 4, tile: "T" },
-      { row: 5, col: 4, tile: "I" },
-      { row: 6, col: 4, tile: "N" },
-      { row: 7, col: 4, tile: "E" },
+      { row: 4, col: 1, tile: "P" },
+      { row: 5, col: 1, tile: "O" },
+      { row: 6, col: 1, tile: "U" },
+      { row: 7, col: 1, tile: "T" },
+      { row: 8, col: 1, tile: "I" },
+      { row: 9, col: 1, tile: "N" },
+      { row: 10, col: 1, tile: "E" },
     ],
   },
   {
     playerIndex: 1,
     tilesPlaced: [
       { row: 7, col: 0, tile: "A" },
-      { row: 7, col: 1, tile: "X" },
+      { row: 8, col: 0, tile: "X" },
     ],
   },
   {
@@ -314,6 +314,7 @@ const NEAR_END_GAME_MOVES = [
     tilesPlaced: [
       { row: 4, col: 2, tile: "I" },
       { row: 4, col: 3, tile: "V" },
+      { row: 4, col: 4, tile: "O" },
       { row: 4, col: 5, tile: "T" },
     ],
   },
@@ -321,18 +322,18 @@ const NEAR_END_GAME_MOVES = [
     playerIndex: 1,
     tilesPlaced: [
       { row: 8, col: 13, tile: "Q" },
-      { row: 8, col: 14, tile: "I" },
-      { row: 9, col: 14, tile: "N" },
+      { row: 9, col: 13, tile: "I" },
+      { row: 10, col: 13, tile: "N" },
     ],
   },
   {
     playerIndex: 0,
     tilesPlaced: [
       { row: 10, col: 0, tile: "L" },
-      { row: 10, col: 1, tile: "A" },
-      { row: 11, col: 1, tile: "D" },
-      { row: 12, col: 1, tile: "L" },
-      { row: 13, col: 1, tile: "E" },
+      { row: 11, col: 0, tile: "A" },
+      { row: 12, col: 0, tile: "D" },
+      { row: 13, col: 0, tile: "L" },
+      { row: 14, col: 0, tile: "E" },
     ],
   },
   {
@@ -367,8 +368,8 @@ const NEAR_END_GAME_MOVES = [
   {
     playerIndex: 0,
     tilesPlaced: [
-      { row: 6, col: 6, tile: "O" },
-      { row: 8, col: 6, tile: "O" },
+      { row: 5, col: 6, tile: "O" },
+      { row: 5, col: 8, tile: "O" },
     ],
   },
   {
@@ -391,8 +392,8 @@ const NEAR_END_GAME_MOVES = [
     playerIndex: 1,
     tilesPlaced: [
       { row: 1, col: 9, tile: "K" },
-      { row: 1, col: 10, tile: "I" },
-      { row: 1, col: 11, tile: "T" },
+      { row: 2, col: 9, tile: "I" },
+      { row: 3, col: 9, tile: "T" },
     ],
   },
   {
