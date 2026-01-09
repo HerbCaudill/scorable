@@ -159,9 +159,9 @@ test.describe("Score Verification", () => {
         expectedScores[move.player] += move.score
       } else if (move.type === "exchange" || move.type === "challenge") {
         await gamePage.endTurn()
-        await page.waitForSelector('[role="alertdialog"]', { timeout: 5000 })
+        await page.waitForSelector('[role="alertdialog"]')
         await gamePage.confirmPass()
-        await page.waitForSelector('[role="alertdialog"]', { state: "detached", timeout: 5000 })
+        await page.waitForSelector('[role="alertdialog"]', { state: "detached" })
       }
 
       // Verify scores after each move

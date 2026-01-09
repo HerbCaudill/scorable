@@ -136,10 +136,10 @@ export async function replayGcgFromParsed(
       // Treat as pass - click on current player panel to trigger pass dialog
       await gamePage.endTurn()
       // Wait for and confirm the pass dialog
-      await page.waitForSelector('[role="alertdialog"]', { timeout: 5000 })
+      await page.waitForSelector('[role="alertdialog"]')
       await gamePage.confirmPass()
       // Wait for dialog to close
-      await page.waitForSelector('[role="alertdialog"]', { state: "detached", timeout: 5000 })
+      await page.waitForSelector('[role="alertdialog"]', { state: "detached" })
       playedMoves++
     }
     // Skip 'end' type moves (end-game scoring)

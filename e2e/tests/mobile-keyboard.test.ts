@@ -31,7 +31,6 @@ test.describe("Keyboard input", () => {
     await gamePage.expectCursorDirection("horizontal")
 
     // Click same cell to toggle direction - use a small delay to ensure first click is processed
-    await page.waitForTimeout(100)
     await gamePage.clickCell(7, 7)
     await gamePage.expectCursorDirection("vertical")
 
