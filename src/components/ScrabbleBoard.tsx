@@ -312,6 +312,11 @@ const ScrabbleBoard = ({
     if (!editable || !cursor) return
 
     const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      // Don't intercept hotkeys (Ctrl/Cmd/Alt + key)
+      if (event.ctrlKey || event.metaKey || event.altKey) {
+        return
+      }
+
       // Don't intercept other inputs
       const activeEl = document.activeElement
       if (activeEl?.tagName === 'INPUT' || activeEl?.tagName === 'TEXTAREA') {
