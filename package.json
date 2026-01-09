@@ -9,9 +9,9 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
-    "pw": "playwright test",
-    "pw:ui": "playwright test --ui",
-    "pw:headed": "playwright test --headed",
+    "test:pw": "playwright test",
+    "test:pw:ui": "playwright test --ui",
+    "test:pw:headed": "playwright test --headed",
     "generate-icons": "rsvg-convert -w 192 -h 192 public/icon.svg -o public/icon-192.png && rsvg-convert -w 512 -h 512 public/icon.svg -o public/icon-512.png && rsvg-convert -w 180 -h 180 public/icon.svg -o public/apple-touch-icon.png"
   },
   "dependencies": {
