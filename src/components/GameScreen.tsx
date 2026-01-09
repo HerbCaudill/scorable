@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { DocumentId } from '@automerge/automerge-repo'
 import { useGame } from '@/lib/useGame'
 import { getPlayerScore } from '@/lib/getPlayerScore'
@@ -102,6 +102,16 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   const [keyHandler, setKeyHandler] = useState<((key: string) => void) | null>(null)
   const [hasCursor, setHasCursor] = useState(false)
   const [cursorDirection, setCursorDirection] = useState<'horizontal' | 'vertical'>('horizontal')
+
+  // Stable callbacks for ScrabbleBoard to avoid infinite re-render loops
+  const handleKeyPressCallback = useCallback((handler: (key: string) => void) => {
+    setKeyHandler(() => handler)
+  }, [])
+
+  const handleCursorChangeCallback = useCallback((cursor: boolean, direction: 'horizontal' | 'vertical') => {
+    setHasCursor(cursor)
+    setCursorDirection(direction)
+  }, [])
 
   // Force re-render every 100ms to update timer display when running
   const [, setTick] = useState(0)
@@ -338,11 +348,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             editable
             highlightedTiles={highlightedTiles}
             onEnter={handleEndTurn}
-            onKeyPress={handler => setKeyHandler(() => handler)}
-            onCursorChange={(cursor, direction) => {
-              setHasCursor(cursor)
-              setCursorDirection(direction)
-            }}
+            onKeyPress={handleKeyPressCallback}
+            onCursorChange={handleCursorChangeCallback}
             useNativeKeyboard={!isMobile}
           />
         </div>
@@ -415,7 +422,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Action buttons - placed below player panels to avoid mobile browser overlap */}
-      <div className="shrink-0 flex gap-2">
+      <div className="shrink-0 flex gap-2 relative z-60">
         {isEditing ? (
           <>
             <Button className="flex-1" variant="outline" size="xs" onClick={handleCancelEdit}>

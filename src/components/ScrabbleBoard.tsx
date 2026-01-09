@@ -331,12 +331,17 @@ const ScrabbleBoard = ({
     [editable, cursor, processKey]
   )
 
-  // Expose processKey to parent via onKeyPress callback
+  // Store processKey in a ref so we can access the latest version without re-renders
+  const processKeyRef = useRef(processKey)
+  processKeyRef.current = processKey
+
+  // Expose a stable wrapper function to parent via onKeyPress callback
   useEffect(() => {
     if (onKeyPress) {
-      onKeyPress(processKey)
+      // Pass a stable function that calls the ref's current value
+      onKeyPress((key: string) => processKeyRef.current(key))
     }
-  }, [onKeyPress, processKey])
+  }, [onKeyPress]) // Only depends on onKeyPress, not processKey
 
   // Notify parent when cursor changes
   useEffect(() => {

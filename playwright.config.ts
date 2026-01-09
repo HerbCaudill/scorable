@@ -17,18 +17,21 @@ export default defineConfig({
   },
 
   projects: [
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     browserName: 'webkit',
-    //     viewport: { width: 485, height: 932 },
-    //     isMobile: true,
-    //     hasTouch: true,
-    //   },
-    // },
     {
-      name: "Chrome",
-      use: { browserName: "chromium" },
+      name: "Mobile Safari",
+      use: {
+        browserName: "webkit",
+        viewport: { width: 485, height: 932 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+    {
+      name: "Chrome Desktop",
+      use: {
+        browserName: "chromium",
+        viewport: { width: 1280, height: 720 },
+      },
     },
   ],
 
