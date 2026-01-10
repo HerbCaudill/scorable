@@ -44,6 +44,12 @@ const toAppGame = (doc: GameDoc): Game => {
             bonus: m.adjustment.bonus,
           }
         : undefined,
+      failedChallenge:
+        m.failedChallenge ?
+          {
+            words: [...m.failedChallenge.words],
+          }
+        : undefined,
     })),
     timerEvents: toAppTimerEvents(doc.timerEvents),
     status: doc.status,
@@ -67,8 +73,8 @@ export type UseGameResult = {
   undoLastMove: () => void
   removeMove: (moveIndex: number) => void
   /** Handle challenge result - successful removes move and skips challenged player's turn,
-   *  failed skips challenger's turn */
-  challengeMove: (moveIndex: number, successful: boolean) => void
+   *  failed skips challenger's turn and records the challenged words */
+  challengeMove: (moveIndex: number, successful: boolean, challengedWords?: string[]) => void
   pauseGame: () => void
   resumeGame: () => void
   endGame: () => void
@@ -238,7 +244,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     })
   }
 
-  const challengeMove = (moveIndex: number, successful: boolean) => {
+  const challengeMove = (moveIndex: number, successful: boolean, challengedWords?: string[]) => {
     if (!doc) return
     if (moveIndex < 0 || moveIndex >= doc.moves.length) return
 
@@ -288,10 +294,11 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
         // The current player is the one who challenged
         const challengerIndex = d.currentPlayerIndex
 
-        // Add a pass move for the challenger
+        // Add a pass move for the challenger with the failed challenge info
         d.moves.push({
           playerIndex: challengerIndex,
           tilesPlaced: [],
+          failedChallenge: challengedWords ? { words: challengedWords } : undefined,
         })
 
         // Move to the next player

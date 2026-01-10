@@ -20,11 +20,17 @@ export type Adjustment = {
   bonus: number
 }
 
+/** Failed challenge info */
+export type FailedChallenge = {
+  words: string[] // The words that were challenged but were valid
+}
+
 /** A move made by a specific player  */
 export type GameMove = {
   playerIndex: number
   tilesPlaced: Move
   adjustment?: Adjustment
+  failedChallenge?: FailedChallenge
 }
 
 /** Player state  */

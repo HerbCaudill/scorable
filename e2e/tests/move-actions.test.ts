@@ -134,7 +134,7 @@ test.describe("Move actions", () => {
       expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
     })
 
-    test("failed challenge shows error toast", async ({ page }) => {
+    test("failed challenge shows error toast and records on scoresheet", async ({ page }) => {
       // Seed a game with a valid word (CAT is a valid word)
       await seedGameWithMoves(
         page,
@@ -169,6 +169,11 @@ test.describe("Move actions", () => {
 
       // Bob loses his turn for failed challenge, so it should be Alice's turn
       expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
+
+      // Bob's scoresheet should show the failed challenge with the word
+      const bobPanel = page.locator('[role="region"][data-player="Bob"]')
+      await expect(bobPanel.getByText(/failed challenge/)).toBeVisible()
+      await expect(bobPanel.getByText(/CAT/)).toBeVisible()
     })
 
     test("challenge option only appears for the last move", async ({ page }) => {

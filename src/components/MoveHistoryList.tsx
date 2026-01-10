@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { IconPencil, IconArrowBackUp, IconAlertTriangle } from "@tabler/icons-react"
+import { IconPencil, IconArrowBackUp, IconAlertTriangle, IconX } from "@tabler/icons-react"
 
 export type MoveAction = "correct" | "undo" | "challenge"
 
@@ -36,6 +36,20 @@ export const MoveHistoryList = ({
                 {scorePrefix}
                 {entry.score}
               </span>
+            </div>
+          )
+        }
+
+        if (entry.isFailedChallenge) {
+          // Display failed challenge entry (not editable)
+          const challengedWords = entry.failedChallengeWords?.map(w => w.toUpperCase()).join(", ")
+          return (
+            <div key={i} className="flex justify-between gap-2 px-1 py-1.5 text-red-600 italic">
+              <span className="flex items-center gap-1 truncate">
+                <IconX size={12} className="shrink-0" />
+                <span>failed challenge{challengedWords ? `: ${challengedWords}` : ""}</span>
+              </span>
+              <span className="font-medium">0</span>
             </div>
           )
         }
