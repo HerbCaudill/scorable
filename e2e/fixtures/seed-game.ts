@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test"
 import type { Repo } from "@automerge/automerge-repo"
 import type { GcgGame, GcgPlayMove } from "../../src/lib/parseGcg"
+import { DEFAULT_TIME_MS } from "../../src/lib/types"
 
 declare global {
   interface Window {

@@ -104,7 +104,6 @@ export function gcgToGame(
     board,
     moves,
     status: "playing",
-    timerRunning: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
