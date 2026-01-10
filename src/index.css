@@ -190,3 +190,12 @@
 .animate-highlight-fade {
   animation: highlight-fade 1.5s ease-out forwards;
 }
+
+/* Hide scrollbar but keep scrolling */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

@@ -150,7 +150,7 @@ export class GamePage {
   async clickEndGame() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
-    await this.page.getByRole("button", { name: "End game" }).click()
+    await this.page.getByRole("button", { name: "End" }).click()
   }
 
   /** Confirm the pass dialog */

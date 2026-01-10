@@ -583,7 +583,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Action buttons - horizontally scrolling container at bottom */}
-      <div className="shrink-0 overflow-x-auto -mx-2 px-2 relative z-60">
+      <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 relative z-60">
         <div className="flex gap-2 w-max">
           {isEditing ?
             <>
@@ -626,7 +626,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               </Button>
               <Button variant="outline" size="xs" onClick={handleEndGameClick}>
                 <IconFlag size={14} />
-                End game
+                End
               </Button>
               <Button variant="outline" size="xs" onClick={handleShare}>
                 <IconShare size={14} />
