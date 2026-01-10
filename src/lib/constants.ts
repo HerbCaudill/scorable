@@ -30,5 +30,7 @@ export const TILE_DISTRIBUTION: Record<string, number> = {
   " ": 2, // Blank tiles
 }
 /** Total number of tiles in a standard Scrabble game */
-
 export const TOTAL_TILES = Object.values(TILE_DISTRIBUTION).reduce((sum, count) => sum + count, 0)
+
+/** Maximum number of tiles a player can place in a single move (rack size) */
+export const MAX_TILES_PER_MOVE = 7

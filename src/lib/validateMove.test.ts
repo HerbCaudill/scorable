@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { Move } from "./types"
 import { createEmptyBoard } from "./types"
 import { validateMove } from "./validateMove"
+import { MAX_TILES_PER_MOVE } from "./constants"
 
 describe("validateMove", () => {
   describe("empty move (pass)", () => {
@@ -22,6 +23,41 @@ describe("validateMove", () => {
 
       const result = validateMove(move, board, false)
       expect(result).toEqual({ valid: true })
+    })
+  })
+
+  describe("tile limit", () => {
+    it("accepts move with exactly 7 tiles", () => {
+      const board = createEmptyBoard()
+      const move: Move = [
+        { row: 7, col: 4, tile: "S" },
+        { row: 7, col: 5, tile: "C" },
+        { row: 7, col: 6, tile: "R" },
+        { row: 7, col: 7, tile: "A" },
+        { row: 7, col: 8, tile: "B" },
+        { row: 7, col: 9, tile: "B" },
+        { row: 7, col: 10, tile: "L" },
+      ]
+
+      const result = validateMove(move, board, true)
+      expect(result).toEqual({ valid: true })
+    })
+
+    it("rejects move with more than 7 tiles", () => {
+      const board = createEmptyBoard()
+      const move: Move = [
+        { row: 7, col: 3, tile: "S" },
+        { row: 7, col: 4, tile: "C" },
+        { row: 7, col: 5, tile: "R" },
+        { row: 7, col: 6, tile: "A" },
+        { row: 7, col: 7, tile: "B" },
+        { row: 7, col: 8, tile: "B" },
+        { row: 7, col: 9, tile: "L" },
+        { row: 7, col: 10, tile: "E" },
+      ]
+
+      const result = validateMove(move, board, true)
+      expect(result).toEqual({ valid: false, error: `Cannot play more than ${MAX_TILES_PER_MOVE} tiles` })
     })
   })
 
@@ -373,17 +409,20 @@ describe("validateMove", () => {
       expect(result).toEqual({ valid: true })
     })
 
-    it("handles very long word", () => {
+    it("handles word spanning long distance with existing tiles", () => {
       const board = createEmptyBoard()
+      // Existing tiles already on the board
+      board[7][0] = "A"
+      board[7][1] = "B"
+      board[7][2] = "C"
+      board[7][3] = "D"
+      board[7][4] = "E"
+      board[7][5] = "F"
+      board[7][6] = "G"
+      board[7][7] = "H"
+
+      // Place 7 new tiles to extend the word
       const move: Move = [
-        { row: 7, col: 0, tile: "A" },
-        { row: 7, col: 1, tile: "B" },
-        { row: 7, col: 2, tile: "C" },
-        { row: 7, col: 3, tile: "D" },
-        { row: 7, col: 4, tile: "E" },
-        { row: 7, col: 5, tile: "F" },
-        { row: 7, col: 6, tile: "G" },
-        { row: 7, col: 7, tile: "H" },
         { row: 7, col: 8, tile: "I" },
         { row: 7, col: 9, tile: "J" },
         { row: 7, col: 10, tile: "K" },
@@ -393,7 +432,7 @@ describe("validateMove", () => {
         { row: 7, col: 14, tile: "O" },
       ]
 
-      const result = validateMove(move, board, true)
+      const result = validateMove(move, board, false)
       expect(result).toEqual({ valid: true })
     })
 
