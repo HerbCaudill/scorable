@@ -3,6 +3,7 @@ import { HomePage } from "../pages/home.page"
 import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
 import { clearStorage, waitForAutomergePersistence } from "../fixtures/storage-fixtures"
+import { seedNearEndGame } from "../fixtures/seed-game"
 
 test.describe("Persistence", () => {
   test.beforeEach(async ({ page }) => {
@@ -52,19 +53,14 @@ test.describe("Persistence", () => {
     const setupPage = new PlayerSetupPage(page)
     const gamePage = new GamePage(page)
 
-    // Create and finish a game with specific players
+    // Create a game with specific players and quit (players are recorded on game start)
     await homePage.clickNewGame()
     await setupPage.addNewPlayer(0, "TestPlayer1")
     await setupPage.addNewPlayer(1, "TestPlayer2")
     await setupPage.startGame()
 
-    // Play a quick move
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-
-    // End game
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    // Quit the game (goes back to home, game stays active)
+    await gamePage.clickQuit()
 
     // Start new game
     await homePage.clickNewGame()
@@ -76,21 +72,12 @@ test.describe("Persistence", () => {
   })
 
   test("finished games appear in past games list", async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
+    // Seed a near-end game and finish it properly
+    await seedNearEndGame(page)
     const gamePage = new GamePage(page)
+    await gamePage.finishGame()
 
-    // Start and finish a game
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, "Alice")
-    await setupPage.addNewPlayer(1, "Bob")
-    await setupPage.startGame()
-
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    const homePage = new HomePage(page)
 
     // Past games section should be visible
     await expect(page.getByText("Past games")).toBeVisible()
@@ -101,29 +88,16 @@ test.describe("Persistence", () => {
   })
 
   test("multiple games accumulate in history", async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
     const gamePage = new GamePage(page)
+    const homePage = new HomePage(page)
 
-    // Play first game
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, "Alice")
-    await setupPage.addNewPlayer(1, "Bob")
-    await setupPage.startGame()
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    // Play first game (seed near-end and finish, clear storage)
+    await seedNearEndGame(page, true)
+    await gamePage.finishGame()
 
-    // Play second game
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, "Charlie")
-    await setupPage.addNewPlayer(1, "Diana")
-    await setupPage.startGame()
-    await gamePage.placeWord(7, 7, "DOG")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    // Play second game (seed near-end and finish, don't clear storage)
+    await seedNearEndGame(page, false)
+    await gamePage.finishGame()
 
     // Should have 2 past games
     const count = await homePage.getPastGamesCount()

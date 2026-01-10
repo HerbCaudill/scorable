@@ -39,15 +39,13 @@ test.describe("Player setup", () => {
   test("can select from previous players", async ({ page }) => {
     const gamePage = new GamePage(page)
 
-    // First create a finished game to populate player records
+    // Create a game to populate player records (players are recorded on game start)
     await setupPage.addNewPlayer(0, "Charlie")
     await setupPage.addNewPlayer(1, "Diana")
     await setupPage.startGame()
 
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    // Quit the game (goes back to home, game stays active)
+    await gamePage.clickQuit()
 
     // Now start a new game
     await homePage.clickNewGame()
@@ -99,15 +97,13 @@ test.describe("Player setup", () => {
   test("selected player is removed from other dropdowns", async ({ page }) => {
     const gamePage = new GamePage(page)
 
-    // First create a finished game to populate player records
+    // Create a game to populate player records (players are recorded on game start)
     await setupPage.addNewPlayer(0, "Charlie")
     await setupPage.addNewPlayer(1, "Diana")
     await setupPage.startGame()
 
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
+    // Quit the game (goes back to home, game stays active)
+    await gamePage.clickQuit()
 
     // Now start a new game
     await homePage.clickNewGame()

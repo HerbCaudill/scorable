@@ -146,11 +146,34 @@ export class GamePage {
     await this.page.getByRole("button", { name: /Tiles/ }).click()
   }
 
-  /** Click the end game button */
+  /** Click the end game button (shows when tiles are low) */
   async clickEndGame() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
     await this.page.getByRole("button", { name: "End" }).click()
+  }
+
+  /** Click the quit button (shows when many tiles remain) */
+  async clickQuit() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey("Escape")
+    await this.page.getByRole("button", { name: "Quit" }).click()
+  }
+
+  /** End the game - clicks End if available, otherwise Quit */
+  async endOrQuitGame() {
+    await this.pressKey("Escape")
+    const endButton = this.page.getByRole("button", { name: "End" })
+    const quitButton = this.page.getByRole("button", { name: "Quit" })
+
+    if (await endButton.isVisible()) {
+      await endButton.click()
+      // End button goes to EndGameScreen, need to apply
+      await this.applyAndEndGame()
+    } else {
+      await quitButton.click()
+      // Quit just exits to home, game stays active (not finished)
+    }
   }
 
   /** Confirm the pass dialog */
@@ -158,12 +181,18 @@ export class GamePage {
     await this.page.getByRole("button", { name: "Pass" }).click()
   }
 
-  /** Confirm the end game dialog and complete the EndGameScreen flow */
-  async confirmEndGame() {
-    // In the early-end dialog, click the "End game" button
-    await this.page.getByRole("alertdialog").getByRole("button", { name: "End game" }).click()
-    // This takes us to the EndGameScreen - click apply to complete the flow
+  /** Finish the game properly via EndGameScreen, then reload to ensure persistence */
+  async finishGame() {
+    await this.pressKey("Escape")
+    await this.page.getByRole("button", { name: "End" }).click()
+    // Wait for EndGameScreen to appear
+    await this.page.waitForSelector('h1:has-text("End game")')
     await this.applyAndEndGame()
+    // Wait for home screen (New game button signals we're on home)
+    await this.page.waitForSelector('button:has-text("New game")')
+    // Reload to ensure Automerge persists to IndexedDB and reloads fresh state
+    await this.page.reload()
+    await this.page.waitForSelector('button:has-text("New game")')
   }
 
   /** Cancel a dialog */

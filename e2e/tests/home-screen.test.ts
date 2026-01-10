@@ -3,6 +3,7 @@ import { HomePage } from "../pages/home.page"
 import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
 import { clearStorage } from "../fixtures/storage-fixtures"
+import { seedNearEndGame } from "../fixtures/seed-game"
 
 test.describe("Home screen", () => {
   test.beforeEach(async ({ page }) => {
@@ -53,21 +54,10 @@ test.describe("Home screen", () => {
   })
 
   test("shows past games after finishing one", async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
+    // Seed a near-end game and finish it properly
+    await seedNearEndGame(page)
     const gamePage = new GamePage(page)
-
-    // Create and play a game to completion
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, "Alice")
-    await setupPage.addNewPlayer(1, "Bob")
-    await setupPage.startGame()
-
-    // Make a move and end the game (early termination - many tiles left)
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
+    await gamePage.finishGame()
 
     // Should be back on home screen with past games section
     await expect(page.getByText("Past games")).toBeVisible()
@@ -108,20 +98,12 @@ test.describe("Home screen", () => {
   })
 
   test("can navigate to past game", async ({ page }) => {
-    const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
+    // Seed a near-end game and finish it properly
+    await seedNearEndGame(page)
     const gamePage = new GamePage(page)
+    await gamePage.finishGame()
 
-    // Create and finish a game (early termination - many tiles left)
-    await homePage.clickNewGame()
-    await setupPage.addNewPlayer(0, "Alice")
-    await setupPage.addNewPlayer(1, "Bob")
-    await setupPage.startGame()
-
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame() // Simple confirmation dialog ends game immediately
+    const homePage = new HomePage(page)
 
     // Should be on home screen with past games
     await expect(page.getByText("Past games")).toBeVisible()

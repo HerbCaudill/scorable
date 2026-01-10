@@ -1,46 +1,29 @@
 import { test, expect } from "@playwright/test"
 import { HomePage } from "../pages/home.page"
-import { PlayerSetupPage } from "../pages/player-setup.page"
 import { PastGamePage } from "../pages/past-game.page"
 import { GamePage } from "../pages/game.page"
-import { clearStorage } from "../fixtures/storage-fixtures"
+import { seedNearEndGame } from "../fixtures/seed-game"
 
-/** Helper to create and finish a game through the UI */
-async function createFinishedGameViaUI(
-  page: import("@playwright/test").Page,
-  playerNames: [string, string],
-) {
-  const homePage = new HomePage(page)
-  const setupPage = new PlayerSetupPage(page)
+/**
+ * Helper to create and finish a game by seeding a near-end game and clicking End
+ * @param clearStorage Whether to clear existing games first (default true)
+ */
+async function createFinishedGame(page: import("@playwright/test").Page, clearStorage = true) {
+  // Seed a near-end game (7 tiles remaining, at threshold for 2 players)
+  await seedNearEndGame(page, clearStorage)
   const gamePage = new GamePage(page)
 
-  await homePage.clickNewGame()
-  await setupPage.addNewPlayer(0, playerNames[0])
-  await setupPage.addNewPlayer(1, playerNames[1])
-  await setupPage.startGame()
+  // Click End to go to EndGameScreen, then apply to finish
+  await gamePage.finishGame()
 
-  // Player 1 places CAT
-  await gamePage.placeWord(7, 7, "CAT")
-  await gamePage.endTurn()
-
-  // Player 2 places DOG
-  await gamePage.placeWord(8, 7, "DOG")
-  await gamePage.endTurn()
-
-  // End game (early termination)
-  await gamePage.clickEndGame()
-  await gamePage.confirmEndGame()
+  // Now on home screen with past games
+  const homePage = new HomePage(page)
+  await homePage.expectOnHomeScreen()
 }
 
 test.describe("Past games", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/")
-    await clearStorage(page)
-    await page.reload()
-  })
-
   test("can view past game details", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     const homePage = new HomePage(page)
     await homePage.clickPastGame(0)
@@ -54,20 +37,20 @@ test.describe("Past games", () => {
   })
 
   test("past game board shows tiles", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     const homePage = new HomePage(page)
     await homePage.clickPastGame(0)
 
-    // The finished game has CAT at center
+    // The near-end game has RIM at center (from seed-game.ts NEAR_END_GAME_MOVES)
     const gamePage = new GamePage(page)
-    await gamePage.expectTileAt(7, 7, "C")
-    await gamePage.expectTileAt(7, 8, "A")
-    await gamePage.expectTileAt(7, 9, "T")
+    await gamePage.expectTileAt(7, 6, "R")
+    await gamePage.expectTileAt(7, 7, "I")
+    await gamePage.expectTileAt(7, 8, "M")
   })
 
   test("past game board is read-only", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     const homePage = new HomePage(page)
     await homePage.clickPastGame(0)
@@ -85,7 +68,7 @@ test.describe("Past games", () => {
   })
 
   test("back button returns to home", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     const homePage = new HomePage(page)
     await homePage.clickPastGame(0)
@@ -97,26 +80,23 @@ test.describe("Past games", () => {
   })
 
   test("shows scores for each player", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     const homePage = new HomePage(page)
     await homePage.clickPastGame(0)
 
     const pastGamePage = new PastGamePage(page)
 
-    // Scores should be visible and Bob should win
-    // (Bob ended the game, so Alice gets auto-populated with remaining tiles and gets deduction)
+    // Both players should have positive scores from the near-end game
     const aliceScore = await pastGamePage.getPlayerScore(0)
     const bobScore = await pastGamePage.getPlayerScore(1)
 
-    // Bob should have a positive score (his word score + Alice's remaining tile bonus)
+    expect(aliceScore).toBeGreaterThan(0)
     expect(bobScore).toBeGreaterThan(0)
-    // Bob should have higher score than Alice (Alice got the big deduction)
-    expect(bobScore).toBeGreaterThan(aliceScore)
   })
 
   test("past games show winner indicator on home screen", async ({ page }) => {
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    await createFinishedGame(page)
 
     // The trophy icon should be visible next to the winner(s)
     // Note: Both players may have tied, so there could be multiple trophies
@@ -124,11 +104,11 @@ test.describe("Past games", () => {
   })
 
   test("multiple past games are listed", async ({ page }) => {
-    // Create first finished game
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
+    // Create first finished game (clear storage)
+    await createFinishedGame(page, true)
 
-    // Create second finished game
-    await createFinishedGameViaUI(page, ["Charlie", "Diana"])
+    // Create second finished game (don't clear storage)
+    await createFinishedGame(page, false)
 
     const homePage = new HomePage(page)
     const count = await homePage.getPastGamesCount()
@@ -136,21 +116,19 @@ test.describe("Past games", () => {
   })
 
   test("can navigate between different past games", async ({ page }) => {
-    // Create first finished game
-    await createFinishedGameViaUI(page, ["Alice", "Bob"])
-
-    // Create second finished game
-    await createFinishedGameViaUI(page, ["Charlie", "Diana"])
+    // Create two finished games (both Alice/Bob since we use seedNearEndGame)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
 
     const homePage = new HomePage(page)
     const pastGamePage = new PastGamePage(page)
 
-    // View first game (most recent, so index 0 is Charlie/Diana)
+    // View first game (most recent)
     await homePage.clickPastGame(0)
-    await pastGamePage.expectPlayerName("Charlie")
+    await pastGamePage.expectPlayerName("Alice")
     await pastGamePage.goBack()
 
-    // View second game (older one, index 1 is Alice/Bob)
+    // View second game (older one)
     await homePage.clickPastGame(1)
     await pastGamePage.expectPlayerName("Alice")
   })

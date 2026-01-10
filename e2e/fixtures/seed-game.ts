@@ -18,6 +18,7 @@ export type SeedGameOptions = {
     tilesPlaced: Array<{ row: number; col: number; tile: string }>
   }>
   status?: "playing" | "finished"
+  clearStorage?: boolean
 }
 
 /**
@@ -46,11 +47,13 @@ async function clearAllStorage(page: Page) {
  * game creation through the UI.
  */
 export async function seedGame(page: Page, options: SeedGameOptions): Promise<string> {
-  const { playerNames, moves = [], status = "playing" } = options
+  const { playerNames, moves = [], status = "playing", clearStorage = true } = options
 
-  // Navigate to app, clear storage, then reload to get fresh repo
+  // Navigate to app, optionally clear storage, then reload to get fresh repo
   await page.goto("/")
-  await clearAllStorage(page)
+  if (clearStorage) {
+    await clearAllStorage(page)
+  }
   await page.reload()
 
   // Wait for the app to initialize and expose the repo
@@ -417,12 +420,14 @@ const NEAR_END_GAME_MOVES = [
  * Seeds a game that's near the end (for testing end-game flow).
  * Uses a pre-defined game state with most tiles played (93 tiles, 7 remaining).
  * Last move was by Alice (playerIndex 0), so it's Bob's turn.
+ * @param clearStorage Whether to clear existing games first (default true)
  */
-export async function seedNearEndGame(page: Page) {
+export async function seedNearEndGame(page: Page, clearStorage = true) {
   return seedGame(page, {
     playerNames: ["Alice", "Bob"],
     moves: NEAR_END_GAME_MOVES,
     status: "playing",
+    clearStorage,
   })
 }
 

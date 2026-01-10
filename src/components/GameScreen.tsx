@@ -109,7 +109,6 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
   const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
-  const [showEndGameConfirm, setShowEndGameConfirm] = useState(false)
   const [showEndGameScreen, setShowEndGameScreen] = useState(false)
   const [editingMoveIndex, setEditingMoveIndex] = useState<number | null>(null)
   const [tileOveruseConfirm, setTileOveruseConfirm] = useState<{
@@ -421,28 +420,27 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
   const remainingTileCount = getRemainingTileCount(currentGame)
 
-  const handleEndGameClick = () => {
-    const playerCount = currentGame?.players.length ?? 2
-    const threshold = (playerCount - 1) * 7
+  // Determine if game can end normally (few tiles left) vs needs to be quit (many tiles left)
+  const playerCount = currentGame?.players.length ?? 2
+  const endGameThreshold = (playerCount - 1) * 7
+  const canEndNormally = remainingTileCount <= endGameThreshold
 
+  const handleEndGameClick = () => {
     if (remainingTileCount === 0) {
       // No tiles left, just end the game
       endGame()
       onEndGame()
-    } else if (remainingTileCount <= threshold) {
+    } else {
       // Near end - show EndGameScreen for rack entry and adjustments
       stopTimer()
       setShowEndGameScreen(true)
-    } else {
-      // Early end - simple confirmation dialog
-      setShowEndGameConfirm(true)
     }
   }
 
-  const handleConfirmEndGame = () => {
-    setShowEndGameConfirm(false)
+  const handleQuitGame = () => {
+    // Quit without ending - game stays active and can be resumed
     stopTimer()
-    setShowEndGameScreen(true)
+    onEndGame()
   }
 
   const handleTimerToggle = () => {
@@ -624,10 +622,16 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 <IconCards size={14} />
                 Tiles ({remainingTileCount})
               </Button>
-              <Button variant="outline" size="xs" onClick={handleEndGameClick}>
-                <IconFlag size={14} />
-                End
-              </Button>
+              {canEndNormally ?
+                <Button variant="outline" size="xs" onClick={handleEndGameClick}>
+                  <IconFlag size={14} />
+                  End
+                </Button>
+              : <Button variant="outline" size="xs" onClick={handleQuitGame}>
+                  <IconX size={14} />
+                  Quit
+                </Button>
+              }
               <Button variant="outline" size="xs" onClick={handleShare}>
                 <IconShare size={14} />
                 Share
@@ -645,16 +649,6 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         description={`${players[currentPlayerIndex].name} has not placed any tiles. Are you sure you want to pass this turn?`}
         confirmText="Pass"
         onConfirm={handleConfirmPass}
-      />
-
-      {/* End game confirmation dialog */}
-      <ConfirmDialog
-        open={showEndGameConfirm}
-        onOpenChange={setShowEndGameConfirm}
-        title="End game?"
-        description={`There are still ${remainingTileCount} unplayed tiles. Are you sure you want to end the game?`}
-        confirmText="End game"
-        onConfirm={handleConfirmEndGame}
       />
 
       {/* Tile overuse confirmation dialog */}

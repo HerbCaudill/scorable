@@ -3,6 +3,7 @@ import { HomePage } from "../pages/home.page"
 import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
 import { clearStorage } from "../fixtures/storage-fixtures"
+import { seedNearEndGame } from "../fixtures/seed-game"
 
 test.describe("Game flow", () => {
   test.beforeEach(async ({ page }) => {
@@ -12,57 +13,25 @@ test.describe("Game flow", () => {
   })
 
   test("complete game from start to finish", async ({ page }) => {
+    // Seed a near-end game to test the normal end-game flow
+    await seedNearEndGame(page)
+
     const homePage = new HomePage(page)
-    const setupPage = new PlayerSetupPage(page)
     const gamePage = new GamePage(page)
 
-    // Start new game
-    await homePage.clickNewGame()
-
-    // Add players
-    await setupPage.addNewPlayer(0, "Alice")
-    await setupPage.addNewPlayer(1, "Bob")
-    await setupPage.startGame()
-
-    // Verify game started
+    // Verify game is loaded
     await gamePage.expectOnGameScreen()
     await gamePage.expectPlayerName("Alice")
     await gamePage.expectPlayerName("Bob")
 
-    // Verify initial scores are 0
-    expect(await gamePage.getPlayerScore(0)).toBe(0)
-    expect(await gamePage.getPlayerScore(1)).toBe(0)
+    // Verify scores are non-zero (game has moves)
+    expect(await gamePage.getPlayerScore(0)).toBeGreaterThan(0)
+    expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
 
-    // Verify Alice (player 0) is the current player
-    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
+    // End game via End button (shows when tiles <= threshold)
+    await gamePage.finishGame()
 
-    // Alice places first word "CAT" at center (7,7)
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-
-    // Verify score updated (C=3, A=1, T=1 = 5 * 2 for center DW = 10)
-    expect(await gamePage.getPlayerScore(0)).toBe(10)
-
-    // Verify turn changed to Bob
-    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
-
-    // Bob extends word by placing "S" below "A" to make "AS"
-    await gamePage.clickCell(8, 8)
-    await gamePage.typeLetters("S")
-    await gamePage.endTurn()
-
-    // Verify Bob got points
-    const bobScore = await gamePage.getPlayerScore(1)
-    expect(bobScore).toBeGreaterThan(0)
-
-    // Verify turn changed back to Alice
-    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
-
-    // End game
-    await gamePage.clickEndGame()
-    await gamePage.confirmEndGame()
-
-    // Should return to home screen
+    // Should return to home screen (finishGame includes reload)
     await homePage.expectOnHomeScreen()
 
     // Past games section should be visible
