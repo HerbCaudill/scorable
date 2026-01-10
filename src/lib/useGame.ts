@@ -481,8 +481,18 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
     // Restore state from snapshot
     changeDoc(d => {
-      // Restore moves
-      d.moves.splice(0, d.moves.length, ...snapshot.moves)
+      // Restore moves - filter out undefined adjustment to avoid Automerge error
+      const cleanMoves = snapshot.moves.map(m => {
+        const move: typeof m = {
+          playerIndex: m.playerIndex,
+          tilesPlaced: m.tilesPlaced,
+        }
+        if (m.adjustment !== undefined) {
+          move.adjustment = m.adjustment
+        }
+        return move
+      })
+      d.moves.splice(0, d.moves.length, ...cleanMoves)
 
       // Rebuild board from moves
       for (let r = 0; r < 15; r++) {
@@ -526,8 +536,18 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
     // Restore state from snapshot
     changeDoc(d => {
-      // Restore moves
-      d.moves.splice(0, d.moves.length, ...snapshot.moves)
+      // Restore moves - filter out undefined adjustment to avoid Automerge error
+      const cleanMoves = snapshot.moves.map(m => {
+        const move: typeof m = {
+          playerIndex: m.playerIndex,
+          tilesPlaced: m.tilesPlaced,
+        }
+        if (m.adjustment !== undefined) {
+          move.adjustment = m.adjustment
+        }
+        return move
+      })
+      d.moves.splice(0, d.moves.length, ...cleanMoves)
 
       // Rebuild board from moves
       for (let r = 0; r < 15; r++) {

@@ -29,16 +29,10 @@ test.describe("Persistence", () => {
     // Verify score
     expect(await gamePage.getPlayerScore(0)).toBe(10)
 
-    // Wait for IndexedDB to flush before reload
-    await page.waitForTimeout(500)
-
     // Reload page - game should auto-resume via URL hash
     await page.reload()
 
-    // Wait for Automerge to reload from IndexedDB
-    await page.waitForTimeout(1000)
-
-    // Game screen should still be visible (auto-navigated via URL hash)
+    // Wait for game screen to be visible (Automerge reloads from IndexedDB)
     await gamePage.expectOnGameScreen()
 
     // CAT should still be on board
@@ -173,7 +167,10 @@ test.describe("Persistence", () => {
     await setupPage.startGame()
 
     await gamePage.toggleTimer() // Start timer
-    await page.waitForTimeout(1000)
+
+    // Wait for timer to decrement at least once
+    const timer = gamePage.getPlayerTimer(0)
+    await expect(timer).not.toHaveAttribute("aria-label", "30:00 remaining")
 
     // Get time before reload
     const timerBefore = gamePage.getPlayerTimer(0)

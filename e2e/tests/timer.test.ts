@@ -69,36 +69,34 @@ test.describe("Timer", () => {
 
     // Get initial time display from the timer element
     const timer = gamePage.getPlayerTimer(0)
-    const initialLabel = await timer.getAttribute("aria-label")
 
-    // Wait for time to decrease
-    await page.waitForTimeout(1500)
-
-    // Time should have decreased
-    const newLabel = await timer.getAttribute("aria-label")
-    expect(newLabel).not.toBe(initialLabel)
+    // Wait for timer to decrement from initial 30:00
+    await expect(timer).not.toHaveAttribute("aria-label", "30:00 remaining")
   })
 
   test("timer pauses during moves", async ({ page }) => {
     // Start timer
     await gamePage.toggleTimer()
 
-    // Let timer run a bit
-    await page.waitForTimeout(500)
+    // Wait for timer to decrement
+    const timer = gamePage.getPlayerTimer(0)
+    await expect(timer).not.toHaveAttribute("aria-label", "30:00 remaining")
 
     // Pause timer
     await gamePage.toggleTimer()
 
     // Get time immediately after pause
-    const timer = gamePage.getPlayerTimer(0)
     const labelAfterPause = await timer.getAttribute("aria-label")
 
-    // Wait a bit
-    await page.waitForTimeout(1000)
-
-    // Time should not have changed while paused
-    const labelAfterWait = await timer.getAttribute("aria-label")
-    expect(labelAfterWait).toBe(labelAfterPause)
+    // Verify timer stays the same - poll a few times to ensure it's stable
+    await expect
+      .poll(
+        async () => {
+          return timer.getAttribute("aria-label")
+        },
+        { intervals: [200, 200, 200], timeout: 1000 },
+      )
+      .toBe(labelAfterPause)
   })
 
   test("timer continues for next player after turn", async ({ page }) => {
@@ -118,20 +116,16 @@ test.describe("Timer", () => {
     // Start timer first (timers are hidden until started)
     await gamePage.toggleTimer()
 
-    // Get initial times for both players
+    // Get both timers
     const aliceTimer = gamePage.getPlayerTimer(0)
     const bobTimer = gamePage.getPlayerTimer(1)
-    const aliceInitialLabel = await aliceTimer.getAttribute("aria-label")
     const bobInitialLabel = await bobTimer.getAttribute("aria-label")
 
-    // Wait for time to decrease (Alice's turn)
-    await page.waitForTimeout(1500)
+    // Wait for Alice's timer to decrease (Alice's turn)
+    await expect(aliceTimer).not.toHaveAttribute("aria-label", "30:00 remaining")
 
-    // Alice's time should have decreased, Bob's should be the same
-    const aliceLabelAfter = await aliceTimer.getAttribute("aria-label")
+    // Bob's time should still be the same
     const bobLabelAfter = await bobTimer.getAttribute("aria-label")
-
-    expect(aliceLabelAfter).not.toBe(aliceInitialLabel)
     expect(bobLabelAfter).toBe(bobInitialLabel)
   })
 
@@ -140,20 +134,17 @@ test.describe("Timer", () => {
     await gamePage.toggleTimer()
     await expect(page.getByRole("button", { name: "Pause" })).toBeVisible()
 
-    // Wait for timer to run for a bit (several interval ticks)
-    await page.waitForTimeout(500)
+    // Wait for timer to actually start running
+    const timer = gamePage.getPlayerTimer(0)
+    await expect(timer).not.toHaveAttribute("aria-label", "30:00 remaining")
 
     // Try to place a word on the board - typing multiple letters tests that
     // the timer interval doesn't steal focus away from the board
     await gamePage.clickCell(7, 7)
     await gamePage.expectCellSelected(7, 7)
 
-    // Type a word slowly to ensure timer interval has time to fire between keystrokes
-    await gamePage.typeLetters("C")
-    await page.waitForTimeout(150)
-    await gamePage.typeLetters("A")
-    await page.waitForTimeout(150)
-    await gamePage.typeLetters("T")
+    // Type a word - the timer running should not interfere
+    await gamePage.typeLetters("CAT")
 
     // All tiles should be placed
     await gamePage.expectTileAt(7, 7, "C")

@@ -91,10 +91,7 @@ test.describe("Multi-tab sync", () => {
     // Verify score in browser 1
     expect(await gamePage1.getPlayerScore(0)).toBe(10)
 
-    // Wait for sync and verify in browser 2
-    await page2.waitForTimeout(500) // Allow sync time
-
-    // Browser 2 should see the tiles
+    // Browser 2 should see the tiles (wait for sync)
     await gamePage2.expectTileAt(7, 7, "C")
     await gamePage2.expectTileAt(7, 8, "A")
     await gamePage2.expectTileAt(7, 9, "T")
@@ -128,12 +125,9 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.placeWord(7, 7, "CAT")
     await gamePage1.endTurn()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
-
-    // Now Bob should be current player in both browsers
+    // Now Bob should be current player in both browsers (wait for sync)
     expect(await gamePage1.getCurrentPlayerIndex()).toBe(1)
-    expect(await gamePage2.getCurrentPlayerIndex()).toBe(1)
+    await expect.poll(async () => gamePage2.getCurrentPlayerIndex(), { timeout: 5000 }).toBe(1)
   })
 
   test("both browsers can make moves", async () => {
@@ -157,18 +151,15 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.placeWord(7, 7, "CAT")
     await gamePage1.endTurn()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
+    // Wait for sync before browser 2 can make a move
+    await gamePage2.expectTileAt(7, 7, "C")
 
     // Browser 2 (Bob) makes second move - extend CAT to CATS
     await gamePage2.clickCell(7, 10)
     await gamePage2.typeLetters("S")
     await gamePage2.endTurn()
 
-    // Wait for sync back to browser 1
-    await page1.waitForTimeout(500)
-
-    // Verify both browsers see both tiles
+    // Verify both browsers see both tiles (wait for sync)
     await gamePage1.expectTileAt(7, 7, "C")
     await gamePage1.expectTileAt(7, 10, "S")
     await gamePage2.expectTileAt(7, 7, "C")
@@ -208,10 +199,7 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.endTurn()
     await gamePage1.confirmPass()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
-
-    // Verify tab 2 sees CAT
+    // Verify tab 2 sees CAT (wait for sync)
     await gamePage2.expectTileAt(7, 7, "C")
     await gamePage2.expectTileAt(7, 8, "A")
     await gamePage2.expectTileAt(7, 9, "T")
@@ -223,10 +211,7 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.typeLetters("S")
     await gamePage1.saveEdit()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
-
-    // Tab 2 should now see CATS
+    // Tab 2 should now see CATS (wait for sync)
     await gamePage2.expectTileAt(7, 7, "C")
     await gamePage2.expectTileAt(7, 8, "A")
     await gamePage2.expectTileAt(7, 9, "T")
@@ -254,15 +239,12 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.placeWord(7, 7, "CAT")
     await gamePage1.endTurn()
 
-    // Wait for sync and IndexedDB persistence
-    await page1.waitForTimeout(500)
+    // Wait for sync to tab 2 before reloading
+    await gamePage2.expectTileAt(7, 7, "C")
 
     // Reload both tabs
     await page1.reload()
     await page2.reload()
-
-    // Wait for Automerge to reload from IndexedDB
-    await page1.waitForTimeout(1000)
 
     // Both should see the game with the move (from IndexedDB)
     await gamePage1.expectOnGameScreen()
@@ -300,20 +282,14 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.toggleTimer()
     await expect(page1.getByRole("button", { name: "Pause" })).toBeVisible()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
-
-    // Tab 2 should also show timer as running
+    // Tab 2 should also show timer as running (wait for sync)
     await expect(page2.getByRole("button", { name: "Pause" })).toBeVisible()
 
     // Tab 2 pauses the timer
     await gamePage2.toggleTimer()
     await expect(page2.getByRole("button", { name: "Resume" })).toBeVisible()
 
-    // Wait for sync
-    await page1.waitForTimeout(500)
-
-    // Tab 1 should also show timer as paused
+    // Tab 1 should also show timer as paused (wait for sync)
     await expect(page1.getByRole("button", { name: "Resume" })).toBeVisible()
   })
 
@@ -337,17 +313,15 @@ test.describe("Multi-tab sync", () => {
     // Tab 1 starts timer (Alice's turn)
     await gamePage1.toggleTimer()
 
-    // Wait a bit for timer to run
-    await page1.waitForTimeout(500)
+    // Wait for timer to actually start decrementing
+    const aliceTimer = gamePage1.getPlayerTimer(0)
+    await expect(aliceTimer).not.toHaveAttribute("aria-label", "30:00 remaining")
 
     // Tab 1 makes a move - timer should switch to Bob
     await gamePage1.placeWord(7, 7, "CAT")
     await gamePage1.endTurn()
 
-    // Wait for sync
-    await page2.waitForTimeout(500)
-
-    // Timer should still be running in both tabs
+    // Timer should still be running in both tabs (wait for sync)
     await expect(page1.getByRole("button", { name: "Pause" })).toBeVisible()
     await expect(page2.getByRole("button", { name: "Pause" })).toBeVisible()
 

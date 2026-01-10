@@ -24,8 +24,13 @@ export class PlayerSetupPage {
     if (await newMenuItem.isVisible()) {
       await newMenuItem.click()
     }
-    await this.page.getByPlaceholder("Enter name...").fill(playerName)
+    // Target the input within the visible dropdown content to avoid race conditions
+    // with multiple dropdowns potentially being in the DOM
+    const input = this.page.getByPlaceholder("Enter name...").first()
+    await input.fill(playerName)
     await this.page.getByRole("button", { name: "Add" }).click()
+    // Wait for dropdown to close before proceeding
+    await input.waitFor({ state: "hidden" })
   }
 
   /** Clear a selected player */

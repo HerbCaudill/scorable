@@ -1,5 +1,20 @@
 import { Page, expect, Locator } from "@playwright/test"
 
+/** Helper to wait for a condition to be true, polling at intervals */
+export async function waitForCondition(
+  page: Page,
+  condition: () => Promise<boolean>,
+  options: { timeout?: number; interval?: number } = {},
+) {
+  const { timeout = 5000, interval = 50 } = options
+  const startTime = Date.now()
+  while (Date.now() - startTime < timeout) {
+    if (await condition()) return
+    await page.waitForTimeout(interval)
+  }
+  throw new Error(`Condition not met within ${timeout}ms`)
+}
+
 export class GamePage {
   private board: Locator
 
@@ -25,9 +40,10 @@ export class GamePage {
 
   /** Click on a board cell */
   async clickCell(row: number, col: number) {
-    await this.getCell(row, col).click()
-    // Wait for React to process the click
-    await this.page.waitForTimeout(100)
+    const cell = this.getCell(row, col)
+    await cell.click()
+    // Wait for React to process the click by checking for selection
+    await expect(cell).toHaveAttribute("aria-selected", "true")
   }
 
   /** Type letters (places tiles at cursor position) */
@@ -340,8 +356,7 @@ export class GamePage {
 
   /** Click the global redo button */
   async clickRedo() {
-    // Dismiss mobile keyboard if visible by pressing Escape
-    await this.pressKey("Escape")
+    // Don't use pressKey as it might interfere - just click directly
     await this.page.getByRole("button", { name: "Redo" }).click()
   }
 

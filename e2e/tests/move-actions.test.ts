@@ -5,26 +5,17 @@ import { seedTwoPlayerGame, seedGameWithMoves } from "../fixtures/seed-game"
 test.describe("Move actions", () => {
   test.describe("Global undo/redo", () => {
     test("undo reverses the last move and restores board state", async ({ page }) => {
-      // Seed a game with one move already played
-      await seedGameWithMoves(
-        page,
-        ["Alice", "Bob"],
-        [
-          {
-            playerIndex: 0,
-            tilesPlaced: [
-              { row: 7, col: 7, tile: "C" },
-              { row: 7, col: 8, tile: "A" },
-              { row: 7, col: 9, tile: "T" },
-            ],
-          },
-        ],
-      )
+      // Seed an empty game and play move via UI to populate undo stack
+      await seedTwoPlayerGame(page, "Alice", "Bob")
 
       const gamePage = new GamePage(page)
       await gamePage.expectOnGameScreen()
 
-      // Verify initial state - CAT is on the board and it's Bob's turn
+      // Play CAT via UI
+      await gamePage.placeWord(7, 7, "CAT")
+      await gamePage.endTurn()
+
+      // Verify state - CAT is on the board and it's Bob's turn
       await gamePage.expectTileAt(7, 7, "C")
       await gamePage.expectTileAt(7, 8, "A")
       await gamePage.expectTileAt(7, 9, "T")
@@ -43,33 +34,28 @@ test.describe("Move actions", () => {
     })
 
     test("redo restores the undone move", async ({ page }) => {
-      // Seed a game with one move already played
-      await seedGameWithMoves(
-        page,
-        ["Alice", "Bob"],
-        [
-          {
-            playerIndex: 0,
-            tilesPlaced: [
-              { row: 7, col: 7, tile: "C" },
-              { row: 7, col: 8, tile: "A" },
-              { row: 7, col: 9, tile: "T" },
-            ],
-          },
-        ],
-      )
+      // Seed an empty game and play move via UI to populate undo stack
+      await seedTwoPlayerGame(page, "Alice", "Bob")
 
       const gamePage = new GamePage(page)
       await gamePage.expectOnGameScreen()
 
+      // Play CAT via UI
+      await gamePage.placeWord(7, 7, "CAT")
+      await gamePage.endTurn()
+
       // Undo the move
       await gamePage.clickUndo()
 
-      // Board should be empty
+      // Board should be empty and redo should be enabled
       expect(await gamePage.cellHasTile(7, 7)).toBe(false)
+      expect(await gamePage.isRedoEnabled()).toBe(true)
 
       // Redo the move
       await gamePage.clickRedo()
+
+      // After redo, redo should be disabled (nothing left to redo)
+      expect(await gamePage.isRedoEnabled()).toBe(false)
 
       // Board should have CAT again
       await gamePage.expectTileAt(7, 7, "C")
@@ -106,24 +92,15 @@ test.describe("Move actions", () => {
     })
 
     test("undo can undo a successful challenge", async ({ page }) => {
-      // Seed a game with an invalid word
-      await seedGameWithMoves(
-        page,
-        ["Alice", "Bob"],
-        [
-          {
-            playerIndex: 0,
-            tilesPlaced: [
-              { row: 7, col: 7, tile: "X" },
-              { row: 7, col: 8, tile: "Y" },
-              { row: 7, col: 9, tile: "Z" },
-            ],
-          },
-        ],
-      )
+      // Seed an empty game and play invalid word via UI
+      await seedTwoPlayerGame(page, "Alice", "Bob")
 
       const gamePage = new GamePage(page)
       await gamePage.expectOnGameScreen()
+
+      // Play XYZ (invalid word) via UI
+      await gamePage.placeWord(7, 7, "XYZ")
+      await gamePage.endTurn()
 
       // XYZ is on the board
       await gamePage.expectTileAt(7, 7, "X")
@@ -183,24 +160,15 @@ test.describe("Move actions", () => {
     })
 
     test("new action clears the redo stack", async ({ page }) => {
-      // Seed a game with one move
-      await seedGameWithMoves(
-        page,
-        ["Alice", "Bob"],
-        [
-          {
-            playerIndex: 0,
-            tilesPlaced: [
-              { row: 7, col: 7, tile: "C" },
-              { row: 7, col: 8, tile: "A" },
-              { row: 7, col: 9, tile: "T" },
-            ],
-          },
-        ],
-      )
+      // Seed an empty game and play move via UI
+      await seedTwoPlayerGame(page, "Alice", "Bob")
 
       const gamePage = new GamePage(page)
       await gamePage.expectOnGameScreen()
+
+      // Play CAT via UI
+      await gamePage.placeWord(7, 7, "CAT")
+      await gamePage.endTurn()
 
       // Undo the move
       await gamePage.clickUndo()
