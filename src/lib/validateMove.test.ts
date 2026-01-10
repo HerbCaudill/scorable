@@ -57,7 +57,10 @@ describe("validateMove", () => {
       ]
 
       const result = validateMove(move, board, true)
-      expect(result).toEqual({ valid: false, error: `Cannot play more than ${MAX_TILES_PER_MOVE} tiles` })
+      expect(result).toEqual({
+        valid: false,
+        error: `Cannot play more than ${MAX_TILES_PER_MOVE} tiles`,
+      })
     })
   })
 

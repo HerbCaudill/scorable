@@ -1,8 +1,14 @@
 import { Page } from "@playwright/test"
+import type { Repo } from "@automerge/automerge-repo"
 import type { GcgGame, GcgPlayMove } from "../../src/lib/parseGcg"
 
+declare global {
+  interface Window {
+    __TEST_REPO__?: Repo
+  }
+}
+
 const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"]
-const DEFAULT_TIME_MS = 30 * 60 * 1000
 
 export type SeedGameOptions = {
   playerNames: string[]
@@ -73,7 +79,8 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
       // Create the game document
       const handle = repo.create()
-      handle.change((d: Record<string, unknown>) => {
+      handle.change((doc: unknown) => {
+        const d = doc as Record<string, unknown>
         d.players = playerNames.map((name: string, i: number) => ({
           name,
           timeRemainingMs: DEFAULT_TIME_MS,

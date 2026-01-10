@@ -1,6 +1,11 @@
-import type { Game, Player, BoardState, GameMove } from "../../src/lib/types"
+import {
+  type Game,
+  type Player,
+  type BoardState,
+  type GameMove,
+  DEFAULT_TIME_MS,
+} from "../../src/lib/types"
 
-const DEFAULT_TIME_MS = 30 * 60 * 1000
 const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"]
 
 function createEmptyBoard(): BoardState {
@@ -22,7 +27,6 @@ export function createTestGame(playerNames: string[], options: Partial<Game> = {
     board: createEmptyBoard(),
     moves: [],
     status: "playing",
-    timerRunning: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
     ...options,

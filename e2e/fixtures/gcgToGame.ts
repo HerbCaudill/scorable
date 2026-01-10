@@ -1,7 +1,12 @@
-import type { Game, GameMove, BoardState, Player } from "../../src/lib/types"
+import {
+  type Game,
+  type GameMove,
+  type BoardState,
+  type Player,
+  DEFAULT_TIME_MS,
+} from "../../src/lib/types"
 import { parseGcg, type GcgGame, type GcgPlayMove } from "../../src/lib/parseGcg"
 
-const DEFAULT_TIME_MS = 30 * 60 * 1000
 const PLAYER_COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B"]
 
 function createEmptyBoard(): BoardState {
