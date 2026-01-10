@@ -1,4 +1,4 @@
-import { IconBackspace } from "@tabler/icons-react"
+import { IconBackspace, IconChevronDown } from "@tabler/icons-react"
 import { cx } from "@/lib/cx"
 
 /** Direction indicator that mirrors the cursor style on the board */
@@ -136,6 +136,17 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
           onMouseDown={handleKeyPress("Enter")}
         >
           Done
+        </button>
+        <button
+          type="button"
+          className={cx(
+            "flex h-11 w-12 items-center justify-center rounded-md bg-neutral-300 font-semibold shadow-sm",
+            "active:bg-neutral-400 touch-manipulation select-none",
+          )}
+          onTouchStart={handleKeyPress("Escape")}
+          onMouseDown={handleKeyPress("Escape")}
+        >
+          <IconChevronDown size={22} />
         </button>
       </div>
     </div>
