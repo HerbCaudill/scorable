@@ -26,6 +26,8 @@ import {
   IconPlayerPlay,
   IconX,
   IconShare,
+  IconArrowBackUp,
+  IconArrowForwardUp,
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
 
@@ -94,10 +96,13 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     stopTimer,
     commitMove,
     updateMove,
-    undoLastMove,
     challengeMove,
     endGame,
     endGameWithAdjustments,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   } = useGame(gameId)
 
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
@@ -236,16 +241,6 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     switch (action) {
       case "correct":
         handleEditMove(playerIndex, playerMoveIndex)
-        break
-
-      case "undo":
-        // Only allow undo of the last move
-        if (globalIndex === moves.length - 1) {
-          undoLastMove()
-          toast.success("Move undone")
-        } else {
-          toast.error("Can only undo the most recent move")
-        }
         break
 
       case "challenge": {
@@ -539,6 +534,24 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             </Button>
           </>
         : <>
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={undo}
+              disabled={!canUndo}
+              aria-label="Undo"
+            >
+              <IconArrowBackUp size={14} />
+            </Button>
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={redo}
+              disabled={!canRedo}
+              aria-label="Redo"
+            >
+              <IconArrowForwardUp size={14} />
+            </Button>
             {timerEverUsed ?
               <Button
                 className="flex-1"

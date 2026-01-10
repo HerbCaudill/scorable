@@ -7,9 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { IconPencil, IconArrowBackUp, IconAlertTriangle, IconX } from "@tabler/icons-react"
+import { IconPencil, IconAlertTriangle, IconX } from "@tabler/icons-react"
 
-export type MoveAction = "correct" | "undo" | "challenge"
+export type MoveAction = "correct" | "challenge"
 
 export const MoveHistoryList = ({
   history,
@@ -115,16 +115,10 @@ const MoveHistoryEntry = ({
             Correct
           </DropdownMenuItem>
           {isLastMove && (
-            <>
-              <DropdownMenuItem onClick={() => handleAction("undo")}>
-                <IconArrowBackUp size={16} />
-                Undo
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAction("challenge")}>
-                <IconAlertTriangle size={16} />
-                Challenge
-              </DropdownMenuItem>
-            </>
+            <DropdownMenuItem onClick={() => handleAction("challenge")}>
+              <IconAlertTriangle size={16} />
+              Challenge
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       )}
