@@ -502,7 +502,9 @@ const ScrabbleBoard = ({
                   <>
                     <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
                     {cursor && <CursorArrow direction={cursor.direction} />}
-                    {currentMoveScore !== null && <ScoreBadge score={currentMoveScore} />}
+                    {currentMoveScore !== null && currentMoveScore > 0 && (
+                      <ScoreBadge score={currentMoveScore} />
+                    )}
                   </>
                 )}
                 {highlighted && (
