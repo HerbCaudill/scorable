@@ -153,27 +153,11 @@ export class GamePage {
     await this.page.getByRole("button", { name: "End" }).click()
   }
 
-  /** Click the quit button (shows when many tiles remain) */
-  async clickQuit() {
+  /** Click the back button to return to home (game stays active) */
+  async clickBack() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
-    await this.page.getByRole("button", { name: "Quit" }).click()
-  }
-
-  /** End the game - clicks End if available, otherwise Quit */
-  async endOrQuitGame() {
-    await this.pressKey("Escape")
-    const endButton = this.page.getByRole("button", { name: "End" })
-    const quitButton = this.page.getByRole("button", { name: "Quit" })
-
-    if (await endButton.isVisible()) {
-      await endButton.click()
-      // End button goes to EndGameScreen, need to apply
-      await this.applyAndEndGame()
-    } else {
-      await quitButton.click()
-      // Quit just exits to home, game stays active (not finished)
-    }
+    await this.page.getByRole("button", { name: "Back" }).click()
   }
 
   /** Confirm the pass dialog */

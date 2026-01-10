@@ -59,8 +59,8 @@ test.describe("Persistence", () => {
     await setupPage.addNewPlayer(1, "TestPlayer2")
     await setupPage.startGame()
 
-    // Quit the game (goes back to home, game stays active)
-    await gamePage.clickQuit()
+    // Go back to home (game stays active)
+    await gamePage.clickBack()
 
     // Start new game
     await homePage.clickNewGame()

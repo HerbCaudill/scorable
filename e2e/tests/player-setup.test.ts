@@ -44,8 +44,8 @@ test.describe("Player setup", () => {
     await setupPage.addNewPlayer(1, "Diana")
     await setupPage.startGame()
 
-    // Quit the game (goes back to home, game stays active)
-    await gamePage.clickQuit()
+    // Go back to home (game stays active)
+    await gamePage.clickBack()
 
     // Now start a new game
     await homePage.clickNewGame()
@@ -102,8 +102,8 @@ test.describe("Player setup", () => {
     await setupPage.addNewPlayer(1, "Diana")
     await setupPage.startGame()
 
-    // Quit the game (goes back to home, game stays active)
-    await gamePage.clickQuit()
+    // Go back to home (game stays active)
+    await gamePage.clickBack()
 
     // Now start a new game
     await homePage.clickNewGame()

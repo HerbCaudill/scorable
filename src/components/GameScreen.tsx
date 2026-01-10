@@ -28,6 +28,7 @@ import {
   IconShare,
   IconArrowBackUp,
   IconArrowForwardUp,
+  IconArrowLeft,
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
 
@@ -437,8 +438,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     }
   }
 
-  const handleQuitGame = () => {
-    // Quit without ending - game stays active and can be resumed
+  const handleBack = () => {
+    // Navigate back to home - game stays active and can be resumed
     stopTimer()
     onEndGame()
   }
@@ -487,6 +488,37 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
   return (
     <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2">
+      {/* Top navigation bar */}
+      <div className="shrink-0 flex items-center justify-between">
+        <Button variant="ghost" size="xs" onClick={handleBack}>
+          <IconArrowLeft size={14} />
+          Back
+        </Button>
+        <div className="flex gap-2">
+          {isEditing ?
+            <>
+              <Button variant="outline" size="xs" onClick={handleCancelEdit}>
+                <IconX size={14} />
+                Cancel
+              </Button>
+              <Button variant="default" size="xs" onClick={handleSaveEdit}>
+                Save edit
+              </Button>
+            </>
+          : <>
+              <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
+                <IconArrowBackUp size={14} />
+                Undo
+              </Button>
+              <Button variant="ghost" size="xs" onClick={redo} disabled={!canRedo}>
+                <IconArrowForwardUp size={14} />
+                Redo
+              </Button>
+            </>
+          }
+        </div>
+      </div>
+
       {/*  Board + Player panels */}
       <div className="shrink-0">
         {/* Edit mode banner */}
@@ -581,65 +613,42 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       </div>
 
       {/* Action buttons - horizontally scrolling container at bottom */}
-      <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 relative z-60">
-        <div className="flex gap-2 w-max">
-          {isEditing ?
-            <>
-              <Button variant="outline" size="xs" onClick={handleCancelEdit}>
-                <IconX size={14} />
-                Cancel
+      {!isEditing && (
+        <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 relative z-60">
+          <div className="flex gap-2 w-max">
+            {timerEverUsed ?
+              <Button
+                variant={timerRunning ? "outline" : "default"}
+                size="xs"
+                onClick={handleTimerToggle}
+              >
+                {timerRunning ?
+                  <IconPlayerPause size={14} />
+                : <IconPlayerPlay size={14} />}
+                {timerRunning ? "Pause" : "Resume"}
               </Button>
-              <Button variant="default" size="xs" onClick={handleSaveEdit}>
-                Save edit
+            : <Button variant="outline" size="xs" onClick={handleTimerToggle}>
+                <IconPlayerPlay size={14} />
+                Timer
               </Button>
-            </>
-          : <>
-              <Button variant="outline" size="xs" onClick={undo} disabled={!canUndo}>
-                <IconArrowBackUp size={14} />
-                Undo
+            }
+            <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+              <IconCards size={14} />
+              Tiles ({remainingTileCount})
+            </Button>
+            {canEndNormally && (
+              <Button variant="outline" size="xs" onClick={handleEndGameClick}>
+                <IconFlag size={14} />
+                End
               </Button>
-              <Button variant="outline" size="xs" onClick={redo} disabled={!canRedo}>
-                <IconArrowForwardUp size={14} />
-                Redo
-              </Button>
-              {timerEverUsed ?
-                <Button
-                  variant={timerRunning ? "outline" : "default"}
-                  size="xs"
-                  onClick={handleTimerToggle}
-                >
-                  {timerRunning ?
-                    <IconPlayerPause size={14} />
-                  : <IconPlayerPlay size={14} />}
-                  {timerRunning ? "Pause" : "Resume"}
-                </Button>
-              : <Button variant="outline" size="xs" onClick={handleTimerToggle}>
-                  <IconPlayerPlay size={14} />
-                  Timer
-                </Button>
-              }
-              <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
-                <IconCards size={14} />
-                Tiles ({remainingTileCount})
-              </Button>
-              {canEndNormally ?
-                <Button variant="outline" size="xs" onClick={handleEndGameClick}>
-                  <IconFlag size={14} />
-                  End
-                </Button>
-              : <Button variant="outline" size="xs" onClick={handleQuitGame}>
-                  <IconX size={14} />
-                  Quit
-                </Button>
-              }
-              <Button variant="outline" size="xs" onClick={handleShare}>
-                <IconShare size={14} />
-                Share
-              </Button>
-            </>
-          }
+            )}
+            <Button variant="outline" size="xs" onClick={handleShare}>
+              <IconShare size={14} />
+              Share
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Pass confirmation dialog */}
       <ConfirmDialog

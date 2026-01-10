@@ -112,14 +112,13 @@ Zustand store with actions:
 
 Long-press on a move in the history to edit it. The board shows the state before that move, allowing tile placement corrections.
 
-## Ending vs quitting games
+## Navigation and ending games
 
-Games can be ended or quit depending on how many tiles remain:
+- **Back** button (top left): Always visible. Stops timer and returns to home. Game stays "active" and can be resumed.
+- **End** button (bottom): Only shows when tiles remaining <= threshold. Goes to EndGameScreen for rack entry and final adjustments. Game becomes "finished" and appears in Past games.
+- **Undo/Redo** buttons (top right): Navigate through game history.
 
-- **End** (tiles <= threshold): Shows when few tiles remain. Goes to EndGameScreen for rack entry and final adjustments. Game becomes "finished" and appears in Past games.
-- **Quit** (tiles > threshold): Shows when many tiles remain. Stops timer and exits to home. Game stays "active" and can be resumed or deleted later.
-
-The threshold is `(playerCount - 1) * 7` tiles (e.g., 7 tiles for 2 players).
+The threshold for showing "End" is `(playerCount - 1) * 7` tiles (e.g., 7 tiles for 2 players).
 
 ## End game flow
 
