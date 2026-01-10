@@ -1,4 +1,5 @@
 import type { BoardState, Move } from "./types"
+import { MAX_TILES_PER_MOVE } from "./constants"
 
 export type ValidationResult = { valid: true } | { valid: false; error: string }
 
@@ -7,6 +8,7 @@ export type ValidationResult = { valid: true } | { valid: false; error: string }
  *
  * Rules:
  * - Empty move is valid (player passes)
+ * - Cannot play more than 7 tiles (rack size)
  * - First move must include center square (7,7)
  * - All tiles must be in a single line (horizontal or vertical)
  * - Subsequent moves must connect to existing tiles
@@ -20,6 +22,11 @@ export const validateMove = (
   // Empty move is valid (player passes)
   if (move.length === 0) {
     return { valid: true }
+  }
+
+  // Cannot play more than 7 tiles (rack size)
+  if (move.length > MAX_TILES_PER_MOVE) {
+    return { valid: false, error: `Cannot play more than ${MAX_TILES_PER_MOVE} tiles` }
   }
 
   // All tiles must be in a single line
