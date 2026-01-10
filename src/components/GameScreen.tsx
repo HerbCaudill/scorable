@@ -78,6 +78,17 @@ const getBoardExcludingMove = (moves: GameMove[], excludeIndex: number): BoardSt
   return board
 }
 
+/** Build board state with only moves before the specified index */
+const getBoardBeforeMove = (moves: GameMove[], moveIndex: number): BoardState => {
+  const board = createEmptyBoard()
+  for (let i = 0; i < moveIndex; i++) {
+    for (const { row, col, tile } of moves[i].tilesPlaced) {
+      board[row][col] = tile
+    }
+  }
+  return board
+}
+
 /** Convert Move to BoardState for editing */
 const moveToBoardState = (tilesPlaced: GameMove["tilesPlaced"]): BoardState => {
   const board = createEmptyBoard()
@@ -252,7 +263,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
         const move = moves[globalIndex]
         // Build board state before this move to check words
-        const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
+        const boardBeforeMove = getBoardBeforeMove(moves, globalIndex)
         const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
 
         // Check each word against the dictionary
@@ -289,7 +300,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
       case "check": {
         // Check words without any consequences (no turn loss, no move removal)
         const move = moves[globalIndex]
-        const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
+        const boardBeforeMove = getBoardBeforeMove(moves, globalIndex)
         const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
 
         const invalidWords = words.filter(word => !isValidWord(word))
