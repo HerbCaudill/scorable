@@ -269,8 +269,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
           const invalidList = invalidWords.map(w => w.toUpperCase()).join(", ")
           toast.error(`${invalidList} ${invalidWords.length > 1 ? "are" : "is"} not valid`)
         } else {
-          // Challenge failed - challenger loses their turn
-          challengeMove(globalIndex, false)
+          // Challenge failed - challenger loses their turn, record the challenged words
+          challengeMove(globalIndex, false, words)
           toast.success(
             <div>
               <div className="font-medium">All words are valid:</div>

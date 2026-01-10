@@ -12,6 +12,8 @@ export type MoveHistoryEntry = {
     deduction: number
     bonus: number
   }
+  isFailedChallenge?: boolean
+  failedChallengeWords?: string[]
 }
 
 type Options = {
@@ -39,6 +41,15 @@ export const getPlayerMoveHistory = (
           tiles: [],
           isAdjustment: true,
           adjustmentDetails: move.adjustment,
+        })
+      } else if (move.failedChallenge) {
+        // Failed challenge - pass with challenged words recorded
+        history.push({
+          words: [],
+          score: 0,
+          tiles: [],
+          isFailedChallenge: true,
+          failedChallengeWords: move.failedChallenge.words,
         })
       } else {
         const words = getWordsFromMove(move.tilesPlaced, boardState)

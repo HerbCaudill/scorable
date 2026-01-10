@@ -21,11 +21,17 @@ export type AdjustmentDoc = {
   bonus: number
 }
 
+/** Automerge-compatible failed challenge */
+export type FailedChallengeDoc = {
+  words: string[]
+}
+
 /** Automerge-compatible game move */
 export type GameMoveDoc = {
   playerIndex: number
   tilesPlaced: TilePlacement[]
   adjustment?: AdjustmentDoc
+  failedChallenge?: FailedChallengeDoc
 }
 
 /** Game status */
