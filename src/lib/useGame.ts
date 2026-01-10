@@ -11,6 +11,31 @@ type GameSnapshot = {
   timerEventsLength: number // Only track length since we append timer events
 }
 
+/** Clear board and rebuild from moves */
+function rebuildBoard(board: string[][], moves: GameMoveDoc[]): void {
+  for (let r = 0; r < 15; r++) {
+    for (let c = 0; c < 15; c++) {
+      board[r][c] = ""
+    }
+  }
+  for (const move of moves) {
+    for (const { row, col, tile } of move.tilesPlaced) {
+      board[row][col] = tile
+    }
+  }
+}
+
+/** Add timer switch event if timer is running (mutates the events array) */
+function addTimerSwitchEvent(d: { timerEvents?: TimerEventDoc[] }, playerIndex: number): void {
+  if (!isTimerRunning(d.timerEvents)) return
+  if (!d.timerEvents) d.timerEvents = []
+  d.timerEvents.push({
+    type: "switch",
+    timestamp: Date.now(),
+    playerIndex,
+  })
+}
+
 /** Convert automerge board (empty strings) to app board (nulls) */
 const toAppBoard = (board: string[][]): BoardState => {
   return board.map(row => row.map(cell => (cell === "" ? null : cell)))
@@ -197,20 +222,10 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
         d.board[row][col] = tile
       }
 
-      // Advance turn
+      // Advance turn and switch timer
       const nextPlayerIndex = (d.currentPlayerIndex + 1) % d.players.length
       d.currentPlayerIndex = nextPlayerIndex
-
-      // If timer is running, switch it to the next player
-      if (isTimerRunning(d.timerEvents)) {
-        if (!d.timerEvents) d.timerEvents = []
-        d.timerEvents.push({
-          type: "switch",
-          timestamp: Date.now(),
-          playerIndex: nextPlayerIndex,
-        })
-      }
-
+      addTimerSwitchEvent(d, nextPlayerIndex)
       d.updatedAt = Date.now()
     })
   }
@@ -221,24 +236,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
     pushUndo()
     changeDoc(d => {
-      // Update the move's tiles
       d.moves[moveIndex].tilesPlaced = newTiles.map(t => ({
         row: t.row,
         col: t.col,
         tile: t.tile,
       }))
-
-      // Rebuild board from scratch
-      for (let r = 0; r < 15; r++) {
-        for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ""
-        }
-      }
-      for (const move of d.moves) {
-        for (const { row, col, tile } of move.tilesPlaced) {
-          d.board[row][col] = tile
-        }
-      }
+      rebuildBoard(d.board, d.moves)
       d.updatedAt = Date.now()
     })
   }
@@ -249,37 +252,13 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
     pushUndo()
     changeDoc(d => {
-      // Get the move being removed to determine whose turn it was
       const removedMove = d.moves[moveIndex]
-
-      // Remove the move
       d.moves.splice(moveIndex, 1)
+      rebuildBoard(d.board, d.moves)
 
-      // Rebuild board from scratch
-      for (let r = 0; r < 15; r++) {
-        for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ""
-        }
-      }
-      for (const move of d.moves) {
-        for (const { row, col, tile } of move.tilesPlaced) {
-          d.board[row][col] = tile
-        }
-      }
-
-      // Set current player back to the player whose move was removed
+      // Restore turn to the player whose move was removed
       d.currentPlayerIndex = removedMove.playerIndex
-
-      // If timer is running, switch it back to that player
-      if (isTimerRunning(d.timerEvents)) {
-        if (!d.timerEvents) d.timerEvents = []
-        d.timerEvents.push({
-          type: "switch",
-          timestamp: Date.now(),
-          playerIndex: removedMove.playerIndex,
-        })
-      }
-
+      addTimerSwitchEvent(d, removedMove.playerIndex)
       d.updatedAt = Date.now()
     })
   }
@@ -296,65 +275,28 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
       if (successful) {
         // Challenge successful: remove the move, challenged player passes (loses turn)
-        // Remove the move
         d.moves.splice(moveIndex, 1)
-
-        // Rebuild board from scratch
-        for (let r = 0; r < 15; r++) {
-          for (let c = 0; c < 15; c++) {
-            d.board[r][c] = ""
-          }
-        }
-        for (const move of d.moves) {
-          for (const { row, col, tile } of move.tilesPlaced) {
-            d.board[row][col] = tile
-          }
-        }
+        rebuildBoard(d.board, d.moves)
 
         // Add a pass move for the challenged player
-        d.moves.push({
-          playerIndex: challengedPlayerIndex,
-          tilesPlaced: [],
-        })
+        d.moves.push({ playerIndex: challengedPlayerIndex, tilesPlaced: [] })
 
         // Move to the next player after the challenged player
         const nextPlayerIndex = (challengedPlayerIndex + 1) % playerCount
         d.currentPlayerIndex = nextPlayerIndex
-
-        // If timer is running, switch to next player
-        if (isTimerRunning(d.timerEvents)) {
-          if (!d.timerEvents) d.timerEvents = []
-          d.timerEvents.push({
-            type: "switch",
-            timestamp: Date.now(),
-            playerIndex: nextPlayerIndex,
-          })
-        }
+        addTimerSwitchEvent(d, nextPlayerIndex)
       } else {
         // Challenge failed: challenger (current player) loses their turn
-        // The current player is the one who challenged
         const challengerIndex = d.currentPlayerIndex
-
-        // Add a pass move for the challenger with the failed challenge info
         d.moves.push({
           playerIndex: challengerIndex,
           tilesPlaced: [],
           failedChallenge: challengedWords ? { words: challengedWords } : undefined,
         })
 
-        // Move to the next player
         const nextPlayerIndex = (challengerIndex + 1) % playerCount
         d.currentPlayerIndex = nextPlayerIndex
-
-        // If timer is running, switch to next player
-        if (isTimerRunning(d.timerEvents)) {
-          if (!d.timerEvents) d.timerEvents = []
-          d.timerEvents.push({
-            type: "switch",
-            timestamp: Date.now(),
-            playerIndex: nextPlayerIndex,
-          })
-        }
+        addTimerSwitchEvent(d, nextPlayerIndex)
       }
 
       d.updatedAt = Date.now()
@@ -465,6 +407,36 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
   const isUnavailable = handleState === "unavailable"
   const isLoading = id !== null && doc === undefined && !isUnavailable
 
+  /** Restore game state from a snapshot */
+  const restoreSnapshot = useCallback(
+    (snapshot: GameSnapshot) => {
+      changeDoc(d => {
+        // Restore moves - filter out undefined adjustment to avoid Automerge error
+        const cleanMoves = snapshot.moves.map(m => {
+          const move: typeof m = {
+            playerIndex: m.playerIndex,
+            tilesPlaced: m.tilesPlaced,
+          }
+          if (m.adjustment !== undefined) {
+            move.adjustment = m.adjustment
+          }
+          return move
+        })
+        d.moves.splice(0, d.moves.length, ...cleanMoves)
+        rebuildBoard(d.board, d.moves)
+        d.currentPlayerIndex = snapshot.currentPlayerIndex
+
+        // Trim timer events to snapshot length if needed
+        if (d.timerEvents && d.timerEvents.length > snapshot.timerEventsLength) {
+          d.timerEvents.splice(snapshot.timerEventsLength)
+        }
+
+        d.updatedAt = Date.now()
+      })
+    },
+    [changeDoc],
+  )
+
   // Undo: restore the previous snapshot
   const undo = useCallback(() => {
     if (!doc || undoStackRef.current.length === 0) return
@@ -475,50 +447,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       redoStackRef.current = [...redoStackRef.current, currentSnapshot]
     }
 
-    // Pop from undo stack
+    // Pop and restore from undo stack
     const snapshot = undoStackRef.current[undoStackRef.current.length - 1]
     undoStackRef.current = undoStackRef.current.slice(0, -1)
-
-    // Restore state from snapshot
-    changeDoc(d => {
-      // Restore moves - filter out undefined adjustment to avoid Automerge error
-      const cleanMoves = snapshot.moves.map(m => {
-        const move: typeof m = {
-          playerIndex: m.playerIndex,
-          tilesPlaced: m.tilesPlaced,
-        }
-        if (m.adjustment !== undefined) {
-          move.adjustment = m.adjustment
-        }
-        return move
-      })
-      d.moves.splice(0, d.moves.length, ...cleanMoves)
-
-      // Rebuild board from moves
-      for (let r = 0; r < 15; r++) {
-        for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ""
-        }
-      }
-      for (const move of d.moves) {
-        for (const { row, col, tile } of move.tilesPlaced) {
-          d.board[row][col] = tile
-        }
-      }
-
-      // Restore current player
-      d.currentPlayerIndex = snapshot.currentPlayerIndex
-
-      // Trim timer events to snapshot length if needed
-      if (d.timerEvents && d.timerEvents.length > snapshot.timerEventsLength) {
-        d.timerEvents.splice(snapshot.timerEventsLength)
-      }
-
-      d.updatedAt = Date.now()
-    })
-
+    restoreSnapshot(snapshot)
     setUndoRedoVersion(v => v + 1)
-  }, [doc, changeDoc, createSnapshot])
+  }, [doc, createSnapshot, restoreSnapshot])
 
   // Redo: restore the next snapshot from redo stack
   const redo = useCallback(() => {
@@ -530,50 +464,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       undoStackRef.current = [...undoStackRef.current, currentSnapshot]
     }
 
-    // Pop from redo stack
+    // Pop and restore from redo stack
     const snapshot = redoStackRef.current[redoStackRef.current.length - 1]
     redoStackRef.current = redoStackRef.current.slice(0, -1)
-
-    // Restore state from snapshot
-    changeDoc(d => {
-      // Restore moves - filter out undefined adjustment to avoid Automerge error
-      const cleanMoves = snapshot.moves.map(m => {
-        const move: typeof m = {
-          playerIndex: m.playerIndex,
-          tilesPlaced: m.tilesPlaced,
-        }
-        if (m.adjustment !== undefined) {
-          move.adjustment = m.adjustment
-        }
-        return move
-      })
-      d.moves.splice(0, d.moves.length, ...cleanMoves)
-
-      // Rebuild board from moves
-      for (let r = 0; r < 15; r++) {
-        for (let c = 0; c < 15; c++) {
-          d.board[r][c] = ""
-        }
-      }
-      for (const move of d.moves) {
-        for (const { row, col, tile } of move.tilesPlaced) {
-          d.board[row][col] = tile
-        }
-      }
-
-      // Restore current player
-      d.currentPlayerIndex = snapshot.currentPlayerIndex
-
-      // Trim timer events to snapshot length if needed (redo should restore, but we stored length)
-      if (d.timerEvents && d.timerEvents.length > snapshot.timerEventsLength) {
-        d.timerEvents.splice(snapshot.timerEventsLength)
-      }
-
-      d.updatedAt = Date.now()
-    })
-
+    restoreSnapshot(snapshot)
     setUndoRedoVersion(v => v + 1)
-  }, [doc, changeDoc, createSnapshot])
+  }, [doc, createSnapshot, restoreSnapshot])
 
   // Track canUndo/canRedo based on stack state (undoRedoVersion triggers re-render)
   const canUndo = undoStackRef.current.length > 0

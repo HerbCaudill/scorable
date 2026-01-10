@@ -11,6 +11,12 @@ import { IconPencil, IconAlertTriangle, IconX, IconEye } from "@tabler/icons-rea
 
 export type MoveAction = "correct" | "challenge" | "check"
 
+function getScoreColorClass(score: number): string {
+  if (score > 0) return "text-green-600"
+  if (score < 0) return "text-red-600"
+  return ""
+}
+
 export const MoveHistoryList = ({
   history,
   onMoveClick,
@@ -24,10 +30,7 @@ export const MoveHistoryList = ({
       {history.map((entry, i) => {
         if (entry.isAdjustment) {
           // Display adjustment entry (not editable)
-          const scoreClass =
-            entry.score > 0 ? "text-green-600"
-            : entry.score < 0 ? "text-red-600"
-            : ""
+          const scoreClass = getScoreColorClass(entry.score)
           const scorePrefix = entry.score > 0 ? "+" : ""
           return (
             <div key={i} className="flex justify-between gap-2 px-1 py-1.5 text-neutral-500 italic">

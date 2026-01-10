@@ -32,6 +32,21 @@ import {
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
 
+/** Check if board has any tiles placed */
+const hasTilesPlaced = (board: BoardState): boolean =>
+  board.some(row => row.some(cell => cell !== null))
+
+/** Render a word with its definition */
+const WordWithDefinition = ({ word }: { word: string }) => {
+  const entry = getWordDefinition(word)
+  const def = entry?.definitions[0]?.text ?? "no definition"
+  return (
+    <li>
+      <strong>{word.toUpperCase()}</strong>: {def}
+    </li>
+  )
+}
+
 /** Convert player's move index to global index in moves array */
 const getGlobalMoveIndex = (
   moves: GameMove[],
@@ -212,9 +227,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
   // Handle entering edit mode
   const handleEditMove = (playerIndex: number, playerMoveIndex: number) => {
-    // Block if tiles are in progress
-    const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
-    if (hasTilesInProgress) {
+    if (hasTilesPlaced(newTiles)) {
       toast.error("Clear current move first")
       return
     }
@@ -231,9 +244,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     const globalIndex = getGlobalMoveIndex(moves, playerIndex, playerMoveIndex)
     if (globalIndex === -1) return
 
-    // Block if tiles are in progress
-    const hasTilesInProgress = newTiles.some(row => row.some(cell => cell !== null))
-    if (hasTilesInProgress) {
+    if (hasTilesPlaced(newTiles)) {
       toast.error("Clear current move first")
       return
     }
@@ -251,11 +262,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         }
 
         const move = moves[globalIndex]
-        // Build board state before this move to check words
         const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
         const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
-
-        // Check each word against the dictionary
         const invalidWords = words.filter(word => !isValidWord(word))
 
         if (invalidWords.length > 0) {
@@ -270,15 +278,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             <div>
               <div className="font-medium">All words are valid:</div>
               <ul className="mt-1 list-disc pl-4">
-                {words.map(word => {
-                  const entry = getWordDefinition(word)
-                  const def = entry?.definitions[0]?.text ?? "no definition"
-                  return (
-                    <li key={word}>
-                      <strong>{word.toUpperCase()}</strong>: {def}
-                    </li>
-                  )
-                })}
+                {words.map(word => (
+                  <WordWithDefinition key={word} word={word} />
+                ))}
               </ul>
             </div>,
           )
@@ -291,12 +293,10 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         const move = moves[globalIndex]
         const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
         const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
-
         const invalidWords = words.filter(word => !isValidWord(word))
         const validWords = words.filter(word => isValidWord(word))
 
         if (invalidWords.length > 0) {
-          // Some words are invalid
           toast.error(
             <div>
               <div className="font-medium">Invalid words found:</div>
@@ -311,35 +311,22 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 <>
                   <div className="font-medium mt-2">Valid words:</div>
                   <ul className="mt-1 list-disc pl-4">
-                    {validWords.map(word => {
-                      const entry = getWordDefinition(word)
-                      const def = entry?.definitions[0]?.text ?? "no definition"
-                      return (
-                        <li key={word}>
-                          <strong>{word.toUpperCase()}</strong>: {def}
-                        </li>
-                      )
-                    })}
+                    {validWords.map(word => (
+                      <WordWithDefinition key={word} word={word} />
+                    ))}
                   </ul>
                 </>
               )}
             </div>,
           )
         } else {
-          // All words are valid
           toast.success(
             <div>
               <div className="font-medium">All words are valid:</div>
               <ul className="mt-1 list-disc pl-4">
-                {words.map(word => {
-                  const entry = getWordDefinition(word)
-                  const def = entry?.definitions[0]?.text ?? "no definition"
-                  return (
-                    <li key={word}>
-                      <strong>{word.toUpperCase()}</strong>: {def}
-                    </li>
-                  )
-                })}
+                {words.map(word => (
+                  <WordWithDefinition key={word} word={word} />
+                ))}
               </ul>
             </div>,
           )
