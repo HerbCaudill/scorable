@@ -11,6 +11,7 @@ export type SeedGameOptions = {
     tilesPlaced: Array<{ row: number; col: number; tile: string }>
   }>
   status?: "playing" | "finished"
+  startTimer?: boolean
 }
 
 /**
@@ -39,7 +40,7 @@ async function clearAllStorage(page: Page) {
  * game creation through the UI.
  */
 export async function seedGame(page: Page, options: SeedGameOptions): Promise<string> {
-  const { playerNames, moves = [], status = "playing" } = options
+  const { playerNames, moves = [], status = "playing", startTimer = true } = options
 
   // Navigate to app, clear storage, then reload to get fresh repo
   await page.goto("/")
@@ -51,7 +52,7 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
   // Create the game document using the app's Automerge repo
   const gameId = await page.evaluate(
-    ({ playerNames, moves, status, PLAYER_COLORS, DEFAULT_TIME_MS }) => {
+    ({ playerNames, moves, status, startTimer, PLAYER_COLORS, DEFAULT_TIME_MS }) => {
       const repo = window.__TEST_REPO__
       if (!repo) throw new Error("Test repo not available")
 
@@ -71,6 +72,9 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
       const currentPlayerIndex =
         moves.length > 0 ? (moves[moves.length - 1].playerIndex + 1) % playerNames.length : 0
 
+      // Create timer events if timer should be started
+      const timerEvents = startTimer ? [{ type: "start", timestamp: Date.now() }] : []
+
       // Create the game document
       const handle = repo.create()
       handle.change((d: Record<string, unknown>) => {
@@ -85,7 +89,7 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
           playerIndex: m.playerIndex,
           tilesPlaced: m.tilesPlaced.map(t => ({ row: t.row, col: t.col, tile: t.tile })),
         }))
-        d.timerEvents = []
+        d.timerEvents = timerEvents
         d.status = status
         d.createdAt = Date.now()
         d.updatedAt = Date.now()
@@ -129,7 +133,7 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
       return documentId
     },
-    { playerNames, moves, status, PLAYER_COLORS, DEFAULT_TIME_MS },
+    { playerNames, moves, status, startTimer, PLAYER_COLORS, DEFAULT_TIME_MS },
   )
 
   // Wait for the game screen to be ready

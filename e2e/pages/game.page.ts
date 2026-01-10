@@ -86,18 +86,18 @@ export class GamePage {
     await this.typeLetters(word)
   }
 
-  /** End the current turn by clicking on the active player panel */
+  /** End the current turn by clicking on the active player's timer */
   async endTurn() {
-    // Find the active player panel (has aria-current="true") and click it
+    // Find the active player panel (has aria-current="true") and click its timer
     const activePanel = this.page.locator('[aria-current="true"]')
-    const clickableRow = activePanel.locator(".cursor-pointer").first()
-    await clickableRow.click()
+    const timer = activePanel.locator('[role="timer"]')
+    await timer.click()
   }
 
-  /** Click on a player panel to end turn */
-  async clickPlayerPanel(playerIndex: number) {
+  /** Click on a player's timer to end turn */
+  async clickPlayerTimer(playerIndex: number) {
     const panels = this.page.locator('[role="region"][data-player]')
-    await panels.nth(playerIndex).locator(".cursor-pointer").first().click()
+    await panels.nth(playerIndex).locator('[role="timer"]').click()
   }
 
   /** Toggle the timer (start/pause) */

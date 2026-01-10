@@ -89,13 +89,13 @@ test.describe("Pass turn", () => {
     await expect(page.getByText("(pass)")).toBeVisible()
   })
 
-  test("clicking player panel without tiles shows pass dialog", async () => {
+  test("clicking player timer without tiles shows pass dialog", async () => {
     // Alice places first word
     await gamePage.placeWord(7, 7, "CAT")
     await gamePage.endTurn()
 
-    // Click on the next player's panel (or current player's panel) to end turn
-    await gamePage.clickPlayerPanel(0) // Click Alice's panel (next player)
+    // Click on the next player's timer to end turn
+    await gamePage.clickPlayerTimer(0) // Click Alice's timer (next player)
 
     // Should show pass confirmation
     await gamePage.expectDialogWithTitle("Pass turn?")

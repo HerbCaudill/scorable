@@ -481,13 +481,12 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
               >
                 {/* Player panel header */}
                 <div
-                  className="shrink-0 flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
+                  className="shrink-0 flex items-center gap-3 p-2"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : "transparent",
                     borderBottomWidth: 2,
                     borderBottomColor: isActive ? player.color : `${player.color}20`,
                   }}
-                  onClick={handlePlayerClick}
                 >
                   {timerEverUsed && (
                     <Timer
@@ -495,6 +494,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                       color={player.color}
                       isActive={isActive}
                       isPaused={!timerRunning}
+                      onClick={handlePlayerClick}
                     />
                   )}
 

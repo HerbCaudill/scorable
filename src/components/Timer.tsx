@@ -6,6 +6,7 @@ type Props = {
   color: string
   isActive?: boolean
   isPaused?: boolean
+  onClick?: () => void
 }
 
 const formatTime = (ms: number) => {
@@ -14,7 +15,7 @@ const formatTime = (ms: number) => {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
-export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = false }: Props) => {
+export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = false, onClick }: Props) => {
   const timeRemainingPercent = Math.max(0, (timeRemainingMs / DEFAULT_TIME_MS) * 100)
   const radius = 20
   const circumference = 2 * Math.PI * radius
@@ -24,8 +25,9 @@ export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = fals
     <div
       role="timer"
       aria-label={`${formatTime(timeRemainingMs)} remaining`}
-      className="relative flex size-12 shrink-0 items-center justify-center transition-opacity"
+      className={`relative flex size-12 shrink-0 items-center justify-center transition-opacity ${onClick ? "cursor-pointer hover:opacity-80" : ""}`}
       style={{ opacity: isActive && !isPaused ? 1 : 0.4 }}
+      onClick={onClick}
     >
       <svg className="absolute size-12 rotate-90 -scale-x-100">
         {/* Background circle (time used) */}
