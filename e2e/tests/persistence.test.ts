@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 import { HomePage } from "../pages/home.page"
 import { PlayerSetupPage } from "../pages/player-setup.page"
 import { GamePage } from "../pages/game.page"
-import { clearStorage } from "../fixtures/storage-fixtures"
+import { clearStorage, waitForAutomergePersistence } from "../fixtures/storage-fixtures"
 
 test.describe("Persistence", () => {
   test.beforeEach(async ({ page }) => {
@@ -175,6 +175,9 @@ test.describe("Persistence", () => {
     // Get time before reload
     const timerBefore = gamePage.getPlayerTimer(0)
     const timeBefore = await timerBefore.getAttribute("aria-label")
+
+    // Wait for IndexedDB to persist the timer event before reloading
+    await waitForAutomergePersistence(page)
 
     // Reload - game auto-resumes via URL hash
     await page.reload()
