@@ -48,7 +48,7 @@ jobs:
         run: pnpm exec playwright install --with-deps webkit
 
       - name: Run Playwright tests
-        run: pnpm pw
+        run: pnpm test:pw
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
