@@ -1,8 +1,15 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useDocument, useDocHandle } from "@automerge/automerge-repo-react-hooks"
 import type { DocumentId } from "@automerge/automerge-repo"
 import type { GameDoc, GameMoveDoc, TimerEventDoc } from "./automergeTypes"
 import type { BoardState, Game, GameMove, Move, Adjustment, TimerEvent } from "./types"
+
+/** Snapshot of undoable game state */
+type GameSnapshot = {
+  moves: GameMoveDoc[]
+  currentPlayerIndex: number
+  timerEventsLength: number // Only track length since we append timer events
+}
 
 /** Convert automerge board (empty strings) to app board (nulls) */
 const toAppBoard = (board: string[][]): BoardState => {
@@ -70,7 +77,6 @@ export type UseGameResult = {
   // Game actions
   commitMove: (move: GameMove) => void
   updateMove: (moveIndex: number, newTiles: Move) => void
-  undoLastMove: () => void
   removeMove: (moveIndex: number) => void
   /** Handle challenge result - successful removes move and skips challenged player's turn,
    *  failed skips challenger's turn and records the challenged words */
@@ -79,6 +85,12 @@ export type UseGameResult = {
   resumeGame: () => void
   endGame: () => void
   endGameWithAdjustments: (adjustments: Array<{ playerIndex: number } & Adjustment>) => void
+
+  // Undo/Redo - generic undo/redo for any game action
+  undo: () => void
+  redo: () => void
+  canUndo: boolean
+  canRedo: boolean
 }
 
 /** Helper to check if timer is currently running based on events */
@@ -102,6 +114,35 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
   // Track handle state changes to detect unavailable documents
   const [handleState, setHandleState] = useState<string | null>(null)
+
+  // Undo/Redo stacks - stored locally (not synced)
+  const undoStackRef = useRef<GameSnapshot[]>([])
+  const redoStackRef = useRef<GameSnapshot[]>([])
+  const [undoRedoVersion, setUndoRedoVersion] = useState(0)
+
+  // Helper to create a snapshot of current state
+  const createSnapshot = useCallback((): GameSnapshot | null => {
+    if (!doc) return null
+    return {
+      moves: doc.moves.map(m => ({
+        playerIndex: m.playerIndex,
+        tilesPlaced: m.tilesPlaced.map(t => ({ row: t.row, col: t.col, tile: t.tile })),
+        adjustment: m.adjustment ? { ...m.adjustment, rackTiles: [...m.adjustment.rackTiles] } : undefined,
+      })),
+      currentPlayerIndex: doc.currentPlayerIndex,
+      timerEventsLength: doc.timerEvents?.length ?? 0,
+    }
+  }, [doc])
+
+  // Helper to push snapshot to undo stack before an action
+  const pushUndo = useCallback(() => {
+    const snapshot = createSnapshot()
+    if (snapshot) {
+      undoStackRef.current = [...undoStackRef.current, snapshot]
+      redoStackRef.current = [] // Clear redo stack on new action
+      setUndoRedoVersion(v => v + 1)
+    }
+  }, [createSnapshot])
 
   useEffect(() => {
     if (!handle) {
@@ -138,6 +179,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
 
   const commitMove = (move: GameMove) => {
     if (!doc) return
+    pushUndo()
     changeDoc(d => {
       const moveDoc: GameMoveDoc = {
         playerIndex: move.playerIndex,
@@ -176,6 +218,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     if (!doc) return
     if (moveIndex < 0 || moveIndex >= doc.moves.length) return
 
+    pushUndo()
     changeDoc(d => {
       // Update the move's tiles
       d.moves[moveIndex].tilesPlaced = newTiles.map(t => ({
@@ -199,15 +242,11 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     })
   }
 
-  const undoLastMove = () => {
-    if (!doc || doc.moves.length === 0) return
-    removeMove(doc.moves.length - 1)
-  }
-
   const removeMove = (moveIndex: number) => {
     if (!doc) return
     if (moveIndex < 0 || moveIndex >= doc.moves.length) return
 
+    pushUndo()
     changeDoc(d => {
       // Get the move being removed to determine whose turn it was
       const removedMove = d.moves[moveIndex]
@@ -248,6 +287,7 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     if (!doc) return
     if (moveIndex < 0 || moveIndex >= doc.moves.length) return
 
+    pushUndo()
     changeDoc(d => {
       const challengedMove = d.moves[moveIndex]
       const challengedPlayerIndex = challengedMove.playerIndex
@@ -424,6 +464,103 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
   const isUnavailable = handleState === "unavailable"
   const isLoading = id !== null && doc === undefined && !isUnavailable
 
+  // Undo: restore the previous snapshot
+  const undo = useCallback(() => {
+    if (!doc || undoStackRef.current.length === 0) return
+
+    // Save current state to redo stack
+    const currentSnapshot = createSnapshot()
+    if (currentSnapshot) {
+      redoStackRef.current = [...redoStackRef.current, currentSnapshot]
+    }
+
+    // Pop from undo stack
+    const snapshot = undoStackRef.current[undoStackRef.current.length - 1]
+    undoStackRef.current = undoStackRef.current.slice(0, -1)
+
+    // Restore state from snapshot
+    changeDoc(d => {
+      // Restore moves
+      d.moves.splice(0, d.moves.length, ...snapshot.moves)
+
+      // Rebuild board from moves
+      for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+          d.board[r][c] = ""
+        }
+      }
+      for (const move of d.moves) {
+        for (const { row, col, tile } of move.tilesPlaced) {
+          d.board[row][col] = tile
+        }
+      }
+
+      // Restore current player
+      d.currentPlayerIndex = snapshot.currentPlayerIndex
+
+      // Trim timer events to snapshot length if needed
+      if (d.timerEvents && d.timerEvents.length > snapshot.timerEventsLength) {
+        d.timerEvents.splice(snapshot.timerEventsLength)
+      }
+
+      d.updatedAt = Date.now()
+    })
+
+    setUndoRedoVersion(v => v + 1)
+  }, [doc, changeDoc, createSnapshot])
+
+  // Redo: restore the next snapshot from redo stack
+  const redo = useCallback(() => {
+    if (!doc || redoStackRef.current.length === 0) return
+
+    // Save current state to undo stack
+    const currentSnapshot = createSnapshot()
+    if (currentSnapshot) {
+      undoStackRef.current = [...undoStackRef.current, currentSnapshot]
+    }
+
+    // Pop from redo stack
+    const snapshot = redoStackRef.current[redoStackRef.current.length - 1]
+    redoStackRef.current = redoStackRef.current.slice(0, -1)
+
+    // Restore state from snapshot
+    changeDoc(d => {
+      // Restore moves
+      d.moves.splice(0, d.moves.length, ...snapshot.moves)
+
+      // Rebuild board from moves
+      for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+          d.board[r][c] = ""
+        }
+      }
+      for (const move of d.moves) {
+        for (const { row, col, tile } of move.tilesPlaced) {
+          d.board[row][col] = tile
+        }
+      }
+
+      // Restore current player
+      d.currentPlayerIndex = snapshot.currentPlayerIndex
+
+      // Trim timer events to snapshot length if needed (redo should restore, but we stored length)
+      if (d.timerEvents && d.timerEvents.length > snapshot.timerEventsLength) {
+        d.timerEvents.splice(snapshot.timerEventsLength)
+      }
+
+      d.updatedAt = Date.now()
+    })
+
+    setUndoRedoVersion(v => v + 1)
+  }, [doc, changeDoc, createSnapshot])
+
+  // Track canUndo/canRedo based on stack state (undoRedoVersion triggers re-render)
+  const canUndo = undoStackRef.current.length > 0
+  const canRedo = redoStackRef.current.length > 0
+
+  // Include undoRedoVersion in a way that doesn't cause ESLint warnings
+  void undoRedoVersion
+
   return {
     game: doc ? toAppGame(doc) : null,
     isLoading,
@@ -432,12 +569,15 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     stopTimer,
     commitMove,
     updateMove,
-    undoLastMove,
     removeMove,
     challengeMove,
     pauseGame,
     resumeGame,
     endGame,
     endGameWithAdjustments,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   }
 }

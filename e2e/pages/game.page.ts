@@ -331,10 +331,28 @@ export class GamePage {
     await entry.click()
   }
 
-  /** Select undo from the move action menu */
-  async undoMove(playerName: string, moveIndex: number) {
-    await this.openMoveMenu(playerName, moveIndex)
-    await this.page.getByRole("menuitem", { name: "Undo" }).click()
+  /** Click the global undo button */
+  async clickUndo() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey("Escape")
+    await this.page.getByRole("button", { name: "Undo" }).click()
+  }
+
+  /** Click the global redo button */
+  async clickRedo() {
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey("Escape")
+    await this.page.getByRole("button", { name: "Redo" }).click()
+  }
+
+  /** Check if undo button is enabled */
+  async isUndoEnabled(): Promise<boolean> {
+    return this.page.getByRole("button", { name: "Undo" }).isEnabled()
+  }
+
+  /** Check if redo button is enabled */
+  async isRedoEnabled(): Promise<boolean> {
+    return this.page.getByRole("button", { name: "Redo" }).isEnabled()
   }
 
   /** Select challenge from the move action menu */
