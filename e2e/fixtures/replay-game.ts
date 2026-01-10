@@ -105,23 +105,42 @@ export async function replayGcgFromParsed(
       if (newTiles.length > 0) {
         const direction = playMove.position.direction
 
-        // Place each tile at its specific position
-        for (let i = 0; i < newTiles.length; i++) {
-          const tile = newTiles[i]
-
-          // Click the tile position
-          await gamePage.clickCell(tile.row, tile.col)
-
-          // On first tile, set direction if vertical
-          if (i === 0 && direction === "vertical") {
-            await gamePage.clickCell(tile.row, tile.col) // Toggle to vertical
-          }
-
-          // Type the tile letter
-          if (tile.tile === " ") {
-            await gamePage.pressKey(" ") // Blank tile
+        // Check if new tiles are contiguous (no gaps from existing tiles)
+        const isContiguous = newTiles.every((tile, i) => {
+          if (i === 0) return true
+          const prev = newTiles[i - 1]
+          if (direction === "horizontal") {
+            return tile.row === prev.row && tile.col === prev.col + 1
           } else {
-            await gamePage.typeLetters(tile.tile)
+            return tile.col === prev.col && tile.row === prev.row + 1
+          }
+        })
+
+        if (isContiguous) {
+          // Efficient path: click first cell, set direction, type all letters
+          const firstTile = newTiles[0]
+          await gamePage.setCursorDirection(firstTile.row, firstTile.col, direction)
+          const letters = newTiles.map(t => (t.tile === " " ? " " : t.tile)).join("")
+          await gamePage.typeLetters(letters)
+        } else {
+          // Non-contiguous tiles: must click each position individually
+          for (let i = 0; i < newTiles.length; i++) {
+            const tile = newTiles[i]
+
+            // Click the tile position
+            await gamePage.clickCell(tile.row, tile.col)
+
+            // On first tile, set direction if vertical
+            if (i === 0 && direction === "vertical") {
+              await gamePage.clickCell(tile.row, tile.col) // Toggle to vertical
+            }
+
+            // Type the tile letter
+            if (tile.tile === " ") {
+              await gamePage.pressKey(" ") // Blank tile
+            } else {
+              await gamePage.typeLetters(tile.tile)
+            }
           }
         }
 
