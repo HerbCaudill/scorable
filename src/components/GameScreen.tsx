@@ -285,6 +285,67 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         }
         break
       }
+
+      case "check": {
+        // Check words without any consequences (no turn loss, no move removal)
+        const move = moves[globalIndex]
+        const boardBeforeMove = getBoardExcludingMove(moves, globalIndex)
+        const words = getWordsFromMove(move.tilesPlaced, boardBeforeMove)
+
+        const invalidWords = words.filter(word => !isValidWord(word))
+        const validWords = words.filter(word => isValidWord(word))
+
+        if (invalidWords.length > 0) {
+          // Some words are invalid
+          toast.error(
+            <div>
+              <div className="font-medium">Invalid words found:</div>
+              <ul className="mt-1 list-disc pl-4">
+                {invalidWords.map(word => (
+                  <li key={word}>
+                    <strong>{word.toUpperCase()}</strong>
+                  </li>
+                ))}
+              </ul>
+              {validWords.length > 0 && (
+                <>
+                  <div className="font-medium mt-2">Valid words:</div>
+                  <ul className="mt-1 list-disc pl-4">
+                    {validWords.map(word => {
+                      const entry = getWordDefinition(word)
+                      const def = entry?.definitions[0]?.text ?? "no definition"
+                      return (
+                        <li key={word}>
+                          <strong>{word.toUpperCase()}</strong>: {def}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </>
+              )}
+            </div>,
+          )
+        } else {
+          // All words are valid
+          toast.success(
+            <div>
+              <div className="font-medium">All words are valid:</div>
+              <ul className="mt-1 list-disc pl-4">
+                {words.map(word => {
+                  const entry = getWordDefinition(word)
+                  const def = entry?.definitions[0]?.text ?? "no definition"
+                  return (
+                    <li key={word}>
+                      <strong>{word.toUpperCase()}</strong>: {def}
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>,
+          )
+        }
+        break
+      }
     }
   }
 

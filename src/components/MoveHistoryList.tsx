@@ -7,9 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { IconPencil, IconAlertTriangle, IconX } from "@tabler/icons-react"
+import { IconPencil, IconAlertTriangle, IconX, IconEye } from "@tabler/icons-react"
 
-export type MoveAction = "correct" | "challenge"
+export type MoveAction = "correct" | "challenge" | "check"
 
 export const MoveHistoryList = ({
   history,
@@ -113,6 +113,10 @@ const MoveHistoryEntry = ({
           <DropdownMenuItem onClick={() => handleAction("correct")}>
             <IconPencil size={16} />
             Correct
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleAction("check")}>
+            <IconEye size={16} />
+            Check
           </DropdownMenuItem>
           {isLastMove && (
             <DropdownMenuItem onClick={() => handleAction("challenge")}>
