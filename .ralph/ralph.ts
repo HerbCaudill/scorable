@@ -24,7 +24,7 @@ for (let i = 1; i <= iterations; i++) {
       process.exit(0)
     }
   } catch (error) {
-    console.error("Error running claude:", error)
+    console.error("Error running Claude:", error)
     process.exit(1)
   }
 }
