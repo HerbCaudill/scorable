@@ -115,7 +115,24 @@ const runIteration = (i: number) => {
                 const path = block.input?.path
                 showFileOp(`Glob: ${pattern}${path ? ` in ${rel(path)}` : ""}`)
               } else if (block.name === "TodoWrite") {
-                showFileOp(`TodoWrite`)
+                const todos = block.input?.todos as
+                  | Array<{ content: string; status: string }>
+                  | undefined
+                if (todos?.length) {
+                  const summary = todos
+                    .map(
+                      t =>
+                        `[${
+                          t.status === "completed" ? "x"
+                          : t.status === "in_progress" ? "~"
+                          : " "
+                        }] ${t.content}`,
+                    )
+                    .join("\n         ")
+                  showFileOp(`TodoWrite:\n         ${summary}`)
+                } else {
+                  showFileOp(`TodoWrite`)
+                }
               } else if (block.name === "WebFetch") {
                 const url = block.input?.url
                 showFileOp(`WebFetch: ${url}`)
