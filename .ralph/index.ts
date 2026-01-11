@@ -40,6 +40,18 @@ const runIteration = (i: number) => {
   )
 
   let output = ""
+  let lastOutputWasText = false // Track if we just wrote text (need blank line before file ops)
+  let lastOutputWasFileOp = false // Track if we just showed a file op (need blank line after)
+
+  const showFileOp = (message: string) => {
+    // Add blank line before if we just wrote text
+    if (lastOutputWasText) {
+      process.stdout.write("\n")
+    }
+    console.log(message)
+    lastOutputWasText = false
+    lastOutputWasFileOp = true
+  }
 
   child.stdout.on("data", data => {
     const chunk = data.toString()
@@ -54,14 +66,21 @@ const runIteration = (i: number) => {
         if (event.type === "stream_event") {
           const delta = event.event?.delta
           if (delta?.type === "text_delta" && delta.text) {
+            // Add blank line after file ops before resuming text
+            if (lastOutputWasFileOp) {
+              process.stdout.write("\n")
+              lastOutputWasFileOp = false
+            }
             process.stdout.write(delta.text)
+            // Track if the text ended with newlines (reset if it did)
+            lastOutputWasText = !delta.text.endsWith("\n\n")
           }
         }
 
         // Show file reads
         if (event.type === "user" && event.tool_use_result?.file) {
           const file = event.tool_use_result.file
-          console.log(`\n\nRead: ${file.filePath}`)
+          showFileOp(`Read: ${file.filePath}`)
         }
 
         // Show file edits
@@ -71,7 +90,7 @@ const runIteration = (i: number) => {
               if (block.name === "Edit" || block.name === "Write") {
                 const filePath = block.input?.file_path
                 if (filePath) {
-                  console.log(`\n\n${block.name}: ${filePath}`)
+                  showFileOp(`${block.name}: ${filePath}`)
                 }
               }
             }
