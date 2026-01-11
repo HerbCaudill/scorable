@@ -41,6 +41,7 @@ const runIteration = (i: number) => {
 
   let output = ""
   let trailingNewlines = 2 // Start as if we just had a blank line (after the header)
+  let needsBlankLineBeforeText = false // Track if we need blank line before next text
 
   const showFileOp = (message: string) => {
     // Ensure blank line before file op (need 2 newlines total, console.log adds 1)
@@ -50,6 +51,7 @@ const runIteration = (i: number) => {
     }
     console.log(message)
     trailingNewlines = 1 // console.log adds one newline
+    needsBlankLineBeforeText = true // Need blank line before next text block
   }
 
   child.stdout.on("data", data => {
@@ -65,6 +67,12 @@ const runIteration = (i: number) => {
         if (event.type === "stream_event") {
           const delta = event.event?.delta
           if (delta?.type === "text_delta" && delta.text) {
+            // Add blank line after file ops before resuming text
+            if (needsBlankLineBeforeText) {
+              process.stdout.write("\n")
+              trailingNewlines = 2
+              needsBlankLineBeforeText = false
+            }
             process.stdout.write(delta.text)
             // Count trailing newlines in the text we just wrote
             const match = delta.text.match(/\n+$/)
