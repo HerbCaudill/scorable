@@ -116,17 +116,19 @@ export async function replayGcgFromParsed(
           }
         })
 
+        // Collect blank letters for later dialog entry
+        const blankLetters: string[] = []
+
         if (isContiguous) {
           // Efficient path: click first cell, set direction, type letters
-          // But we need to handle blank tiles specially (they require dialog selection)
           const firstTile = newTiles[0]
           await gamePage.setCursorDirection(firstTile.row, firstTile.col, direction)
 
           for (const tile of newTiles) {
             if (tile.tile === " " && tile.blankLetter) {
-              // Blank tile: press space then select letter in dialog
+              // Blank tile: press space (placed immediately, letter assigned after commit)
               await gamePage.pressKey(" ")
-              await gamePage.selectBlankLetter(tile.blankLetter)
+              blankLetters.push(tile.blankLetter)
             } else {
               await gamePage.typeLetters(tile.tile)
             }
@@ -146,17 +148,22 @@ export async function replayGcgFromParsed(
 
             // Type the tile letter
             if (tile.tile === " " && tile.blankLetter) {
-              // Blank tile: press space then select letter in dialog
+              // Blank tile: press space (placed immediately, letter assigned after commit)
               await gamePage.pressKey(" ")
-              await gamePage.selectBlankLetter(tile.blankLetter)
+              blankLetters.push(tile.blankLetter)
             } else {
               await gamePage.typeLetters(tile.tile)
             }
           }
         }
 
-        // End turn
-        await gamePage.endTurn()
+        // End turn - if there are blanks, dialog will appear after pressing Enter
+        if (blankLetters.length > 0) {
+          await gamePage.pressKey("Enter")
+          await gamePage.typeBlankLetters(blankLetters.join(""))
+        } else {
+          await gamePage.endTurn()
+        }
 
         // Update our tracked board
         board = applyMoveToBoard(playMove, board)

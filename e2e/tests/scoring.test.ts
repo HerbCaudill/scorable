@@ -64,10 +64,10 @@ test.describe("Scoring", () => {
     // C=3, blank=0, T=1 = 4 * 2 = 8
     await gamePage.clickCell(7, 7)
     await gamePage.typeLetters("C")
-    await gamePage.pressKey(" ") // Blank tile
-    await gamePage.selectBlankLetter("A") // Select letter for blank tile
+    await gamePage.pressKey(" ") // Blank tile (placed immediately as unassigned)
     await gamePage.typeLetters("T")
-    await gamePage.endTurn()
+    await gamePage.pressKey("Enter") // Commit - dialog appears for blank letter
+    await gamePage.typeBlankLetters("A") // Type letter for blank tile and click Done
 
     // C(3) + blank(0) + T(1) = 4 * 2 = 8
     expect(await gamePage.getPlayerScore(0)).toBe(8)

@@ -59,10 +59,7 @@ test.describe("Keyboard input", () => {
     await gamePage.clickCell(7, 7)
     await gamePage.pressKey(" ")
 
-    // Select a letter for the blank tile in the dialog
-    await gamePage.selectBlankLetter("A")
-
-    // A blank tile should be placed
+    // Blank tile should be placed immediately (no dialog until committing)
     await gamePage.expectNewTileAt(7, 7)
   })
 

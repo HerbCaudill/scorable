@@ -142,20 +142,28 @@ test.describe("Score verification", () => {
           // Click first cell and set correct direction
           await gamePage.setCursorDirection(firstTile.row, firstTile.col, direction)
 
+          // Collect blank letters for later dialog entry
+          const blankLetters: string[] = []
+
           // Type all tiles - cursor auto-advances in the set direction
           for (const tile of newTiles) {
             if (tile.tile === " ") {
               await gamePage.pressKey(" ")
-              // Select the letter for the blank tile
               if (tile.blankLetter) {
-                await gamePage.selectBlankLetter(tile.blankLetter)
+                blankLetters.push(tile.blankLetter)
               }
             } else {
               await gamePage.typeLetters(tile.tile)
             }
           }
 
-          await gamePage.endTurn()
+          // End turn - if there are blanks, dialog will appear after pressing Enter
+          if (blankLetters.length > 0) {
+            await gamePage.pressKey("Enter")
+            await gamePage.typeBlankLetters(blankLetters.join(""))
+          } else {
+            await gamePage.endTurn()
+          }
           board = applyMoveToBoard(playMove, board)
         }
 

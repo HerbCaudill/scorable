@@ -68,11 +68,20 @@ export class GamePage {
     await this.page.keyboard.press(key)
   }
 
-  /** Select a letter for a blank tile in the dialog */
-  async selectBlankLetter(letter: string) {
-    const dialog = this.page.getByRole("dialog", { name: "Choose a letter" })
-    await dialog.getByRole("button", { name: letter.toUpperCase(), exact: true }).click()
-    await dialog.getByRole("button", { name: "Confirm" }).click()
+  /** Type letter(s) for blank tile(s) in the dialog that appears when committing a move with blanks */
+  async typeBlankLetters(letters: string) {
+    // Wait for the blank letter dialog to appear
+    const dialog = this.page.getByRole("dialog", { name: /What letter/ })
+    await dialog.waitFor({ state: "visible" })
+
+    // Type each letter
+    await this.page.keyboard.type(letters.toUpperCase())
+
+    // Click Done button
+    await dialog.getByRole("button", { name: "Done" }).click()
+
+    // Wait for dialog to close
+    await dialog.waitFor({ state: "detached" })
   }
 
   /** Click cell until cursor has desired direction */

@@ -33,7 +33,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
-import { BlankTileDialog } from "./BlankTileDialog"
+import { BlankLetterDialog } from "./BlankLetterDialog"
 import { BackButton } from "./BackButton"
 
 /** Check if board has any tiles placed */
@@ -135,12 +135,15 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
     warnings: TileOveruseWarning[]
     pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
-  const [blankTilePosition, setBlankTilePosition] = useState<{
-    row: number
-    col: number
+  const [pendingBlankTiles, setPendingBlankTiles] = useState<{
+    blanks: Array<{ row: number; col: number }>
+    pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const removeGameId = useLocalStore(s => s.removeGameId)
+
+  // Current player index - needed early for callbacks
+  const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
 
   const handleDeleteGame = () => {
     removeGameId(gameId)
@@ -166,31 +169,43 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
     [],
   )
 
-  const handleBlankTilePlaced = useCallback((row: number, col: number) => {
-    setBlankTilePosition({ row, col })
-  }, [])
+  // Handle blank letter assignment after user provides letters
+  const handleBlankLettersComplete = useCallback(
+    (letters: string[]) => {
+      if (!pendingBlankTiles) return
 
-  const handleBlankTileSelect = useCallback(
-    (letter: string) => {
-      if (!blankTilePosition) return
-      const { row, col } = blankTilePosition
-      setNewTiles(prev => {
-        const updated = prev.map(r => [...r])
-        updated[row][col] = letter // lowercase = blank tile representing letter
-        return updated
+      // Update the pending move with assigned letters (lowercase = blank tile)
+      const updatedMove = pendingBlankTiles.pendingMove.map(tile => {
+        if (tile.tile === " ") {
+          // Find index of this blank in the blanks array
+          const blankIndex = pendingBlankTiles.blanks.findIndex(
+            b => b.row === tile.row && b.col === tile.col,
+          )
+          if (blankIndex !== -1 && letters[blankIndex]) {
+            return { ...tile, tile: letters[blankIndex].toLowerCase() }
+          }
+        }
+        return tile
       })
-      setBlankTilePosition(null)
+
+      // Commit the move with assigned blanks
+      commitMove({
+        playerIndex: currentPlayerIndex,
+        tilesPlaced: updatedMove,
+      })
+
+      setNewTiles(createEmptyBoard())
+      setPendingBlankTiles(null)
     },
-    [blankTilePosition],
+    [pendingBlankTiles, commitMove, currentPlayerIndex],
   )
 
-  const handleBlankTileCancel = useCallback(() => {
-    setBlankTilePosition(null)
+  const handleBlankLettersCancel = useCallback(() => {
+    setPendingBlankTiles(null)
   }, [])
 
   // Force re-render every 100ms to update timer display when running
   const [, setTick] = useState(0)
-  const currentPlayerIndex = currentGame?.currentPlayerIndex ?? 0
 
   // Compute timer state from events (called on each render when timer running)
   const timerState =
@@ -433,6 +448,17 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
         return
       }
 
+      // Check for unassigned blank tiles (stored as " ")
+      const unassignedBlanks = move.filter(tile => tile.tile === " ")
+      if (unassignedBlanks.length > 0) {
+        // Show dialog to assign letters to blanks
+        setPendingBlankTiles({
+          blanks: unassignedBlanks.map(t => ({ row: t.row, col: t.col })),
+          pendingMove: move,
+        })
+        return
+      }
+
       commitMove({
         playerIndex: currentPlayerIndex,
         tilesPlaced: move,
@@ -559,7 +585,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
             onEnter={handleEndTurn}
             onKeyPress={handleKeyPressCallback}
             onCursorChange={handleCursorChangeCallback}
-            onBlankTilePlaced={handleBlankTilePlaced}
           />
         </div>
       </div>
@@ -725,11 +750,12 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
         onConfirm={() => setTileOveruseConfirm(null)}
       />
 
-      {/* Blank tile letter selection dialog */}
-      <BlankTileDialog
-        open={blankTilePosition !== null}
-        onSelect={handleBlankTileSelect}
-        onCancel={handleBlankTileCancel}
+      {/* Blank tile letter assignment dialog */}
+      <BlankLetterDialog
+        open={pendingBlankTiles !== null}
+        blanks={pendingBlankTiles?.blanks ?? []}
+        onComplete={handleBlankLettersComplete}
+        onCancel={handleBlankLettersCancel}
       />
 
       {/* Delete game confirmation dialog */}
