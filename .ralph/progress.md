@@ -5,12 +5,14 @@
 **Problem:** Button drop shadows used generic semi-transparent black (`rgba(0,0,0,0.25)`), which looked flat and disconnected from the button colors.
 
 **Solution:** Changed shadows to use darker variants of each button's color:
+
 - Primary (teal) buttons: shadow uses `--color-teal-700`
 - Destructive (red) buttons: shadow uses a darker oklch red
 - Outline buttons: shadow uses `--color-khaki-300`
 - Secondary (khaki) buttons: shadow uses `--color-khaki-800`
 
 **Files changed:**
+
 - `src/components/ui/Button.tsx` - Updated shadow colors for each variant
 
 ---

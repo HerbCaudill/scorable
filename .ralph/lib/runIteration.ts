@@ -39,22 +39,13 @@ export const runIteration = (i: number, iterations: number) => {
 
   let output = ""
 
-  child.stdout.on("data", data => {
-    const chunk = data.toString()
-    for (const line of chunk.split("\n")) {
-      if (!line.trim()) continue
-      try {
-        const event = JSON.parse(line)
-        appendFileSync(logFile, JSON.stringify(event, null, 2) + "\n\n")
-        processEvent(event)
-      } catch {
-        // Incomplete JSON line, ignore
-      }
-    }
-    output += chunk
-  })
+  let stdoutEnded = false
+  let closeInfo: { code: number | null; signal: NodeJS.Signals | null } | null = null
 
-  child.on("close", (code, signal) => {
+  const handleIterationComplete = () => {
+    if (!stdoutEnded || !closeInfo) return
+
+    const { code, signal } = closeInfo
     if (code !== 0) {
       console.error(
         chalk.red(`Claude exited with code ${code}${signal ? ` (signal: ${signal})` : ""}`),
@@ -70,6 +61,31 @@ export const runIteration = (i: number, iterations: number) => {
     }
 
     runIteration(i + 1, iterations)
+  }
+
+  child.stdout.on("data", data => {
+    const chunk = data.toString()
+    for (const line of chunk.split("\n")) {
+      if (!line.trim()) continue
+      try {
+        const event = JSON.parse(line)
+        appendFileSync(logFile, JSON.stringify(event, null, 2) + "\n\n")
+        processEvent(event)
+      } catch {
+        // Incomplete JSON line, ignore
+      }
+    }
+    output += chunk
+  })
+
+  child.stdout.on("end", () => {
+    stdoutEnded = true
+    handleIterationComplete()
+  })
+
+  child.on("close", (code, signal) => {
+    closeInfo = { code, signal }
+    handleIterationComplete()
   })
 
   child.on("error", error => {
