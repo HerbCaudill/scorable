@@ -63,6 +63,7 @@ const runIteration = (i: number) => {
       if (!line.trim()) continue
       try {
         const event = JSON.parse(line)
+        console.log(event)
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
             if (block.type === "text") {
