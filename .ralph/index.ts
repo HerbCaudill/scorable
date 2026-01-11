@@ -90,7 +90,7 @@ const runIteration = (i: number) => {
           showFileOp(`Read: ${file.filePath}`)
         }
 
-        // Show file edits
+        // Show file edits and bash commands
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
             if (block.type === "tool_use") {
@@ -98,6 +98,11 @@ const runIteration = (i: number) => {
                 const filePath = block.input?.file_path
                 if (filePath) {
                   showFileOp(`${block.name}: ${filePath}`)
+                }
+              } else if (block.name === "Bash") {
+                const command = block.input?.command
+                if (command) {
+                  showFileOp(`$ ${command}`)
                 }
               }
             }
