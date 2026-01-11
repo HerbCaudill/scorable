@@ -15,39 +15,49 @@ const toolIndent = "  "
 
 // Word wrap state for streaming text
 let currentLineLength = 0
-let wordBuffer = ""
+let lineBuffer = ""
 
-const flushWord = () => {
-  if (!wordBuffer) return
-  if (currentLineLength + wordBuffer.length > termWidth && currentLineLength > 0) {
-    process.stdout.write("\n")
-    currentLineLength = 0
-  }
-  process.stdout.write(wordBuffer)
-  currentLineLength += wordBuffer.length
-  wordBuffer = ""
+const formatLine = (text: string) => {
+  // Convert markdown bold to ANSI bold
+  return text.replace(/\*\*([^*]+)\*\*/g, (_, content) => chalk.bold(content))
+}
+
+const flushLine = () => {
+  if (!lineBuffer) return
+  // Calculate visible length (without ** markers)
+  const visibleText = lineBuffer.replace(/\*\*([^*]+)\*\*/g, "$1")
+  process.stdout.write(formatLine(lineBuffer))
+  currentLineLength += visibleText.length
+  lineBuffer = ""
 }
 
 const writeWrappedText = (text: string) => {
-  // Convert markdown bold to ANSI bold
-  const formatted = text.replace(/\*\*([^*]+)\*\*/g, (_, content) => chalk.bold(content))
-
-  for (const char of formatted) {
+  // Accumulate text, wrap at word boundaries
+  for (const char of text) {
     if (char === "\n") {
-      flushWord()
+      flushLine()
       process.stdout.write("\n")
       currentLineLength = 0
     } else if (char === " " || char === "\t") {
-      flushWord()
-      if (currentLineLength > 0) {
-        process.stdout.write(" ")
-        currentLineLength++
+      lineBuffer += char
+      // Check if we need to wrap - look for last space to break at
+      const visibleLength = lineBuffer.replace(/\*\*([^*]+)\*\*/g, "$1").length
+      if (currentLineLength + visibleLength > termWidth) {
+        // Find last space to break at
+        const lastSpace = lineBuffer.lastIndexOf(" ", lineBuffer.length - 2)
+        if (lastSpace > 0) {
+          const beforeBreak = lineBuffer.slice(0, lastSpace)
+          const afterBreak = lineBuffer.slice(lastSpace + 1)
+          process.stdout.write(formatLine(beforeBreak))
+          process.stdout.write("\n")
+          currentLineLength = 0
+          lineBuffer = afterBreak
+        }
       }
     } else {
-      wordBuffer += char
+      lineBuffer += char
     }
   }
-  flushWord()
 }
 
 // Parse arguments
@@ -62,6 +72,7 @@ let trailingNewlines = 2
 let needsBlankLineBeforeText = false
 
 const showToolUse = (name: string, arg?: string) => {
+  flushLine()
   while (trailingNewlines < 2) {
     process.stdout.write("\n")
     trailingNewlines++
@@ -70,6 +81,7 @@ const showToolUse = (name: string, arg?: string) => {
   console.log(toolIndent + formatted)
   trailingNewlines = 1
   currentLineLength = 0
+  lineBuffer = ""
   needsBlankLineBeforeText = true
 }
 
