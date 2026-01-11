@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { MoveHistoryEntry } from "@/lib/getPlayerMoveHistory"
+import type { WordWithBlankInfo } from "@/lib/getWordsFromMove"
 import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
@@ -11,6 +12,46 @@ import { IconPencil, IconAlertTriangle, IconX, IconEye } from "@tabler/icons-rea
 import { useLongPress } from "@/lib/useLongPress"
 
 export type MoveAction = "correct" | "challenge" | "check"
+
+/** Render a word with blank letters at 25% opacity */
+const WordWithBlanks = ({ wordInfo }: { wordInfo: WordWithBlankInfo }) => {
+  const { word, blankIndices } = wordInfo
+  const blankSet = new Set(blankIndices)
+
+  return (
+    <span>
+      {word.split("").map((char, i) => (
+        <span key={i} className={blankSet.has(i) ? "opacity-25" : ""}>
+          {char}
+        </span>
+      ))}
+    </span>
+  )
+}
+
+/** Render words list with blanks shown at 25% opacity */
+const WordsDisplay = ({ entry }: { entry: MoveHistoryEntry }) => {
+  if (entry.words.length === 0) {
+    return <em className="text-neutral-400">(pass)</em>
+  }
+
+  // Use wordsWithBlanks if available for proper blank rendering
+  if (entry.wordsWithBlanks && entry.wordsWithBlanks.length > 0) {
+    return (
+      <>
+        {entry.wordsWithBlanks.map((wordInfo, i) => (
+          <span key={i}>
+            {i > 0 && ", "}
+            <WordWithBlanks wordInfo={wordInfo} />
+          </span>
+        ))}
+      </>
+    )
+  }
+
+  // Fallback to simple display
+  return <>{entry.words.join(", ")}</>
+}
 
 function getScoreColorClass(score: number): string {
   if (score > 0) return "text-green-600"
@@ -24,6 +65,7 @@ export const MoveHistoryList = ({
   onMoveAction,
   editingIndex,
   isLastMove,
+  disableActions,
   className,
 }: Props) => {
   return (
@@ -58,6 +100,20 @@ export const MoveHistoryList = ({
           )
         }
 
+        if (entry.isSuccessfulChallenge) {
+          // Display successful challenge entry - shows rejected words with strikethrough
+          const rejectedWords = entry.successfulChallengeWords?.map(w => w.toUpperCase()).join(", ")
+          return (
+            <div key={i} className="flex justify-between gap-2 px-1 py-1.5 text-neutral-400 italic">
+              <span className="flex items-center gap-1 truncate">
+                <IconX size={12} className="shrink-0" />
+                <span className="line-through">{rejectedWords || "(rejected)"}</span>
+              </span>
+              <span className="font-medium">0</span>
+            </div>
+          )
+        }
+
         const isLast = isLastMove?.(i) ?? false
 
         return (
@@ -67,6 +123,7 @@ export const MoveHistoryList = ({
             index={i}
             isEditing={editingIndex === i}
             isLastMove={isLast}
+            disableActions={disableActions}
             onMoveClick={onMoveClick}
             onMoveAction={onMoveAction}
           />
@@ -81,6 +138,7 @@ const MoveHistoryEntry = ({
   index,
   isEditing,
   isLastMove,
+  disableActions,
   onMoveClick,
   onMoveAction,
 }: MoveHistoryEntryProps) => {
@@ -94,11 +152,14 @@ const MoveHistoryEntry = ({
   // For passes (no tiles placed), don't show any actions
   const isPass = entry.tiles.length === 0
 
+  // Disable long-press when actions are disabled or for passes
+  const enableLongPress = !disableActions && !isPass
+
   const longPressHandlers = useLongPress(() => {
-    if (!isPass) {
+    if (enableLongPress) {
       setDropdownOpen(true)
     }
-  }, !isPass)
+  }, enableLongPress)
 
   return (
     <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -112,9 +173,7 @@ const MoveHistoryEntry = ({
           onClick={() => onMoveClick(entry.tiles)}
         >
           <span className="truncate">
-            {entry.words.length > 0 ?
-              entry.words.join(", ")
-            : <em className="text-neutral-400">(pass)</em>}
+            <WordsDisplay entry={entry} />
           </span>
           <span className="font-medium">{entry.score}</span>
         </div>
@@ -148,12 +207,15 @@ type Props = {
   editingIndex?: number
   /** Function to check if a move at index is the last move in the game */
   isLastMove?: (playerMoveIndex: number) => boolean
+  /** Disable all dropdown actions (for past games view) */
+  disableActions?: boolean
   className?: string
 }
 
 type MoveHistoryEntryProps = {
   entry: MoveHistoryEntry
   index: number
+  disableActions?: boolean
   isEditing: boolean
   isLastMove: boolean
   onMoveClick: (tiles: Array<{ row: number; col: number }>) => void

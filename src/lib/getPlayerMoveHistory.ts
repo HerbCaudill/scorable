@@ -1,9 +1,10 @@
 import { createEmptyBoard, type GameMove } from "./types"
-import { getWordsFromMove } from "./getWordsFromMove"
+import { getWordsWithBlankInfo, type WordWithBlankInfo } from "./getWordsFromMove"
 import { calculateMoveScore } from "./calculateMoveScore"
 
 export type MoveHistoryEntry = {
   words: string[]
+  wordsWithBlanks?: WordWithBlankInfo[]
   score: number
   tiles: Array<{ row: number; col: number }>
   isAdjustment?: boolean
@@ -14,6 +15,8 @@ export type MoveHistoryEntry = {
   }
   isFailedChallenge?: boolean
   failedChallengeWords?: string[]
+  isSuccessfulChallenge?: boolean
+  successfulChallengeWords?: string[]
 }
 
 type Options = {
@@ -51,11 +54,21 @@ export const getPlayerMoveHistory = (
           isFailedChallenge: true,
           failedChallengeWords: move.failedChallenge.words,
         })
+      } else if (move.successfulChallenge) {
+        // Successful challenge - pass with rejected words recorded
+        history.push({
+          words: [],
+          score: 0,
+          tiles: [],
+          isSuccessfulChallenge: true,
+          successfulChallengeWords: move.successfulChallenge.words,
+        })
       } else {
-        const words = getWordsFromMove(move.tilesPlaced, boardState)
+        const wordsWithBlanks = getWordsWithBlankInfo(move.tilesPlaced, boardState)
+        const words = wordsWithBlanks.map(w => w.word)
         const score = calculateMoveScore({ move: move.tilesPlaced, board: boardState })
         const tiles = move.tilesPlaced.map(({ row, col }) => ({ row, col }))
-        history.push({ words, score, tiles })
+        history.push({ words, wordsWithBlanks, score, tiles })
       }
     }
     // Update board state after each move

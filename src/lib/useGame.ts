@@ -82,6 +82,12 @@ const toAppGame = (doc: GameDoc): Game => {
             words: [...m.failedChallenge.words],
           }
         : undefined,
+      successfulChallenge:
+        m.successfulChallenge ?
+          {
+            words: [...m.successfulChallenge.words],
+          }
+        : undefined,
     })),
     timerEvents: toAppTimerEvents(doc.timerEvents),
     status: doc.status,
@@ -105,7 +111,12 @@ export type UseGameResult = {
   removeMove: (moveIndex: number) => void
   /** Handle challenge result - successful removes move and skips challenged player's turn,
    *  failed skips challenger's turn and records the challenged words */
-  challengeMove: (moveIndex: number, successful: boolean, challengedWords?: string[]) => void
+  challengeMove: (
+    moveIndex: number,
+    successful: boolean,
+    challengedWords?: string[],
+    invalidWords?: string[],
+  ) => void
   pauseGame: () => void
   resumeGame: () => void
   endGame: () => void
@@ -263,7 +274,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
     })
   }
 
-  const challengeMove = (moveIndex: number, successful: boolean, challengedWords?: string[]) => {
+  const challengeMove = (
+    moveIndex: number,
+    successful: boolean,
+    challengedWords?: string[],
+    invalidWords?: string[],
+  ) => {
     if (!doc) return
     if (moveIndex < 0 || moveIndex >= doc.moves.length) return
 
@@ -278,8 +294,12 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
         d.moves.splice(moveIndex, 1)
         rebuildBoard(d.board, d.moves)
 
-        // Add a pass move for the challenged player
-        d.moves.push({ playerIndex: challengedPlayerIndex, tilesPlaced: [] })
+        // Add a pass move for the challenged player with the rejected words recorded
+        d.moves.push({
+          playerIndex: challengedPlayerIndex,
+          tilesPlaced: [],
+          successfulChallenge: invalidWords ? { words: invalidWords } : undefined,
+        })
 
         // Move to the next player after the challenged player
         const nextPlayerIndex = (challengedPlayerIndex + 1) % playerCount

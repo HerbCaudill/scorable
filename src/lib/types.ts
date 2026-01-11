@@ -25,12 +25,18 @@ export type FailedChallenge = {
   words: string[] // The words that were challenged but were valid
 }
 
+/** Successful challenge info - records words that were rejected */
+export type SuccessfulChallenge = {
+  words: string[] // The words that were successfully challenged (invalid)
+}
+
 /** A move made by a specific player  */
 export type GameMove = {
   playerIndex: number
   tilesPlaced: Move
   adjustment?: Adjustment
   failedChallenge?: FailedChallenge
+  successfulChallenge?: SuccessfulChallenge
 }
 
 /** Player state  */
