@@ -17,7 +17,7 @@ const runIteration = (i: number) => {
   }
 
   console.log(`Iteration ${i}`)
-  console.log("------------------------------")
+  console.log("------------------------------\n")
 
   // Clear log file at start of each iteration
   writeFileSync(logFile, "")
@@ -40,17 +40,16 @@ const runIteration = (i: number) => {
   )
 
   let output = ""
-  let lastOutputWasText = false // Track if we just wrote text (need blank line before file ops)
-  let lastOutputWasFileOp = false // Track if we just showed a file op (need blank line after)
+  let trailingNewlines = 2 // Start as if we just had a blank line (after the header)
 
   const showFileOp = (message: string) => {
-    // Add blank line before if we just wrote text
-    if (lastOutputWasText) {
+    // Ensure blank line before file op (need 2 newlines total, console.log adds 1)
+    while (trailingNewlines < 2) {
       process.stdout.write("\n")
+      trailingNewlines++
     }
     console.log(message)
-    lastOutputWasText = false
-    lastOutputWasFileOp = true
+    trailingNewlines = 1 // console.log adds one newline
   }
 
   child.stdout.on("data", data => {
@@ -66,14 +65,14 @@ const runIteration = (i: number) => {
         if (event.type === "stream_event") {
           const delta = event.event?.delta
           if (delta?.type === "text_delta" && delta.text) {
-            // Add blank line after file ops before resuming text
-            if (lastOutputWasFileOp) {
-              process.stdout.write("\n")
-              lastOutputWasFileOp = false
-            }
             process.stdout.write(delta.text)
-            // Track if the text ended with newlines (reset if it did)
-            lastOutputWasText = !delta.text.endsWith("\n\n")
+            // Count trailing newlines in the text we just wrote
+            const match = delta.text.match(/\n+$/)
+            if (match) {
+              trailingNewlines = Math.min(match[0].length, 2)
+            } else {
+              trailingNewlines = 0
+            }
           }
         }
 
