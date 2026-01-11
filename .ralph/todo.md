@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] We have some flaky playwright tests dealing with persistence - we need to fix those before doing anything else.
 - [ ] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
 - [ ] The player panels should have drop shadows too
 - [ ] The keys on the virtual keyboard should have drop shadows too
