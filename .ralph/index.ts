@@ -8,7 +8,7 @@ import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const logFile = join(__dirname, "events.log")
 
-const iterations = parseInt(process.argv[2], 10) || 100
+const iterations = parseInt(process.argv[2], 10) || 1
 
 const runIteration = (i: number) => {
   if (i > iterations) {
