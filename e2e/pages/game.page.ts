@@ -68,13 +68,34 @@ export class GamePage {
     await this.page.keyboard.press(key)
   }
 
+  /** Select a letter for a blank tile in the dialog */
+  async selectBlankLetter(letter: string) {
+    const dialog = this.page.getByRole("dialog", { name: "Choose a letter" })
+    await dialog.getByRole("button", { name: letter.toUpperCase(), exact: true }).click()
+    await dialog.getByRole("button", { name: "Confirm" }).click()
+  }
+
   /** Click cell until cursor has desired direction */
   async setCursorDirection(row: number, col: number, direction: "horizontal" | "vertical") {
+    // First click sets cursor with inferred direction
     await this.clickCell(row, col)
-    const currentDirection = await this.getCursorDirection()
-    if (currentDirection !== direction) {
-      await this.clickCell(row, col) // Toggle direction
+
+    // Wait for direction attribute to be present
+    const selectedCell = this.page.locator('[aria-selected="true"]')
+    await selectedCell.waitFor({ state: "visible" })
+
+    // Check current direction and toggle if needed
+    const currentDirection = await selectedCell.getAttribute("data-cursor-direction")
+    if (currentDirection === direction) {
+      return
     }
+
+    // Need to toggle - click again
+    const cell = this.getCell(row, col)
+    await cell.click()
+
+    // Verify we got the right direction
+    await expect(selectedCell).toHaveAttribute("data-cursor-direction", direction)
   }
 
   /** Get the cursor direction from the selected cell */
@@ -102,12 +123,51 @@ export class GamePage {
     await this.typeLetters(word)
   }
 
-  /** End the current turn by clicking on the active player panel */
+  /** End the current turn by pressing enter (assumes tiles have been placed) */
   async endTurn() {
-    // Find the active player panel (has aria-current="true") and click it
-    const activePanel = this.page.locator('[aria-current="true"]')
-    const clickableRow = activePanel.locator(".cursor-pointer").first()
-    await clickableRow.click()
+    const currentPlayerIndex = await this.getCurrentPlayerIndex()
+
+    await this.pressKey("Enter")
+
+    // Wait for player to change, error toast, or pass dialog
+    const errorToast = this.page.locator('[data-sonner-toast][data-type="error"]')
+    const passDialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
+    await waitForCondition(this.page, async () => {
+      // Check for pass dialog
+      if (await passDialog.isVisible()) {
+        return true
+      }
+      // Check for error toast
+      if (await errorToast.isVisible()) {
+        return true
+      }
+      // Check if player changed
+      const newPlayerIndex = await this.getCurrentPlayerIndex()
+      return newPlayerIndex !== currentPlayerIndex
+    })
+  }
+
+  /** Pass the current turn (no tiles placed) */
+  async pass() {
+    const currentPlayerIndex = await this.getCurrentPlayerIndex()
+
+    // Click on a corner cell to ensure cursor exists so keyboard events work
+    await this.clickCell(0, 0)
+    await this.pressKey("Enter")
+
+    // Wait for pass dialog
+    const passDialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
+    await passDialog.waitFor({ state: "visible" })
+
+    // Confirm the pass
+    await this.confirmPass()
+    await passDialog.waitFor({ state: "hidden" })
+
+    // Wait for player to change
+    await waitForCondition(this.page, async () => {
+      const newPlayerIndex = await this.getCurrentPlayerIndex()
+      return newPlayerIndex !== currentPlayerIndex
+    })
   }
 
   /** Click on a player panel to end turn */

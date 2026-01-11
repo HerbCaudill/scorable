@@ -41,8 +41,7 @@ test.describe("Move correction", () => {
     expect(initialScore).toBe(10)
 
     // Bob passes
-    await gamePage.endTurn()
-    await gamePage.confirmPass()
+    await gamePage.pass()
 
     // Edit Alice's move - add letter S to make CATS
     await gamePage.longPressMove("Alice", 0)
@@ -69,8 +68,7 @@ test.describe("Move correction", () => {
     await gamePage.endTurn()
 
     // Bob passes
-    await gamePage.endTurn()
-    await gamePage.confirmPass()
+    await gamePage.pass()
 
     // Edit to CATS (add S)
     await gamePage.longPressMove("Alice", 0)
@@ -117,8 +115,7 @@ test.describe("Move correction", () => {
     await gamePage.endTurn()
 
     // Bob passes
-    await gamePage.endTurn()
-    await gamePage.confirmPass()
+    await gamePage.pass()
 
     // Edit Alice's move
     await gamePage.longPressMove("Alice", 0)

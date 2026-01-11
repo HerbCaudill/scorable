@@ -78,8 +78,7 @@ test.describe("Move actions", () => {
       await gamePage.endTurn()
 
       // Bob passes
-      await gamePage.endTurn()
-      await gamePage.confirmPass()
+      await gamePage.pass()
 
       // Now it's Alice's turn
       expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
@@ -451,8 +450,7 @@ test.describe("Move actions", () => {
       await gamePage.endTurn()
 
       // Now pass for Bob
-      await gamePage.endTurn()
-      await gamePage.confirmPass()
+      await gamePage.pass()
 
       // Try to click on the pass entry
       const passEntry = page

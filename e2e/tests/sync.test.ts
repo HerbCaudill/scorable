@@ -196,8 +196,7 @@ test.describe("Multi-tab sync", () => {
     await gamePage1.endTurn()
 
     // Bob passes
-    await gamePage1.endTurn()
-    await gamePage1.confirmPass()
+    await gamePage1.pass()
 
     // Verify tab 2 sees CAT (wait for sync)
     await gamePage2.expectTileAt(7, 7, "C")

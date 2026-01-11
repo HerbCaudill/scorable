@@ -23,13 +23,14 @@ const createEmptyBoard = (): BoardState => {
  * Extract only the NEW tiles from a GCG play move.
  * Some tiles in the word may already be on the board (when extending words).
  * This function returns only the tiles that need to be placed.
+ * For blank tiles, `blankLetter` indicates what letter the blank represents.
  */
 export const getNewTiles = (
   move: GcgPlayMove,
   board: BoardState,
-): Array<{ row: number; col: number; tile: string }> => {
+): Array<{ row: number; col: number; tile: string; blankLetter?: string }> => {
   const { position, word } = move
-  const tiles: Array<{ row: number; col: number; tile: string }> = []
+  const tiles: Array<{ row: number; col: number; tile: string; blankLetter?: string }> = []
 
   for (let i = 0; i < word.length; i++) {
     const row = position.direction === "vertical" ? position.row + i : position.row
@@ -46,8 +47,9 @@ export const getNewTiles = (
     if (board[row][col] === null) {
       // Lowercase letters in GCG are blanks - we represent them as spaces
       const letter = word[i]
-      const tile = letter === letter.toLowerCase() ? " " : letter
-      tiles.push({ row, col, tile })
+      const isBlank = letter === letter.toLowerCase() && letter !== letter.toUpperCase()
+      const tile = isBlank ? " " : letter
+      tiles.push({ row, col, tile, blankLetter: isBlank ? letter.toUpperCase() : undefined })
     }
   }
 

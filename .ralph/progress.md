@@ -7,6 +7,7 @@
 **Solution:** Added a `findPreviousPosition` function in `ScrabbleBoard.tsx` that mirrors `findNextPosition` but moves backward. Updated the backspace handler to use this function with `skipExisting: true`, allowing the cursor to skip over existing tiles when finding the previous new tile to delete.
 
 **Files changed:**
+
 - `src/components/ScrabbleBoard.tsx` - Added `findPreviousPosition` and updated backspace logic
 - `e2e/tests/board-interaction.test.ts` - Added new test "backspace skips over existing tiles"
 

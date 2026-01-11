@@ -87,8 +87,7 @@ test.describe("Score verification", () => {
    * placed through the UI, not just seeded directly.
    */
   test("verifies running scores via UI for cresta-yorra-2006.gcg", async ({ page }) => {
-    test.setTimeout(180000) // 3 minutes
-
+    test.setTimeout(60000) // This test plays through many moves
     const gcg = loadGcgGame("cresta-yorra-2006.gcg")
     const [player1, player2] = getPlayerNames(gcg)
 
@@ -138,15 +137,19 @@ test.describe("Score verification", () => {
 
         if (newTiles.length > 0) {
           const direction = playMove.position.direction
+          const firstTile = newTiles[0]
 
-          for (let i = 0; i < newTiles.length; i++) {
-            const tile = newTiles[i]
-            await gamePage.clickCell(tile.row, tile.col)
-            if (i === 0 && direction === "vertical") {
-              await gamePage.clickCell(tile.row, tile.col)
-            }
+          // Click first cell and set correct direction
+          await gamePage.setCursorDirection(firstTile.row, firstTile.col, direction)
+
+          // Type all tiles - cursor auto-advances in the set direction
+          for (const tile of newTiles) {
             if (tile.tile === " ") {
               await gamePage.pressKey(" ")
+              // Select the letter for the blank tile
+              if (tile.blankLetter) {
+                await gamePage.selectBlankLetter(tile.blankLetter)
+              }
             } else {
               await gamePage.typeLetters(tile.tile)
             }
@@ -158,10 +161,7 @@ test.describe("Score verification", () => {
 
         expectedScores[move.player] += move.score
       } else if (move.type === "exchange" || move.type === "challenge") {
-        await gamePage.endTurn()
-        await page.waitForSelector('[role="alertdialog"]')
-        await gamePage.confirmPass()
-        await page.waitForSelector('[role="alertdialog"]', { state: "detached" })
+        await gamePage.pass()
       }
 
       // Verify scores after each move
