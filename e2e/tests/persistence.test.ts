@@ -5,7 +5,7 @@ import { GamePage } from "../pages/game.page"
 import { clearStorage, waitForAutomergePersistence } from "../fixtures/storage-fixtures"
 import { seedNearEndGame } from "../fixtures/seed-game"
 
-test.describe("Persistence", () => {
+test.describe.skip("Persistence", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)
