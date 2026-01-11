@@ -2,11 +2,13 @@
 
 import { spawn } from "child_process"
 import { appendFileSync, writeFileSync } from "fs"
-import { dirname, join } from "path"
+import { dirname, join, relative } from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const logFile = join(__dirname, "events.log")
+const cwd = process.cwd()
+const rel = (path: string) => relative(cwd, path) || path
 
 const iterations = parseInt(process.argv[2], 10) || 1
 
@@ -28,9 +30,9 @@ const runIteration = (i: number) => {
       "--permission-mode",
       "bypassPermissions",
       "-p",
-      "@ralph/prompt.md",
-      "@plans/todo.md",
-      "@plans/progress.md",
+      "@.ralph/prompt.md",
+      "@.ralph/todo.md",
+      "@.ralph/progress.md",
       "--output-format",
       "stream-json",
       "--include-partial-messages",
@@ -87,7 +89,7 @@ const runIteration = (i: number) => {
         // Show file reads
         if (event.type === "user" && event.tool_use_result?.file) {
           const file = event.tool_use_result.file
-          showFileOp(`Read: ${file.filePath}`)
+          showFileOp(`Read: ${rel(file.filePath)}`)
         }
 
         // Show file edits and bash commands
@@ -97,7 +99,7 @@ const runIteration = (i: number) => {
               if (block.name === "Edit" || block.name === "Write") {
                 const filePath = block.input?.file_path
                 if (filePath) {
-                  showFileOp(`${block.name}: ${filePath}`)
+                  showFileOp(`${block.name}: ${rel(filePath)}`)
                 }
               } else if (block.name === "Bash") {
                 const command = block.input?.command
