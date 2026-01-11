@@ -1,32 +1,57 @@
 #!/usr/bin/env npx tsx
 
-import { execSync } from "child_process"
+import { spawn } from "child_process"
 
 const iterations = parseInt(process.argv[2], 10) || 100
 
-for (let i = 1; i <= iterations; i++) {
+const runIteration = (i: number) => {
+  if (i > iterations) {
+    console.log(`Completed ${iterations} iterations.`)
+    return
+  }
+
   console.log(`Iteration ${i}`)
   console.log("------------------------------")
 
-  try {
-    const result = execSync(
-      `claude --permission-mode bypassPermissions -p @ralph/prompt.md @plans/todo.md @plans/progress.md`,
-      {
-        encoding: "utf-8",
-        stdio: ["inherit", "pipe", "inherit"],
-      },
-    )
+  const child = spawn(
+    "claude",
+    [
+      "--permission-mode",
+      "bypassPermissions",
+      "-p",
+      "@ralph/prompt.md",
+      "@plans/todo.md",
+      "@plans/progress.md",
+    ],
+    { stdio: ["inherit", "pipe", "inherit"] },
+  )
 
-    console.log(result)
+  let output = ""
 
-    if (result.includes("<result>COMPLETE</result>")) {
+  child.stdout.on("data", data => {
+    const chunk = data.toString()
+    process.stdout.write(chunk)
+    output += chunk
+  })
+
+  child.on("close", code => {
+    if (code !== 0) {
+      console.error(`Claude exited with code ${code}`)
+      process.exit(1)
+    }
+
+    if (output.includes("<result>COMPLETE</result>")) {
       console.log("Todo list complete, exiting.")
       process.exit(0)
     }
-  } catch (error) {
+
+    runIteration(i + 1)
+  })
+
+  child.on("error", error => {
     console.error("Error running Claude:", error)
     process.exit(1)
-  }
+  })
 }
 
-console.log(`Completed ${iterations} iterations.`)
+runIteration(1)
