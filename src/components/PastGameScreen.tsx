@@ -10,7 +10,8 @@ import { formatDate } from "@/lib/formatDate"
 import { getPlayerMoveHistory } from "@/lib/getPlayerMoveHistory"
 import { MoveHistoryList } from "./MoveHistoryList"
 import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
-import { IconArrowLeft, IconHome, IconTrash, IconTrophyFilled } from "@tabler/icons-react"
+import { IconHome, IconTrash, IconTrophyFilled } from "@tabler/icons-react"
+import { BackButton } from "./BackButton"
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { game, isLoading, isUnavailable } = useGame(gameId)
@@ -53,10 +54,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
     <div className="flex h-screen flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b p-2">
-        <Button variant="outline" size="sm" onClick={onBack}>
-          <IconArrowLeft size={16} />
-          Back
-        </Button>
+        <BackButton onClick={onBack} />
         <span className="text-sm text-gray-500">
           {formatDate(game.createdAt, { includeYear: true })}
         </span>
@@ -118,6 +116,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
                 key={index}
                 history={moveHistory}
                 onMoveClick={highlightTiles}
+                disableActions
                 className="flex-1 p-1 text-xs"
               />
             )

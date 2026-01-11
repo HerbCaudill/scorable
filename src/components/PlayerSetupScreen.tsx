@@ -4,7 +4,7 @@ import { PlayerSetup } from "./PlayerSetup"
 import { useLocalStore } from "@/lib/localStore"
 import { createEmptyBoardDoc, type GameDoc } from "@/lib/automergeTypes"
 import { PLAYER_COLORS, DEFAULT_TIME_MS } from "@/lib/types"
-import { IconArrowLeft } from "@tabler/icons-react"
+import { BackButton } from "./BackButton"
 
 export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   const repo = useRepo()
@@ -50,14 +50,9 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
     <div className="flex min-h-screen flex-col p-4">
       <div className="mx-auto w-full max-w-md">
         {/* Back button */}
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"
-        >
-          <IconArrowLeft size={16} />
-          Back
-        </button>
+        <div className="mb-4">
+          <BackButton onClick={onBack} />
+        </div>
 
         {/* Player setup form */}
         <PlayerSetup previousPlayers={previousPlayers} onStartGame={handleStartGame} />

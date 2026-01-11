@@ -2,8 +2,7 @@ import { getSortedTileEntries } from "@/lib/getSortedTileEntries"
 import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
 import { getRemainingTiles } from "@/lib/getRemainingTiles"
 import { TILE_DISTRIBUTION, TOTAL_TILES } from "@/lib/constants"
-import { Button } from "@/components/ui/button"
-import { IconArrowLeft } from "@tabler/icons-react"
+import { BackButton } from "./BackButton"
 import { Tile } from "./Tile"
 import type { Game } from "@/lib/types"
 
@@ -18,9 +17,7 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
     <div className="flex h-screen flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 border-b p-4">
-        <Button variant="ghost" size="sm" onClick={onBack} aria-label="Back">
-          <IconArrowLeft size={16} />
-        </Button>
+        <BackButton onClick={onBack} />
         <div>
           <h1 className="text-base font-semibold">Unplayed tiles</h1>
           <p className="text-xs text-neutral-500">
