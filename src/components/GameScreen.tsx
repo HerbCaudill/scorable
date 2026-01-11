@@ -474,7 +474,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
   }
 
   return (
-    <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2">
+    <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Top navigation bar */}
       <div className="shrink-0 flex items-center justify-between">
         <Button variant="ghost" size="xs" onClick={handleBack}>
