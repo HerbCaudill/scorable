@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { cx } from "class-variance-authority"
 import type { DocumentId } from "@automerge/automerge-repo"
 import { useGame } from "@/lib/useGame"
+import { darkenColor } from "@/lib/utils"
 import { getPlayerScore } from "@/lib/getPlayerScore"
 import ScrabbleBoard from "./ScrabbleBoard"
 import { Button } from "@/components/ui/button"
@@ -613,7 +614,10 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                 data-player={player.name}
                 className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
                 style={{
-                  boxShadow: isActive ? `0 0 0 3px ${player.color}` : `0 0 0 1px ${player.color}40`,
+                  boxShadow:
+                    isActive ?
+                      `0 0 0 3px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
+                    : `0 0 0 1px ${player.color}40, 0 3px 0 0 ${darkenColor(player.color)}40`,
                 }}
               >
                 {/* Player panel header */}
