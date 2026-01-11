@@ -27,10 +27,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast: "bg-white text-neutral-900 border-neutral-200 !gap-6 !p-4",
           icon: "!mr-0",
-          success: "!bg-green-50 !text-green-800 !border-green-300",
-          error: "!bg-red-50 !text-red-800 !border-red-300",
+          success: "!text-green-600",
+          error: "!text-red-600",
         },
       }}
+      duration={5000}
       {...props}
     />
   )
