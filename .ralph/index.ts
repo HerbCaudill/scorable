@@ -25,6 +25,7 @@ const runIteration = (i: number) => {
       "--output-format",
       "stream-json",
       "--include-partial-messages",
+      "--verbose",
     ],
     { stdio: ["inherit", "pipe", "inherit"] },
   )
