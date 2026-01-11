@@ -2,12 +2,7 @@
 
 import { execSync } from "child_process"
 
-const iterations = parseInt(process.argv[2], 10)
-
-if (isNaN(iterations) || iterations < 1) {
-  console.error("Usage: npx tsx scripts/ralph.ts <iterations>")
-  process.exit(1)
-}
+const iterations = parseInt(process.argv[2], 10) || 10
 
 const prompt = `@plans/todo.md @plans/progress.md
 1. Find the highest-priority feature to work on and work only on that feature.
