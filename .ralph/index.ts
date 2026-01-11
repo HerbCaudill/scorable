@@ -1,5 +1,6 @@
 #!/usr/bin/env npx tsx
 
+import chalk from "chalk"
 import { spawn } from "child_process"
 import { appendFileSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join, relative } from "path"
@@ -9,6 +10,49 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const logFile = join(__dirname, "events.log")
 const cwd = process.cwd()
 const rel = (path: string) => relative(cwd, path) || path
+const termWidth = process.stdout.columns || 80
+const textIndent = "  "
+const toolIndent = "    "
+
+// Word wrap state for streaming text
+let currentLineLength = 0
+let wordBuffer = ""
+
+const flushWord = () => {
+  if (!wordBuffer) return
+  const maxWidth = termWidth - textIndent.length
+  if (currentLineLength + wordBuffer.length > maxWidth && currentLineLength > 0) {
+    process.stdout.write("\n" + textIndent)
+    currentLineLength = 0
+  }
+  process.stdout.write(wordBuffer)
+  currentLineLength += wordBuffer.length
+  wordBuffer = ""
+}
+
+const writeWrappedText = (text: string) => {
+  for (const char of text) {
+    if (char === "\n") {
+      flushWord()
+      process.stdout.write("\n")
+      currentLineLength = 0
+    } else if (char === " " || char === "\t") {
+      flushWord()
+      if (currentLineLength > 0) {
+        process.stdout.write(" ")
+        currentLineLength++
+      }
+    } else {
+      // Start of line - add indent
+      if (currentLineLength === 0 && wordBuffer === "") {
+        process.stdout.write(textIndent)
+        currentLineLength = textIndent.length
+      }
+      wordBuffer += char
+    }
+  }
+  flushWord()
+}
 
 // Parse arguments
 const args = process.argv.slice(2)
@@ -26,8 +70,9 @@ const showFileOp = (message: string) => {
     process.stdout.write("\n")
     trailingNewlines++
   }
-  console.log(message)
+  console.log(chalk.dim(toolIndent + message))
   trailingNewlines = 1
+  currentLineLength = 0
   needsBlankLineBeforeText = true
 }
 
@@ -42,7 +87,7 @@ const processEvent = (event: Record<string, unknown>) => {
         trailingNewlines = 2
         needsBlankLineBeforeText = false
       }
-      process.stdout.write(delta.text as string)
+      writeWrappedText(delta.text as string)
       const match = (delta.text as string).match(/\n+$/)
       if (match) {
         trailingNewlines = Math.min(match[0].length, 2)
@@ -90,6 +135,7 @@ const processEvent = (event: Record<string, unknown>) => {
           } else if (block.name === "TodoWrite") {
             const todos = input?.todos as Array<{ content: string; status: string }> | undefined
             if (todos?.length) {
+              const todoIndent = toolIndent + "  "
               const summary = todos
                 .map(
                   t =>
@@ -99,8 +145,8 @@ const processEvent = (event: Record<string, unknown>) => {
                       : " "
                     }] ${t.content}`,
                 )
-                .join("\n         ")
-              showFileOp(`TodoWrite:\n         ${summary}`)
+                .join("\n" + todoIndent)
+              showFileOp(`TodoWrite:\n${todoIndent}${summary}`)
             } else {
               showFileOp(`TodoWrite`)
             }
@@ -121,8 +167,8 @@ const processEvent = (event: Record<string, unknown>) => {
 }
 
 const replayLog = (filePath: string) => {
-  console.log(`Replaying: ${filePath}`)
-  console.log("------------------------------\n")
+  console.log(chalk.cyan(`Replaying: ${filePath}`))
+  console.log(chalk.dim("─".repeat(40)) + "\n")
 
   const content = readFileSync(filePath, "utf-8")
   // Log file contains pretty-printed JSON objects separated by blank lines
@@ -141,12 +187,12 @@ const replayLog = (filePath: string) => {
 
 const runIteration = (i: number) => {
   if (i > iterations) {
-    console.log(`Completed ${iterations} iterations.`)
+    console.log(chalk.green(`Completed ${iterations} iterations.`))
     return
   }
 
-  console.log(`Iteration ${i}`)
-  console.log("------------------------------\n")
+  console.log(chalk.cyan(`Iteration ${i}`))
+  console.log(chalk.dim("─".repeat(40)) + "\n")
 
   // Clear log file at start of each iteration
   writeFileSync(logFile, "")
@@ -187,12 +233,12 @@ const runIteration = (i: number) => {
 
   child.on("close", code => {
     if (code !== 0) {
-      console.error(`Claude exited with code ${code}`)
+      console.error(chalk.red(`Claude exited with code ${code}`))
       process.exit(1)
     }
 
     if (output.includes("<result>COMPLETE</result>")) {
-      console.log("Todo list complete, exiting.")
+      console.log(chalk.green("Todo list complete, exiting."))
       process.exit(0)
     }
 
@@ -200,7 +246,7 @@ const runIteration = (i: number) => {
   })
 
   child.on("error", error => {
-    console.error("Error running Claude:", error)
+    console.error(chalk.red("Error running Claude:"), error)
     process.exit(1)
   })
 }

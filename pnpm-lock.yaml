@@ -116,6 +116,9 @@ importers:
       "@vitejs/plugin-react":
         specifier: ^5.1.1
         version: 5.1.1(vite@7.2.6(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0))
+      chalk:
+        specifier: ^5.6.2
+        version: 5.6.2
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -3135,6 +3138,13 @@ packages:
         integrity: sha512-p4Z49OGG5W/WBCPSS/dH3jQ73kD6tiMmUM+bckNK6Jr5JHMG3k9bg/BvKR8lKmtVBKmOiuVaV2ws8s9oSbwysg==,
       }
     engines: { node: ">=18" }
+
+  chalk@5.6.2:
+    resolution:
+      {
+        integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==,
+      }
+    engines: { node: ^12.17.0 || ^14.13 || >=16.0.0 }
 
   check-error@2.1.1:
     resolution:
@@ -7916,6 +7926,8 @@ snapshots:
       pathval: 2.0.1
 
   chai@6.2.1: {}
+
+  chalk@5.6.2: {}
 
   check-error@2.1.1: {}
 

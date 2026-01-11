@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] The tile in the header should be tilted like it is in the icon
 - [ ] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
 - [ ] The buttons are too round
 - [ ] The buttons' drop shadow should always be a darker version of the button color
