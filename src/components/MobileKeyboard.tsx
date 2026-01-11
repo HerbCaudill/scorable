@@ -25,7 +25,10 @@ const ROWS = [
 
 export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
   const handleKeyPress = (key: string) => (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault()
+    // Only preventDefault on mouse events (touch events are passive by default)
+    if (e.type === "mousedown") {
+      e.preventDefault()
+    }
     e.stopPropagation()
     // Prevent duplicate events - only handle touchStart OR mouseDown, not both
     if (e.type === "mousedown" && "ontouchstart" in window) return
