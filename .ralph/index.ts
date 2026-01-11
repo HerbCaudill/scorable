@@ -16,18 +16,37 @@ const toolIndent = "  "
 // Word wrap state for streaming text
 let currentLineLength = 0
 let lineBuffer = ""
-
-const formatLine = (text: string) => {
-  // Convert markdown bold to ANSI bold
-  return text.replace(/\*\*([^*]+)\*\*/g, (_, content) => chalk.bold(content))
-}
+let inBold = false
 
 const flushLine = () => {
   if (!lineBuffer) return
-  // Calculate visible length (without ** markers)
-  const visibleText = lineBuffer.replace(/\*\*([^*]+)\*\*/g, "$1")
-  process.stdout.write(formatLine(lineBuffer))
-  currentLineLength += visibleText.length
+
+  let output = ""
+  let segment = ""
+  let segmentBold = inBold
+  let i = 0
+
+  while (i < lineBuffer.length) {
+    if (lineBuffer[i] === "*" && lineBuffer[i + 1] === "*") {
+      // Flush current segment
+      if (segment) {
+        output += segmentBold ? chalk.bold(segment) : segment
+        segment = ""
+      }
+      inBold = !inBold
+      segmentBold = inBold
+      i += 2
+    } else {
+      segment += lineBuffer[i]
+      currentLineLength++
+      i++
+    }
+  }
+  // Flush remaining segment
+  if (segment) {
+    output += segmentBold ? chalk.bold(segment) : segment
+  }
+  process.stdout.write(output)
   lineBuffer = ""
 }
 
@@ -41,14 +60,15 @@ const writeWrappedText = (text: string) => {
     } else if (char === " " || char === "\t") {
       lineBuffer += char
       // Check if we need to wrap - look for last space to break at
-      const visibleLength = lineBuffer.replace(/\*\*([^*]+)\*\*/g, "$1").length
+      const visibleLength = lineBuffer.replace(/\*\*/g, "").length
       if (currentLineLength + visibleLength > termWidth) {
         // Find last space to break at
         const lastSpace = lineBuffer.lastIndexOf(" ", lineBuffer.length - 2)
         if (lastSpace > 0) {
           const beforeBreak = lineBuffer.slice(0, lastSpace)
           const afterBreak = lineBuffer.slice(lastSpace + 1)
-          process.stdout.write(formatLine(beforeBreak))
+          lineBuffer = beforeBreak
+          flushLine()
           process.stdout.write("\n")
           currentLineLength = 0
           lineBuffer = afterBreak
@@ -82,6 +102,7 @@ const showToolUse = (name: string, arg?: string) => {
   trailingNewlines = 1
   currentLineLength = 0
   lineBuffer = ""
+  inBold = false
   needsBlankLineBeforeText = true
 }
 
