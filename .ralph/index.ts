@@ -70,7 +70,7 @@ const showToolUse = (name: string, arg?: string) => {
     process.stdout.write("\n")
     trailingNewlines++
   }
-  const formatted = arg ? `${chalk.dim(name)} ${chalk.gray(arg)}` : chalk.dim(name)
+  const formatted = arg ? `${chalk.blue(name)} ${chalk.dim(arg)}` : chalk.blue(name)
   console.log(toolIndent + formatted)
   trailingNewlines = 1
   currentLineLength = 0
