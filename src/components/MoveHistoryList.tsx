@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { IconPencil, IconAlertTriangle, IconX, IconEye } from "@tabler/icons-react"
+import { useLongPress } from "@/lib/useLongPress"
 
 export type MoveAction = "correct" | "challenge" | "check"
 
@@ -93,12 +94,19 @@ const MoveHistoryEntry = ({
   // For passes (no tiles placed), don't show any actions
   const isPass = entry.tiles.length === 0
 
+  const longPressHandlers = useLongPress(() => {
+    if (!isPass) {
+      setDropdownOpen(true)
+    }
+  }, !isPass)
+
   return (
     <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild disabled>
         <div
+          {...longPressHandlers()}
           className={cn(
-            "flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200",
+            "flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200 touch-none",
             isEditing ? "bg-teal-100 text-teal-800 font-medium" : "text-neutral-600",
           )}
           onClick={() => onMoveClick(entry.tiles)}

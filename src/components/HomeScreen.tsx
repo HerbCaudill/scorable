@@ -6,9 +6,10 @@ import type { GameDoc } from "@/lib/automergeTypes"
 import { formatDate } from "@/lib/formatDate"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import { IconSparkles, IconPlayerPlay, IconTrophyFilled } from "@tabler/icons-react"
+import { SwipeToDelete } from "@/components/SwipeToDelete"
 
 export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) => {
-  const { knownGameIds } = useLocalStore()
+  const { knownGameIds, removeGameId } = useLocalStore()
 
   // Load all known game documents
   const [docs] = useDocuments<GameDoc>(knownGameIds as any)
@@ -45,22 +46,23 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
             <h2 className="text-sm font-medium text-gray-500">Active games</h2>
             <div className="flex flex-col gap-2">
               {activeGames.map(({ id, doc }) => (
-                <div
-                  key={id}
-                  onClick={() => onResumeGame(id)}
-                  className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
-                    <span className="text-xs text-gray-400">
-                      {doc.players.map(p => p.name).join(" vs ")}
-                    </span>
+                <SwipeToDelete key={id} onDelete={() => removeGameId(id)} className="rounded">
+                  <div
+                    onClick={() => onResumeGame(id)}
+                    className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
+                      <span className="text-xs text-gray-400">
+                        {doc.players.map(p => p.name).join(" vs ")}
+                      </span>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <IconPlayerPlay size={16} />
+                      Resume
+                    </Button>
                   </div>
-                  <Button variant="outline" size="sm">
-                    <IconPlayerPlay size={16} />
-                    Resume
-                  </Button>
-                </div>
+                </SwipeToDelete>
               ))}
             </div>
           </div>
@@ -75,26 +77,29 @@ export const HomeScreen = ({ onNewGame, onResumeGame, onViewPastGame }: Props) =
                 const scores = doc.players.map((_, i) => getPlayerScoreFromDoc(doc, i))
                 const maxScore = Math.max(...scores)
                 return (
-                  <div
-                    key={id}
-                    onClick={() => onViewPastGame(id)}
-                    className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
-                  >
-                    <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
-                    <div className="flex gap-4">
-                      {doc.players.map((player, playerIndex) => {
-                        const score = scores[playerIndex]
-                        const isWinner = score === maxScore
-                        return (
-                          <div key={playerIndex} className="flex items-center gap-1">
-                            <span className="text-sm">{player.name}</span>
-                            <span className="font-medium">{score}</span>
-                            {isWinner && <IconTrophyFilled size={16} className="text-amber-500" />}
-                          </div>
-                        )
-                      })}
+                  <SwipeToDelete key={id} onDelete={() => removeGameId(id)} className="rounded">
+                    <div
+                      onClick={() => onViewPastGame(id)}
+                      className="flex cursor-pointer items-center justify-between rounded border border-gray-200 bg-white p-3 hover:bg-gray-50"
+                    >
+                      <span className="text-sm text-gray-500">{formatDate(doc.createdAt)}</span>
+                      <div className="flex gap-4">
+                        {doc.players.map((player, playerIndex) => {
+                          const score = scores[playerIndex]
+                          const isWinner = score === maxScore
+                          return (
+                            <div key={playerIndex} className="flex items-center gap-1">
+                              <span className="text-sm">{player.name}</span>
+                              <span className="font-medium">{score}</span>
+                              {isWinner && (
+                                <IconTrophyFilled size={16} className="text-amber-500" />
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  </SwipeToDelete>
                 )
               })}
             </div>
