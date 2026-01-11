@@ -169,12 +169,49 @@ const ScrabbleBoard = ({
     [tiles],
   )
 
+  // Find previous position in current direction, optionally skipping existing tiles
+  // Used for backspace to allow deleting through existing tiles
+  const findPreviousPosition = useCallback(
+    (
+      fromRow: number,
+      fromCol: number,
+      direction: CursorDirection,
+      skipExisting: boolean,
+    ): Cursor | null => {
+      let row = fromRow
+      let col = fromCol
+
+      if (direction === "horizontal") {
+        col--
+        while (col >= 0) {
+          // Only skip cells with existing tiles (from `tiles` prop), not newTiles
+          if (!skipExisting || !tiles || tiles[row][col] === null) {
+            return { row, col, direction }
+          }
+          col--
+        }
+      } else {
+        row--
+        while (row >= 0) {
+          // Only skip cells with existing tiles (from `tiles` prop), not newTiles
+          if (!skipExisting || !tiles || tiles[row][col] === null) {
+            return { row, col, direction }
+          }
+          row--
+        }
+      }
+
+      return null // Off the board
+    },
+    [tiles],
+  )
+
   // Process a key press (shared by keyboard events and external onKeyPress)
   const processKey = useCallback(
     (key: string) => {
       if (!editable || !cursor) return
 
-      // Handle backspace - delete current tile and move back
+      // Handle backspace - delete current tile and move back, skipping existing tiles
       if (key === "Backspace") {
         const { row, col, direction } = cursor
 
@@ -186,17 +223,16 @@ const ScrabbleBoard = ({
             return updated
           })
         } else {
-          // Move back and delete previous tile
-          const prevRow = direction === "vertical" ? row - 1 : row
-          const prevCol = direction === "horizontal" ? col - 1 : col
+          // Find previous position, skipping existing tiles
+          const prev = findPreviousPosition(row, col, direction, true)
 
-          if (prevRow >= 0 && prevCol >= 0 && newTiles[prevRow][prevCol] !== null) {
-            setNewTiles(prev => {
-              const updated = prev.map(r => [...r])
-              updated[prevRow][prevCol] = null
+          if (prev && newTiles[prev.row][prev.col] !== null) {
+            setNewTiles(prevState => {
+              const updated = prevState.map(r => [...r])
+              updated[prev.row][prev.col] = null
               return updated
             })
-            setCursor({ row: prevRow, col: prevCol, direction })
+            setCursor(prev)
           }
         }
 
@@ -300,7 +336,17 @@ const ScrabbleBoard = ({
         return
       }
     },
-    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter, onBlankTilePlaced],
+    [
+      editable,
+      cursor,
+      tiles,
+      newTiles,
+      setNewTiles,
+      findNextPosition,
+      findPreviousPosition,
+      onEnter,
+      onBlankTilePlaced,
+    ],
   )
 
   // Store processKey in a ref so we can access the latest version without re-renders

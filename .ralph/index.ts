@@ -17,6 +17,13 @@ const toolIndent = "  "
 let currentLineLength = 0
 let lineBuffer = ""
 let inBold = false
+let inCode = false
+
+const formatSegment = (text: string, bold: boolean, code: boolean) => {
+  if (code) return chalk.cyan(text)
+  if (bold) return chalk.bold(text)
+  return text
+}
 
 const flushLine = () => {
   if (!lineBuffer) return
@@ -24,18 +31,28 @@ const flushLine = () => {
   let output = ""
   let segment = ""
   let segmentBold = inBold
+  let segmentCode = inCode
   let i = 0
 
   while (i < lineBuffer.length) {
     if (lineBuffer[i] === "*" && lineBuffer[i + 1] === "*") {
       // Flush current segment
       if (segment) {
-        output += segmentBold ? chalk.bold(segment) : segment
+        output += formatSegment(segment, segmentBold, segmentCode)
         segment = ""
       }
       inBold = !inBold
       segmentBold = inBold
       i += 2
+    } else if (lineBuffer[i] === "`") {
+      // Flush current segment
+      if (segment) {
+        output += formatSegment(segment, segmentBold, segmentCode)
+        segment = ""
+      }
+      inCode = !inCode
+      segmentCode = inCode
+      i++
     } else {
       segment += lineBuffer[i]
       currentLineLength++
@@ -44,7 +61,7 @@ const flushLine = () => {
   }
   // Flush remaining segment
   if (segment) {
-    output += segmentBold ? chalk.bold(segment) : segment
+    output += formatSegment(segment, segmentBold, segmentCode)
   }
   process.stdout.write(output)
   lineBuffer = ""
@@ -60,7 +77,7 @@ const writeWrappedText = (text: string) => {
     } else if (char === " " || char === "\t") {
       lineBuffer += char
       // Check if we need to wrap - look for last space to break at
-      const visibleLength = lineBuffer.replace(/\*\*/g, "").length
+      const visibleLength = lineBuffer.replace(/\*\*/g, "").replace(/`/g, "").length
       if (currentLineLength + visibleLength > termWidth) {
         // Find last space to break at
         const lastSpace = lineBuffer.lastIndexOf(" ", lineBuffer.length - 2)
@@ -103,6 +120,7 @@ const showToolUse = (name: string, arg?: string) => {
   currentLineLength = 0
   lineBuffer = ""
   inBold = false
+  inCode = false
   needsBlankLineBeforeText = true
 }
 
