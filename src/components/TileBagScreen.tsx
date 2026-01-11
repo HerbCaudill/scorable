@@ -22,8 +22,8 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
           <IconArrowLeft size={16} />
         </Button>
         <div>
-          <h1 className="text-lg font-semibold">Unplayed Tiles</h1>
-          <p className="text-sm text-neutral-500">
+          <h1 className="text-base font-semibold">Unplayed tiles</h1>
+          <p className="text-xs text-neutral-500">
             {remainingCount} tiles remaining · {playedCount} played
           </p>
         </div>
@@ -40,13 +40,13 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
               <div key={letter} className="flex gap-1">
                 {/* Remaining tiles */}
                 {Array.from({ length: remaining }).map((_, i) => (
-                  <div key={`remaining-${i}`} className="aspect-square w-8">
+                  <div key={`remaining-${i}`} className="aspect-square w-6">
                     <Tile letter={letter} />
                   </div>
                 ))}
                 {/* Played tiles (faded) */}
                 {Array.from({ length: played }).map((_, i) => (
-                  <div key={`played-${i}`} className="aspect-square w-8 opacity-20">
+                  <div key={`played-${i}`} className="aspect-square w-6 opacity-20">
                     <Tile letter={letter} />
                   </div>
                 ))}

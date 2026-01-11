@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
+import { cx } from "class-variance-authority"
 import type { DocumentId } from "@automerge/automerge-repo"
 import { useGame } from "@/lib/useGame"
 import { getPlayerScore } from "@/lib/getPlayerScore"
@@ -477,11 +478,13 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Top navigation bar */}
       <div className="shrink-0 flex items-center justify-between">
-        <Button variant="ghost" size="xs" onClick={handleBack}>
-          <IconArrowLeft size={14} />
-          Back
-        </Button>
-        <div className="flex gap-2">
+        {!isEditing && (
+          <Button variant="ghost" size="xs" onClick={handleBack}>
+            <IconArrowLeft size={14} />
+            Back
+          </Button>
+        )}
+        <div className={cx("flex gap-2", isEditing && "ml-auto")}>
           {isEditing ?
             <>
               <Button variant="outline" size="xs" onClick={handleCancelEdit}>
