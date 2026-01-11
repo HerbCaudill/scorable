@@ -4,6 +4,30 @@ import { spawn } from "child_process"
 
 const iterations = parseInt(process.argv[2], 10) || 100
 
+const getTerminalWidth = () => Math.max(process.stdout.columns || 80, 80)
+
+const wordWrap = (text: string, width: number): string => {
+  const lines: string[] = []
+  for (const paragraph of text.split("\n")) {
+    if (paragraph.length <= width) {
+      lines.push(paragraph)
+      continue
+    }
+    const words = paragraph.split(" ")
+    let currentLine = ""
+    for (const word of words) {
+      if (currentLine.length + word.length + 1 <= width) {
+        currentLine += (currentLine ? " " : "") + word
+      } else {
+        if (currentLine) lines.push(currentLine)
+        currentLine = word
+      }
+    }
+    if (currentLine) lines.push(currentLine)
+  }
+  return lines.join("\n")
+}
+
 const runIteration = (i: number) => {
   if (i > iterations) {
     console.log(`Completed ${iterations} iterations.`)
@@ -42,7 +66,8 @@ const runIteration = (i: number) => {
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
             if (block.type === "text") {
-              process.stdout.write(block.text + "\n\n")
+              const wrapped = wordWrap(block.text, getTerminalWidth())
+              process.stdout.write(wrapped + "\n\n")
             }
           }
         }
