@@ -106,6 +106,25 @@ const runIteration = (i: number) => {
                 if (command) {
                   showFileOp(`$ ${command}`)
                 }
+              } else if (block.name === "Grep") {
+                const pattern = block.input?.pattern
+                const path = block.input?.path
+                showFileOp(`Grep: ${pattern}${path ? ` in ${rel(path)}` : ""}`)
+              } else if (block.name === "Glob") {
+                const pattern = block.input?.pattern
+                const path = block.input?.path
+                showFileOp(`Glob: ${pattern}${path ? ` in ${rel(path)}` : ""}`)
+              } else if (block.name === "TodoWrite") {
+                showFileOp(`TodoWrite`)
+              } else if (block.name === "WebFetch") {
+                const url = block.input?.url
+                showFileOp(`WebFetch: ${url}`)
+              } else if (block.name === "WebSearch") {
+                const query = block.input?.query
+                showFileOp(`WebSearch: ${query}`)
+              } else if (block.name === "Task") {
+                const description = block.input?.description
+                showFileOp(`Task: ${description}`)
               }
             }
           }
