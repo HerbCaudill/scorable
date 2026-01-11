@@ -2,8 +2,11 @@
 
 import { spawn } from "child_process"
 import { appendFileSync, writeFileSync } from "fs"
+import { dirname, join } from "path"
+import { fileURLToPath } from "url"
 
-const logFile = ".ralph/events.log"
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const logFile = join(__dirname, "events.log")
 
 const iterations = parseInt(process.argv[2], 10) || 100
 
@@ -58,7 +61,7 @@ const runIteration = (i: number) => {
         // Show file reads
         if (event.type === "user" && event.tool_use_result?.file) {
           const file = event.tool_use_result.file
-          console.log(`\n📄 Read: ${file.filePath}`)
+          console.log(`\n\nRead: ${file.filePath}`)
         }
 
         // Show file edits
@@ -68,7 +71,7 @@ const runIteration = (i: number) => {
               if (block.name === "Edit" || block.name === "Write") {
                 const filePath = block.input?.file_path
                 if (filePath) {
-                  console.log(`\n✏️  ${block.name}: ${filePath}`)
+                  console.log(`\n\n${block.name}: ${filePath}`)
                 }
               }
             }
