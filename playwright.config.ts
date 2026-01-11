@@ -27,13 +27,6 @@ export default defineConfig({
         hasTouch: true,
       },
     },
-    {
-      name: "Chrome Desktop",
-      use: {
-        browserName: "chromium",
-        viewport: { width: 1280, height: 1280 },
-      },
-    },
   ],
   webServer: {
     command: `pnpm dev --port ${PORT}`,
