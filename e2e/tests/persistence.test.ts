@@ -30,18 +30,28 @@ test.describe("Persistence", () => {
     // Verify score
     expect(await gamePage.getPlayerScore(0)).toBe(10)
 
+    // Wait for IndexedDB to persist before reloading
+    await waitForAutomergePersistence(page)
+
     // Reload page - game should auto-resume via URL hash
     await page.reload()
 
     // Wait for game screen to be visible (Automerge reloads from IndexedDB)
     await gamePage.expectOnGameScreen()
 
+    // Wait for Automerge data to load from IndexedDB by waiting for score to appear
+    // The score being 10 means the game data has loaded (CAT at center = 10 points)
+    await expect(async () => {
+      const score = await gamePage.getPlayerScore(0)
+      expect(score).toBe(10)
+    }).toPass({ timeout: 10000 })
+
     // CAT should still be on board
     await gamePage.expectTileAt(7, 7, "C")
     await gamePage.expectTileAt(7, 8, "A")
     await gamePage.expectTileAt(7, 9, "T")
 
-    // Score should be preserved
+    // Score should be preserved (already verified above)
     expect(await gamePage.getPlayerScore(0)).toBe(10)
 
     // Should be Bob's turn

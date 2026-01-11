@@ -117,11 +117,20 @@ export async function replayGcgFromParsed(
         })
 
         if (isContiguous) {
-          // Efficient path: click first cell, set direction, type all letters
+          // Efficient path: click first cell, set direction, type letters
+          // But we need to handle blank tiles specially (they require dialog selection)
           const firstTile = newTiles[0]
           await gamePage.setCursorDirection(firstTile.row, firstTile.col, direction)
-          const letters = newTiles.map(t => (t.tile === " " ? " " : t.tile)).join("")
-          await gamePage.typeLetters(letters)
+
+          for (const tile of newTiles) {
+            if (tile.tile === " " && tile.blankLetter) {
+              // Blank tile: press space then select letter in dialog
+              await gamePage.pressKey(" ")
+              await gamePage.selectBlankLetter(tile.blankLetter)
+            } else {
+              await gamePage.typeLetters(tile.tile)
+            }
+          }
         } else {
           // Non-contiguous tiles: must click each position individually
           for (let i = 0; i < newTiles.length; i++) {
@@ -136,8 +145,10 @@ export async function replayGcgFromParsed(
             }
 
             // Type the tile letter
-            if (tile.tile === " ") {
-              await gamePage.pressKey(" ") // Blank tile
+            if (tile.tile === " " && tile.blankLetter) {
+              // Blank tile: press space then select letter in dialog
+              await gamePage.pressKey(" ")
+              await gamePage.selectBlankLetter(tile.blankLetter)
             } else {
               await gamePage.typeLetters(tile.tile)
             }
@@ -152,13 +163,8 @@ export async function replayGcgFromParsed(
         playedMoves++
       }
     } else if (move.type === "exchange" || move.type === "challenge") {
-      // Treat as pass - click on current player panel to trigger pass dialog
-      await gamePage.endTurn()
-      // Wait for and confirm the pass dialog
-      await page.waitForSelector('[role="alertdialog"]')
-      await gamePage.confirmPass()
-      // Wait for dialog to close
-      await page.waitForSelector('[role="alertdialog"]', { state: "detached" })
+      // Treat as pass - use pass() method which clicks cell first to set cursor
+      await gamePage.pass()
       playedMoves++
     }
     // Skip 'end' type moves (end-game scoring)

@@ -161,7 +161,8 @@ export class GamePage {
 
     // Confirm the pass
     await this.confirmPass()
-    await passDialog.waitFor({ state: "hidden" })
+    // Wait for dialog to be removed from DOM (not just hidden - Radix dialogs animate out)
+    await passDialog.waitFor({ state: "detached" })
 
     // Wait for player to change
     await waitForCondition(this.page, async () => {

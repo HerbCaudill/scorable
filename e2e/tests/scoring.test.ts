@@ -65,6 +65,7 @@ test.describe("Scoring", () => {
     await gamePage.clickCell(7, 7)
     await gamePage.typeLetters("C")
     await gamePage.pressKey(" ") // Blank tile
+    await gamePage.selectBlankLetter("A") // Select letter for blank tile
     await gamePage.typeLetters("T")
     await gamePage.endTurn()
 

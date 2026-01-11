@@ -86,6 +86,9 @@ test.describe("Board interaction", () => {
     await gamePage.clickCell(7, 7)
     await gamePage.pressKey(" ")
 
+    // Select a letter for the blank tile in the dialog
+    await gamePage.selectBlankLetter("A")
+
     // Blank tile should be visible (indicated by data-tile-state="new")
     await gamePage.expectNewTileAt(7, 7)
   })
