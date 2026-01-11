@@ -54,9 +54,13 @@ export const runIteration = (i: number, iterations: number) => {
     output += chunk
   })
 
-  child.on("close", code => {
+  child.on("close", (code, signal) => {
     if (code !== 0) {
-      console.error(chalk.red(`Claude exited with code ${code}`))
+      console.error(
+        chalk.red(`Claude exited with code ${code}${signal ? ` (signal: ${signal})` : ""}`),
+      )
+      console.error(chalk.yellow("Last 2000 chars of output:"))
+      console.error(chalk.dim(output.slice(-2000)))
       process.exit(1)
     }
 
