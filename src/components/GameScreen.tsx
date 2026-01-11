@@ -31,6 +31,7 @@ import {
   IconArrowBackUp,
   IconArrowForwardUp,
   IconTrash,
+  IconHandStop,
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
 import { BlankLetterDialog } from "./BlankLetterDialog"
@@ -682,6 +683,10 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                 Timer
               </Button>
             }
+            <Button variant="outline" size="xs" onClick={() => setShowPassConfirm(true)}>
+              <IconHandStop size={14} />
+              Pass
+            </Button>
             <Button
               variant="outline"
               size="xs"

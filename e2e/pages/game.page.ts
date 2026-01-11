@@ -156,13 +156,15 @@ export class GamePage {
     })
   }
 
-  /** Pass the current turn (no tiles placed) */
+  /** Pass the current turn using the explicit Pass button */
   async pass() {
     const currentPlayerIndex = await this.getCurrentPlayerIndex()
 
-    // Click on a corner cell to ensure cursor exists so keyboard events work
-    await this.clickCell(0, 0)
-    await this.pressKey("Enter")
+    // Dismiss mobile keyboard if visible by pressing Escape
+    await this.pressKey("Escape")
+
+    // Click the Pass button
+    await this.page.getByRole("button", { name: "Pass", exact: true }).click()
 
     // Wait for pass dialog
     const passDialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
@@ -232,7 +234,9 @@ export class GamePage {
 
   /** Confirm the pass dialog */
   async confirmPass() {
-    await this.page.getByRole("button", { name: "Pass" }).click()
+    // Target the Pass button inside the alert dialog specifically
+    const dialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
+    await dialog.getByRole("button", { name: "Pass" }).click()
   }
 
   /** Finish the game properly via EndGameScreen, then reload to ensure persistence */
