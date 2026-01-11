@@ -18,16 +18,14 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
       {/* Header */}
       <div className="flex items-center gap-3 border-b p-4">
         <BackButton onClick={onBack} />
-        <div>
-          <h1 className="text-base font-semibold">Unplayed tiles</h1>
-          <p className="text-xs text-neutral-500">
-            {remainingCount} tiles remaining · {playedCount} played
-          </p>
-        </div>
+        <h1 className="text-base font-semibold">Unplayed tiles</h1>
       </div>
 
       {/* Tile rows - each letter on its own row */}
       <div className="flex-1 overflow-y-auto p-4">
+        <p className="mb-3 text-xs text-neutral-500">
+          {remainingCount} tiles remaining · {playedCount} played
+        </p>
         <div className="flex flex-col gap-1">
           {sortedTiles.map(([letter, total]) => {
             const remaining = remainingTiles[letter] || 0

@@ -1,16 +1,32 @@
 ## Progress log
 
+### 2026-01-12: Moved tile counts below header on unplayed tiles screen
+
+**Problem:** On the unplayed tiles screen, the counts ("X tiles remaining · Y played") were displayed next to the header title, which was visually cramped.
+
+**Solution:** Moved the counts to be below the header and flush left with the tile content. The counts now appear at the top of the scrollable content area with bottom margin for spacing.
+
+**Files changed:**
+
+- `src/components/TileBagScreen.tsx` - Moved counts paragraph from header to content area
+
+**Tests:** All 132 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Added drop shadows to virtual keyboard keys
 
 **Problem:** Virtual keyboard keys had subtle `shadow-sm` shadows while other interactive elements (buttons, player panels) had more pronounced color-matched drop shadows, creating visual inconsistency.
 
 **Solution:** Applied consistent 2px drop shadows to all keyboard keys following the established pattern:
+
 - White letter keys and blank key: `shadow-[0_2px_0_0_var(--color-neutral-300)]`
 - Gray keys (backspace, direction toggle, escape): `shadow-[0_2px_0_0_var(--color-neutral-500)]`
 - Teal "Done" key: `shadow-[0_2px_0_0_var(--color-teal-700)]` (matching primary buttons)
 - Added `active:shadow-none active:translate-y-[2px]` for press feedback
 
 **Files changed:**
+
 - `src/components/MobileKeyboard.tsx` - Updated all key button classes
 
 **Tests:** All 132 Playwright tests and 98 unit tests pass.
