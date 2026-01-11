@@ -9,7 +9,13 @@ import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const logFile = join(__dirname, "events.log")
 const cwd = process.cwd()
-const rel = (path: string) => relative(cwd, path) || path
+const rel = (path: string) => {
+  // For temp files, just show the filename
+  if (path.includes("/var/folders/") || path.includes("/tmp/")) {
+    return path.split("/").pop() || path
+  }
+  return relative(cwd, path) || path
+}
 const termWidth = process.stdout.columns || 80
 const toolIndent = "  "
 

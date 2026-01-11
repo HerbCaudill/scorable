@@ -123,4 +123,35 @@ test.describe("Board interaction", () => {
     // S should be placed at row 8, col 8
     await gamePage.expectTileAt(8, 8, "S")
   })
+
+  test("backspace skips over existing tiles", async ({ page }) => {
+    // Player 1 places first word: CAT at center
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Player 2 places word that spans existing tiles: ERASE starting at 7,6
+    // E at 7,6, then R at 7,7 (where C already is), so R goes to 7,10, then A, S, E
+    // Actually let's place a simpler test: add tiles before and after existing word
+    // Place B at 7,6 (before CAT), then D at 7,10 (after CAT)
+    await gamePage.clickCell(7, 6)
+    await gamePage.typeLetters("B") // B at 7,6
+    // Cursor should skip C, A, T and land at 7,10
+    await gamePage.typeLetters("D") // D at 7,10
+
+    await gamePage.expectTileAt(7, 6, "B")
+    await gamePage.expectTileAt(7, 10, "D")
+
+    // Now backspace from current position (7,11)
+    // Should skip back over existing tiles (CAT) and delete D first, then B
+    await gamePage.pressKey("Backspace") // Deletes D at 7,10
+
+    const cellD = page.getByRole("gridcell", { name: "K8", exact: true })
+    await expect(cellD).not.toContainText("D")
+
+    // Now backspace again - should skip over existing tiles (CAT) and delete B
+    await gamePage.pressKey("Backspace") // Deletes B at 7,6
+
+    const cellB = page.getByRole("gridcell", { name: "G8", exact: true })
+    await expect(cellB).not.toContainText("B")
+  })
 })
