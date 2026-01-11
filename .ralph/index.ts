@@ -29,7 +29,10 @@ const flushWord = () => {
 }
 
 const writeWrappedText = (text: string) => {
-  for (const char of text) {
+  // Convert markdown bold to ANSI bold
+  const formatted = text.replace(/\*\*([^*]+)\*\*/g, (_, content) => chalk.bold(content))
+
+  for (const char of formatted) {
     if (char === "\n") {
       flushWord()
       process.stdout.write("\n")
