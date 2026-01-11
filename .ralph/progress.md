@@ -5,6 +5,7 @@
 **Problem:** The blank tile interface was janky - pressing space immediately opened a dialog with 26 letter buttons, interrupting the tile placement flow.
 
 **Solution:** Deferred letter selection until move commit:
+
 1. Press space → blank tile placed immediately (no dialog)
 2. Continue placing other tiles normally
 3. Press Enter/Done to commit → if there are blanks, dialog appears
@@ -12,6 +13,7 @@
 5. Click Done to complete the move
 
 **Files changed:**
+
 - `src/components/BlankLetterDialog.tsx` - New component for keyboard-based letter input
 - `src/components/GameScreen.tsx` - Check for unassigned blanks on commit, show dialog
 - `src/components/ScrabbleBoard.tsx` - Remove `onBlankTilePlaced` callback, place blanks immediately
