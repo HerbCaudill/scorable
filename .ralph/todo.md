@@ -9,11 +9,11 @@
 - [ ] The player panels should have drop shadows too
 - [ ] The keys on the virtual keyboard should have drop shadows too
 - [ ] On the tiles screen, the counts should be below the header and flush left
-- [ ] The choose-a-letter-for-a-wildcard interface is janky. Wait until the move is committed, then show a dialog that asks for the missing letter or letters by showing the word with blank(s) to be filled in. We don't need a button for every letter - we already have a virtual keyboard, just ask the user to type the missing letter(s). The "Done" button on the keyboard finishes committing the move.
 - [ ] On the home page add a "statistics" button: it should show how many games each player has won out of the total number of games played, and visualizations analyzing each player's distribution of move scores and game scores. Only players with more than two games should be included.
 
 ---
 
 ### Done
 
+- [x] The choose-a-letter-for-a-wildcard interface is janky. Wait until the move is committed, then show a dialog that asks for the missing letter or letters by showing the word with blank(s) to be filled in. We don't need a button for every letter - we already have a virtual keyboard, just ask the user to type the missing letter(s). The "Done" button on the keyboard finishes committing the move.
 - [x] When entering tiles, the backspace should skip over tiles that were already on the board. I should be able to backspace my entire entry, even where it spans existing tiles. Currently I can backspace up until the first existing tile we encounter, then I have to manually click on the remaining tiles to continue backspacing.
