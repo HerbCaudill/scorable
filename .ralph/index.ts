@@ -127,16 +127,7 @@ const processEvent = (event: Record<string, unknown>) => {
     }
   }
 
-  // Show file reads
-  if (event.type === "user") {
-    const toolResult = event.tool_use_result as Record<string, unknown> | undefined
-    const file = toolResult?.file as Record<string, unknown> | undefined
-    if (file?.filePath) {
-      showToolUse("Read", rel(file.filePath as string))
-    }
-  }
-
-  // Show file edits and other tool uses
+  // Show tool uses
   if (event.type === "assistant") {
     const message = event.message as Record<string, unknown> | undefined
     const content = message?.content as Array<Record<string, unknown>> | undefined
@@ -144,7 +135,12 @@ const processEvent = (event: Record<string, unknown>) => {
       for (const block of content) {
         if (block.type === "tool_use") {
           const input = block.input as Record<string, unknown> | undefined
-          if (block.name === "Edit" || block.name === "Write") {
+          if (block.name === "Read") {
+            const filePath = input?.file_path as string | undefined
+            if (filePath) {
+              showToolUse("Read", rel(filePath))
+            }
+          } else if (block.name === "Edit" || block.name === "Write") {
             const filePath = input?.file_path as string | undefined
             if (filePath) {
               showToolUse(block.name as string, rel(filePath))
