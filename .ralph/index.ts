@@ -11,8 +11,7 @@ const logFile = join(__dirname, "events.log")
 const cwd = process.cwd()
 const rel = (path: string) => relative(cwd, path) || path
 const termWidth = process.stdout.columns || 80
-const textIndent = "  "
-const toolIndent = "    "
+const toolIndent = "  "
 
 // Word wrap state for streaming text
 let currentLineLength = 0
@@ -20,9 +19,8 @@ let wordBuffer = ""
 
 const flushWord = () => {
   if (!wordBuffer) return
-  const maxWidth = termWidth - textIndent.length
-  if (currentLineLength + wordBuffer.length > maxWidth && currentLineLength > 0) {
-    process.stdout.write("\n" + textIndent)
+  if (currentLineLength + wordBuffer.length > termWidth && currentLineLength > 0) {
+    process.stdout.write("\n")
     currentLineLength = 0
   }
   process.stdout.write(wordBuffer)
@@ -43,11 +41,6 @@ const writeWrappedText = (text: string) => {
         currentLineLength++
       }
     } else {
-      // Start of line - add indent
-      if (currentLineLength === 0 && wordBuffer === "") {
-        process.stdout.write(textIndent)
-        currentLineLength = textIndent.length
-      }
       wordBuffer += char
     }
   }
@@ -136,7 +129,7 @@ const processEvent = (event: Record<string, unknown>) => {
           } else if (block.name === "TodoWrite") {
             const todos = input?.todos as Array<{ content: string; status: string }> | undefined
             if (todos?.length) {
-              const todoIndent = toolIndent + "  "
+              const todoIndent = toolIndent + "    "
               const summary = todos
                 .map(
                   t =>
