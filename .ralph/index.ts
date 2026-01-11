@@ -13,8 +13,9 @@ const rel = (path: string) => relative(cwd, path) || path
 // Parse arguments
 const args = process.argv.slice(2)
 const replayIndex = args.indexOf("--replay")
-const replayFile = replayIndex !== -1 ? args[replayIndex + 1] : null
-const iterations = replayFile ? 1 : parseInt(args.find(a => /^\d+$/.test(a)) || "1", 10) || 1
+const replayMode = replayIndex !== -1
+const replayFile = replayMode ? args[replayIndex + 1] || logFile : null
+const iterations = replayMode ? 1 : parseInt(args.find(a => /^\d+$/.test(a)) || "1", 10) || 1
 
 // Shared state for output formatting
 let trailingNewlines = 2
