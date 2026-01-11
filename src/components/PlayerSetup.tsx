@@ -25,10 +25,14 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
 
   useEffect(() => {
     if (isAddingNew && inputRef.current) {
-      // Use requestAnimationFrame to focus after Radix's focus management settles
-      requestAnimationFrame(() => {
+      // Use multiple attempts to focus - mobile browsers are finicky
+      // First try immediately
+      inputRef.current?.focus()
+      // Then try after a short delay for Radix's focus management
+      const timeoutId = setTimeout(() => {
         inputRef.current?.focus()
-      })
+      }, 50)
+      return () => clearTimeout(timeoutId)
     }
   }, [isAddingNew])
 
