@@ -1,5 +1,20 @@
 ## Progress log
 
+### 2026-01-12: Added drop shadows to player panels
+
+**Problem:** Player panels had a colored ring border but no drop shadow, making them look flat compared to the buttons which have color-matched drop shadows.
+
+**Solution:** Added drop shadows to player panels using the same 3px solid shadow pattern as buttons. Created a `darkenColor` utility function that takes a hex color and darkens it by a configurable factor (default 70%). Active player panels get a solid colored shadow, inactive panels get a transparent shadow.
+
+**Files changed:**
+- `src/lib/utils.ts` - Added `darkenColor` helper function
+- `src/lib/utils.test.ts` - Unit tests for darkenColor
+- `src/components/GameScreen.tsx` - Updated player panel boxShadow to include drop shadow
+
+**Tests:** All 138 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Reduced button border radius
 
 **Problem:** Buttons were using `rounded-full` which made them pill-shaped (fully rounded ends), looking too round.
