@@ -65,12 +65,13 @@ const iterations = replayMode ? 1 : parseInt(args.find(a => /^\d+$/.test(a)) || 
 let trailingNewlines = 2
 let needsBlankLineBeforeText = false
 
-const showFileOp = (message: string) => {
+const showToolUse = (name: string, arg?: string) => {
   while (trailingNewlines < 2) {
     process.stdout.write("\n")
     trailingNewlines++
   }
-  console.log(chalk.dim(toolIndent + message))
+  const formatted = arg ? `${chalk.dim(name)} ${chalk.gray(arg)}` : chalk.dim(name)
+  console.log(toolIndent + formatted)
   trailingNewlines = 1
   currentLineLength = 0
   needsBlankLineBeforeText = true
@@ -102,7 +103,7 @@ const processEvent = (event: Record<string, unknown>) => {
     const toolResult = event.tool_use_result as Record<string, unknown> | undefined
     const file = toolResult?.file as Record<string, unknown> | undefined
     if (file?.filePath) {
-      showFileOp(`Read: ${rel(file.filePath as string)}`)
+      showToolUse("Read", rel(file.filePath as string))
     }
   }
 
@@ -117,21 +118,21 @@ const processEvent = (event: Record<string, unknown>) => {
           if (block.name === "Edit" || block.name === "Write") {
             const filePath = input?.file_path as string | undefined
             if (filePath) {
-              showFileOp(`${block.name}: ${rel(filePath)}`)
+              showToolUse(block.name as string, rel(filePath))
             }
           } else if (block.name === "Bash") {
             const command = input?.command as string | undefined
             if (command) {
-              showFileOp(`$ ${command}`)
+              showToolUse("$", command)
             }
           } else if (block.name === "Grep") {
             const pattern = input?.pattern as string | undefined
             const path = input?.path as string | undefined
-            showFileOp(`Grep: ${pattern}${path ? ` in ${rel(path)}` : ""}`)
+            showToolUse("Grep", `${pattern}${path ? ` in ${rel(path)}` : ""}`)
           } else if (block.name === "Glob") {
             const pattern = input?.pattern as string | undefined
             const path = input?.path as string | undefined
-            showFileOp(`Glob: ${pattern}${path ? ` in ${rel(path)}` : ""}`)
+            showToolUse("Glob", `${pattern}${path ? ` in ${rel(path)}` : ""}`)
           } else if (block.name === "TodoWrite") {
             const todos = input?.todos as Array<{ content: string; status: string }> | undefined
             if (todos?.length) {
@@ -146,19 +147,19 @@ const processEvent = (event: Record<string, unknown>) => {
                     }] ${t.content}`,
                 )
                 .join("\n" + todoIndent)
-              showFileOp(`TodoWrite:\n${todoIndent}${summary}`)
+              showToolUse("TodoWrite", "\n" + todoIndent + summary)
             } else {
-              showFileOp(`TodoWrite`)
+              showToolUse("TodoWrite")
             }
           } else if (block.name === "WebFetch") {
             const url = input?.url as string | undefined
-            showFileOp(`WebFetch: ${url}`)
+            showToolUse("WebFetch", url)
           } else if (block.name === "WebSearch") {
             const query = input?.query as string | undefined
-            showFileOp(`WebSearch: ${query}`)
+            showToolUse("WebSearch", query)
           } else if (block.name === "Task") {
             const description = input?.description as string | undefined
-            showFileOp(`Task: ${description}`)
+            showToolUse("Task", description)
           }
         }
       }
