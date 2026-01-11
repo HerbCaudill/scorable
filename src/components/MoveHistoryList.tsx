@@ -106,7 +106,7 @@ const MoveHistoryEntry = ({
         <div
           {...longPressHandlers()}
           className={cn(
-            "flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200 touch-none",
+            "flex cursor-pointer justify-between gap-2 px-1 py-1.5 select-none hover:bg-neutral-100 active:bg-neutral-200 touch-pan-y",
             isEditing ? "bg-teal-100 text-teal-800 font-medium" : "text-neutral-600",
           )}
           onClick={() => onMoveClick(entry.tiles)}
