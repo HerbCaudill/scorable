@@ -4,6 +4,7 @@ import { appendFileSync, writeFileSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import { processEvent } from "./processEvent.js"
+import { flushLine, resetTextState } from "./textFormatting.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const logFile = join(__dirname, "..", "events.log")
@@ -59,6 +60,11 @@ export const runIteration = (i: number, iterations: number) => {
       console.log(chalk.green("Todo list complete, exiting."))
       process.exit(0)
     }
+
+    // Flush any remaining text in the line buffer and reset state
+    flushLine()
+    resetTextState()
+    console.log() // Ensure we start on a new line
 
     runIteration(i + 1, iterations)
   }
