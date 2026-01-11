@@ -24,15 +24,19 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const availablePlayers = previousPlayers.filter(name => !players.includes(name))
 
   useEffect(() => {
-    if (isAddingNew && inputRef.current) {
+    if (isAddingNew) {
       // Use multiple attempts to focus - mobile browsers are finicky
-      // First try immediately
-      inputRef.current?.focus()
-      // Then try after a short delay for Radix's focus management
-      const timeoutId = setTimeout(() => {
-        inputRef.current?.focus()
-      }, 50)
-      return () => clearTimeout(timeoutId)
+      // and Radix's dropdown animation needs time to complete
+      const focusInput = () => inputRef.current?.focus()
+      // Try immediately if input exists
+      focusInput()
+      // Retry after delays for Radix's focus management and animations
+      const timeoutId1 = setTimeout(focusInput, 50)
+      const timeoutId2 = setTimeout(focusInput, 150)
+      return () => {
+        clearTimeout(timeoutId1)
+        clearTimeout(timeoutId2)
+      }
     }
   }, [isAddingNew])
 

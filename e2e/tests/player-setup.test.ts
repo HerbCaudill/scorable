@@ -94,6 +94,30 @@ test.describe("Player setup", () => {
     await expect(page.getByRole("button", { name: "Start game" })).toBeEnabled()
   })
 
+  test("input is focused when no previous players exist", async ({ page }) => {
+    // With no previous players, input shows directly when opening dropdown
+    await setupPage.clickPlayerSlot(0)
+    const input = page.getByPlaceholder("Enter name...")
+    await expect(input).toBeFocused()
+  })
+
+  test("input is focused when clicking New...", async ({ page }) => {
+    const gamePage = new GamePage(page)
+
+    // Create a game to populate player records
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+    await gamePage.clickBack()
+    await homePage.clickNewGame()
+
+    // Now we have previous players, so "New..." menu item appears
+    await setupPage.clickPlayerSlot(0)
+    await page.getByRole("menuitem", { name: "New..." }).click()
+    const input = page.getByPlaceholder("Enter name...")
+    await expect(input).toBeFocused()
+  })
+
   test("selected player is removed from other dropdowns", async ({ page }) => {
     const gamePage = new GamePage(page)
 
