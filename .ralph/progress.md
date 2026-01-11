@@ -1,5 +1,22 @@
 ## Progress log
 
+### 2026-01-12: Added drop shadows to virtual keyboard keys
+
+**Problem:** Virtual keyboard keys had subtle `shadow-sm` shadows while other interactive elements (buttons, player panels) had more pronounced color-matched drop shadows, creating visual inconsistency.
+
+**Solution:** Applied consistent 2px drop shadows to all keyboard keys following the established pattern:
+- White letter keys and blank key: `shadow-[0_2px_0_0_var(--color-neutral-300)]`
+- Gray keys (backspace, direction toggle, escape): `shadow-[0_2px_0_0_var(--color-neutral-500)]`
+- Teal "Done" key: `shadow-[0_2px_0_0_var(--color-teal-700)]` (matching primary buttons)
+- Added `active:shadow-none active:translate-y-[2px]` for press feedback
+
+**Files changed:**
+- `src/components/MobileKeyboard.tsx` - Updated all key button classes
+
+**Tests:** All 132 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Added drop shadows to player panels
 
 **Problem:** Player panels had a colored ring border but no drop shadow, making them look flat compared to the buttons which have color-matched drop shadows.
@@ -7,6 +24,7 @@
 **Solution:** Added drop shadows to player panels using the same 3px solid shadow pattern as buttons. Created a `darkenColor` utility function that takes a hex color and darkens it by a configurable factor (default 70%). Active player panels get a solid colored shadow, inactive panels get a transparent shadow.
 
 **Files changed:**
+
 - `src/lib/utils.ts` - Added `darkenColor` helper function
 - `src/lib/utils.test.ts` - Unit tests for darkenColor
 - `src/components/GameScreen.tsx` - Updated player panel boxShadow to include drop shadow

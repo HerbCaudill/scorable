@@ -63,8 +63,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
               key={letter}
               type="button"
               className={cx(
-                "flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-white font-semibold shadow-sm",
-                "active:bg-neutral-300 touch-manipulation select-none",
+                "flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-white font-semibold",
+                "shadow-[0_2px_0_0_var(--color-neutral-300)] active:shadow-none active:translate-y-[2px]",
+                "touch-manipulation select-none",
               )}
               onTouchStart={handleKeyPress(letter)}
               onMouseDown={handleKeyPress(letter)}
@@ -82,8 +83,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
             key={letter}
             type="button"
             className={cx(
-              "flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-white font-semibold shadow-sm",
-              "active:bg-neutral-300 touch-manipulation select-none",
+              "flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-white font-semibold",
+              "shadow-[0_2px_0_0_var(--color-neutral-300)] active:shadow-none active:translate-y-[2px]",
+              "touch-manipulation select-none",
             )}
             onTouchStart={handleKeyPress(letter)}
             onMouseDown={handleKeyPress(letter)}
@@ -94,8 +96,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
         <button
           type="button"
           className={cx(
-            "ml-1.5 flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-neutral-300 font-semibold shadow-sm",
-            "active:bg-neutral-400 touch-manipulation select-none",
+            "ml-1.5 flex h-11 min-w-[9%] flex-1 max-w-10 items-center justify-center rounded-md bg-neutral-300 font-semibold",
+            "shadow-[0_2px_0_0_var(--color-neutral-500)] active:shadow-none active:translate-y-[2px]",
+            "touch-manipulation select-none",
           )}
           onTouchStart={handleKeyPress("Backspace")}
           onMouseDown={handleKeyPress("Backspace")}
@@ -109,8 +112,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
         <button
           type="button"
           className={cx(
-            "flex h-11 w-12 items-center justify-center rounded-md bg-neutral-300 font-semibold shadow-sm",
-            "active:bg-neutral-400 touch-manipulation select-none",
+            "flex h-11 w-12 items-center justify-center rounded-md bg-neutral-300 font-semibold",
+            "shadow-[0_2px_0_0_var(--color-neutral-500)] active:shadow-none active:translate-y-[2px]",
+            "touch-manipulation select-none",
           )}
           onTouchStart={handleKeyPress("ToggleDirection")}
           onMouseDown={handleKeyPress("ToggleDirection")}
@@ -120,8 +124,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
         <button
           type="button"
           className={cx(
-            "flex h-11 flex-1 items-center justify-center rounded-md bg-white text-sm text-neutral-500 shadow-sm",
-            "active:bg-neutral-300 touch-manipulation select-none",
+            "flex h-11 flex-1 items-center justify-center rounded-md bg-white text-sm text-neutral-500",
+            "shadow-[0_2px_0_0_var(--color-neutral-300)] active:shadow-none active:translate-y-[2px]",
+            "touch-manipulation select-none",
           )}
           onTouchStart={handleKeyPress(" ")}
           onMouseDown={handleKeyPress(" ")}
@@ -131,8 +136,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
         <button
           type="button"
           className={cx(
-            "flex h-11 w-16 items-center justify-center rounded-md bg-teal-500 font-semibold text-white shadow-sm",
-            "active:bg-teal-600 touch-manipulation select-none",
+            "flex h-11 w-16 items-center justify-center rounded-md bg-teal-500 font-semibold text-white",
+            "shadow-[0_2px_0_0_var(--color-teal-700)] active:shadow-none active:translate-y-[2px]",
+            "touch-manipulation select-none",
           )}
           onTouchStart={handleKeyPress("Enter")}
           onMouseDown={handleKeyPress("Enter")}
@@ -142,8 +148,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
         <button
           type="button"
           className={cx(
-            "flex h-11 w-12 items-center justify-center rounded-md bg-neutral-300 font-semibold shadow-sm",
-            "active:bg-neutral-400 touch-manipulation select-none",
+            "flex h-11 w-12 items-center justify-center rounded-md bg-neutral-300 font-semibold",
+            "shadow-[0_2px_0_0_var(--color-neutral-500)] active:shadow-none active:translate-y-[2px]",
+            "touch-manipulation select-none",
           )}
           onTouchStart={handleKeyPress("Escape")}
           onMouseDown={handleKeyPress("Escape")}
