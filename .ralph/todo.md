@@ -2,7 +2,6 @@
 
 - [ ] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
 - [ ] The buttons are too round
-- [ ] The buttons' drop shadow should always be a darker version of the button color
 - [ ] The drop shadows for the buttons in the footer are getting cut off
 - [ ] The player panels should have drop shadows too
 - [ ] The keys on the virtual keyboard should have drop shadows too
@@ -17,3 +16,4 @@
 - [x] When entering tiles, the backspace should skip over tiles that were already on the board. I should be able to backspace my entire entry, even where it spans existing tiles. Currently I can backspace up until the first existing tile we encounter, then I have to manually click on the remaining tiles to continue backspacing.
 - [x] Add an explicit "pass" button and use that in playwright replay tests
 - [x] Remove "Score keeper for word games" subtitle from home screen
+- [x] The buttons' drop shadow should always be a darker version of the button color
