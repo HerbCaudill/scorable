@@ -1,5 +1,17 @@
 ## Progress log
 
+### 2026-01-12: Reduced button border radius
+
+**Problem:** Buttons were using `rounded-full` which made them pill-shaped (fully rounded ends), looking too round.
+
+**Solution:** Changed buttons from `rounded-full` to `rounded-xl` for a softer but not pill-shaped appearance.
+
+**Files changed:**
+
+- `src/components/ui/Button.tsx` - Changed base class from `rounded-full` to `rounded-xl`
+
+---
+
 ### 2026-01-12: Fixed footer button drop shadows being clipped
 
 **Problem:** The action buttons in the footer (Timer, Pass, Tiles, etc.) had their drop shadows clipped/cut off because the container used `overflow-x-auto` for horizontal scrolling.

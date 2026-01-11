@@ -1,7 +1,7 @@
 ### To do
 
+- [ ] We have some flaky playwright tests dealing with persistence - we need to fix those before doing anything else.
 - [ ] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
-- [ ] The buttons are too round
 - [ ] The player panels should have drop shadows too
 - [ ] The keys on the virtual keyboard should have drop shadows too
 - [ ] On the tiles screen, the counts should be below the header and flush left
@@ -17,3 +17,4 @@
 - [x] Remove "Score keeper for word games" subtitle from home screen
 - [x] The buttons' drop shadow should always be a darker version of the button color
 - [x] The drop shadows for the buttons in the footer are getting cut off
+- [x] The buttons are too round
