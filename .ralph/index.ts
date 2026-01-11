@@ -22,6 +22,9 @@ const runIteration = (i: number) => {
       "@ralph/prompt.md",
       "@plans/todo.md",
       "@plans/progress.md",
+      "--output-format",
+      "stream-json",
+      "--include-partial-messages",
     ],
     { stdio: ["inherit", "pipe", "inherit"] },
   )
@@ -30,7 +33,22 @@ const runIteration = (i: number) => {
 
   child.stdout.on("data", data => {
     const chunk = data.toString()
-    process.stdout.write(chunk)
+    // Parse each line of NDJSON and extract text content
+    for (const line of chunk.split("\n")) {
+      if (!line.trim()) continue
+      try {
+        const event = JSON.parse(line)
+        if (event.type === "assistant" && event.message?.content) {
+          for (const block of event.message.content) {
+            if (block.type === "text") {
+              process.stdout.write(block.text)
+            }
+          }
+        }
+      } catch {
+        // Incomplete JSON line, ignore
+      }
+    }
     output += chunk
   })
 
