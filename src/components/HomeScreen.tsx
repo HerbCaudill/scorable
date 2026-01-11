@@ -57,7 +57,7 @@ export const HomeScreen = ({
         <div className="flex flex-col items-center gap-2 py-4">
           <div className="flex items-center gap-2">
             {/* Simple tile-style logo */}
-            <div className="relative flex h-10 w-10 items-center justify-center rounded bg-amber-100 font-bold text-amber-900 shadow-[0_3px_0_0_rgba(0,0,0,0.15)]">
+            <div className="relative flex h-10 w-10 -rotate-12 items-center justify-center rounded bg-amber-100 font-bold text-amber-900 shadow-[0_3px_0_0_rgba(0,0,0,0.15)]">
               <span className="text-2xl">S</span>
               <span className="absolute bottom-0.5 right-1 text-[8px]">1</span>
             </div>
