@@ -1,5 +1,11 @@
 ## Progress log
 
+### 2026-01-12: Removed subtitle from home screen
+
+Removed the "Score keeper for word games" subtitle from the home screen header area per the todo list. Simple one-line deletion from `HomeScreen.tsx`.
+
+---
+
 ### 2026-01-12: Added explicit Pass button
 
 **Problem:** To pass a turn, users had to click "Done" without placing tiles, which triggered a confirmation dialog. This was unintuitive and made Playwright tests more complex (requiring clicking a cell and pressing Enter to trigger the pass flow).

@@ -63,7 +63,6 @@ export const HomeScreen = ({
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-neutral-800">Scorable</h1>
           </div>
-          <p className="text-sm text-neutral-500">Score keeper for word games</p>
         </div>
 
         {/* Main actions */}
