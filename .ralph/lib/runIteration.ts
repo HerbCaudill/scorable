@@ -64,7 +64,7 @@ export const runIteration = (i: number, iterations: number) => {
     // Flush any remaining text in the line buffer and reset state
     flushLine()
     resetTextState()
-    console.log() // Ensure we start on a new line
+    console.log("\n") // Add blank lines before next iteration
 
     runIteration(i + 1, iterations)
   }
