@@ -1,3 +1,9 @@
+Before doing anything, check that the types check via `pnpm typecheck`, that unit tests pass via `pnpm test`, and that end-to-end tests pass via `pnpm test:pw`.
+
+If there are type errors or test failures: YOUR ONLY TASK IS TO FIX THEM.
+
+If there are no type errors or test failures:
+
 In @.ralph/todo.md, Find the highest-priority task to work on and work only on that task. This should be the one YOU decide has the highest priority - not necessarily the first one in the list.
 
 ONLY WORK ON A SINGLE TASK.
