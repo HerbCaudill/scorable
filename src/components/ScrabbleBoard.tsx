@@ -17,6 +17,7 @@ const ScrabbleBoard = ({
   onEnter,
   onKeyPress,
   onCursorChange,
+  onBlankTilePlaced,
 }: Props) => {
   const [internalNewTiles, setInternalNewTiles] = useState<BoardState>(createEmptyBoard)
   const [cursor, setCursor] = useState<Cursor | null>(null)
@@ -230,12 +231,17 @@ const ScrabbleBoard = ({
         // Don't place tile on existing tile
         if (tiles && tiles[row][col] !== null) return
 
-        // Place blank tile
-        setNewTiles(prev => {
-          const updated = prev.map(r => [...r])
-          updated[row][col] = " "
-          return updated
-        })
+        // If callback is provided, let parent handle the letter selection
+        if (onBlankTilePlaced) {
+          onBlankTilePlaced(row, col)
+        } else {
+          // Place unassigned blank tile (legacy behavior)
+          setNewTiles(prev => {
+            const updated = prev.map(r => [...r])
+            updated[row][col] = " "
+            return updated
+          })
+        }
 
         // Move to next position, skipping existing tiles
         const next = findNextPosition(row, col, direction, true)
@@ -294,7 +300,7 @@ const ScrabbleBoard = ({
         return
       }
     },
-    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter],
+    [editable, cursor, tiles, newTiles, setNewTiles, findNextPosition, onEnter, onBlankTilePlaced],
   )
 
   // Store processKey in a ref so we can access the latest version without re-renders
@@ -546,4 +552,6 @@ type Props = {
   onKeyPress?: (handler: (key: string) => void) => void
   /** Callback when cursor changes (appears/disappears or direction changes) */
   onCursorChange?: (hasCursor: boolean, direction: "horizontal" | "vertical") => void
+  /** Callback when a blank tile is placed and needs a letter selection */
+  onBlankTilePlaced?: (row: number, col: number) => void
 }

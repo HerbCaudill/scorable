@@ -19,6 +19,7 @@ import { isValidWord, getWordDefinition } from "@/lib/wordList"
 import { getWordsFromMove } from "@/lib/getWordsFromMove"
 import { Timer } from "./Timer"
 import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
+import { useLocalStore } from "@/lib/localStore"
 import { toast } from "sonner"
 import {
   IconFlag,
@@ -29,9 +30,11 @@ import {
   IconShare,
   IconArrowBackUp,
   IconArrowForwardUp,
-  IconArrowLeft,
+  IconTrash,
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
+import { BlankTileDialog } from "./BlankTileDialog"
+import { BackButton } from "./BackButton"
 
 /** Check if board has any tiles placed */
 const hasTilesPlaced = (board: BoardState): boolean =>
@@ -104,7 +107,7 @@ const moveToBoardState = (tilesPlaced: GameMove["tilesPlaced"]): BoardState => {
   return board
 }
 
-export const GameScreen = ({ gameId, onEndGame }: Props) => {
+export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
   const {
     game: currentGame,
     isLoading,
@@ -132,6 +135,17 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     warnings: TileOveruseWarning[]
     pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
+  const [blankTilePosition, setBlankTilePosition] = useState<{
+    row: number
+    col: number
+  } | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const removeGameId = useLocalStore(s => s.removeGameId)
+
+  const handleDeleteGame = () => {
+    removeGameId(gameId)
+    onEndGame()
+  }
 
   // Mobile keyboard support
   const [isMobile] = useState(() => "ontouchstart" in window || navigator.maxTouchPoints > 0)
@@ -151,6 +165,28 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     },
     [],
   )
+
+  const handleBlankTilePlaced = useCallback((row: number, col: number) => {
+    setBlankTilePosition({ row, col })
+  }, [])
+
+  const handleBlankTileSelect = useCallback(
+    (letter: string) => {
+      if (!blankTilePosition) return
+      const { row, col } = blankTilePosition
+      setNewTiles(prev => {
+        const updated = prev.map(r => [...r])
+        updated[row][col] = letter // lowercase = blank tile representing letter
+        return updated
+      })
+      setBlankTilePosition(null)
+    },
+    [blankTilePosition],
+  )
+
+  const handleBlankTileCancel = useCallback(() => {
+    setBlankTilePosition(null)
+  }, [])
 
   // Force re-render every 100ms to update timer display when running
   const [, setTick] = useState(0)
@@ -195,7 +231,9 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     )
   }
 
-  if (showTileBag) {
+  // Tiles page now uses URL routing - handled by parent App component
+  // Keep showTileBag for internal use if onShowTiles not provided
+  if (showTileBag && !onShowTiles) {
     return <UnplayedTilesScreen game={currentGame} onBack={() => setShowTileBag(false)} />
   }
 
@@ -269,7 +307,8 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 
         if (invalidWords.length > 0) {
           // Challenge successful - remove the move, challenged player passes
-          challengeMove(globalIndex, true)
+          // Pass both the valid words (for reference) and invalid words (to display)
+          challengeMove(globalIndex, true, words, invalidWords)
           const invalidList = invalidWords.map(w => w.toUpperCase()).join(", ")
           toast.error(`${invalidList} ${invalidWords.length > 1 ? "are" : "is"} not valid`)
         } else {
@@ -478,12 +517,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
     <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Top navigation bar */}
       <div className="shrink-0 flex items-center justify-between">
-        {!isEditing && (
-          <Button variant="ghost" size="xs" onClick={handleBack}>
-            <IconArrowLeft size={14} />
-            Back
-          </Button>
-        )}
+        {!isEditing && <BackButton onClick={handleBack} />}
         <div className={cx("flex gap-2", isEditing && "ml-auto")}>
           {isEditing ?
             <>
@@ -525,6 +559,7 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             onEnter={handleEndTurn}
             onKeyPress={handleKeyPressCallback}
             onCursorChange={handleCursorChangeCallback}
+            onBlankTilePlaced={handleBlankTilePlaced}
           />
         </div>
       </div>
@@ -622,7 +657,11 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
                 Timer
               </Button>
             }
-            <Button variant="outline" size="xs" onClick={() => setShowTileBag(true)}>
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={() => (onShowTiles ? onShowTiles() : setShowTileBag(true))}
+            >
               <IconCards size={14} />
               Tiles ({remainingTileCount})
             </Button>
@@ -635,6 +674,15 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
             <Button variant="outline" size="xs" onClick={handleShare}>
               <IconShare size={14} />
               Share
+            </Button>
+            <Button
+              variant="outline"
+              size="xs"
+              className="text-red-600 hover:bg-red-50"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <IconTrash size={14} />
+              Delete
             </Button>
           </div>
         </div>
@@ -677,6 +725,24 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
         onConfirm={() => setTileOveruseConfirm(null)}
       />
 
+      {/* Blank tile letter selection dialog */}
+      <BlankTileDialog
+        open={blankTilePosition !== null}
+        onSelect={handleBlankTileSelect}
+        onCancel={handleBlankTileCancel}
+      />
+
+      {/* Delete game confirmation dialog */}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Delete game?"
+        description="This game will be permanently deleted. This cannot be undone."
+        confirmText="Delete"
+        confirmClassName="bg-red-600 hover:bg-red-700"
+        onConfirm={handleDeleteGame}
+      />
+
       {/* Mobile keyboard - floating overlay */}
       {isMobile && keyHandler && (
         <MobileKeyboard onKeyPress={keyHandler} direction={cursorDirection} visible={hasCursor} />
@@ -688,4 +754,5 @@ export const GameScreen = ({ gameId, onEndGame }: Props) => {
 type Props = {
   gameId: DocumentId
   onEndGame: () => void
+  onShowTiles?: () => void
 }
