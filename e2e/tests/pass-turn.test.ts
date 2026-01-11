@@ -100,4 +100,31 @@ test.describe("Pass turn", () => {
     // Should show pass confirmation
     await gamePage.expectDialogWithTitle("Pass turn?")
   })
+
+  test("clicking Pass button shows confirmation dialog", async ({ page }) => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Bob's turn - click the explicit Pass button
+    await gamePage.pressKey("Escape") // Dismiss mobile keyboard if visible
+    await page.getByRole("button", { name: "Pass", exact: true }).click()
+
+    // Should show pass confirmation
+    await gamePage.expectDialogWithTitle("Pass turn?")
+  })
+
+  test("Pass button works for consecutive passes", async () => {
+    // Alice places first word
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Bob passes using button
+    await gamePage.pass()
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
+
+    // Alice passes using button
+    await gamePage.pass()
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+  })
 })

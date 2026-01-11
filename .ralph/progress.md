@@ -1,5 +1,21 @@
 ## Progress log
 
+### 2026-01-12: Added explicit Pass button
+
+**Problem:** To pass a turn, users had to click "Done" without placing tiles, which triggered a confirmation dialog. This was unintuitive and made Playwright tests more complex (requiring clicking a cell and pressing Enter to trigger the pass flow).
+
+**Solution:** Added an explicit "Pass" button to the action buttons bar at the bottom of the game screen (using `IconHandStop`). Clicking it directly opens the pass confirmation dialog.
+
+**Files changed:**
+
+- `src/components/GameScreen.tsx` - Added Pass button with IconHandStop icon
+- `e2e/pages/game.page.ts` - Updated `pass()` to click the Pass button instead of clicking a cell and pressing Enter; scoped `confirmPass()` to target the dialog button specifically
+- `e2e/tests/pass-turn.test.ts` - Added 2 new tests for the Pass button
+
+**Tests:** All 138 Playwright tests and 93 unit tests pass.
+
+---
+
 ### 2026-01-11: Improved blank tile letter selection UX
 
 **Problem:** The blank tile interface was janky - pressing space immediately opened a dialog with 26 letter buttons, interrupting the tile placement flow.
