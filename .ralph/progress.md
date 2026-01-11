@@ -1,5 +1,17 @@
 ## Progress log
 
+### 2026-01-12: Fixed footer button drop shadows being clipped
+
+**Problem:** The action buttons in the footer (Timer, Pass, Tiles, etc.) had their drop shadows clipped/cut off because the container used `overflow-x-auto` for horizontal scrolling.
+
+**Solution:** Added `pb-1` (4px bottom padding) to the footer container to provide space for the 3px drop shadows.
+
+**Files changed:**
+
+- `src/components/GameScreen.tsx` - Added `pb-1` to the action buttons container
+
+---
+
 ### 2026-01-12: Button drop shadows now match button colors
 
 **Problem:** Button drop shadows used generic semi-transparent black (`rgba(0,0,0,0.25)`), which looked flat and disconnected from the button colors.

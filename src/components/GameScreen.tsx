@@ -665,7 +665,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
 
       {/* Action buttons - horizontally scrolling container at bottom */}
       {!isEditing && (
-        <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 relative z-60">
+        <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 pb-1 relative z-60">
           <div className="flex gap-2 w-max">
             {timerEverUsed ?
               <Button
