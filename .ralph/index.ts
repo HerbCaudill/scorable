@@ -20,7 +20,7 @@ let inBold = false
 let inCode = false
 
 const formatSegment = (text: string, bold: boolean, code: boolean) => {
-  if (code) return chalk.cyan(text)
+  if (code) return chalk.yellow(text)
   if (bold) return chalk.bold(text)
   return text
 }
