@@ -6,9 +6,9 @@ If there are no type errors or test failures:
 
 In @.ralph/todo.md, Find the highest-priority task to work on and work only on that task. This should be the one YOU decide has the highest priority - not necessarily the first one in the list.
 
-ONLY WORK ON A SINGLE TASK.
+ONLY WORK ON A SINGLE TASK. If the task you choose is especially complex, then your task is to break it into subtasks, replace the original task in the todo file, commit the file, and end your turn.
 
-When you complete the task, before committing:
+When you complete a task, before committing:
 
 - Check that the types check via `pnpm typecheck`, that unit tests pass via `pnpm test`, and that end-to-end tests pass via `pnpm test:pw`.
 - Where applicable, make new playwright tests to validate your changes and confirm that they pass.
