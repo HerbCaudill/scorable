@@ -85,6 +85,9 @@ export const processEvent = (event: Record<string, unknown>) => {
           } else if (block.name === "Task") {
             const description = input?.description as string | undefined
             showToolUse("Task", description)
+          } else if (block.name === "Skill") {
+            const skill = input?.skill as string | undefined
+            showToolUse("Skill", skill)
           }
         }
       }
