@@ -7,30 +7,6 @@ const logFile = ".ralph/events.log"
 
 const iterations = parseInt(process.argv[2], 10) || 100
 
-const getTerminalWidth = () => Math.max(process.stdout.columns || 80, 80)
-
-const wordWrap = (text: string, width: number): string => {
-  const lines: string[] = []
-  for (const paragraph of text.split("\n")) {
-    if (paragraph.length <= width) {
-      lines.push(paragraph)
-      continue
-    }
-    const words = paragraph.split(" ")
-    let currentLine = ""
-    for (const word of words) {
-      if (currentLine.length + word.length + 1 <= width) {
-        currentLine += (currentLine ? " " : "") + word
-      } else {
-        if (currentLine) lines.push(currentLine)
-        currentLine = word
-      }
-    }
-    if (currentLine) lines.push(currentLine)
-  }
-  return lines.join("\n")
-}
-
 const runIteration = (i: number) => {
   if (i > iterations) {
     console.log(`Completed ${iterations} iterations.`)
@@ -70,11 +46,31 @@ const runIteration = (i: number) => {
       try {
         const event = JSON.parse(line)
         appendFileSync(logFile, JSON.stringify(event, null, 2) + "\n\n")
+
+        // Stream text deltas as they come in
+        if (event.type === "stream_event") {
+          const delta = event.event?.delta
+          if (delta?.type === "text_delta" && delta.text) {
+            process.stdout.write(delta.text)
+          }
+        }
+
+        // Show file reads
+        if (event.type === "user" && event.tool_use_result?.file) {
+          const file = event.tool_use_result.file
+          console.log(`\n📄 Read: ${file.filePath}`)
+        }
+
+        // Show file edits
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
-            if (block.type === "text") {
-              const wrapped = wordWrap(block.text, getTerminalWidth())
-              process.stdout.write(wrapped + "\n\n")
+            if (block.type === "tool_use") {
+              if (block.name === "Edit" || block.name === "Write") {
+                const filePath = block.input?.file_path
+                if (filePath) {
+                  console.log(`\n✏️  ${block.name}: ${filePath}`)
+                }
+              }
             }
           }
         }
