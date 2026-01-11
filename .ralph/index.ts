@@ -16,6 +16,13 @@ const rel = (path: string) => {
   }
   return relative(cwd, path) || path
 }
+
+const shortenTempPaths = (text: string) => {
+  // Replace temp file paths with just the filename
+  return text
+    .replace(/\/var\/folders\/[^\s]+/g, match => match.split("/").pop() || match)
+    .replace(/\/tmp\/[^\s]+/g, match => match.split("/").pop() || match)
+}
 const termWidth = process.stdout.columns || 80
 const toolIndent = "  "
 
@@ -172,7 +179,7 @@ const processEvent = (event: Record<string, unknown>) => {
           } else if (block.name === "Bash") {
             const command = input?.command as string | undefined
             if (command) {
-              showToolUse("$", command)
+              showToolUse("$", shortenTempPaths(command))
             }
           } else if (block.name === "Grep") {
             const pattern = input?.pattern as string | undefined
