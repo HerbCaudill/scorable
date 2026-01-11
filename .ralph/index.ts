@@ -1,6 +1,9 @@
 #!/usr/bin/env npx tsx
 
 import { spawn } from "child_process"
+import { appendFileSync, writeFileSync } from "fs"
+
+const logFile = ".ralph/events.log"
 
 const iterations = parseInt(process.argv[2], 10) || 100
 
@@ -37,6 +40,9 @@ const runIteration = (i: number) => {
   console.log(`Iteration ${i}`)
   console.log("------------------------------")
 
+  // Clear log file at start of each iteration
+  writeFileSync(logFile, "")
+
   const child = spawn(
     "claude",
     [
@@ -63,7 +69,7 @@ const runIteration = (i: number) => {
       if (!line.trim()) continue
       try {
         const event = JSON.parse(line)
-        console.log(event)
+        appendFileSync(logFile, JSON.stringify(event, null, 2) + "\n\n")
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
             if (block.type === "text") {
