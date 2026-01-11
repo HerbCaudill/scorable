@@ -42,7 +42,7 @@ const runIteration = (i: number) => {
         if (event.type === "assistant" && event.message?.content) {
           for (const block of event.message.content) {
             if (block.type === "text") {
-              process.stdout.write(block.text)
+              process.stdout.write(block.text + "\n\n")
             }
           }
         }
