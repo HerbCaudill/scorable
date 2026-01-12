@@ -10,16 +10,7 @@ test.describe("Pass turn", () => {
     gamePage = new GamePage(page)
   })
 
-  test("shows confirmation dialog when passing with no tiles", async () => {
-    // Press Enter without placing tiles
-    await gamePage.clickCell(7, 7) // Need to focus the board first
-    await gamePage.endTurn()
-
-    // Should show pass confirmation
-    await gamePage.expectDialogWithTitle("Pass turn?")
-  })
-
-  test("confirming pass advances turn", async () => {
+  test("pressing Enter with no tiles passes turn", async () => {
     // Alice places first word
     await gamePage.placeWord(7, 7, "CAT")
     await gamePage.endTurn()
@@ -27,30 +18,12 @@ test.describe("Pass turn", () => {
     // Bob's turn (index 1)
     expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 
-    // Pass turn
+    // Press Enter without placing tiles - should pass directly
     await gamePage.clickCell(0, 0) // Focus board
     await gamePage.endTurn()
-    await gamePage.confirmPass()
 
     // Should now be Alice's turn (index 0)
     expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
-  })
-
-  test("canceling pass dialog keeps same player", async () => {
-    // Alice places first word
-    await gamePage.placeWord(7, 7, "CAT")
-    await gamePage.endTurn()
-
-    // Bob's turn (index 1)
-    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
-
-    // Try to pass but cancel
-    await gamePage.clickCell(0, 0)
-    await gamePage.endTurn()
-    await gamePage.cancelDialog()
-
-    // Should still be Bob's turn
-    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
   })
 
   test("passing does not change score", async () => {
@@ -60,15 +33,13 @@ test.describe("Pass turn", () => {
 
     const scoreBefore = await gamePage.getPlayerScore(1)
 
-    // Pass turn
+    // Pass turn (no tiles placed, press Enter)
     await gamePage.clickCell(0, 0)
     await gamePage.endTurn()
-    await gamePage.confirmPass()
 
-    // After passing, check score on next turn
+    // After passing, Alice passes too
     await gamePage.clickCell(0, 0)
     await gamePage.endTurn()
-    await gamePage.confirmPass()
 
     // Bob's score should still be 0
     const scoreAfter = await gamePage.getPlayerScore(1)
@@ -83,35 +54,39 @@ test.describe("Pass turn", () => {
     // Bob passes
     await gamePage.clickCell(0, 0)
     await gamePage.endTurn()
-    await gamePage.confirmPass()
 
     // "(pass)" should appear in move history
     await expect(page.getByText("(pass)")).toBeVisible()
   })
 
-  test("clicking player panel without tiles shows pass dialog", async () => {
+  test("clicking player panel without tiles passes turn", async () => {
     // Alice places first word
     await gamePage.placeWord(7, 7, "CAT")
     await gamePage.endTurn()
 
-    // Click on the next player's panel (or current player's panel) to end turn
-    await gamePage.clickPlayerPanel(0) // Click Alice's panel (next player)
+    // Bob's turn (index 1)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 
-    // Should show pass confirmation
-    await gamePage.expectDialogWithTitle("Pass turn?")
+    // Click on Alice's panel (next player) to pass
+    await gamePage.clickPlayerPanel(0)
+
+    // Should now be Alice's turn (index 0)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
   })
 
-  test("clicking Pass button shows confirmation dialog", async ({ page }) => {
+  test("Pass button immediately passes turn", async () => {
     // Alice places first word
     await gamePage.placeWord(7, 7, "CAT")
     await gamePage.endTurn()
 
-    // Bob's turn - click the explicit Pass button
-    await gamePage.pressKey("Escape") // Dismiss mobile keyboard if visible
-    await page.getByRole("button", { name: "Pass", exact: true }).click()
+    // Bob's turn (index 1)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
 
-    // Should show pass confirmation
-    await gamePage.expectDialogWithTitle("Pass turn?")
+    // Click Pass button - should pass immediately (no dialog)
+    await gamePage.pass()
+
+    // Should now be Alice's turn (index 0)
+    expect(await gamePage.getCurrentPlayerIndex()).toBe(0)
   })
 
   test("Pass button works for consecutive passes", async () => {

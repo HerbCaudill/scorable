@@ -138,14 +138,9 @@ export class GamePage {
 
     await this.pressKey("Enter")
 
-    // Wait for player to change, error toast, or pass dialog
+    // Wait for player to change or error toast
     const errorToast = this.page.locator('[data-sonner-toast][data-type="error"]')
-    const passDialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
     await waitForCondition(this.page, async () => {
-      // Check for pass dialog
-      if (await passDialog.isVisible()) {
-        return true
-      }
       // Check for error toast
       if (await errorToast.isVisible()) {
         return true
@@ -163,17 +158,8 @@ export class GamePage {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
 
-    // Click the Pass button
+    // Click the Pass button - this immediately passes (no confirmation needed)
     await this.page.getByRole("button", { name: "Pass", exact: true }).click()
-
-    // Wait for pass dialog
-    const passDialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
-    await passDialog.waitFor({ state: "visible" })
-
-    // Confirm the pass
-    await this.confirmPass()
-    // Wait for dialog to be removed from DOM (not just hidden - Radix dialogs animate out)
-    await passDialog.waitFor({ state: "detached" })
 
     // Wait for player to change
     await waitForCondition(this.page, async () => {
@@ -230,13 +216,6 @@ export class GamePage {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
     await this.page.getByRole("button", { name: "Back" }).click()
-  }
-
-  /** Confirm the pass dialog */
-  async confirmPass() {
-    // Target the Pass button inside the alert dialog specifically
-    const dialog = this.page.getByRole("alertdialog", { name: "Pass turn?" })
-    await dialog.getByRole("button", { name: "Pass" }).click()
   }
 
   /** Finish the game properly via EndGameScreen, then reload to ensure persistence */

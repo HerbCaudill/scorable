@@ -129,7 +129,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
 
   const [newTiles, setNewTiles] = useState<BoardState>(createEmptyBoard)
   const { highlightedTiles, highlightTiles } = useHighlightedTiles()
-  const [showPassConfirm, setShowPassConfirm] = useState(false)
   const [showTileBag, setShowTileBag] = useState(false)
   const [showEndGameScreen, setShowEndGameScreen] = useState(false)
   const [editingMoveIndex, setEditingMoveIndex] = useState<number | null>(null)
@@ -469,8 +468,8 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       // Clear new tiles for next player
       setNewTiles(createEmptyBoard())
     } else {
-      // No tiles placed - show confirmation dialog
-      setShowPassConfirm(true)
+      // No tiles placed - pass directly (user can always undo)
+      handleConfirmPass()
     }
   }
 
@@ -528,7 +527,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       tilesPlaced: [],
     })
     setNewTiles(createEmptyBoard())
-    setShowPassConfirm(false)
   }
 
   const handleConfirmTileOveruse = () => {
@@ -687,7 +685,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                 Timer
               </Button>
             }
-            <Button variant="outline" size="xs" onClick={() => setShowPassConfirm(true)}>
+            <Button variant="outline" size="xs" onClick={handleConfirmPass}>
               <IconHandStop size={14} />
               Pass
             </Button>
@@ -721,16 +719,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
           </div>
         </div>
       )}
-
-      {/* Pass confirmation dialog */}
-      <ConfirmDialog
-        open={showPassConfirm}
-        onOpenChange={setShowPassConfirm}
-        title="Pass turn?"
-        description={`${players[currentPlayerIndex].name} has not placed any tiles. Are you sure you want to pass this turn?`}
-        confirmText="Pass"
-        onConfirm={handleConfirmPass}
-      />
 
       {/* Tile overuse confirmation dialog */}
       <ConfirmDialog

@@ -2,6 +2,8 @@
 
 - [ ] The names on the test games should all be Alice and Bob
 - [ ] No need for a confirmation when pressing the pass button - you can always undo
+- [ ] Buttons that are currently transparent should have a 10% white background
+- [ ] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
 
 ---
 

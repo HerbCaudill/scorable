@@ -5,6 +5,7 @@
 **Problem:** The "Create test game" button was prominent (same size as "New game") and only created a single test game. Users wanted a way to quickly populate the app with multiple test games in various states.
 
 **Solution:**
+
 1. Changed button text to "Create test games" (plural)
 2. Made button smaller and moved to bottom of screen (subtle, text-only style)
 3. Creates 10 test games from all GCG files in the e2e/games directory
@@ -12,6 +13,7 @@
 5. Remaining 8 games are finished
 
 **Implementation:**
+
 - Created `src/lib/gcgData.ts` - imports all GCG files as raw strings using Vite's `?raw` feature
 - Updated `src/lib/createTestGame.ts`:
   - Refactored `createTestGame` to accept options (gcgContent, movesToInclude, status)
@@ -23,6 +25,7 @@
   - Registers all player names from the created games
 
 **Files changed:**
+
 - `src/lib/gcgData.ts` - New file to import GCG files as raw strings
 - `src/lib/createTestGame.ts` - Refactored to support multiple games
 - `src/components/HomeScreen.tsx` - Updated button and handler
