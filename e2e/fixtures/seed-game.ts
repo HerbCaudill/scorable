@@ -61,7 +61,7 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
   // Create the game document using the app's Automerge repo
   const gameId = await page.evaluate(
-    ({ playerNames, moves, status, PLAYER_COLORS, DEFAULT_TIME_MS }) => {
+    ({ playerNames, moves, status, PLAYER_COLORS, DEFAULT_TIME_MS, navigateToGame }) => {
       const repo = window.__TEST_REPO__
       if (!repo) throw new Error("Test repo not available")
 
@@ -135,16 +135,27 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
       localStorage.setItem(storageKey, JSON.stringify(state))
 
-      // Navigate via hash change (faster than page.goto)
-      window.location.hash = documentId
+      // Navigate via hash change (faster than page.goto) - only for active games
+      if (navigateToGame) {
+        window.location.hash = documentId
+      }
 
       return documentId
     },
-    { playerNames, moves, status, PLAYER_COLORS, DEFAULT_TIME_MS },
+    {
+      playerNames,
+      moves,
+      status,
+      PLAYER_COLORS,
+      DEFAULT_TIME_MS,
+      navigateToGame: status !== "finished",
+    },
   )
 
-  // Wait for the game screen to be ready
-  await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
+  // Wait for the game screen to be ready (only for active games)
+  if (status !== "finished") {
+    await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
+  }
 
   return gameId
 }

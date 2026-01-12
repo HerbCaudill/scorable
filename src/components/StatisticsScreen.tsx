@@ -3,8 +3,12 @@ import { useDocuments } from "@automerge/automerge-repo-react-hooks"
 import { useLocalStore } from "@/lib/localStore"
 import type { GameDoc } from "@/lib/automergeTypes"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
+import { getMoveScoresFromDoc } from "@/lib/getMoveScoresFromDoc"
 import { BackButton } from "./BackButton"
 import { cx } from "@/lib/cx"
+import { Histogram } from "./Histogram"
+
+const MIN_GAMES_FOR_STATS = 3
 
 type PlayerStats = {
   name: string
@@ -15,6 +19,8 @@ type PlayerStats = {
   avgScore: number
   highScore: number
   lowScore: number
+  gameScores: number[]
+  moveScores: number[]
 }
 
 export const StatisticsScreen = ({ onBack }: Props) => {
@@ -30,7 +36,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
       {
         gamesPlayed: number
         gamesWon: number
-        scores: number[]
+        gameScores: number[]
+        moveScores: number[]
       }
     >()
 
@@ -48,34 +55,43 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         const playerName = doc.players[i].name
         const score = scores[i]
         const isWinner = score === maxScore
+        const playerMoveScores = getMoveScoresFromDoc(doc, i)
 
         const existing = playerStatsMap.get(playerName) || {
           gamesPlayed: 0,
           gamesWon: 0,
-          scores: [],
+          gameScores: [],
+          moveScores: [],
         }
 
         playerStatsMap.set(playerName, {
           gamesPlayed: existing.gamesPlayed + 1,
           gamesWon: existing.gamesWon + (isWinner ? 1 : 0),
-          scores: [...existing.scores, score],
+          gameScores: [...existing.gameScores, score],
+          moveScores: [...existing.moveScores, ...playerMoveScores],
         })
       }
     }
 
     // Convert to array with calculated stats
+    // Only include players with more than 2 games
     const playerStats: PlayerStats[] = []
     for (const [name, data] of playerStatsMap) {
-      const { gamesPlayed, gamesWon, scores } = data
+      const { gamesPlayed, gamesWon, gameScores, moveScores } = data
+      if (gamesPlayed < MIN_GAMES_FOR_STATS) continue
+
       playerStats.push({
         name,
         gamesPlayed,
         gamesWon,
         winRate: gamesPlayed > 0 ? gamesWon / gamesPlayed : 0,
-        totalScore: scores.reduce((a, b) => a + b, 0),
-        avgScore: gamesPlayed > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / gamesPlayed) : 0,
-        highScore: scores.length > 0 ? Math.max(...scores) : 0,
-        lowScore: scores.length > 0 ? Math.min(...scores) : 0,
+        totalScore: gameScores.reduce((a, b) => a + b, 0),
+        avgScore:
+          gamesPlayed > 0 ? Math.round(gameScores.reduce((a, b) => a + b, 0) / gamesPlayed) : 0,
+        highScore: gameScores.length > 0 ? Math.max(...gameScores) : 0,
+        lowScore: gameScores.length > 0 ? Math.min(...gameScores) : 0,
+        gameScores,
+        moveScores,
       })
     }
 
@@ -119,8 +135,10 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         {/* Player stats */}
         {stats.length === 0 ?
           <div className="text-center text-neutral-500">
-            <p>No finished games yet</p>
-            <p className="text-sm">Complete some games to see player statistics</p>
+            <p>No player statistics yet</p>
+            <p className="text-sm">
+              Complete at least {MIN_GAMES_FOR_STATS} games to see player statistics
+            </p>
           </div>
         : <div className="flex flex-col gap-4">
             <h2 className="text-sm font-medium text-neutral-500">Player rankings</h2>
@@ -169,24 +187,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                   </div>
                 </div>
 
-                {/* Score range bar */}
-                {player.gamesPlayed > 1 && (
-                  <div className="mt-3">
-                    <div className="mb-1 flex justify-between text-xs text-neutral-400">
-                      <span>{player.lowScore}</span>
-                      <span>{player.highScore}</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
-                      <div
-                        className="h-full bg-teal-500"
-                        style={{
-                          width: `${((player.avgScore - player.lowScore) / (player.highScore - player.lowScore || 1)) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <div className="mt-1 text-center text-xs text-neutral-500">Score range</div>
-                  </div>
-                )}
+                {/* Score distribution histograms */}
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <Histogram data={player.moveScores} label="Move scores" color="teal" />
+                  <Histogram data={player.gameScores} label="Game scores" color="amber" />
+                </div>
               </div>
             ))}
           </div>

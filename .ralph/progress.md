@@ -1,5 +1,36 @@
 ## Progress log
 
+### 2026-01-12: Added statistics page with player visualizations
+
+**Problem:** Users wanted to see player statistics including win rates and score distributions across their games.
+
+**Solution:** Enhanced the existing StatisticsScreen to:
+
+1. Filter to only show players with 3+ finished games (MIN_GAMES_FOR_STATS)
+2. Display move score distribution histograms for each player
+3. Display game score distribution histograms for each player
+
+Created reusable components:
+- `Histogram.tsx` - SVG-based histogram visualization with configurable colors (teal/amber)
+- `getMoveScoresFromDoc.ts` - Extract individual move scores for a player from a GameDoc
+
+Updated StatisticsScreen to:
+- Calculate move scores by replaying each game's board state
+- Track both gameScores and moveScores arrays per player
+- Show empty state message when no players have 3+ games
+- Display histograms side-by-side (move scores in teal, game scores in amber)
+
+**Files changed:**
+- `src/components/StatisticsScreen.tsx` - Added filtering and histogram display
+- `src/components/Histogram.tsx` - New SVG histogram component
+- `src/lib/getMoveScoresFromDoc.ts` - New helper to extract move scores
+- `e2e/fixtures/seed-game.ts` - Fixed to not wait for board on finished games
+- `e2e/tests/statistics.test.ts` - New Playwright tests for statistics page
+
+**Tests:** All 142 Playwright tests (136 passing, 6 skipped) and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Moved tile counts below header on unplayed tiles screen
 
 **Problem:** On the unplayed tiles screen, the counts ("X tiles remaining · Y played") were displayed next to the header title, which was visually cramped.
