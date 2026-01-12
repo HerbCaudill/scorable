@@ -21,6 +21,8 @@ type PlayerStats = {
   lowScore: number
   gameScores: number[]
   moveScores: number[]
+  avgMoveScore: number
+  maxMoveScore: number
 }
 
 export const StatisticsScreen = ({ onBack }: Props) => {
@@ -92,6 +94,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         lowScore: gameScores.length > 0 ? Math.min(...gameScores) : 0,
         gameScores,
         moveScores,
+        avgMoveScore:
+          moveScores.length > 0 ?
+            Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)
+          : 0,
+        maxMoveScore: moveScores.length > 0 ? Math.max(...moveScores) : 0,
       })
     }
 
@@ -181,7 +188,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 text-center text-sm">
+                <div className="grid grid-cols-3 gap-2 text-center text-sm">
                   <div>
                     <div className="font-semibold">{player.gamesPlayed}</div>
                     <div className="text-xs text-neutral-500">Games</div>
@@ -191,12 +198,27 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                     <div className="text-xs text-neutral-500">Wins</div>
                   </div>
                   <div>
+                    <div className="font-semibold">{player.highScore}</div>
+                    <div className="text-xs text-neutral-500">Best game</div>
+                  </div>
+                </div>
+
+                <div className="mt-2 grid grid-cols-4 gap-2 text-center text-sm">
+                  <div>
                     <div className="font-semibold">{player.avgScore}</div>
-                    <div className="text-xs text-neutral-500">Avg</div>
+                    <div className="text-xs text-neutral-500">Avg game</div>
                   </div>
                   <div>
-                    <div className="font-semibold">{player.highScore}</div>
-                    <div className="text-xs text-neutral-500">Best</div>
+                    <div className="font-semibold">{player.avgMoveScore}</div>
+                    <div className="text-xs text-neutral-500">Avg move</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold">{player.maxMoveScore}</div>
+                    <div className="text-xs text-neutral-500">Best move</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold">{player.moveScores.length}</div>
+                    <div className="text-xs text-neutral-500">Moves</div>
                   </div>
                 </div>
 

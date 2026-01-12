@@ -1,10 +1,32 @@
 ## Progress log
 
+### 2026-01-12: Added move score statistics to statistics screen
+
+**Problem:** The statistics screen showed game-level statistics (games played, wins, avg game score, best game score) but didn't show move-level statistics, which are useful for understanding a player's per-move performance.
+
+**Solution:** Extended the PlayerStats type and statistics calculation to include:
+
+1. `avgMoveScore` - Average score across all moves
+2. `maxMoveScore` - Best single move score
+
+Updated the UI to display these in a reorganized two-row stats grid:
+- Row 1: Games, Wins, Best game (3 columns)
+- Row 2: Avg game, Avg move, Best move, Moves (4 columns)
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Added avgMoveScore and maxMoveScore to PlayerStats type, calculation, and display
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Added x-axis to histogram component
 
 **Problem:** The histograms on the statistics screen showed min/max values at the bottom with the label in the middle, but didn't have a proper x-axis with tick marks to help users understand the scale.
 
 **Solution:** Restructured the Histogram component to show:
+
 1. Label at the top (moved from bottom)
 2. X-axis with tick marks below the bars showing min, middle (if range is large enough), and max values
 3. Used absolute positioning for tick marks with percentage-based placement
