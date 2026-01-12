@@ -8,8 +8,7 @@ import { seedNearEndGame } from "../fixtures/seed-game"
 test.describe("Game flow", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
-    await clearStorage(page)
-    await page.reload()
+    // seedNearEndGame and other test setup functions handle clearing storage
   })
 
   test("complete game from start to finish", async ({ page }) => {

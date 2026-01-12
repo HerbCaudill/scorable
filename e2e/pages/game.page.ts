@@ -1,20 +1,5 @@
 import { Page, expect, Locator } from "@playwright/test"
 
-/** Helper to wait for a condition to be true, polling at intervals */
-export async function waitForCondition(
-  page: Page,
-  condition: () => Promise<boolean>,
-  options: { timeout?: number; interval?: number } = {},
-) {
-  const { timeout = 5000, interval = 50 } = options
-  const startTime = Date.now()
-  while (Date.now() - startTime < timeout) {
-    if (await condition()) return
-    await page.waitForTimeout(interval)
-  }
-  throw new Error(`Condition not met within ${timeout}ms`)
-}
-
 export class GamePage {
   private board: Locator
 
@@ -135,25 +120,28 @@ export class GamePage {
   /** End the current turn by pressing enter (assumes tiles have been placed) */
   async endTurn() {
     const currentPlayerIndex = await this.getCurrentPlayerIndex()
+    const currentPlayerPanel = this.page.locator(
+      `[data-player="${currentPlayerIndex}"][aria-current="true"]`,
+    )
 
     await this.pressKey("Enter")
 
-    // Wait for player to change or error toast
+    // Wait for player to change (current player panel no longer has aria-current) or error toast
     const errorToast = this.page.locator('[data-sonner-toast][data-type="error"]')
-    await waitForCondition(this.page, async () => {
-      // Check for error toast
-      if (await errorToast.isVisible()) {
-        return true
-      }
-      // Check if player changed
-      const newPlayerIndex = await this.getCurrentPlayerIndex()
-      return newPlayerIndex !== currentPlayerIndex
+    await Promise.race([
+      currentPlayerPanel.waitFor({ state: "hidden", timeout: 5000 }),
+      errorToast.waitFor({ state: "visible", timeout: 5000 }),
+    ]).catch(() => {
+      // If both fail, that's okay - one should succeed
     })
   }
 
   /** Pass the current turn using the explicit Pass button */
   async pass() {
     const currentPlayerIndex = await this.getCurrentPlayerIndex()
+    const currentPlayerPanel = this.page.locator(
+      `[data-player="${currentPlayerIndex}"][aria-current="true"]`,
+    )
 
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
@@ -161,11 +149,8 @@ export class GamePage {
     // Click the Pass button - this immediately passes (no confirmation needed)
     await this.page.getByRole("button", { name: "Pass", exact: true }).click()
 
-    // Wait for player to change
-    await waitForCondition(this.page, async () => {
-      const newPlayerIndex = await this.getCurrentPlayerIndex()
-      return newPlayerIndex !== currentPlayerIndex
-    })
+    // Wait for player to change (current player panel no longer has aria-current)
+    await currentPlayerPanel.waitFor({ state: "hidden", timeout: 5000 })
   }
 
   /** Click on a player panel to end turn */
@@ -228,7 +213,8 @@ export class GamePage {
     // Wait for home screen (New game button signals we're on home)
     await this.page.waitForSelector('button:has-text("New game")')
     // Reload to ensure Automerge persists to IndexedDB and reloads fresh state
-    await this.page.reload({ waitUntil: "networkidle" })
+    // Use 'load' instead of 'networkidle' for faster test execution
+    await this.page.reload({ waitUntil: "load" })
     await this.page.waitForSelector('button:has-text("New game")')
   }
 

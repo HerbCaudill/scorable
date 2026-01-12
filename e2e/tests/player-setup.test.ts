@@ -11,7 +11,7 @@ test.describe("Player setup", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)
-    await page.reload()
+    // No reload needed - clearStorage is synchronous
     homePage = new HomePage(page)
     setupPage = new PlayerSetupPage(page)
     await homePage.clickNewGame()

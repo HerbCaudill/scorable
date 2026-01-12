@@ -8,8 +8,7 @@ import { seedNearEndGame } from "../fixtures/seed-game"
 test.describe("Persistence", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
-    await clearStorage(page)
-    await page.reload()
+    // Test setup functions handle clearing storage
   })
 
   test("game state persists across page reload", async ({ page }) => {

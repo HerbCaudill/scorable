@@ -9,7 +9,7 @@ test.describe("Home screen", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await clearStorage(page)
-    await page.reload()
+    // No reload needed - clearStorage is synchronous
   })
 
   test("shows New Game button", async ({ page }) => {
