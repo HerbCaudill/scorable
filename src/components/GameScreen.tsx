@@ -16,7 +16,7 @@ import { UnplayedTilesScreen } from "./TileBagScreen"
 import { EndGameScreen } from "./EndGameScreen"
 import { ConfirmDialog } from "./ConfirmDialog"
 import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
-import { isValidWord, getWordDefinition } from "@/lib/wordList"
+import { isValidWord, getWordDefinitionWithFallback } from "@/lib/wordList"
 import { getWordsFromMove } from "@/lib/getWordsFromMove"
 import { Timer } from "./Timer"
 import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
@@ -44,11 +44,15 @@ const hasTilesPlaced = (board: BoardState): boolean =>
 
 /** Render a word with its definition */
 const WordWithDefinition = ({ word }: { word: string }) => {
-  const entry = getWordDefinition(word)
-  const def = entry?.definitions[0]?.text ?? "no definition"
+  const result = getWordDefinitionWithFallback(word)
+  const def = result?.definitions[0]?.text ?? "no definition"
+  const displayWord = word.toUpperCase()
+  const baseWord = result?.baseWord
+
   return (
     <li>
-      <strong>{word.toUpperCase()}</strong>: {def}
+      <strong>{displayWord}</strong>
+      {baseWord && <span className="text-muted-foreground"> (form of {baseWord})</span>}: {def}
     </li>
   )
 }

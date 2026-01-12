@@ -1,10 +1,10 @@
 ### To do
 
-- [ ] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
-
 ---
 
 ### Done
+
+- [x] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
 
 - [x] The names on the test games should all be Alice and Bob
 - [x] Buttons that are currently transparent should have a 10% white background

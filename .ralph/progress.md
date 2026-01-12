@@ -1,5 +1,25 @@
 ## Progress log
 
+### 2026-01-12: Word form lookup for dictionary definitions
+
+**Problem:** When displaying check or challenge results, some words (like "AAHED", "AAHING") showed "no definition" because they are forms of a base word (like "AAH") and the dictionary entry only has a crossRef to the base word, not the full definition.
+
+**Solution:** Enhanced word lookup to follow crossRef links:
+
+1. Added `getWordDefinitionWithFallback` function that checks if a word has no definitions but has a crossRef
+2. If crossRef exists, it looks up the base word and returns its definitions
+3. Updated the `WordWithDefinition` component to display both the word form and base word (e.g., "AAHED (form of AAH): to exclaim in surprise")
+
+**Files changed:**
+
+- `src/lib/wordList.ts` - Added `getWordDefinitionWithFallback` function and `WordDefinitionResult` type
+- `src/lib/wordList.test.ts` - New unit tests for word form lookup
+- `src/components/GameScreen.tsx` - Updated to use `getWordDefinitionWithFallback` and display base word reference
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Standardized player names in test games to Alice and Bob
 
 **Problem:** Test games created from GCG files used various player names (Brian/Elise, Noah/Mike, Jerry/Noah, Kaia/Heidi Robertson, Yorra/Cresta, etc.), making it harder to follow the games and less consistent for testing.
