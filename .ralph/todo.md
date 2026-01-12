@@ -1,6 +1,4 @@
 ### To do
-
-- [ ] Use the layout-grid-add icon for the new game button
 - [ ] When generating test games, randomize whether Alice or Bob starts first
 - [ ] On the statistics screen, make the "games completed" block much less prominent
 - [ ] On the statistics screen, use the same axes for each player's histograms
@@ -11,6 +9,7 @@
 
 ### Done
 
+- [x] Use the layout-grid-add icon for the new game button
 - [x] Make a header component for consistency, and use it throughout
 - [x] Remove the word "Back" from the back button
 - [x] Add a little padding around the xs buttons

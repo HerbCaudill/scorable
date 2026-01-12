@@ -1,16 +1,32 @@
 ## Progress log
 
+### 2026-01-12: Changed New game button icon to layout-grid-add
+
+**Problem:** The New game button used a sparkles icon (IconSparkles) which didn't clearly convey "new game" semantics.
+
+**Solution:** Replaced IconSparkles with IconLayoutGridAdd, which better represents creating a new game grid.
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Changed icon import and usage
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Created reusable Header component
 
 **Problem:** Headers across different screens were implemented inconsistently with duplicated code. Each screen had its own ad-hoc header implementation with back buttons, titles, and right-side content arranged differently.
 
 **Solution:** Created a reusable `Header` component that provides:
+
 - Optional back button (via `onBack` prop)
 - Optional title (via `title` prop)
 - Optional right-side content (via `rightContent` prop)
 - Optional border-bottom (via `border` prop)
 
 Updated all screens to use the new Header component:
+
 - `StatisticsScreen.tsx` - Uses Header with title and back button
 - `TileBagScreen.tsx` (UnplayedTilesScreen) - Uses Header with title, back button, and border
 - `EndGameScreen.tsx` - Uses Header with title, back button, and border
@@ -19,6 +35,7 @@ Updated all screens to use the new Header component:
 - `GameScreen.tsx` - Uses Header with back button and undo/redo buttons on right (or cancel/save when editing)
 
 **Files changed:**
+
 - `src/components/Header.tsx` - New component
 - `src/components/StatisticsScreen.tsx` - Updated to use Header
 - `src/components/TileBagScreen.tsx` - Updated to use Header

@@ -6,7 +6,7 @@ import type { GameDoc } from "@/lib/automergeTypes"
 import { formatDate } from "@/lib/formatDate"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import {
-  IconSparkles,
+  IconLayoutGridAdd,
   IconPlayerPlay,
   IconTrophyFilled,
   IconTestPipe,
@@ -69,7 +69,7 @@ export const HomeScreen = ({
         {/* Main actions */}
         <div className="flex flex-col gap-3">
           <Button size="lg" onClick={onNewGame} className="w-full">
-            <IconSparkles size={20} />
+            <IconLayoutGridAdd size={20} />
             New game
           </Button>
         </div>
