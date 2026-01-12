@@ -113,6 +113,9 @@ test.describe("Move actions", () => {
       // Board should be empty after successful challenge
       expect(await gamePage.cellHasTile(7, 7)).toBe(false)
 
+      // Alice loses her turn (passes), so it should be Bob's turn
+      expect(await gamePage.getCurrentPlayerIndex()).toBe(1)
+
       // Undo the challenge
       await gamePage.clickUndo()
 

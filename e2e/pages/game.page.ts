@@ -418,6 +418,11 @@ export class GamePage {
   async clickUndo() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
+
+    // Wait for any toasts to be hidden (they may cover the button)
+    const toast = this.page.locator("[data-sonner-toast]")
+    await toast.waitFor({ state: "hidden", timeout: 10000 })
+
     await this.page.getByRole("button", { name: "Undo" }).click()
   }
 
