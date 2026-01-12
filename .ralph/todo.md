@@ -7,11 +7,11 @@
 - [ ] make two separate sections on each player's statistics card - move scores and game scores, each with a histogram, average, and best. Get rid of the game, win, and move counts.
 - [ ] On the histograms, show the x axis as a line (no ticks).
 - [ ] The axes should both start at zero and go up to a round number
-- [ ] Let's not include the cresta-yorra game as one of the test games, since it is the highest scoring game of all time and it throws off the statistics
 - [ ] on the statistics screen, get rid of the "Player rankings / X games" line, and get rid of the ordinal rank next to the player name
 
 ### Done
 
+- [x] Exclude cresta-yorra game from test games (it's the highest scoring game of all time and skews statistics)
 - [x] On the statistics screen, give each player's card a white background and a drop shadow.
 - [x] Get rid of border under header
 - [x] On the statistics screen, make the "games completed" block much less prominent

@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Excluded cresta-yorra game from test game generation
+
+**Problem:** The cresta-yorra-2006.gcg file (the highest scoring Scrabble game of all time with scores of 830 to 490) was included in the test game generation, which skewed the statistics on the statistics screen with unrealistic outlier values.
+
+**Solution:** Removed the cresta-yorra-2006 import and entry from `gcgData.ts`. The file is still retained in the `e2e/games/` directory and used by the score verification tests (which have their own hardcoded list of GCG files), but it's no longer included when creating test games via the "Create test games" button.
+
+**Files changed:**
+
+- `src/lib/gcgData.ts` - Removed cresta-yorra-2006 import and array entry
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added white background and drop shadow to statistics player cards
 
 **Problem:** Player cards on the statistics screen used a plain border (`border`) without a background color, making them look flat compared to other elements in the app that use white backgrounds with drop shadows.
