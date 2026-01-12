@@ -3,9 +3,8 @@ import { IconArrowLeft } from "@tabler/icons-react"
 
 export const BackButton = ({ onClick }: Props) => {
   return (
-    <Button variant="ghost" size="xs" onClick={onClick}>
+    <Button variant="ghost" size="xs" onClick={onClick} aria-label="Back">
       <IconArrowLeft size={14} />
-      Back
     </Button>
   )
 }

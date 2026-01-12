@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-12: Removed "Back" text from back button
+
+**Problem:** The back button had both an arrow icon and the word "Back", which was redundant and took up more space than necessary.
+
+**Solution:** Removed the "Back" text, leaving just the left arrow icon. Added `aria-label="Back"` to maintain accessibility for screen readers and to keep Playwright tests working (they find buttons by accessible name).
+
+**Files changed:**
+
+- `src/components/BackButton.tsx` - Removed text, added aria-label
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Increased padding on xs buttons
 
 **Problem:** XS-sized buttons had minimal horizontal padding (8px/6px with icons), making them feel cramped and inconsistent with the rest of the UI.

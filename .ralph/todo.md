@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] Remove the word "Back" from the back button
 - [ ] Make a header component for consistency. It should have a
 - [ ] Use the layout-grid-add icon for the new game button
 - [ ] When generating test games, randomize whether Alice or Bob starts first
@@ -13,6 +12,7 @@
 
 ### Done
 
+- [x] Remove the word "Back" from the back button
 - [x] Add a little padding around the xs buttons
 - [x] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
 - [x] The names on the test games should all be Alice and Bob
