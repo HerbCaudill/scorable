@@ -1,14 +1,22 @@
 ### To do
 
----
+- [ ] get rid of border under header
+- [ ] display past games using the same components as current games: use the same player panels. use the same footer and put the delete button there. the only differences should be that you can't change anything, and it shows who won.
+- [ ] on the statistics screen, give each player's card a white background and a drop shadow.
+- [ ] make the histograms a little more granular
+- [ ] show histogram values when hovering over bars
+- [ ] the labels on the histogram axes are bumping into each other
+- [ ] make two separate sections on each player's statistics card - move scores and game scores, each with a histogram, average, and best. Get rid of the game, win, and move counts.
+- [ ] On the histograms, show the x axis as a line (no ticks).
+- [ ] The axes should both start at zero and go up to a round number
+- [ ] Let's not include the cresta-yorra game as one of the test games, since it is the highest scoring game of all time and it throws off the statistics
+- [ ] on the statistics screen, get rid of the "Player rankings / X games" line, and get rid of the ordinal rank next to the player name
 
 ### Done
 
 - [x] On the statistics screen, make the "games completed" block much less prominent
-
 - [x] When generating test games, randomize whether Alice or Bob starts first
 - [x] On the statistics screen, show average and maximum move scores in addition to game scores
-- [x] On the statistics screen, show the x axis
 - [x] On the statistics screen, use the same axes for each player's histograms
 - [x] Use the layout-grid-add icon for the new game button
 - [x] Make a header component for consistency, and use it throughout
