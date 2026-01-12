@@ -45,7 +45,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@herbcaudill/ralph": "file:../ralph",
+    "@herbcaudill/ralph": "link:../ralph",
     "@automerge/automerge-repo-storage-nodefs": "^2.5.1",
     "@playwright/test": "^1.57.0",
     "@storybook/react": "^10.1.4",
