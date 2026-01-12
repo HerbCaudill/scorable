@@ -8,6 +8,8 @@ In @.ralph/todo.md, Find the highest-priority task to work on and work only on t
 
 ONLY WORK ON A SINGLE TASK. If the task you choose is especially complex, then your task is to break it into subtasks, replace the original task in the todo file, commit the file, and end your turn.
 
+Use worktrees to avoid interfering with other agents working concurrently on this device.
+
 When you complete a task, before committing:
 
 - Check that the types check via `pnpm typecheck`, that unit tests pass via `pnpm test`, and that end-to-end tests pass via `pnpm test:pw`.
