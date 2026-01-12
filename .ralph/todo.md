@@ -1,12 +1,12 @@
 ### To do
 
-- [ ] When generating test games, randomize whether Alice or Bob starts first
 - [ ] On the statistics screen, make the "games completed" block much less prominent
 
 ---
 
 ### Done
 
+- [x] When generating test games, randomize whether Alice or Bob starts first
 - [x] On the statistics screen, show average and maximum move scores in addition to game scores
 - [x] On the statistics screen, show the x axis
 - [x] On the statistics screen, use the same axes for each player's histograms

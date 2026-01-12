@@ -7,8 +7,9 @@ import { gcgFiles } from "./gcgData"
 
 /**
  * Convert a GCG game to game moves.
+ * @param swapPlayers - If true, swap player indices (player1 becomes index 1, player2 becomes index 0)
  */
-const convertGcgToMoves = (gcg: GcgGame): GameMoveDoc[] => {
+const convertGcgToMoves = (gcg: GcgGame, swapPlayers: boolean = false): GameMoveDoc[] => {
   // Build set of move indices that were challenged off
   const challengedOffIndices = new Set<number>()
   for (let i = 0; i < gcg.moves.length - 1; i++) {
@@ -31,7 +32,8 @@ const convertGcgToMoves = (gcg: GcgGame): GameMoveDoc[] => {
     if (move.type !== "play" || challengedOffIndices.has(i)) continue
 
     const playMove = move as GcgPlayMove
-    const playerIndex = move.player === gcg.player1.nickname ? 0 : 1
+    const baseIndex = move.player === gcg.player1.nickname ? 0 : 1
+    const playerIndex = swapPlayers ? 1 - baseIndex : baseIndex
 
     const tilesPlaced: Array<{ row: number; col: number; tile: string }> = []
 
@@ -69,6 +71,8 @@ type CreateGameOptions = {
   movesToInclude?: number
   /** Game status - defaults to 'finished' */
   status?: GameStatus
+  /** If true, swap player order so player2 plays first */
+  swapPlayers?: boolean
 }
 
 /**
@@ -76,9 +80,9 @@ type CreateGameOptions = {
  * Returns the document ID of the created game.
  */
 export const createTestGame = (repo: Repo, options: CreateGameOptions): DocumentId => {
-  const { gcgContent, movesToInclude, status = "finished" } = options
+  const { gcgContent, movesToInclude, status = "finished", swapPlayers = false } = options
   const gcg = parseGcg(gcgContent)
-  let moves = convertGcgToMoves(gcg)
+  let moves = convertGcgToMoves(gcg, swapPlayers)
 
   // Limit moves if specified
   if (movesToInclude !== undefined && movesToInclude < moves.length) {
@@ -96,11 +100,15 @@ export const createTestGame = (repo: Repo, options: CreateGameOptions): Document
   // Calculate current player (next player after last move)
   const currentPlayerIndex = moves.length > 0 ? (moves[moves.length - 1].playerIndex + 1) % 2 : 0
 
+  // Determine player order based on swapPlayers
+  const [firstPlayer, secondPlayer] =
+    swapPlayers ? [gcg.player2, gcg.player1] : [gcg.player1, gcg.player2]
+
   const handle = repo.create<GameDoc>()
   handle.change(d => {
     d.players = [
-      { name: gcg.player1.name, timeRemainingMs: DEFAULT_TIME_MS, color: PLAYER_COLORS[0] },
-      { name: gcg.player2.name, timeRemainingMs: DEFAULT_TIME_MS, color: PLAYER_COLORS[1] },
+      { name: firstPlayer.name, timeRemainingMs: DEFAULT_TIME_MS, color: PLAYER_COLORS[0] },
+      { name: secondPlayer.name, timeRemainingMs: DEFAULT_TIME_MS, color: PLAYER_COLORS[1] },
     ]
     d.currentPlayerIndex = currentPlayerIndex
     d.board = board
@@ -124,6 +132,7 @@ type TestGameInfo = {
  * - Most games are created as finished
  * - Two games are created as in-progress
  * - One of the in-progress games has all moves except the last
+ * - Randomly determines which player starts first for each game
  */
 export const createTestGames = (repo: Repo): TestGameInfo[] => {
   const games: TestGameInfo[] = []
@@ -131,7 +140,13 @@ export const createTestGames = (repo: Repo): TestGameInfo[] => {
   gcgFiles.forEach((file, index) => {
     const gcg = parseGcg(file.content)
     const allMoves = convertGcgToMoves(gcg)
-    const playerNames: [string, string] = [gcg.player1.name, gcg.player2.name]
+
+    // Randomly determine if players should be swapped
+    const swapPlayers = Math.random() < 0.5
+
+    // Player names in the order they appear in the game
+    const playerNames: [string, string] =
+      swapPlayers ? [gcg.player2.name, gcg.player1.name] : [gcg.player1.name, gcg.player2.name]
 
     let options: CreateGameOptions
 
@@ -141,6 +156,7 @@ export const createTestGames = (repo: Repo): TestGameInfo[] => {
         gcgContent: file.content,
         movesToInclude: Math.max(1, allMoves.length - 1),
         status: "playing",
+        swapPlayers,
       }
     } else if (index === 1) {
       // Second game: in-progress, mid-game (half the moves)
@@ -148,12 +164,14 @@ export const createTestGames = (repo: Repo): TestGameInfo[] => {
         gcgContent: file.content,
         movesToInclude: Math.max(1, Math.floor(allMoves.length / 2)),
         status: "playing",
+        swapPlayers,
       }
     } else {
       // All other games: finished
       options = {
         gcgContent: file.content,
         status: "finished",
+        swapPlayers,
       }
     }
 

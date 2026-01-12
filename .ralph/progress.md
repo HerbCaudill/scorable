@@ -1,5 +1,23 @@
 ## Progress log
 
+### 2026-01-12: Randomized starting player in test game generation
+
+**Problem:** Test games always had Alice (player1 in GCG files) playing first. This made the test games less varied and didn't test the scenario where Bob starts first.
+
+**Solution:** Added a `swapPlayers` option to the test game creation functions:
+
+1. `convertGcgToMoves` now accepts a `swapPlayers` parameter that swaps player indices
+2. `createTestGame` now accepts a `swapPlayers` option and also swaps the player order in the game document
+3. `createTestGames` randomly sets `swapPlayers` for each game using `Math.random() < 0.5`
+
+**Files changed:**
+
+- `src/lib/createTestGame.ts` - Added swapPlayers parameter and random selection
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Added move score statistics to statistics screen
 
 **Problem:** The statistics screen showed game-level statistics (games played, wins, avg game score, best game score) but didn't show move-level statistics, which are useful for understanding a player's per-move performance.
@@ -10,6 +28,7 @@
 2. `maxMoveScore` - Best single move score
 
 Updated the UI to display these in a reorganized two-row stats grid:
+
 - Row 1: Games, Wins, Best game (3 columns)
 - Row 2: Avg game, Avg move, Best move, Moves (4 columns)
 
