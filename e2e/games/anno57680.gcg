@@ -1,54 +1,54 @@
 #character-encoding UTF-8
-#player1 Caleb_Pittman Caleb Pittman
-#player2 Anita_Rackham Anita Rackham
->Caleb_Pittman: ACDEIRT 8D CREDIT +24 24
+#player1 Alice Alice
+#player2 Bob Bob
+>Alice: ACDEIRT 8D CREDIT +24 24
 #note Fine. Points > leave
->Anita_Rackham: HNU 7H HUN +15 15
->Caleb_Pittman: AILNQST K5 QAT +31 55
+>Bob: HNU 7H HUN +15 15
+>Alice: AILNQST K5 QAT +31 55
 #note Slam dunk
->Anita_Rackham: ARV 6G VAR +15 30
->Caleb_Pittman: ILNSV L4 VIN +25 80
+>Bob: ARV 6G VAR +15 30
+>Alice: ILNSV L4 VIN +25 80
 #note Forgot to track tiles here. This is probably pretty good, though
->Anita_Rackham: BLT F7 B.LT +8 38
->Caleb_Pittman: AEGLNOS D8 .ONGEALS +74 154
+>Bob: BLT F7 B.LT +8 38
+>Alice: AEGLNOS D8 .ONGEALS +74 154
 #note Saw both bingos here. This is worth the sacrifice, and I'm not super scared of putting an S out, with the consonants she's likely to have.
->Anita_Rackham: IPZ 15A ZIP. +45 83
->Caleb_Pittman: AAIMMNP C13 MA. +24 178
+>Bob: IPZ 15A ZIP. +45 83
+>Alice: AAIMMNP C13 MA. +24 178
 #note Fine
->Anita_Rackham: ESX M5 SEX +33 116
->Caleb_Pittman: ABGIMNP 14B B..ING +30 208
+>Bob: ESX M5 SEX +33 116
+>Alice: ABGIMNP 14B B..ING +30 208
 #note Perfectly fine.
->Anita_Rackham: DOT 8M TOD +23 139
->Caleb_Pittman: AAGIMPR 15G IMP +24 232
+>Bob: DOT 8M TOD +23 139
+>Alice: AAGIMPR 15G IMP +24 232
 #note Missed PARA(D)IGM
->Anita_Rackham: LOO I12 LOO. +7 146
->Caleb_Pittman: AAEGRRS 12H G.ARER +18 250
+>Bob: LOO I12 LOO. +7 146
+>Alice: AAEGRRS 12H G.ARER +18 250
 #note This is not a word. I strongly considered a play through the D. Also I missed REA(L)GARS.
->Anita_Rackham: ?AENRSU O8 .ANSEURs +77 223
->Caleb_Pittman: AEEJSUY K10 JU.Y +28 278
+>Bob: ?AENRSU O8 .ANSEURs +77 223
+>Alice: AEEJSUY K10 JU.Y +28 278
 #note Yep
->Anita_Rackham: ORWY M10 WO.RY +22 245
->Caleb_Pittman: ACDEESU L9 CAD. +24 302
+>Bob: ORWY M10 WO.RY +22 245
+>Alice: ACDEESU L9 CAD. +24 302
 #note Too stylish
->Anita_Rackham: AE N14 AE +17 262
+>Bob: AE N14 AE +17 262
 #note Anita played what I should have played last turn
->Caleb_Pittman: EEFIKSU J14 KI +40 342
+>Alice: EEFIKSU J14 KI +40 342
 #note By a mile.
->Anita_Rackham: HO E11 OH +21 283
->Caleb_Pittman: EEEFISU -EEFIU +0 342
+>Bob: HO E11 OH +21 283
+>Alice: EEEFISU -EEFIU +0 342
 #note Just keeping an S is the play here.
->Anita_Rackham: EET C9 TEE +13 296
->Caleb_Pittman: EEFIOSW 10B F.. +14 356
+>Bob: EET C9 TEE +13 296
+>Alice: EEFIOSW 10B F.. +14 356
 #note Sim hates this play
->Anita_Rackham: F N8 .F +10 306
->Caleb_Pittman: EEEIOSW 6K ...W +15 371
+>Bob: F N8 .F +10 306
+>Alice: EEEIOSW 6K ...W +15 371
 #note I should play off tiles in the middle
->Anita_Rackham: LU G4 LU. +6 312
->Caleb_Pittman: EEEIOOS 4F O.EO +5 376
+>Bob: LU G4 LU. +6 312
+>Alice: EEEIOOS 4F O.EO +5 376
 #note I have to do something like this. She'll always have a bingo through the L, and I wanted to block any -AR words in the E column (though none existed)
->Anita_Rackham: ?ADEINT 3A DETAIN +16 328
->Caleb_Pittman: EEIIS A1 EI.ES +21 397
+>Bob: ?ADEINT 3A DETAIN +16 328
+>Alice: EEIIS A1 EI.ES +21 397
 #note This is a phony.
->Anita_Rackham: ? F7 ....s +10 338
->Anita_Rackham:  (I) +2 340
+>Bob: ? F7 ....s +10 338
+>Bob:  (I) +2 340
 #note I've gotta cool it with the phonies

@@ -1,5 +1,28 @@
 ## Progress log
 
+### 2026-01-12: Standardized player names in test games to Alice and Bob
+
+**Problem:** Test games created from GCG files used various player names (Brian/Elise, Noah/Mike, Jerry/Noah, Kaia/Heidi Robertson, Yorra/Cresta, etc.), making it harder to follow the games and less consistent for testing.
+
+**Solution:** Updated all GCG files to use "Alice" for player1 and "Bob" for player2. This standardization makes test games more predictable and easier to follow.
+
+**Files changed:**
+
+- `e2e/games/anno57595.gcg` - Changed Brian/Elise to Alice/Bob
+- `e2e/games/anno57629.gcg` - Changed Noah/Mike to Alice/Bob
+- `e2e/games/anno57680.gcg` - Changed Caleb Pittman/Anita Rackham to Alice/Bob
+- `e2e/games/anno57691.gcg` - Changed Jerry/Noah to Alice/Bob
+- `e2e/games/anno57697.gcg` - Changed Noah/Keith to Alice/Bob
+- `e2e/games/anno57701.gcg` - Changed Noah/Jason to Alice/Bob
+- `e2e/games/anno57721.gcg` - Changed Jackson Smylie/Steve Bush to Alice/Bob
+- `e2e/games/anno57741.gcg` - Changed Kaia/Heidi Robertson to Alice/Bob
+- `e2e/games/cresta-yorra-2006.gcg` - Changed Wayne Yorra/Michael Cresta to Alice/Bob
+- `e2e/games/near-end-game.gcg` - Already had Alice/Bob (no change)
+
+**Tests:** All 140 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Added 10% white background to transparent buttons
 
 **Problem:** Ghost variant buttons (used for Back, Undo, and Redo buttons) were completely transparent with no background, which could make them hard to see against various backgrounds.

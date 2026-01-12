@@ -1,35 +1,35 @@
 #character-encoding UTF-8
-#player1 Jerry Jerry
-#player2 Noah Noah
->Jerry: AKO 8F OKA +14 14
->Noah: DFIJRTY F6 FJ.RD +28 28
+#player1 Alice Alice
+#player2 Bob Bob
+>Alice: AKO 8F OKA +14 14
+>Bob: DFIJRTY F6 FJ.RD +28 28
 #note Jerry told me he played this word in the previous game. 9F FID sims close behind this.
->Jerry: AEGP E3 GAPE +19 33
->Noah: HIIIOTY 10B HYOI. +20 48
+>Alice: AEGP E3 GAPE +19 33
+>Bob: HIIIOTY 10B HYOI. +20 48
 #note Missed TORII, which looks better. 
->Jerry: AFO D2 OAF +25 58
->Noah: IIIMSTT 9D SM.ITI +25 73
->Jerry: ENNO 11A NEON +17 75
->Noah: AADIOTV F2 VAT +24 97
->Jerry: ILNO 1A NOIL +23 98
->Noah: AADIILO A11 .AIAD +21 118
->Jerry: AEEGRV B1 .VERAGE +30 128
->Noah: DEILMOO 12C MELOID +38 156
->Jerry: BUY A7 BUY +28 156
->Noah: CEELOOS H12 .ECO +21 177
->Jerry: NTX 13G N.XT +23 179
->Noah: EELOPSS J9 SPEL. +22 199
+>Alice: AFO D2 OAF +25 58
+>Bob: IIIMSTT 9D SM.ITI +25 73
+>Alice: ENNO 11A NEON +17 75
+>Bob: AADIOTV F2 VAT +24 97
+>Alice: ILNO 1A NOIL +23 98
+>Bob: AADIILO A11 .AIAD +21 118
+>Alice: AEEGRV B1 .VERAGE +30 128
+>Bob: DEILMOO 12C MELOID +38 156
+>Alice: BUY A7 BUY +28 156
+>Bob: CEELOOS H12 .ECO +21 177
+>Alice: NTX 13G N.XT +23 179
+>Bob: EELOPSS J9 SPEL. +22 199
 #note Tricky turn with nothing that stood out. The main option I missed here was ASLEEP 14A (I just saw ASLOPE in that spot). Also wonderd about YOMPS/YOMP. Was trying to balance leave with what I gave back with this play. Sim likes ASLEEP here, I agree.
->Jerry: ?EGNRRT 7H REGRaNT +62 241
->Noah: ?CEEHOS O2 rECHOSE +100 299
->Jerry: ABELRTU M4 TUR.ABLE +63 304
->Noah: IINQSTW K11 WIS +36 335
+>Alice: ?EGNRRT 7H REGRaNT +62 241
+>Bob: ?CEEHOS O2 rECHOSE +100 299
+>Alice: ABELRTU M4 TUR.ABLE +63 304
+>Bob: IINQSTW K11 WIS +36 335
 #note Also considered IWIS, WIST, QI. 
->Jerry: ADIRUUZ 4L U. +4 308
->Noah: EINQTW 5A Q.T +12 347
+>Alice: ADIRUUZ 4L U. +4 308
+>Bob: EINQTW 5A Q.T +12 347
 #note It appeared he missed QAT. I think I spent most of my time on this turn retracking?
->Jerry: ADIRUZ 14H .UZ +80 388
+>Alice: ADIRUZ 14H .UZ +80 388
 #note I was totally blindsided by this!! Oof, still hurts, though I was also impressed. Interesting how the process of him putting this down is still somewhat vivid in my memory, compared to many other events. He did miss QAT though. According to macondo, I do not have an honest win here, with the best sequence being WIST-RUG-WE-IZARD for a 3 point loss. However, I should clearly try, and I think my best option if I see SPELTZ is to block it, rather than hope he doesn't see it, as I think he has a tough position in front of him if I play WIST or EW. My position on IINQSTW is tougher than I thought in some ways because of SPELTZ, but maybe also better in some ways in case I draw it? I suspect I should either block with WIST or play QI and hope to draw it myself, WIST appears better as I will often draw a U and even if I don't draw a U the endgame might be tough for him (I was looking at what would've happened with what was actually in the bag with Quackle a bit and it didn't look clear whether he would beat me; macondo endgame confirms that he can win in that case, but it could be tricky). Peg thinks WIST is the prohibitive favorite on the IINQSTW turn, which does seem plausible, though some of its analysis might be wrong because I didn't run it at a high depth. Too bad I didn't play it, especially since I was strongly considering it even without seeing SPELTZ.
->Noah: EINW N11 WINE +19 366
+>Bob: EINW N11 WINE +19 366
 #note Maybe my worst-played game of the tournament: SPELT, WIS, and QAT all look quite bad, with HYOID as a small mistake.
->Noah:  (ADIR) +10 376
+>Bob:  (ADIR) +10 376

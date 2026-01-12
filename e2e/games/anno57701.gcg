@@ -1,38 +1,38 @@
 #character-encoding UTF-8
-#player1 Noah Noah
-#player2 Jason Jason
->Noah: EEHLRSW H4 WELSHER +84 84
+#player1 Alice Alice
+#player2 Bob Bob
+>Alice: EEHLRSW H4 WELSHER +84 84
 #note Wasn't very sure about this, maybe even didn't like it.
->Jason: AEU G6 EAU +14 14
->Noah: BEFGHLY 5G B.EFY +32 116
->Jason: AEOR 6J AERO +18 32
->Noah: DDGHLMY 7F D..HY +25 141
+>Bob: AEU G6 EAU +14 14
+>Alice: BEFGHLY 5G B.EFY +32 116
+>Bob: AEOR 6J AERO +18 32
+>Alice: DDGHLMY 7F D..HY +25 141
 #note Sim likes DODGY, which I considered, but maybe I didn't notice some of its merits enough: blocks both Rs some, blocks the E and O, and blocks the 4K line for scoring and opening. That's a good defensive play.
->Jason: EIT 4K TIE +12 44
->Noah: DGILMNS 11H SLING +26 167
+>Bob: EIT 4K TIE +12 44
+>Alice: DGILMNS 11H SLING +26 167
 #note Didn't consider much else here, but DEMO and DEMOING are available. Maybe this is just too bad with row 3 available and the Q and X spot it opens up. It's possibly not a bad response to fishing.
->Jason: ITZ J10 Z.TI +33 77
->Noah: AACDEMO 13F CODE.A +11 178
+>Bob: ITZ J10 Z.TI +33 77
+>Alice: AACDEMO 13F CODE.A +11 178
 #note This might be too nuts, I also considered K9 plays (though didn't see MOANED). But I'm suspecting this is too short-sighted ... there are a lot of ways to open this board even if this closes the best lines immediately. And it still leaves some lines anyway. Should probably just play CANED or maybe MOANED. I saw ANADEM as well but didn't like open up the 3x3.
->Jason: ?ADEIST 3I DESTAIn +81 158
->Noah: AIKMNSU O1 MI.K +42 220
->Jason: Q 2N Q. +44 202
->Noah: AINPRSU 8J SPRAIN +37 257
+>Bob: ?ADEIST 3I DESTAIn +81 158
+>Alice: AIKMNSU O1 MI.K +42 220
+>Bob: Q 2N Q. +44 202
+>Alice: AINPRSU 8J SPRAIN +37 257
 #note Missed UNRIP here, which looks quite a bit better to keep better and block. 
->Jason: AOVW 2G AVOW +34 236
->Noah: ?AADIOU K10 A.O. +17 274
->Jason: EFOTU 6B OUTFE.. +19 255
->Noah: ?ACDIOU D4 AU.OCoID +76 350
->Jason: BGLN 10B BL.NG +18 273
->Noah: AEEPRTV C2 VET +14 364
+>Bob: AOVW 2G AVOW +34 236
+>Alice: ?AADIOU K10 A.O. +17 274
+>Bob: EFOTU 6B OUTFE.. +19 255
+>Alice: ?ACDIOU D4 AU.OCoID +76 350
+>Bob: BGLN 10B BL.NG +18 273
+>Alice: AEEPRTV C2 VET +14 364
 #note I think the idea here was to block the top and keep a decent looking leave ... maybe liked the A too much here? The sim doesn't like this very much, not sure if it is wrong? Sim likes PERV which might be OK because row 1 looks pretty weak with this pool. Jason can still open on the bottom, hm. PLATER is decent, PERVO is also.
->Jason: JNX N7 J.NX +34 307
->Noah: AENOPRR 8A PER. +24 388
+>Bob: JNX N7 J.NX +34 307
+>Alice: AENOPRR 8A PER. +24 388
 #note Saw NEUTRINO (the only bingo after this) and felt that I might lose if he drew the M afterward, but it turns out AGIN, which I think I'd have found with my bit of time left, wins in that case. Also considered NONE, which leaves bingos on the left, including some I missed, and seemed more questionable, but from looking at endgames that also seems to be a 100% win. 
->Jason: I G13 .I +2 309
->Noah: AENNORR 1I RAN +13 401
+>Bob: I G13 .I +2 309
+>Alice: AENNORR 1I RAN +13 401
 #note Low on time here, this is -1 to TOON, BARREN, RERAN.
->Jason: GILMOTU 15D MOULT +33 342
->Noah: ENOR 2A RO.EN +16 417
+>Bob: GILMOTU 15D MOULT +33 342
+>Alice: ENOR 2A RO.EN +16 417
 #note Did a somewhat poor  job thinking about the board and finding plays here in the midgame with DASHY, CODEIA, SPRAIN. SLING and VET possibly also  mistakes.
->Noah:  (GI) +6 423
+>Alice:  (GI) +6 423

@@ -1,47 +1,47 @@
-#player1 Yorra Wayne Yorra
-#player2 Cresta Michael Cresta
+#player1 Alice Alice
+#player2 Bob Bob
 #title 830 point club game
 #description Oct 12, 2006 - Lexington MA Club game
->Yorra: DEJOSTU H4 JOUSTED +96 96
->Cresta: E - +0 0
+>Alice: DEJOSTU H4 JOUSTED +96 96
+>Bob: E - +0 0
 #note - Cresta exchanged 7
->Yorra: ADIKLLY 9A LADYLIKE +73 169
->Cresta: AFFHIST A8 FLATFISH +239 239
->Yorra: EEGIN - +0 169
+>Alice: ADIKLLY 9A LADYLIKE +73 169
+>Bob: AFFHIST A8 FLATFISH +239 239
+>Alice: EEGIN - +0 169
 #note - Yorra challenged FLATFISH
->Cresta: E - +0 0
+>Bob: E - +0 0
 #note - Cresta exchanged 3
->Yorra: EEGIN D8 EYEING +22 191
->Cresta: E - +0 0
+>Alice: EEGIN D8 EYEING +22 191
+>Bob: E - +0 0
 #note - Cresta exchanged 2
->Yorra: AW B9 AWA +29 220
->Cresta: AO 10G ADO +10 249
->Yorra: ACEMRT? 7H SCAMsTER +65 285
->Cresta: IQUXY - +0 249
+>Alice: AW B9 AWA +29 220
+>Bob: AO 10G ADO +10 249
+>Alice: ACEMRT? 7H SCAMsTER +65 285
+>Bob: IQUXY - +0 249
 #note - Cresta exchanged 2, keeping QUIXY
->Yorra: DDEGNRU 5B UNDERDOG +72 347
->Cresta: IOQTUXY O1 QUIXOTRY +365 614
->Yorra: AN - +0 347
+>Alice: DDEGNRU 5B UNDERDOG +72 347
+>Bob: IOQTUXY O1 QUIXOTRY +365 614
+>Alice: AN - +0 347
 #note - Yorra challenged QUIXOTRY
->Cresta: E - +0 0
+>Bob: E - +0 0
 #note - Cresta exchanged 7
->Yorra: AN N4 AN +13 370
->Cresta: OP 6A OP +20 634
->Yorra: COR M2 COR +20 390
->Cresta: ABET D1 BATED +22 656
->Yorra: EELP 1D BLEEP +27 417
->Cresta: EIMT 11I MITE +16 672
->Yorra: BNU 3A BUNT +12 429
->Cresta: AZ 6J ZA +66 738
->Yorra: AHIR 12L HAIR +26 455
->Cresta: OWV? O11 VROWs +30 768
->Yorra: ELNNOSS 13F NONLESS +70 525
->Yorra: ELNNOSS -- -70 455
->Cresta: ORV 14L VROW +20 788
->Yorra: ELNNOSS 5K NO +14 469
->Cresta: EEGIIIR A1 GIBE +24 812
->Yorra: ENLSS 11F ES +9 478
->Cresta: EIIR 15A HEIR +8 820
->Yorra: NLS J6 ZAS +12 490
->Cresta: I M12 AIR +6 826
+>Alice: AN N4 AN +13 370
+>Bob: OP 6A OP +20 634
+>Alice: COR M2 COR +20 390
+>Bob: ABET D1 BATED +22 656
+>Alice: EELP 1D BLEEP +27 417
+>Bob: EIMT 11I MITE +16 672
+>Alice: BNU 3A BUNT +12 429
+>Bob: AZ 6J ZA +66 738
+>Alice: AHIR 12L HAIR +26 455
+>Bob: OWV? O11 VROWs +30 768
+>Alice: ELNNOSS 13F NONLESS +70 525
+>Alice: ELNNOSS -- -70 455
+>Bob: ORV 14L VROW +20 788
+>Alice: ELNNOSS 5K NO +14 469
+>Bob: EEGIIIR A1 GIBE +24 812
+>Alice: ENLSS 11F ES +9 478
+>Bob: EIIR 15A HEIR +8 820
+>Alice: NLS J6 ZAS +12 490
+>Bob: I M12 AIR +6 826
 >Cresta" (LN) +4 830
