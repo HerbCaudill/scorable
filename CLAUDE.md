@@ -17,42 +17,76 @@ An app for keeping score during Scrabble games.
 
 ```
 src/
-├── components/           # React components
-│   ├── ui/              # shadcn/ui primitives (Button, Input, Dropdown, Select)
-│   ├── App.tsx          # Root component with screen routing
-│   ├── HomeScreen.tsx   # Welcome screen, past games, resume/new game
+├── App.tsx              # Root component with screen routing
+├── components/          # React components
+│   ├── ui/             # shadcn/ui primitives (button, input, select, dialog, alert-dialog, dropdown-menu, sonner)
+│   ├── HomeScreen.tsx  # Welcome screen, past games, resume/new game
 │   ├── PlayerSetupScreen.tsx  # Player selection (2-4 players)
-│   ├── GameScreen.tsx   # Main gameplay: board, timers, scoring, history
+│   ├── PlayerSetup.tsx # Player name input with autocomplete
+│   ├── GameScreen.tsx  # Main gameplay: board, timers, scoring, history
 │   ├── ScrabbleBoard.tsx  # 15x15 interactive board with multipliers
 │   ├── EndGameScreen.tsx  # End game flow with rack input and adjustments
 │   ├── MoveHistoryList.tsx  # Move history with edit support via long-press
 │   ├── PastGameScreen.tsx  # View completed games
-│   ├── TileBagScreen.tsx  # Display remaining tiles
-│   ├── Timer.tsx        # Player timer with visual progress
-│   ├── Tile.tsx         # Individual tile display
+│   ├── TileBagScreen.tsx  # Display remaining tiles (also UnplayedTilesScreen)
+│   ├── StatisticsScreen.tsx  # Game statistics and analytics
+│   ├── Timer.tsx       # Player timer with visual progress
+│   ├── Tile.tsx        # Individual tile display
 │   ├── ConfirmDialog.tsx  # Confirmation dialogs for pass/end game
-│   └── RackTileInput.tsx  # Keyboard input for rack tiles
-├── lib/                 # Business logic & types
-│   ├── types.ts         # All type definitions (Game, Move, Player, etc.)
-│   ├── gameStore.ts     # Zustand store with persistence
+│   ├── RackTileInput.tsx  # Keyboard input for rack tiles
+│   ├── MobileKeyboard.tsx  # On-screen keyboard for mobile devices
+│   ├── BlankLetterDialog.tsx  # Dialog for selecting blank tile letter
+│   ├── BackButton.tsx  # Navigation back button
+│   ├── SwipeToDelete.tsx  # Swipe gesture component for deleting items
+│   └── Histogram.tsx   # Histogram visualization component
+├── lib/                # Business logic & types
+│   ├── types.ts        # All type definitions (Game, Move, Player, GameMove with challenges, etc.)
+│   ├── automergeTypes.ts  # Automerge-specific type definitions
+│   ├── gameStore.ts    # Zustand store with persistence
+│   ├── localStore.ts   # LocalStorage utilities
 │   ├── calculateMoveScore.ts  # Scoring with multipliers & bingo bonus
 │   ├── calculateEndGameAdjustments.ts  # End game score adjustments
-│   ├── validateMove.ts  # Move validation rules
+│   ├── validateMove.ts # Move validation rules
 │   ├── validateRackTiles.ts  # Validate rack tiles against remaining tiles
 │   ├── checkTileOveruse.ts  # Detect when tiles exceed available supply
-│   ├── parseGcg.ts      # Parse GCG (game notation) files
-│   ├── tileValues.ts    # Standard Scrabble letter values
-│   ├── constants.ts     # Tile distribution and game constants
-│   ├── repo.ts          # Automerge-repo setup for local-first sync
-│   └── useGame.ts       # React hook for game state
-├── stories/             # Storybook files for component development
-└── index.css            # Tailwind config, custom colors, fonts
-e2e/                     # Playwright end-to-end tests
-├── tests/               # Test specs (game-flow, scoring, persistence, etc.)
-├── pages/               # Page objects for test abstraction
-├── fixtures/            # Test fixtures and helpers
-└── games/               # GCG game files for score verification
-spec/                    # Specification and wireframes
+│   ├── parseGcg.ts     # Parse GCG (game notation) files
+│   ├── gcgData.ts      # GCG game data utilities
+│   ├── tileValues.ts   # Standard Scrabble letter values
+│   ├── constants.ts    # Tile distribution and game constants
+│   ├── repo.ts         # Automerge-repo setup for local-first sync
+│   ├── wordList.ts     # Word validation and dictionary
+│   ├── useGame.ts      # React hook for game state
+│   ├── useGameId.ts    # React hook for game ID management
+│   ├── useRoute.ts     # React hook for routing
+│   ├── useLongPress.ts # React hook for long-press gestures
+│   ├── boardLayout.ts  # Board layout constants and utilities
+│   ├── boardStateToMove.ts  # Convert board state to move
+│   ├── createEmptyBoard.ts  # Create empty board state
+│   ├── createTestGame.ts  # Test game creation utilities
+│   ├── getPlayerScore.ts  # Calculate player score
+│   ├── getPlayerScoreFromDoc.ts  # Get player score from Automerge doc
+│   ├── getMoveScoresFromDoc.ts  # Get move scores from Automerge doc
+│   ├── getPlayerMoveHistory.ts  # Get player move history
+│   ├── getRemainingTileCount.ts  # Count remaining tiles
+│   ├── getRemainingTiles.ts  # Get remaining tiles
+│   ├── getPlayedTiles.ts  # Get played tiles from board
+│   ├── getScoresWithWinner.ts  # Calculate scores with winner
+│   ├── getSortedTileEntries.ts  # Sort tile entries
+│   ├── getSquareType.ts  # Get square type for position
+│   ├── getTileValue.ts # Get point value for tile
+│   ├── getWordsFromMove.ts  # Extract words from move
+│   ├── isBlankTile.ts  # Check if tile is blank
+│   ├── formatDate.ts   # Date formatting utilities
+│   ├── cx.ts          # Classname concatenation utility
+│   └── utils.ts       # General utilities
+├── stories/            # Storybook files for component development
+└── index.css           # Tailwind config, custom colors, fonts
+e2e/                    # Playwright end-to-end tests
+├── tests/              # Test specs (game-flow, scoring, persistence, etc.)
+├── pages/              # Page objects for test abstraction
+├── fixtures/           # Test fixtures and helpers
+└── games/              # GCG game files for score verification
+spec/                   # Specification and wireframes
 ```
 
 ## Tech stack
@@ -66,11 +100,32 @@ spec/                    # Specification and wireframes
 ## Key types (`src/lib/types.ts`)
 
 ```typescript
-type Move = Array<{ row: number; col: number; tile: string }>
-type GameMove = { playerIndex: number; tilesPlaced: Move }
+type Position = { row: number; col: number } // 0-14
+type Move = Array<Position & { tile: string }>
+type Adjustment = { rackTiles: string[]; deduction: number; bonus: number }
+type FailedChallenge = { words: string[] } // Valid words that were challenged
+type SuccessfulChallenge = { words: string[] } // Invalid words successfully challenged
+type GameMove = {
+  playerIndex: number
+  tilesPlaced: Move
+  adjustment?: Adjustment
+  failedChallenge?: FailedChallenge
+  successfulChallenge?: SuccessfulChallenge
+}
 type BoardState = Array<Array<string | null>> // 15x15 grid
 type GameStatus = "setup" | "playing" | "paused" | "finished"
 type Player = { name: string; timeRemainingMs: number; color: string }
+type TimerEvent = { type: "start" | "pause" | "switch"; timestamp: number; playerIndex: number }
+type Game = {
+  players: Player[]
+  currentPlayerIndex: number
+  board: BoardState
+  moves: GameMove[]
+  timerEvents: TimerEvent[]
+  status: GameStatus
+  createdAt: number
+  updatedAt: number
+}
 ```
 
 ## State management (`src/lib/gameStore.ts`)
