@@ -1,13 +1,13 @@
 ### To do
 
 - [ ] The names on the test games should all be Alice and Bob
-- [ ] Buttons that are currently transparent should have a 10% white background
 - [ ] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
 
 ---
 
 ### Done
 
+- [x] Buttons that are currently transparent should have a 10% white background
 - [x] No need for a confirmation when pressing the pass button - you can always undo
 
 - [x] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.

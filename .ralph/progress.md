@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-12: Added 10% white background to transparent buttons
+
+**Problem:** Ghost variant buttons (used for Back, Undo, and Redo buttons) were completely transparent with no background, which could make them hard to see against various backgrounds.
+
+**Solution:** Added a subtle 10% white background (`bg-white/10`) to the ghost button variant in the button component. This provides just enough visual presence while maintaining the "ghost" aesthetic.
+
+**Files changed:**
+
+- `src/components/ui/button.tsx` - Updated ghost variant to include `bg-white/10`
+
+**Tests:** All 140 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Create test games button improvements
 
 **Problem:** The "Create test game" button was prominent (same size as "New game") and only created a single test game. Users wanted a way to quickly populate the app with multiple test games in various states.
