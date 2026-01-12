@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Fixed histogram axis labels overlapping
+
+**Problem:** Histogram x-axis labels were bumping into each other because labels were positioned absolutely with centering (-translate-x-1/2), causing the edge labels to overlap or extend beyond the container.
+
+**Solution:** Simplified the x-axis label rendering to use flexbox with `justify-between` to naturally align the min label on the left and max label on the right. Removed the `getXAxisTicks()` function and complex positioning logic. Now only shows the min and max values, which prevents overlap.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Replaced absolute positioning with flexbox, removed unused `getXAxisTicks` function
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made histogram axes start at zero with round max numbers
 
 **Problem:** Histogram axes were using the actual min/max values from the data, which could result in awkward starting points and non-round numbers on the axis labels.

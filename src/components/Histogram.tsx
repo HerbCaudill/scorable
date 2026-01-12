@@ -50,9 +50,6 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
   const maxCount = Math.max(...bins)
   const adjustedMax = adjustedMin + (bins.length - 1) * binSize
 
-  // Calculate tick marks for x-axis (show ~3-5 ticks)
-  const xAxisTicks = getXAxisTicks(adjustedMin, adjustedMax, bins.length)
-
   return (
     <div className="flex flex-col gap-1">
       <div className="text-center text-xs text-neutral-500">{label}</div>
@@ -73,39 +70,12 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
       </div>
       {/* X-axis line and labels */}
       <div className="h-px bg-neutral-300" />
-      <div className="relative h-3">
-        {xAxisTicks.map(tick => (
-          <span
-            key={tick.value}
-            className="absolute -translate-x-1/2 text-xs text-neutral-400"
-            style={{ left: `${tick.position}%` }}
-          >
-            {tick.value}
-          </span>
-        ))}
+      <div className="flex justify-between text-xs text-neutral-400">
+        <span>{adjustedMin}</span>
+        <span>{adjustedMax}</span>
       </div>
     </div>
   )
-}
-
-/** Calculate evenly distributed tick marks for the x-axis */
-const getXAxisTicks = (min: number, max: number, binCount: number) => {
-  const ticks: { value: number; position: number }[] = []
-
-  // Always show first and last tick
-  ticks.push({ value: min, position: 0 })
-  ticks.push({ value: max, position: 100 })
-
-  // Add middle tick if there's enough range
-  if (binCount >= 5) {
-    const mid = Math.round((min + max) / 2)
-    ticks.push({ value: mid, position: 50 })
-  }
-
-  // Sort by position
-  ticks.sort((a, b) => a.position - b.position)
-
-  return ticks
 }
 
 type Props = {

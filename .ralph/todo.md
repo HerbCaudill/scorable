@@ -3,11 +3,11 @@
 - [ ] display past games using the same components as current games: use the same player panels. use the same footer and put the delete button there. the only differences should be that you can't change anything, and it shows who won.
 - [ ] make the histograms a little more granular
 - [ ] show histogram values when hovering over bars
-- [ ] the labels on the histogram axes are bumping into each other
 - [ ] make two separate sections on each player's statistics card - move scores and game scores, each with a histogram, average, and best. Get rid of the game, win, and move counts.
 
 ### Done
 
+- [x] Fix histogram axis labels bumping into each other
 - [x] Make histogram axes start at zero and go up to round numbers
 - [x] On histograms, show x axis as a line without ticks
 - [x] On the statistics screen, remove "Player rankings / X games" header and ordinal rank badges
