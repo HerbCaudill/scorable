@@ -1,6 +1,6 @@
 ### To do
 
-- [ ] Make a header component for consistency. It should have a
+- [ ] Make a header component for consistency, and use it throughout
 - [ ] Use the layout-grid-add icon for the new game button
 - [ ] When generating test games, randomize whether Alice or Bob starts first
 - [ ] On the statistics screen, make the "games completed" block much less prominent
