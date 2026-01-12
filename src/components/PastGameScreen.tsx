@@ -11,7 +11,7 @@ import { getPlayerMoveHistory } from "@/lib/getPlayerMoveHistory"
 import { MoveHistoryList } from "./MoveHistoryList"
 import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
 import { IconHome, IconTrash, IconTrophyFilled } from "@tabler/icons-react"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 
 export const PastGameScreen = ({ gameId, onBack }: Props) => {
   const { game, isLoading, isUnavailable } = useGame(gameId)
@@ -52,13 +52,15 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b p-2">
-        <BackButton onClick={onBack} />
-        <span className="text-sm text-gray-500">
-          {formatDate(game.createdAt, { includeYear: true })}
-        </span>
-      </div>
+      <Header
+        onBack={onBack}
+        border
+        rightContent={
+          <span className="text-sm text-gray-500">
+            {formatDate(game.createdAt, { includeYear: true })}
+          </span>
+        }
+      />
 
       {/* Board - read-only */}
       <div className="flex flex-col items-center p-2 pb-2">

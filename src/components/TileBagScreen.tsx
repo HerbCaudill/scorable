@@ -2,7 +2,7 @@ import { getSortedTileEntries } from "@/lib/getSortedTileEntries"
 import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
 import { getRemainingTiles } from "@/lib/getRemainingTiles"
 import { TILE_DISTRIBUTION, TOTAL_TILES } from "@/lib/constants"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 import { Tile } from "./Tile"
 import type { Game } from "@/lib/types"
 
@@ -15,11 +15,7 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      {/* Header */}
-      <div className="flex items-center gap-3 border-b p-4">
-        <BackButton onClick={onBack} />
-        <h1 className="text-base font-semibold">Unplayed tiles</h1>
-      </div>
+      <Header title="Unplayed tiles" onBack={onBack} border />
 
       {/* Tile rows - each letter on its own row */}
       <div className="flex-1 overflow-y-auto p-4">

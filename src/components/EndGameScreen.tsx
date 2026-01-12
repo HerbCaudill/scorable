@@ -5,7 +5,7 @@ import { getRemainingTiles } from "@/lib/getRemainingTiles"
 import { validateRackTiles } from "@/lib/validateRackTiles"
 import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
 import { cx } from "@/lib/cx"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 import type { Game, Adjustment } from "@/lib/types"
 
 export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
@@ -114,11 +114,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      {/* Header */}
-      <div className="flex items-center gap-2 border-b p-3">
-        <BackButton onClick={onBack} />
-        <h1 className="text-lg font-semibold">End game</h1>
-      </div>
+      <Header title="End game" onBack={onBack} border />
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-4">

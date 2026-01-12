@@ -36,7 +36,7 @@ import {
 } from "@tabler/icons-react"
 import { MobileKeyboard } from "./MobileKeyboard"
 import { BlankLetterDialog } from "./BlankLetterDialog"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 
 /** Check if board has any tiles placed */
 const hasTilesPlaced = (board: BoardState): boolean =>
@@ -546,31 +546,32 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
   return (
     <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Top navigation bar */}
-      <div className="shrink-0 flex items-center justify-between">
-        {!isEditing && <BackButton onClick={handleBack} />}
-        <div className={cx("flex gap-2", isEditing && "ml-auto")}>
-          {isEditing ?
-            <>
-              <Button variant="outline" size="xs" onClick={handleCancelEdit}>
-                <IconX size={14} />
-                Cancel
-              </Button>
-              <Button variant="default" size="xs" onClick={handleSaveEdit}>
-                Save edit
-              </Button>
-            </>
-          : <>
-              <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
-                <IconArrowBackUp size={14} />
-                Undo
-              </Button>
-              <Button variant="ghost" size="xs" onClick={redo} disabled={!canRedo}>
-                <IconArrowForwardUp size={14} />
-                Redo
-              </Button>
-            </>
+      <div className="shrink-0">
+        <Header
+          onBack={isEditing ? undefined : handleBack}
+          rightContent={
+            isEditing ?
+              <>
+                <Button variant="outline" size="xs" onClick={handleCancelEdit}>
+                  <IconX size={14} />
+                  Cancel
+                </Button>
+                <Button variant="default" size="xs" onClick={handleSaveEdit}>
+                  Save edit
+                </Button>
+              </>
+            : <>
+                <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
+                  <IconArrowBackUp size={14} />
+                  Undo
+                </Button>
+                <Button variant="ghost" size="xs" onClick={redo} disabled={!canRedo}>
+                  <IconArrowForwardUp size={14} />
+                  Redo
+                </Button>
+              </>
           }
-        </div>
+        />
       </div>
 
       {/*  Board + Player panels */}

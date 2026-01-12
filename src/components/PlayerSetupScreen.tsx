@@ -4,7 +4,7 @@ import { PlayerSetup } from "./PlayerSetup"
 import { useLocalStore } from "@/lib/localStore"
 import { createEmptyBoardDoc, type GameDoc } from "@/lib/automergeTypes"
 import { PLAYER_COLORS, DEFAULT_TIME_MS } from "@/lib/types"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 
 export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   const repo = useRepo()
@@ -47,12 +47,9 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col p-4">
-      <div className="mx-auto w-full max-w-md">
-        {/* Back button */}
-        <div className="mb-4">
-          <BackButton onClick={onBack} />
-        </div>
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto w-full max-w-md px-4">
+        <Header title="New game" onBack={onBack} />
 
         {/* Player setup form */}
         <PlayerSetup previousPlayers={previousPlayers} onStartGame={handleStartGame} />

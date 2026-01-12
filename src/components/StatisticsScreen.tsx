@@ -4,7 +4,7 @@ import { useLocalStore } from "@/lib/localStore"
 import type { GameDoc } from "@/lib/automergeTypes"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import { getMoveScoresFromDoc } from "@/lib/getMoveScoresFromDoc"
-import { BackButton } from "./BackButton"
+import { Header } from "./Header"
 import { cx } from "@/lib/cx"
 import { Histogram } from "./Histogram"
 
@@ -114,13 +114,9 @@ export const StatisticsScreen = ({ onBack }: Props) => {
   }, [knownGameIds, docs])
 
   return (
-    <div className="flex min-h-screen flex-col p-4">
-      <div className="mx-auto w-full max-w-md">
-        {/* Header */}
-        <div className="mb-6 flex items-center gap-2">
-          <BackButton onClick={onBack} />
-          <h1 className="text-lg font-semibold">Statistics</h1>
-        </div>
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto w-full max-w-md px-4">
+        <Header title="Statistics" onBack={onBack} />
 
         {/* Summary */}
         <div className="mb-6 rounded-lg bg-neutral-100 p-4">

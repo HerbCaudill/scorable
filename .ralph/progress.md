@@ -1,5 +1,37 @@
 ## Progress log
 
+### 2026-01-12: Created reusable Header component
+
+**Problem:** Headers across different screens were implemented inconsistently with duplicated code. Each screen had its own ad-hoc header implementation with back buttons, titles, and right-side content arranged differently.
+
+**Solution:** Created a reusable `Header` component that provides:
+- Optional back button (via `onBack` prop)
+- Optional title (via `title` prop)
+- Optional right-side content (via `rightContent` prop)
+- Optional border-bottom (via `border` prop)
+
+Updated all screens to use the new Header component:
+- `StatisticsScreen.tsx` - Uses Header with title and back button
+- `TileBagScreen.tsx` (UnplayedTilesScreen) - Uses Header with title, back button, and border
+- `EndGameScreen.tsx` - Uses Header with title, back button, and border
+- `PlayerSetupScreen.tsx` - Uses Header with title "New game" and back button
+- `PastGameScreen.tsx` - Uses Header with back button, border, and date on right side
+- `GameScreen.tsx` - Uses Header with back button and undo/redo buttons on right (or cancel/save when editing)
+
+**Files changed:**
+- `src/components/Header.tsx` - New component
+- `src/components/StatisticsScreen.tsx` - Updated to use Header
+- `src/components/TileBagScreen.tsx` - Updated to use Header
+- `src/components/EndGameScreen.tsx` - Updated to use Header
+- `src/components/PlayerSetupScreen.tsx` - Updated to use Header
+- `src/components/PastGameScreen.tsx` - Updated to use Header
+- `src/components/GameScreen.tsx` - Updated to use Header
+- `CLAUDE.md` - Added Header component to project structure
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Removed "Back" text from back button
 
 **Problem:** The back button had both an arrow icon and the word "Back", which was redundant and took up more space than necessary.

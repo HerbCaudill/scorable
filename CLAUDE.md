@@ -37,6 +37,7 @@ src/
 │   ├── MobileKeyboard.tsx  # On-screen keyboard for mobile devices
 │   ├── BlankLetterDialog.tsx  # Dialog for selecting blank tile letter
 │   ├── BackButton.tsx  # Navigation back button
+│   ├── Header.tsx     # Reusable header with back button, title, and right content
 │   ├── SwipeToDelete.tsx  # Swipe gesture component for deleting items
 │   └── Histogram.tsx   # Histogram visualization component
 ├── lib/                # Business logic & types
