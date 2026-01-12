@@ -228,7 +228,7 @@ export class GamePage {
     // Wait for home screen (New game button signals we're on home)
     await this.page.waitForSelector('button:has-text("New game")')
     // Reload to ensure Automerge persists to IndexedDB and reloads fresh state
-    await this.page.reload()
+    await this.page.reload({ waitUntil: "networkidle" })
     await this.page.waitForSelector('button:has-text("New game")')
   }
 
