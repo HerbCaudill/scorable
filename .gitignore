@@ -28,3 +28,4 @@ storybook-static
 test-results
 playwright-report
 .worktrees
+.ralph/events.log

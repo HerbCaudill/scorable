@@ -86,6 +86,9 @@ importers:
       "@automerge/automerge-repo-storage-nodefs":
         specifier: ^2.5.1
         version: 2.5.1
+      "@herbcaudill/ralph":
+        specifier: file:../ralph
+        version: file:../ralph
       "@playwright/test":
         specifier: ^1.57.0
         version: 1.57.0
@@ -116,9 +119,6 @@ importers:
       "@vitejs/plugin-react":
         specifier: ^5.1.1
         version: 5.1.1(vite@7.2.6(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0))
-      chalk:
-        specifier: ^5.6.2
-        version: 5.6.2
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -1539,6 +1539,11 @@ packages:
       {
         integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==,
       }
+
+  "@herbcaudill/ralph@file:../ralph":
+    resolution: { directory: ../ralph, type: directory }
+    engines: { node: ">=18.0.0" }
+    hasBin: true
 
   "@herbcaudill/scrabble-words@1.0.2":
     resolution:
@@ -6873,6 +6878,10 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
 
   "@floating-ui/utils@0.2.10": {}
+
+  "@herbcaudill/ralph@file:../ralph":
+    dependencies:
+      chalk: 5.6.2
 
   "@herbcaudill/scrabble-words@1.0.2": {}
 

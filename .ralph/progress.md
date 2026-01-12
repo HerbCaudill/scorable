@@ -5,6 +5,7 @@
 **Problem:** XS-sized buttons had minimal horizontal padding (8px/6px with icons), making them feel cramped and inconsistent with the rest of the UI.
 
 **Solution:** Increased horizontal padding for xs buttons:
+
 - Changed from `px-2` (8px) to `px-3` (12px)
 - Changed from `px-1.5` (6px) to `px-2.5` (10px) for buttons with icons
 
