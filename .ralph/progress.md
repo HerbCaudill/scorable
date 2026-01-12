@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Removed ranking header and ordinal badges from statistics screen
+
+**Problem:** The statistics screen had a "Player rankings / X games" header line and ordinal rank badges (1, 2, 3...) next to each player's name, which added visual clutter.
+
+**Solution:** Removed the "Player rankings" header with the game count, and removed the ordinal rank badge circles next to player names. Player cards now just show the name on the left and win rate on the right.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Removed ranking header div and ordinal rank badge elements, removed unused `cx` import
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Excluded cresta-yorra game from test game generation
 
 **Problem:** The cresta-yorra-2006.gcg file (the highest scoring Scrabble game of all time with scores of 830 to 490) was included in the test game generation, which skewed the statistics on the statistics screen with unrealistic outlier values.

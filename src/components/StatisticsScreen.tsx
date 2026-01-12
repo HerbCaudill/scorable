@@ -5,7 +5,6 @@ import type { GameDoc } from "@/lib/automergeTypes"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import { getMoveScoresFromDoc } from "@/lib/getMoveScoresFromDoc"
 import { Header } from "./Header"
-import { cx } from "@/lib/cx"
 import { Histogram } from "./Histogram"
 
 const MIN_GAMES_FOR_STATS = 3
@@ -154,33 +153,13 @@ export const StatisticsScreen = ({ onBack }: Props) => {
             </p>
           </div>
         : <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-neutral-500">Player rankings</h2>
-              <span className="text-xs text-neutral-400">
-                {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"}
-              </span>
-            </div>
-
-            {stats.map((player, index) => (
+            {stats.map(player => (
               <div
                 key={player.name}
                 className="rounded-lg bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cx(
-                        "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold",
-                        index === 0 && "bg-amber-100 text-amber-700",
-                        index === 1 && "bg-neutral-200 text-neutral-600",
-                        index === 2 && "bg-orange-100 text-orange-700",
-                        index > 2 && "bg-neutral-100 text-neutral-500",
-                      )}
-                    >
-                      {index + 1}
-                    </span>
-                    <span className="font-semibold">{player.name}</span>
-                  </div>
+                  <span className="font-semibold">{player.name}</span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-green-600">
                       {Math.round(player.winRate * 100)}%
