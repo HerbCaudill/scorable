@@ -5,11 +5,11 @@
 - [ ] show histogram values when hovering over bars
 - [ ] the labels on the histogram axes are bumping into each other
 - [ ] make two separate sections on each player's statistics card - move scores and game scores, each with a histogram, average, and best. Get rid of the game, win, and move counts.
-- [ ] On the histograms, show the x axis as a line (no ticks).
 - [ ] The axes should both start at zero and go up to a round number
 
 ### Done
 
+- [x] On histograms, show x axis as a line without ticks
 - [x] On the statistics screen, remove "Player rankings / X games" header and ordinal rank badges
 - [x] Exclude cresta-yorra game from test games (it's the highest scoring game of all time and skews statistics)
 - [x] On the statistics screen, give each player's card a white background and a drop shadow.

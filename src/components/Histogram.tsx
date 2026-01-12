@@ -22,6 +22,7 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
             style={{ height: "100%" }}
           />
         </div>
+        <div className="h-px bg-neutral-300" />
         <div className="flex justify-center text-xs text-neutral-400">
           <span>{min}</span>
         </div>
@@ -70,7 +71,8 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
           />
         ))}
       </div>
-      {/* X-axis with tick marks */}
+      {/* X-axis line and labels */}
+      <div className="h-px bg-neutral-300" />
       <div className="relative h-3">
         {xAxisTicks.map(tick => (
           <span

@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Added x-axis line to histograms
+
+**Problem:** Histograms on the statistics screen showed tick labels at the bottom but didn't have a visible x-axis line, making the chart look incomplete.
+
+**Solution:** Added a 1px horizontal line (`h-px bg-neutral-300`) between the histogram bars and the axis labels to provide a clear visual baseline for the chart.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added x-axis line div in both the single-value case and the normal histogram case
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Removed ranking header and ordinal badges from statistics screen
 
 **Problem:** The statistics screen had a "Player rankings / X games" header line and ordinal rank badges (1, 2, 3...) next to each player's name, which added visual clutter.
