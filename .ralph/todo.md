@@ -1,15 +1,23 @@
 ### To do
 
+- [ ] Remove the word "Back" from the back button
+- [ ] Make a header component for consistency. It should have a
+- [ ] Use the layout-grid-add icon for the new game button
+- [ ] When generating test games, randomize whether Alice or Bob starts first
+- [ ] On the statistics screen, make the "games completed" block much less prominent
+- [ ] On the statistics screen, use the same axes for each player's histograms
+- [ ] On the statistics screen, show the x axis
+- [ ] On the statistics screen, show average and maximum move scores in addition to game scores
+
 ---
 
 ### Done
 
+- [x] Add a little padding around the xs buttons
 - [x] When a word in the dictionary doesn't have a definition, it's probably because it's a form of another word. Look up the other word and use its definition (when displaying check or challenge results)
-
 - [x] The names on the test games should all be Alice and Bob
 - [x] Buttons that are currently transparent should have a 10% white background
 - [x] No need for a confirmation when pressing the pass button - you can always undo
-
 - [x] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
 - [x] On the home page add a "statistics" button: it should show how many games each player has won out of the total number of games played, and visualizations analyzing each player's distribution of move scores and game scores. Only players with more than two games should be included.
 - [x] On the tiles screen, the counts should be below the header and flush left

@@ -1,5 +1,23 @@
 ## Progress log
 
+### 2026-01-12: Increased padding on xs buttons
+
+**Problem:** XS-sized buttons had minimal horizontal padding (8px/6px with icons), making them feel cramped and inconsistent with the rest of the UI.
+
+**Solution:** Increased horizontal padding for xs buttons:
+- Changed from `px-2` (8px) to `px-3` (12px)
+- Changed from `px-1.5` (6px) to `px-2.5` (10px) for buttons with icons
+
+This gives xs buttons slightly more breathing room while maintaining their compact size.
+
+**Files changed:**
+
+- `src/components/ui/button.tsx` - Updated xs size variant padding
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Word form lookup for dictionary definitions
 
 **Problem:** When displaying check or challenge results, some words (like "AAHED", "AAHING") showed "no definition" because they are forms of a base word (like "AAH") and the dictionary entry only has a crossRef to the base word, not the full definition.
