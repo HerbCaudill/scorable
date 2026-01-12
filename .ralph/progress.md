@@ -1,5 +1,36 @@
 ## Progress log
 
+### 2026-01-12: Create test games button improvements
+
+**Problem:** The "Create test game" button was prominent (same size as "New game") and only created a single test game. Users wanted a way to quickly populate the app with multiple test games in various states.
+
+**Solution:**
+1. Changed button text to "Create test games" (plural)
+2. Made button smaller and moved to bottom of screen (subtle, text-only style)
+3. Creates 10 test games from all GCG files in the e2e/games directory
+4. Two games are in-progress: one missing only the last move, one at mid-game
+5. Remaining 8 games are finished
+
+**Implementation:**
+- Created `src/lib/gcgData.ts` - imports all GCG files as raw strings using Vite's `?raw` feature
+- Updated `src/lib/createTestGame.ts`:
+  - Refactored `createTestGame` to accept options (gcgContent, movesToInclude, status)
+  - Uses player names from GCG files instead of hardcoded Alice/Bob
+  - Added `createTestGames` function that creates games from all GCG files
+- Updated `src/components/HomeScreen.tsx`:
+  - Button is now small text at bottom of screen with gray styling
+  - Calls `createTestGames` instead of `createTestGame`
+  - Registers all player names from the created games
+
+**Files changed:**
+- `src/lib/gcgData.ts` - New file to import GCG files as raw strings
+- `src/lib/createTestGame.ts` - Refactored to support multiple games
+- `src/components/HomeScreen.tsx` - Updated button and handler
+
+**Tests:** All 136 Playwright tests and 98 unit tests pass.
+
+---
+
 ### 2026-01-12: Added statistics page with player visualizations
 
 **Problem:** Users wanted to see player statistics including win rates and score distributions across their games.
@@ -11,16 +42,19 @@
 3. Display game score distribution histograms for each player
 
 Created reusable components:
+
 - `Histogram.tsx` - SVG-based histogram visualization with configurable colors (teal/amber)
 - `getMoveScoresFromDoc.ts` - Extract individual move scores for a player from a GameDoc
 
 Updated StatisticsScreen to:
+
 - Calculate move scores by replaying each game's board state
 - Track both gameScores and moveScores arrays per player
 - Show empty state message when no players have 3+ games
 - Display histograms side-by-side (move scores in teal, game scores in amber)
 
 **Files changed:**
+
 - `src/components/StatisticsScreen.tsx` - Added filtering and histogram display
 - `src/components/Histogram.tsx` - New SVG histogram component
 - `src/lib/getMoveScoresFromDoc.ts` - New helper to extract move scores

@@ -1,10 +1,10 @@
 ### To do
 
-- [ ] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
-
 ---
 
 ### Done
+
+- [x] The "Create test game" button should be smaller, should be at the bottom of the screen, and should say "Create test games". It should create as many test games as we have gcg files. Two of them should be in progress. One of the in progress games should be done except for the last move.
 
 - [x] On the home page add a "statistics" button: it should show how many games each player has won out of the total number of games played, and visualizations analyzing each player's distribution of move scores and game scores. Only players with more than two games should be included.
 - [x] On the tiles screen, the counts should be below the header and flush left

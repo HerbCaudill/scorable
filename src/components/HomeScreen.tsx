@@ -13,7 +13,7 @@ import {
   IconChartBar,
 } from "@tabler/icons-react"
 import { SwipeToDelete } from "@/components/SwipeToDelete"
-import { createTestGame } from "@/lib/createTestGame"
+import { createTestGames } from "@/lib/createTestGame"
 
 export const HomeScreen = ({
   onNewGame,
@@ -42,12 +42,13 @@ export const HomeScreen = ({
     }
   }
 
-  const handleCreateTestGame = () => {
-    const gameId = createTestGame(repo)
-    addGameId(gameId)
-    addPlayerRecord("Alice")
-    addPlayerRecord("Bob")
-    onResumeGame(gameId)
+  const handleCreateTestGames = () => {
+    const games = createTestGames(repo)
+    for (const game of games) {
+      addGameId(game.id)
+      addPlayerRecord(game.playerNames[0])
+      addPlayerRecord(game.playerNames[1])
+    }
   }
 
   return (
@@ -70,10 +71,6 @@ export const HomeScreen = ({
           <Button size="lg" onClick={onNewGame} className="w-full">
             <IconSparkles size={20} />
             New game
-          </Button>
-          <Button variant="outline" onClick={handleCreateTestGame} className="w-full">
-            <IconTestPipe size={20} />
-            Create test game
           </Button>
         </div>
 
@@ -153,6 +150,18 @@ export const HomeScreen = ({
             </div>
           </div>
         )}
+
+        {/* Spacer to push test button to bottom */}
+        <div className="flex-1" />
+
+        {/* Test games button at bottom */}
+        <button
+          onClick={handleCreateTestGames}
+          className="flex items-center justify-center gap-1 py-2 text-xs text-gray-400 hover:text-gray-500"
+        >
+          <IconTestPipe size={14} />
+          Create test games
+        </button>
       </div>
     </div>
   )
