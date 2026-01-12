@@ -142,16 +142,6 @@ export const StatisticsScreen = ({ onBack }: Props) => {
       <div className="mx-auto w-full max-w-md px-4">
         <Header title="Statistics" onBack={onBack} />
 
-        {/* Summary */}
-        <div className="mb-6 rounded-lg bg-neutral-100 p-4">
-          <div className="text-center">
-            <span className="text-3xl font-bold">{totalFinishedGames}</span>
-            <p className="text-sm text-neutral-500">
-              {totalFinishedGames === 1 ? "Game completed" : "Games completed"}
-            </p>
-          </div>
-        </div>
-
         {/* Player stats */}
         {stats.length === 0 ?
           <div className="text-center text-neutral-500">
@@ -159,9 +149,17 @@ export const StatisticsScreen = ({ onBack }: Props) => {
             <p className="text-sm">
               Complete at least {MIN_GAMES_FOR_STATS} games to see player statistics
             </p>
+            <p className="mt-4 text-xs text-neutral-400">
+              {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"} completed
+            </p>
           </div>
         : <div className="flex flex-col gap-4">
-            <h2 className="text-sm font-medium text-neutral-500">Player rankings</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-neutral-500">Player rankings</h2>
+              <span className="text-xs text-neutral-400">
+                {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"}
+              </span>
+            </div>
 
             {stats.map((player, index) => (
               <div key={player.name} className="rounded-lg border p-4">

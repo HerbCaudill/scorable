@@ -1,10 +1,10 @@
 ### To do
 
-- [ ] On the statistics screen, make the "games completed" block much less prominent
-
 ---
 
 ### Done
+
+- [x] On the statistics screen, make the "games completed" block much less prominent
 
 - [x] When generating test games, randomize whether Alice or Bob starts first
 - [x] On the statistics screen, show average and maximum move scores in addition to game scores

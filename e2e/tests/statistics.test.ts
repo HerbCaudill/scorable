@@ -61,6 +61,6 @@ test.describe("Statistics", () => {
     await page.getByText("Statistics").click()
 
     // Should show games count
-    await expect(page.getByText("Game completed")).toBeVisible()
+    await expect(page.getByText("1 game completed")).toBeVisible()
   })
 })

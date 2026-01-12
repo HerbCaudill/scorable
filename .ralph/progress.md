@@ -1,5 +1,21 @@
 ## Progress log
 
+### 2026-01-12: Made games completed count less prominent on statistics screen
+
+**Problem:** The "games completed" block on the statistics screen was too prominent - it was displayed as a large centered block with a 3xl font size and rounded background, taking up unnecessary visual space.
+
+**Solution:** Replaced the large prominent block with a subtle inline display:
+1. When player stats are shown: Added "X games" text next to the "Player rankings" header, right-aligned in a small gray font
+2. When no player stats yet: Added "X games completed" below the "Complete at least 3 games" message in a subtle style
+
+**Files changed:**
+- `src/components/StatisticsScreen.tsx` - Removed prominent summary block, added subtle inline count in both states
+- `e2e/tests/statistics.test.ts` - Updated test to look for new text format
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Randomized starting player in test game generation
 
 **Problem:** Test games always had Alice (player1 in GCG files) playing first. This made the test games less varied and didn't test the scenario where Bob starts first.
