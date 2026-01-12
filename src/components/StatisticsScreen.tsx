@@ -113,6 +113,23 @@ export const StatisticsScreen = ({ onBack }: Props) => {
     return count
   }, [knownGameIds, docs])
 
+  // Calculate shared ranges for histograms across all players
+  const histogramRanges = useMemo(() => {
+    const allMoveScores = stats.flatMap(p => p.moveScores)
+    const allGameScores = stats.flatMap(p => p.gameScores)
+
+    return {
+      moveScores: {
+        min: allMoveScores.length > 0 ? Math.min(...allMoveScores) : 0,
+        max: allMoveScores.length > 0 ? Math.max(...allMoveScores) : 0,
+      },
+      gameScores: {
+        min: allGameScores.length > 0 ? Math.min(...allGameScores) : 0,
+        max: allGameScores.length > 0 ? Math.max(...allGameScores) : 0,
+      },
+    }
+  }, [stats])
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="mx-auto w-full max-w-md px-4">
@@ -185,8 +202,20 @@ export const StatisticsScreen = ({ onBack }: Props) => {
 
                 {/* Score distribution histograms */}
                 <div className="mt-4 grid grid-cols-2 gap-4">
-                  <Histogram data={player.moveScores} label="Move scores" color="teal" />
-                  <Histogram data={player.gameScores} label="Game scores" color="amber" />
+                  <Histogram
+                    data={player.moveScores}
+                    label="Move scores"
+                    color="teal"
+                    minValue={histogramRanges.moveScores.min}
+                    maxValue={histogramRanges.moveScores.max}
+                  />
+                  <Histogram
+                    data={player.gameScores}
+                    label="Game scores"
+                    color="amber"
+                    minValue={histogramRanges.gameScores.min}
+                    maxValue={histogramRanges.gameScores.max}
+                  />
                 </div>
               </div>
             ))}

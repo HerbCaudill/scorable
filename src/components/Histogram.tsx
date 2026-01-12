@@ -1,11 +1,14 @@
 import { cx } from "@/lib/cx"
 
-export const Histogram = ({ data, label, color = "teal" }: Props) => {
+export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: Props) => {
   if (data.length === 0) return null
 
   // Create bins for the histogram
-  const min = Math.min(...data)
-  const max = Math.max(...data)
+  // Use provided range if given, otherwise calculate from data
+  const dataMin = Math.min(...data)
+  const dataMax = Math.max(...data)
+  const min = minValue ?? dataMin
+  const max = maxValue ?? dataMax
   const range = max - min
 
   // If all values are the same, show a single bar
@@ -76,4 +79,6 @@ type Props = {
   data: number[]
   label: string
   color?: "teal" | "amber"
+  minValue?: number
+  maxValue?: number
 }

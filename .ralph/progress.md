@@ -1,5 +1,20 @@
 ## Progress log
 
+### 2026-01-12: Use same axes for all player histograms
+
+**Problem:** On the statistics screen, each player's histogram calculated its own min/max from its own data. This made it difficult to compare players visually since the scales were different.
+
+**Solution:** Added `minValue` and `maxValue` props to the `Histogram` component, then calculated shared ranges across all players in `StatisticsScreen`. Now all move score histograms share the same axis, and all game score histograms share the same axis, making visual comparison meaningful.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added optional `minValue` and `maxValue` props
+- `src/components/StatisticsScreen.tsx` - Calculate shared ranges and pass to Histogram components
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Changed New game button icon to layout-grid-add
 
 **Problem:** The New game button used a sparkles icon (IconSparkles) which didn't clearly convey "new game" semantics.
