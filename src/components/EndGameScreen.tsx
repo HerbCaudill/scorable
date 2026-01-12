@@ -114,7 +114,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      <Header title="End game" onBack={onBack} border />
+      <Header title="End game" onBack={onBack} />
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-4">

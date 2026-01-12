@@ -15,7 +15,7 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
 
   return (
     <div className="flex h-screen flex-col">
-      <Header title="Unplayed tiles" onBack={onBack} border />
+      <Header title="Unplayed tiles" onBack={onBack} />
 
       {/* Tile rows - each letter on its own row */}
       <div className="flex-1 overflow-y-auto p-4">

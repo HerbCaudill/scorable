@@ -1,14 +1,34 @@
 ## Progress log
 
+### 2026-01-13: Removed border under header
+
+**Problem:** The `Header` component had a `border` prop that added a bottom border (`border-b`), and it was being used in `TileBagScreen` and `EndGameScreen`. This created an unnecessary visual element.
+
+**Solution:** Removed the `border` prop from all usages and from the Header component itself:
+1. Removed `border` from `<Header>` in `TileBagScreen.tsx`
+2. Removed `border` from `<Header>` in `EndGameScreen.tsx`
+3. Removed the `border` prop and related logic from `Header.tsx`
+
+**Files changed:**
+- `src/components/TileBagScreen.tsx` - Removed `border` prop from Header
+- `src/components/EndGameScreen.tsx` - Removed `border` prop from Header
+- `src/components/Header.tsx` - Removed `border` prop entirely
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Made games completed count less prominent on statistics screen
 
 **Problem:** The "games completed" block on the statistics screen was too prominent - it was displayed as a large centered block with a 3xl font size and rounded background, taking up unnecessary visual space.
 
 **Solution:** Replaced the large prominent block with a subtle inline display:
+
 1. When player stats are shown: Added "X games" text next to the "Player rankings" header, right-aligned in a small gray font
 2. When no player stats yet: Added "X games completed" below the "Complete at least 3 games" message in a subtle style
 
 **Files changed:**
+
 - `src/components/StatisticsScreen.tsx` - Removed prominent summary block, added subtle inline count in both states
 - `e2e/tests/statistics.test.ts` - Updated test to look for new text format
 
