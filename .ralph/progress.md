@@ -1,5 +1,24 @@
 ## Progress log
 
+### 2026-01-12: Added x-axis to histogram component
+
+**Problem:** The histograms on the statistics screen showed min/max values at the bottom with the label in the middle, but didn't have a proper x-axis with tick marks to help users understand the scale.
+
+**Solution:** Restructured the Histogram component to show:
+1. Label at the top (moved from bottom)
+2. X-axis with tick marks below the bars showing min, middle (if range is large enough), and max values
+3. Used absolute positioning for tick marks with percentage-based placement
+
+The changes make the histograms more readable and easier to interpret.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Restructured layout, added `getXAxisTicks` helper function
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-12: Use same axes for all player histograms
 
 **Problem:** On the statistics screen, each player's histogram calculated its own min/max from its own data. This made it difficult to compare players visually since the scales were different.

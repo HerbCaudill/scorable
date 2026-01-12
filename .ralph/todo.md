@@ -2,13 +2,13 @@
 
 - [ ] When generating test games, randomize whether Alice or Bob starts first
 - [ ] On the statistics screen, make the "games completed" block much less prominent
-- [ ] On the statistics screen, show the x axis
 - [ ] On the statistics screen, show average and maximum move scores in addition to game scores
 
 ---
 
 ### Done
 
+- [x] On the statistics screen, show the x axis
 - [x] On the statistics screen, use the same axes for each player's histograms
 - [x] Use the layout-grid-add icon for the new game button
 - [x] Make a header component for consistency, and use it throughout
