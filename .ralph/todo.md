@@ -1,7 +1,6 @@
 ### To do
 
 - [ ] display past games using the same components as current games: use the same player panels. use the same footer and put the delete button there. the only differences should be that you can't change anything, and it shows who won.
-- [ ] on the statistics screen, give each player's card a white background and a drop shadow.
 - [ ] make the histograms a little more granular
 - [ ] show histogram values when hovering over bars
 - [ ] the labels on the histogram axes are bumping into each other
@@ -13,6 +12,7 @@
 
 ### Done
 
+- [x] On the statistics screen, give each player's card a white background and a drop shadow.
 - [x] Get rid of border under header
 - [x] On the statistics screen, make the "games completed" block much less prominent
 - [x] When generating test games, randomize whether Alice or Bob starts first

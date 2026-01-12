@@ -1,15 +1,31 @@
 ## Progress log
 
+### 2026-01-13: Added white background and drop shadow to statistics player cards
+
+**Problem:** Player cards on the statistics screen used a plain border (`border`) without a background color, making them look flat compared to other elements in the app that use white backgrounds with drop shadows.
+
+**Solution:** Changed the player card styling from `rounded-lg border p-4` to `rounded-lg bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]`. This gives the cards a white background with a subtle drop shadow that matches the elevated look of player panels in the game screen.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Updated player card className
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Removed border under header
 
 **Problem:** The `Header` component had a `border` prop that added a bottom border (`border-b`), and it was being used in `TileBagScreen` and `EndGameScreen`. This created an unnecessary visual element.
 
 **Solution:** Removed the `border` prop from all usages and from the Header component itself:
+
 1. Removed `border` from `<Header>` in `TileBagScreen.tsx`
 2. Removed `border` from `<Header>` in `EndGameScreen.tsx`
 3. Removed the `border` prop and related logic from `Header.tsx`
 
 **Files changed:**
+
 - `src/components/TileBagScreen.tsx` - Removed `border` prop from Header
 - `src/components/EndGameScreen.tsx` - Removed `border` prop from Header
 - `src/components/Header.tsx` - Removed `border` prop entirely
