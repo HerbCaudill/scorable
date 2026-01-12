@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Made histogram axes start at zero with round max numbers
+
+**Problem:** Histogram axes were using the actual min/max values from the data, which could result in awkward starting points and non-round numbers on the axis labels.
+
+**Solution:** Changed the histogram ranges in StatisticsScreen to always start at 0 and round up the max value to a nice round number (10, 20, 50, 100, 200, 500, etc.). Added a `roundUpToNice()` helper function that chooses multipliers of 1, 2, 5, or 10 at the appropriate magnitude.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Added `roundUpToNice()` function and updated `histogramRanges` to use min: 0 and round max values
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added x-axis line to histograms
 
 **Problem:** Histograms on the statistics screen showed tick labels at the bottom but didn't have a visible x-axis line, making the chart look incomplete.

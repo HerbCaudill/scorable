@@ -9,6 +9,18 @@ import { Histogram } from "./Histogram"
 
 const MIN_GAMES_FOR_STATS = 3
 
+/** Round up to a nice round number for axis labels (e.g., 10, 20, 50, 100, 200, 500) */
+const roundUpToNice = (value: number): number => {
+  if (value <= 0) return 10
+  const magnitude = Math.pow(10, Math.floor(Math.log10(value)))
+  const normalized = value / magnitude
+  // Choose nice multipliers: 1, 2, 5, 10
+  if (normalized <= 1) return magnitude
+  if (normalized <= 2) return 2 * magnitude
+  if (normalized <= 5) return 5 * magnitude
+  return 10 * magnitude
+}
+
 type PlayerStats = {
   name: string
   gamesPlayed: number
@@ -120,18 +132,22 @@ export const StatisticsScreen = ({ onBack }: Props) => {
   }, [knownGameIds, docs])
 
   // Calculate shared ranges for histograms across all players
+  // Axes start at zero and go up to a round number
   const histogramRanges = useMemo(() => {
     const allMoveScores = stats.flatMap(p => p.moveScores)
     const allGameScores = stats.flatMap(p => p.gameScores)
 
+    const moveMax = allMoveScores.length > 0 ? Math.max(...allMoveScores) : 0
+    const gameMax = allGameScores.length > 0 ? Math.max(...allGameScores) : 0
+
     return {
       moveScores: {
-        min: allMoveScores.length > 0 ? Math.min(...allMoveScores) : 0,
-        max: allMoveScores.length > 0 ? Math.max(...allMoveScores) : 0,
+        min: 0,
+        max: roundUpToNice(moveMax),
       },
       gameScores: {
-        min: allGameScores.length > 0 ? Math.min(...allGameScores) : 0,
-        max: allGameScores.length > 0 ? Math.max(...allGameScores) : 0,
+        min: 0,
+        max: roundUpToNice(gameMax),
       },
     }
   }, [stats])
