@@ -1,10 +1,32 @@
 ## Progress log
 
+### 2026-01-13: Styled reference lines and labels with graph colors
+
+**Problem:** The vertical reference lines for average scores were 2px thick and neutral gray. The avg/best labels had no background color, making them hard to see against the chart.
+
+**Solution:** Updated both DotPlot and Histogram components:
+
+1. **Vertical lines** - Changed from `w-0.5` (2px) to `w-px` (1px), and from `bg-neutral-500` to graph-colored (`bg-teal-600` for teal charts, `bg-amber-600` for amber charts)
+2. **Tick marks** - Same color change as vertical lines
+3. **Labels** - Added solid color background matching the graph color (teal-600/amber-600), white text, rounded corners, and horizontal padding (`px-1`)
+
+This creates a cohesive visual style where reference lines and labels match the chart's color scheme.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Updated avg label, best label, vertical lines, and tick marks with graph-colored styling
+- `src/components/DotPlot.tsx` - Same changes as Histogram
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added colons after avg and best labels on statistics page
 
 **Problem:** The avg and best score labels on the dot plot charts said "avg 32" and "best 194" without colons, which looked inconsistent with typical label formatting.
 
 **Solution:** Added colons after "avg" and "best" in all reference line labels in StatisticsScreen.tsx:
+
 - Move scores: `avg: 32`, `best: 45`
 - Game scores: `avg: 320`, `best: 389`
 

@@ -80,7 +80,10 @@ export const Histogram = ({
             return (
               <span
                 key={`label-avg-${i}`}
-                className="absolute top-0 whitespace-nowrap text-xs text-neutral-500"
+                className={cx(
+                  "absolute top-0 whitespace-nowrap rounded px-1 text-xs text-white",
+                  color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                )}
                 style={{ left: `calc(${xPos}% + 4px)` }}
               >
                 {line.label}
@@ -101,7 +104,10 @@ export const Histogram = ({
             return (
               <div
                 key={`ref-${i}`}
-                className="absolute top-0 z-10 h-full w-0.5 bg-neutral-500"
+                className={cx(
+                  "absolute top-0 z-10 h-full w-px",
+                  color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                )}
                 style={{ left: `${xPos}%` }}
               />
             )
@@ -138,7 +144,10 @@ export const Histogram = ({
             return (
               <div
                 key={`tick-${i}`}
-                className="absolute -top-1 h-2 w-0.5 bg-neutral-500"
+                className={cx(
+                  "absolute -top-1 h-2 w-px",
+                  color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                )}
                 style={{ left: `${xPos}%` }}
               />
             )
@@ -158,7 +167,10 @@ export const Histogram = ({
             return (
               <span
                 key={`label-best-${i}`}
-                className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-xs text-neutral-500"
+                className={cx(
+                  "absolute top-3 -translate-x-1/2 whitespace-nowrap rounded px-1 text-xs text-white",
+                  color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                )}
                 style={{ left: `${clampedPos}%` }}
               >
                 {line.label}
