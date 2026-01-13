@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] Add a little padding around the average and best labels
 - [ ] add more vertical padding around each player's statistics
 - [ ] Make average and best scores bold (just the number, not the text part of the label)
 - [ ] Make the vertical lines showing the average 1px thick and a darker version of the graph color. Give the average and best labels a solid color background of that same color.
