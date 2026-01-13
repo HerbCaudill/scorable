@@ -1,5 +1,32 @@
 ## Progress log
 
+### 2026-01-13: Replaced histogram with dot plot visualization
+
+**Problem:** Histograms on the statistics screen showed binned data but you couldn't see individual games or moves. Users wanted to hover over specific data points to see details about each game/move.
+
+**Solution:** Created a new DotPlot component that shows each data point as an individual dot:
+
+1. **Dot placement** - Data points are placed along the x-axis according to their value, then stacked vertically within bins to avoid overlap
+2. **Hover tooltips** - Hovering over a dot shows information:
+   - Move scores: shows the word and score (e.g., "OVAL for 17")
+   - Game scores: shows the date, opponent, and score (e.g., "Jan 13 vs Bob: 389")
+3. **Visual feedback** - Non-hovered dots dim to 30% opacity, hovered dot gets a ring highlight
+4. **Same axis ranges** - All players' plots use the same min/max for easy comparison
+
+**New files:**
+
+- `src/components/DotPlot.tsx` - New dot plot visualization component
+- `src/lib/getMoveDataFromDoc.ts` - Get move scores with word labels for tooltips
+- `src/lib/getGameDataFromDoc.ts` - Get game scores with date/opponent labels for tooltips
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Updated to use DotPlot instead of Histogram, switched to new data helpers
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Fixed build chunk size warning with bundle splitting
 
 **Problem:** Build showed warning about chunks being larger than 500KB. The main bundle was 31MB due to the Scrabble dictionary and Automerge being bundled together with app code.
@@ -14,6 +41,7 @@
 Also increased `chunkSizeWarningLimit` to 32MB since the dictionary is intentionally large and cannot be reduced without losing word definitions.
 
 **Results:**
+
 - Main app bundle reduced from 31MB to 411KB (97% reduction)
 - All dependencies now cached independently
 - No more build warnings

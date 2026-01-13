@@ -3,9 +3,10 @@ import { useDocuments } from "@automerge/automerge-repo-react-hooks"
 import { useLocalStore } from "@/lib/localStore"
 import type { GameDoc } from "@/lib/automergeTypes"
 import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
-import { getMoveScoresFromDoc } from "@/lib/getMoveScoresFromDoc"
+import { getMoveDataFromDoc, type MoveData } from "@/lib/getMoveDataFromDoc"
+import { getGameDataFromDoc, type GameData } from "@/lib/getGameDataFromDoc"
 import { Header } from "./Header"
-import { Histogram } from "./Histogram"
+import { DotPlot, type DataPoint } from "./DotPlot"
 
 const MIN_GAMES_FOR_STATS = 3
 
@@ -30,8 +31,8 @@ type PlayerStats = {
   avgScore: number
   highScore: number
   lowScore: number
-  gameScores: number[]
-  moveScores: number[]
+  gameData: GameData[]
+  moveData: MoveData[]
   avgMoveScore: number
   maxMoveScore: number
 }
@@ -49,8 +50,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
       {
         gamesPlayed: number
         gamesWon: number
-        gameScores: number[]
-        moveScores: number[]
+        gameData: GameData[]
+        moveData: MoveData[]
       }
     >()
 
@@ -68,20 +69,21 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         const playerName = doc.players[i].name
         const score = scores[i]
         const isWinner = score === maxScore
-        const playerMoveScores = getMoveScoresFromDoc(doc, i)
+        const playerMoveData = getMoveDataFromDoc(doc, i)
+        const playerGameData = getGameDataFromDoc(doc, i)
 
         const existing = playerStatsMap.get(playerName) || {
           gamesPlayed: 0,
           gamesWon: 0,
-          gameScores: [],
-          moveScores: [],
+          gameData: [],
+          moveData: [],
         }
 
         playerStatsMap.set(playerName, {
           gamesPlayed: existing.gamesPlayed + 1,
           gamesWon: existing.gamesWon + (isWinner ? 1 : 0),
-          gameScores: [...existing.gameScores, score],
-          moveScores: [...existing.moveScores, ...playerMoveScores],
+          gameData: [...existing.gameData, playerGameData],
+          moveData: [...existing.moveData, ...playerMoveData],
         })
       }
     }
@@ -90,8 +92,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
     // Only include players with more than 2 games
     const playerStats: PlayerStats[] = []
     for (const [name, data] of playerStatsMap) {
-      const { gamesPlayed, gamesWon, gameScores, moveScores } = data
+      const { gamesPlayed, gamesWon, gameData, moveData } = data
       if (gamesPlayed < MIN_GAMES_FOR_STATS) continue
+
+      const gameScores = gameData.map(g => g.value)
+      const moveScores = moveData.map(m => m.value)
 
       playerStats.push({
         name,
@@ -103,8 +108,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
           gamesPlayed > 0 ? Math.round(gameScores.reduce((a, b) => a + b, 0) / gamesPlayed) : 0,
         highScore: gameScores.length > 0 ? Math.max(...gameScores) : 0,
         lowScore: gameScores.length > 0 ? Math.min(...gameScores) : 0,
-        gameScores,
-        moveScores,
+        gameData,
+        moveData,
         avgMoveScore:
           moveScores.length > 0 ?
             Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)
@@ -131,11 +136,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
     return count
   }, [knownGameIds, docs])
 
-  // Calculate shared ranges for histograms across all players
+  // Calculate shared ranges for dot plots across all players
   // Axes start at zero and go up to a round number
-  const histogramRanges = useMemo(() => {
-    const allMoveScores = stats.flatMap(p => p.moveScores)
-    const allGameScores = stats.flatMap(p => p.gameScores)
+  const plotRanges = useMemo(() => {
+    const allMoveScores = stats.flatMap(p => p.moveData.map(m => m.value))
+    const allGameScores = stats.flatMap(p => p.gameData.map(g => g.value))
 
     const moveMax = allMoveScores.length > 0 ? Math.max(...allMoveScores) : 0
     const gameMax = allGameScores.length > 0 ? Math.max(...allGameScores) : 0
@@ -189,12 +194,12 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                   <div className="mb-2 text-xs font-medium text-neutral-500">Move scores</div>
                   <div className="flex gap-4">
                     <div className="flex-1">
-                      <Histogram
-                        data={player.moveScores}
-                        label=""
+                      <DotPlot
+                        data={player.moveData}
                         color="teal"
-                        minValue={histogramRanges.moveScores.min}
-                        maxValue={histogramRanges.moveScores.max}
+                        minValue={plotRanges.moveScores.min}
+                        maxValue={plotRanges.moveScores.max}
+                        getTooltip={d => d.label ?? String(d.value)}
                       />
                     </div>
                     <div className="flex flex-col justify-center gap-1 text-right">
@@ -215,12 +220,12 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                   <div className="mb-2 text-xs font-medium text-neutral-500">Game scores</div>
                   <div className="flex gap-4">
                     <div className="flex-1">
-                      <Histogram
-                        data={player.gameScores}
-                        label=""
+                      <DotPlot
+                        data={player.gameData}
                         color="amber"
-                        minValue={histogramRanges.gameScores.min}
-                        maxValue={histogramRanges.gameScores.max}
+                        minValue={plotRanges.gameScores.min}
+                        maxValue={plotRanges.gameScores.max}
+                        getTooltip={d => d.label ?? String(d.value)}
                       />
                     </div>
                     <div className="flex flex-col justify-center gap-1 text-right">

@@ -1,10 +1,11 @@
 ### To do
 
 - [ ] On the statistics page, I'd like to anchor the best and average scores to the charts
-- [ ] On the statistics page, instead of a histogram let's show each game and move in a given bin as a dot that you can hover over to see information about it
 - [ ] Let's leave out games with scores over 500 or move scores over 100 to make this more relatable. Let's also find 10 more games online that match these criteria.
 
 ### Done
+
+- [x] On the statistics page, instead of a histogram let's show each game and move in a given bin as a dot that you can hover over to see information about it
 
 - [x] Fix build warning about chunk sizes: split bundle with manualChunks (word-list, automerge, react, radix) and increased chunkSizeWarningLimit to 32MB for dictionary
 
