@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] the tooltips that show up when touching a dot on the chart should be next to the dot, not in a fixed position above the chart
 - [ ] On the statistics page sometimes the avg and best labels overlap each other. let's put the avg label on the top of the chart, flush left against the line
 - [ ] On the statistics page add colons after `avg` and `best`
 - [ ] add more vertical padding around each player's statistics
