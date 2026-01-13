@@ -1,6 +1,12 @@
 ### To do
 
-- [ ] display past games using the same components as current games: use the same player panels. use the same footer and put the delete button there. the only differences should be that you can't change anything, and it shows who won.
+- [ ] Refactor PastGameScreen to use same layout as GameScreen
+  - [ ] Use the same player panel structure (header + move history)
+  - [ ] Show winner indicator on the winning player's panel
+  - [ ] Use same horizontal scrolling footer with action buttons
+  - [ ] Move delete button to footer
+  - [ ] Board should be read-only (no editing capability)
+  - [ ] Remove header date display (or move to footer)
 
 ### Done
 
