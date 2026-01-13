@@ -185,7 +185,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
             {stats.map(player => (
               <div
                 key={player.name}
-                className="rounded-lg bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+                className="rounded-lg bg-white p-4 shadow-[0_3px_0_0_rgba(0,0,0,0.1)]"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <span className="font-semibold">{player.name}</span>

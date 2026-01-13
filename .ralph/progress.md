@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Changed statistics player panel shadows to solid
+
+**Problem:** The drop shadows on the player panels in the statistics page used a blurry spread shadow (`shadow-[0_2px_8px_rgba(0,0,0,0.1)]`) which looked inconsistent with other elements in the app that use solid, horizontally centered shadows.
+
+**Solution:** Changed the shadow style from `shadow-[0_2px_8px_rgba(0,0,0,0.1)]` to `shadow-[0_3px_0_0_rgba(0,0,0,0.1)]`. This creates a solid shadow directly below the panel with no blur or spread, matching the style used on buttons and the logo tile.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Updated player card shadow class
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made avg line prominent, removed line for best scores
 
 **Problem:** On the statistics page dot plots, both the average and best score reference lines had identical dashed line styling, making it hard to distinguish between them. Users wanted the average line to be more prominent and the best score to only show a label (no line).
