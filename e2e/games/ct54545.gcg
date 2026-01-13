@@ -1,0 +1,46 @@
+#character-encoding UTF-8
+#description Created with Macondo
+#id io.woogles gA3umSigtbtJ8PbJkhCC8b
+#lexicon CSW24
+#game-type classic
+#player1 Alice Alice
+#player2 Bob Bob
+>Alice: FENCELR 8D FENCE +28 28
+#note FENCER slightly better
+>Bob: UZED D8 .UZED +36 36
+>Alice: PRYAVLR I7 PRY +26 54
+#note 11C PERVY slightly better
+>Bob: ANA E10 ANA +24 60
+>Alice: AVERREL J9 AVER +20 74
+>Bob: AG F8 .AG +25 85
+>Alice: MOIEIRL C11 MOI +19 93
+>Bob: TOLANES 6C TOLANES +68 153
+>Alice: BRWELIT 11H BR.W +18 111
+#note I BLEWIT. Keeping my L for MOIL probably not worth it here.
+>Bob: EECH H11 .EECH +39 192
+>Alice: TITIBLE 13J TITI +16 127
+#note missed BITTIE
+>Bob: OE 10J .OE +11 203
+>Alice: VULLBEW -BLLUVW +0 127
+#note sligtly better to play through with things like LUV/ODAL?
+>Bob: OURI 15H .OURI +9 212
+>Alice: GRUESEN L7 GRU.S +17 144
+#note Terrible move. First off, if I am playing here, I should see RENEGUES. Additionally, why am I using my S for 17 points? I think I just didnt generate plays like 5D GENU and felt very stuck so did this in panic mode.
+>Bob: EXO B9 EXO +32 244
+>Alice: QINAAES A7 QIN +38 182
+>Bob: LED 5D LED +17 261
+>Alice: AJASTEO 8L .AJA +33 215
+>Bob: LIR M6 LI.R +13 274
+>Alice: HTONIES 9F .H +20 235
+#note HOIST scores enough to be worth it.
+>Bob: FB O7 F.B +8 282
+>Alice: VESNTIO C3 VES. +19 254
+#note Missed VENITE.
+>Bob: DAWTI H1 DAWTI. +33 315
+>Alice: TET?NOI 1A TETaNOI. +74 328
+#note I dont think there is anything I can do at this point besides bingoing and hoping.
+>Bob: P?OMAIN 4G P.OMAINe +72 387
+>Alice: SUKLYGD A11 SULKY +46 374
+#note I knew this was a phony, but was just hoping she wouldnt challenge since the score is close. I got punished, because my valid move of YUKS scores better.
+>Bob: O 3G O. +11 398
+>Bob: (DG) +8 406

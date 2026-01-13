@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Let's leave out games with scores over 500 or move scores over 100 to make this more relatable. Let's also find 10 more games online that match these criteria.
-
 ### Done
+
+- [x] Leave out games with scores over 500 or move scores over 100 to make stats more relatable; added 10 more GCG games from cross-tables.com with normal scores
 
 - [x] The histograms have a fixed height and the dots sometimes overflow it
 

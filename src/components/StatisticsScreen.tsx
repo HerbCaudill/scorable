@@ -6,9 +6,11 @@ import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import { getMoveDataFromDoc, type MoveData } from "@/lib/getMoveDataFromDoc"
 import { getGameDataFromDoc, type GameData } from "@/lib/getGameDataFromDoc"
 import { Header } from "./Header"
-import { DotPlot, type DataPoint, type ReferenceLine } from "./DotPlot"
+import { DotPlot } from "./DotPlot"
 
 const MIN_GAMES_FOR_STATS = 3
+const MAX_GAME_SCORE = 500 // Filter out games with scores above this to keep data relatable
+const MAX_MOVE_SCORE = 100 // Filter out moves with scores above this to keep data relatable
 
 /** Round up to a nice round number for axis labels (e.g., 10, 20, 50, 100, 200, 500) */
 const roundUpToNice = (value: number): number => {
@@ -95,8 +97,12 @@ export const StatisticsScreen = ({ onBack }: Props) => {
       const { gamesPlayed, gamesWon, gameData, moveData } = data
       if (gamesPlayed < MIN_GAMES_FOR_STATS) continue
 
-      const gameScores = gameData.map(g => g.value)
-      const moveScores = moveData.map(m => m.value)
+      // Filter out outlier games and moves to keep data relatable
+      const filteredGameData = gameData.filter(g => g.value <= MAX_GAME_SCORE)
+      const filteredMoveData = moveData.filter(m => m.value <= MAX_MOVE_SCORE)
+
+      const gameScores = filteredGameData.map(g => g.value)
+      const moveScores = filteredMoveData.map(m => m.value)
 
       playerStats.push({
         name,
@@ -105,11 +111,13 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         winRate: gamesPlayed > 0 ? gamesWon / gamesPlayed : 0,
         totalScore: gameScores.reduce((a, b) => a + b, 0),
         avgScore:
-          gamesPlayed > 0 ? Math.round(gameScores.reduce((a, b) => a + b, 0) / gamesPlayed) : 0,
+          gameScores.length > 0 ?
+            Math.round(gameScores.reduce((a, b) => a + b, 0) / gameScores.length)
+          : 0,
         highScore: gameScores.length > 0 ? Math.max(...gameScores) : 0,
         lowScore: gameScores.length > 0 ? Math.min(...gameScores) : 0,
-        gameData,
-        moveData,
+        gameData: filteredGameData,
+        moveData: filteredMoveData,
         avgMoveScore:
           moveScores.length > 0 ?
             Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)

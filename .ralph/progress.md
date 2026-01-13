@@ -1,5 +1,42 @@
 ## Progress log
 
+### 2026-01-13: Filtered outlier scores from statistics and added more normal-scoring games
+
+**Problem:** The statistics screen was showing some extreme scores (games >500 points, moves >100 points) that skewed the visualizations and made them less relatable to typical gameplay. Additionally, some test games included these outlier scores.
+
+**Solution:** Two-part fix:
+
+1. **Filtered outliers from statistics display:**
+   - Added `MAX_GAME_SCORE = 500` and `MAX_MOVE_SCORE = 100` constants in StatisticsScreen
+   - Filter out game data points where value > 500
+   - Filter out move data points where value > 100
+   - Averages and "best" values are now calculated from filtered data only
+
+2. **Removed outlier games and added normal-scoring games:**
+   - Removed `anno57697.gcg` (final score 538) and `anno57721.gcg` (final score 623, with 194 and 104 point moves) from gcgFiles
+   - Downloaded 10 new games from cross-tables.com with normal scores:
+     - ct17123.gcg (442 vs 381)
+     - ct5939.gcg (413 vs 348)
+     - ct4158.gcg (352 vs 311)
+     - ct4048.gcg (453 vs 390)
+     - ct2221.gcg (409 vs 348)
+     - ct741.gcg (457 vs 242)
+     - ct54545.gcg (406 vs 374)
+     - ct20031.gcg (402 vs 296)
+     - ct15827.gcg (397 vs 353)
+     - ct38790.gcg (379 vs 437)
+   - All new games have scores ≤500 and moves ≤100
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Added score filtering constants and logic
+- `src/lib/gcgData.ts` - Removed outlier games, added 10 new cross-tables.com imports
+- `e2e/games/ct*.gcg` - 10 new GCG files added
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Fixed dot overflow in DotPlot component
 
 **Problem:** The DotPlot component had a fixed height of 48px, but when many data points fell into the same bin, the stacked dots could overflow the container since the minimum dot size was 4px.
