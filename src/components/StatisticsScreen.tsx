@@ -209,12 +209,14 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                     referenceLines={[
                       {
                         value: player.avgMoveScore,
-                        label: `avg: ${player.avgMoveScore}`,
+                        label: "avg:",
+                        labelValue: player.avgMoveScore,
                         type: "avg",
                       },
                       {
                         value: player.maxMoveScore,
-                        label: `best: ${player.maxMoveScore}`,
+                        label: "best:",
+                        labelValue: player.maxMoveScore,
                         type: "best",
                       },
                     ]}
@@ -231,8 +233,18 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                     maxValue={plotRanges.gameScores.max}
                     getTooltip={d => d.label ?? String(d.value)}
                     referenceLines={[
-                      { value: player.avgScore, label: `avg: ${player.avgScore}`, type: "avg" },
-                      { value: player.highScore, label: `best: ${player.highScore}`, type: "best" },
+                      {
+                        value: player.avgScore,
+                        label: "avg:",
+                        labelValue: player.avgScore,
+                        type: "avg",
+                      },
+                      {
+                        value: player.highScore,
+                        label: "best:",
+                        labelValue: player.highScore,
+                        type: "best",
+                      },
                     ]}
                   />
                 </div>

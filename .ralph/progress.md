@@ -1,5 +1,21 @@
 ## Progress log
 
+### 2026-01-13: Made average and best score numbers bold in labels
+
+**Problem:** The average and best score labels on the statistics page (e.g., "avg: 25", "best: 40") displayed both the text and the number in the same font weight, making it hard to quickly scan the key values.
+
+**Solution:** Updated the `ReferenceLine` type in both Histogram and DotPlot components to include an optional `labelValue` property. When provided, the value is rendered in bold (`font-bold`) after the label text. Updated StatisticsScreen to pass the label text (e.g., "avg:") separately from the numeric value, so the numbers appear bold while the text stays regular weight.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added `labelValue` property to ReferenceLine type, render value with `font-bold`
+- `src/components/DotPlot.tsx` - Same changes as Histogram
+- `src/components/StatisticsScreen.tsx` - Updated referenceLines to use separate `label` and `labelValue` props
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made move scores histogram taller with padding for avg label
 
 **Problem:** The move scores histogram on the statistics screen was too short at 40px height, and the avg label at the top of the chart was positioned at `top-0` which could cause it to overlap with chart elements.

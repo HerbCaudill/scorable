@@ -102,6 +102,9 @@ export const DotPlot = ({
                 style={{ left: `calc(${xPos}% + 4px)` }}
               >
                 {line.label}
+                {line.labelValue !== undefined && (
+                  <span className="font-bold"> {line.labelValue}</span>
+                )}
               </span>
             )
           })}
@@ -198,6 +201,9 @@ export const DotPlot = ({
                 style={{ left: `${clampedPos}%` }}
               >
                 {line.label}
+                {line.labelValue !== undefined && (
+                  <span className="font-bold"> {line.labelValue}</span>
+                )}
               </span>
             )
           })}
@@ -214,6 +220,7 @@ export type DataPoint = {
 export type ReferenceLine = {
   value: number
   label: string
+  labelValue?: number | string
   type?: "avg" | "best"
 }
 
