@@ -444,18 +444,18 @@ export class GamePage {
     await expect(this.page.getByText("Editing move")).not.toBeVisible()
   }
 
-  /** Click cancel button during edit mode */
+  /** Click cancel button during edit mode (back button) */
   async cancelEdit() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
-    await this.page.getByRole("button", { name: "Cancel" }).click()
+    await this.page.getByRole("button", { name: "Back" }).click()
   }
 
   /** Click save edit button */
   async saveEdit() {
     // Dismiss mobile keyboard if visible by pressing Escape
     await this.pressKey("Escape")
-    await this.page.getByRole("button", { name: "Save edit" }).click()
+    await this.page.getByRole("button", { name: "Save" }).click()
   }
 
   /** Get the current URL hash */

@@ -1,5 +1,27 @@
 ## Progress log
 
+### 2026-01-13: Refactored edit mode header to use standard Header component
+
+**Problem:** When correcting a move, the "Editing move" heading was displayed as a separate `<div>` below the header, and the cancel/save buttons were custom-styled inline. This was inconsistent with other screens that used the standard `Header` component.
+
+**Solution:** Updated GameScreen to use the Header component properly in edit mode:
+
+1. **Title in header** - Moved "Editing move" text to the Header's `title` prop instead of a separate div
+2. **Back button as cancel** - The back button now triggers `handleCancelEdit` when in edit mode (using the standard `BackButton` component from Header)
+3. **Save button** - Simplified from "Save edit" to just "Save" in the right content area
+4. **Removed separate cancel button** - No longer needed since back button serves this purpose
+
+This makes the edit mode header consistent with other screens like EndGameScreen and TileBagScreen.
+
+**Files changed:**
+
+- `src/components/GameScreen.tsx` - Updated Header usage for edit mode, removed separate "Editing move" div, removed IconX import
+- `e2e/pages/game.page.ts` - Updated `cancelEdit()` to click the "Back" button, updated `saveEdit()` to look for "Save" instead of "Save edit"
+
+**Tests:** All 143 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Documented GCG games with challenge notation
 
 **Task:** Find GCG games that include both failed and successful challenges.

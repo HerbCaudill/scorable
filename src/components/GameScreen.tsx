@@ -23,7 +23,6 @@ import {
   IconPlayerPlay,
   IconShare,
   IconTrash,
-  IconX,
 } from "@tabler/icons-react"
 import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -547,18 +546,13 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       {/* Top navigation bar */}
       <div className="shrink-0">
         <Header
-          onBack={isEditing ? undefined : handleBack}
+          title={isEditing ? "Editing move" : undefined}
+          onBack={isEditing ? handleCancelEdit : handleBack}
           rightContent={
             isEditing ?
-              <>
-                <Button variant="outline" size="xs" onClick={handleCancelEdit}>
-                  <IconX size={14} />
-                  Cancel
-                </Button>
-                <Button variant="default" size="xs" onClick={handleSaveEdit}>
-                  Save edit
-                </Button>
-              </>
+              <Button variant="default" size="xs" onClick={handleSaveEdit}>
+                Save
+              </Button>
             : <>
                 <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
                   <IconArrowBackUp size={14} />
@@ -575,9 +569,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
 
       {/*  Board + Player panels */}
       <div className="shrink-0">
-        {/* Edit mode banner */}
-        {isEditing && <div className="font-bold text-center text-sm">Editing move</div>}
-
         {/* Board area */}
         <div className="flex flex-col items-center w-full">
           <ScrabbleBoard
