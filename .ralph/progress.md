@@ -1,5 +1,24 @@
 ## Progress log
 
+### 2026-01-13: Added hover tooltips to histogram bars
+
+**Problem:** Users couldn't see the exact values represented by histogram bars without hovering.
+
+**Solution:** Added hover functionality to histogram bars:
+
+1. When hovering over a bar, a tooltip appears showing the bin range and count (e.g., "20-29: 5")
+2. Non-hovered bars dim to 50% opacity to highlight the focused bar
+3. Used React state to track which bar is hovered
+4. Tooltip is positioned above the bars and centered
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added useState for hoveredBin, tooltip rendering, onMouseEnter/onMouseLeave handlers, and opacity transition
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made histograms more granular
 
 **Problem:** Histograms on the statistics screen used 5-12 bins which didn't provide enough granularity to see the distribution of scores clearly.

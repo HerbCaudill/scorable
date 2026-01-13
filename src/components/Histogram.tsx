@@ -1,6 +1,8 @@
+import { useState } from "react"
 import { cx } from "@/lib/cx"
 
 export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue }: Props) => {
+  const [hoveredBin, setHoveredBin] = useState<number | null>(null)
   if (data.length === 0) return null
 
   // Create bins for the histogram
@@ -50,23 +52,44 @@ export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue
   const maxCount = Math.max(...bins)
   const adjustedMax = adjustedMin + (bins.length - 1) * binSize
 
+  // Calculate bin range for tooltip
+  const getBinRange = (binIndex: number) => {
+    const binStart = adjustedMin + binIndex * binSize
+    const binEnd = binStart + binSize - 1
+    return { binStart, binEnd }
+  }
+
   return (
     <div className="flex flex-col gap-1">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
-      <div className="flex items-end justify-center gap-0.5" style={{ height: 40 }}>
-        {bins.map((count, i) => (
-          <div
-            key={i}
-            className={cx(
-              "min-w-1 flex-1 rounded-t",
-              color === "teal" ? "bg-teal-500" : "bg-amber-500",
-            )}
-            style={{
-              height: `${maxCount > 0 ? (count / maxCount) * 100 : 0}%`,
-              minHeight: count > 0 ? 2 : 0,
-            }}
-          />
-        ))}
+      <div className="relative">
+        {/* Tooltip */}
+        {hoveredBin !== null && bins[hoveredBin] > 0 && (
+          <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
+            {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
+          </div>
+        )}
+        <div
+          className="flex items-end justify-center gap-0.5"
+          style={{ height: 40 }}
+          onMouseLeave={() => setHoveredBin(null)}
+        >
+          {bins.map((count, i) => (
+            <div
+              key={i}
+              className={cx(
+                "min-w-1 flex-1 cursor-pointer rounded-t transition-opacity",
+                color === "teal" ? "bg-teal-500" : "bg-amber-500",
+                hoveredBin !== null && hoveredBin !== i ? "opacity-50" : "",
+              )}
+              style={{
+                height: `${maxCount > 0 ? (count / maxCount) * 100 : 0}%`,
+                minHeight: count > 0 ? 2 : 0,
+              }}
+              onMouseEnter={() => setHoveredBin(i)}
+            />
+          ))}
+        </div>
       </div>
       {/* X-axis line and labels */}
       <div className="h-px bg-neutral-300" />
