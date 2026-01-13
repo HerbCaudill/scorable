@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] Make the vertical line for average scores more prominent. For the best scores, we don't need a line - just the label
 - [ ] The move score chart should go back to being a histogram - there are just too many moves
 ### Done
 
