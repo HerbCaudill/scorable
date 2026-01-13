@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] The move score chart should go back to being a histogram - there are just too many moves
 ### Done
 
 - [x] Leave out games with scores over 500 or move scores over 100 to make stats more relatable; added 10 more GCG games from cross-tables.com with normal scores
