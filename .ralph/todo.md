@@ -3,15 +3,10 @@
 ### Done
 
 - [x] Leave out games with scores over 500 or move scores over 100 to make stats more relatable; added 10 more GCG games from cross-tables.com with normal scores
-
 - [x] The histograms have a fixed height and the dots sometimes overflow it
-
 - [x] On the statistics page, I'd like to anchor the best and average scores to the charts
-
 - [x] On the statistics page, instead of a histogram let's show each game and move in a given bin as a dot that you can hover over to see information about it
-
 - [x] Fix build warning about chunk sizes: split bundle with manualChunks (word-list, automerge, react, radix) and increased chunkSizeWarningLimit to 32MB for dictionary
-
 - [x] Refactor PastGameScreen to use same layout as GameScreen
   - [x] Use the same player panel structure (header + move history)
   - [x] Show winner indicator on the winning player's panel
@@ -19,11 +14,9 @@
   - [x] Move delete button to footer
   - [x] Board should be read-only (no editing capability)
   - [x] Remove header date display
-
 - [x] show histogram values when hovering over bars
 - [x] make the histograms a little more granular
 - [x] make two separate sections on each player's statistics card - move scores and game scores, each with a histogram, average, and best. Get rid of the game, win, and move counts.
-
 - [x] Fix histogram axis labels bumping into each other
 - [x] Make histogram axes start at zero and go up to round numbers
 - [x] On histograms, show x axis as a line without ticks
