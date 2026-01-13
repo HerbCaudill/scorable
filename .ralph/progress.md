@@ -1,5 +1,23 @@
 ## Progress log
 
+### 2026-01-13: Made avg/best labels larger and axis numbers smaller
+
+**Problem:** The reference line labels (avg/best) on the dot plots were the same size as the axis numbers, making them hard to distinguish. The task was to make the labels more prominent and the axis numbers less prominent.
+
+**Solution:** In the DotPlot component:
+1. Changed axis numbers (0, 100, 500) from `text-xs` to `text-[10px]` (smaller)
+2. Changed reference line labels (avg/best) from `text-[10px]` to `text-xs` (larger)
+
+This creates a clearer visual hierarchy where the important reference values stand out more than the scale markers.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Swapped font sizes for axis numbers and reference labels
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Changed statistics player panel shadows to solid
 
 **Problem:** The drop shadows on the player panels in the statistics page used a blurry spread shadow (`shadow-[0_2px_8px_rgba(0,0,0,0.1)]`) which looked inconsistent with other elements in the app that use solid, horizontally centered shadows.

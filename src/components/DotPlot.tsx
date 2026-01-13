@@ -144,7 +144,7 @@ export const DotPlot = ({
           })}
       </div>
       {/* X-axis labels */}
-      <div className="relative h-4 text-xs text-neutral-400">
+      <div className="relative h-4 text-[10px] text-neutral-400">
         <span>{min}</span>
         <span className="absolute right-0">{max}</span>
         {/* Reference line labels on a second row to avoid overlap */}
@@ -155,7 +155,7 @@ export const DotPlot = ({
           return (
             <span
               key={`label-${i}`}
-              className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-[10px] text-neutral-500"
+              className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-xs text-neutral-500"
               style={{ left: `${clampedPos}%` }}
             >
               {line.label}
