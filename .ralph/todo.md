@@ -5,9 +5,10 @@
 - [ ] On the statistics page add colons after `avg` and `best`
 - [ ] add more vertical padding around each player's statistics
 - [ ] The move score chart should go back to being a histogram - there are just too many moves
-- [ ] Enable scrolling on the list of past games
 
 ### Done
+
+- [x] Enable scrolling on the list of past games
 
 - [x] The average/best score labels should be one increment larger, and the numbers on the axis should be smaller
 - [x] The drop shadows on the player panels on the statistics page should be solid and horizontally centered, like they are on other elements

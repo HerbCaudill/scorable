@@ -104,7 +104,7 @@ export const HomeScreen = ({
 
         {/* Past games */}
         {finishedGames.length > 0 && (
-          <div className="flex flex-col gap-3">
+          <div className="flex min-h-0 flex-1 flex-col gap-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-medium text-gray-500">Past games</h2>
               {onViewStatistics && (
@@ -117,7 +117,7 @@ export const HomeScreen = ({
                 </button>
               )}
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 overflow-y-auto">
               {finishedGames.map(({ id, doc }) => {
                 const scores = doc.players.map((_, i) => getPlayerScoreFromDoc(doc, i))
                 const maxScore = Math.max(...scores)
@@ -151,8 +151,8 @@ export const HomeScreen = ({
           </div>
         )}
 
-        {/* Spacer to push test button to bottom */}
-        <div className="flex-1" />
+        {/* Spacer to push test button to bottom (only when no past games) */}
+        {finishedGames.length === 0 && <div className="flex-1" />}
 
         {/* Test games button at bottom */}
         <button

@@ -1,10 +1,31 @@
 ## Progress log
 
+### 2026-01-13: Enabled scrolling on past games list
+
+**Problem:** The list of past games on the home screen could overflow the viewport when there were many games, with no way to scroll through them.
+
+**Solution:** Made the past games section scrollable:
+
+1. Added `min-h-0 flex-1` to the past games container so it can shrink and expand within the flex layout
+2. Added `overflow-y-auto` to the list itself to enable vertical scrolling
+3. Made the spacer conditional - only renders when there are no past games (so the test button stays at bottom)
+
+The past games section now takes up available space and scrolls when the list is too long to fit.
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Added flex-1/min-h-0 to section, overflow-y-auto to list, conditional spacer
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made avg/best labels larger and axis numbers smaller
 
 **Problem:** The reference line labels (avg/best) on the dot plots were the same size as the axis numbers, making them hard to distinguish. The task was to make the labels more prominent and the axis numbers less prominent.
 
 **Solution:** In the DotPlot component:
+
 1. Changed axis numbers (0, 100, 500) from `text-xs` to `text-[10px]` (smaller)
 2. Changed reference line labels (avg/best) from `text-[10px]` to `text-xs` (larger)
 
