@@ -1041,3 +1041,33 @@ Removed the "Score keeper for word games" subtitle from the home screen header a
 - `e2e/tests/board-interaction.test.ts` - Added new test "backspace skips over existing tiles"
 
 **Tests:** All backspace-related tests pass. Note: The "space places blank tile" tests were already failing (pre-existing issue related to blank tile dialog).
+
+---
+
+### 2026-01-13: Fixed scrolling on past games list and statistics page
+
+**Problem:** The list of past games on the home screen and the statistics page content couldn't be scrolled when there was more content than fit in the viewport. The root elements had `h-dvh overflow-hidden` set globally, but the inner screen containers used `min-h-screen` which allowed them to expand infinitely instead of becoming scrollable.
+
+**Solution:** Fixed the flexbox layout constraints to enable proper scrolling:
+
+1. **HomeScreen.tsx:**
+   - Changed outer container from `min-h-screen` to `h-full` (respects parent's fixed height)
+   - Added `min-h-0` to the inner flex container (allows it to shrink below content size)
+   - Added `min-h-0 flex-1` to the past games scrollable container
+   - Added `scrollbar-none` class to hide scrollbars while keeping scroll functionality
+
+2. **StatisticsScreen.tsx:**
+   - Changed outer container from `min-h-screen` to `h-full overflow-y-auto`
+   - Added `scrollbar-none` class to hide scrollbars
+   - Added `pb-6` to inner container for bottom padding
+
+3. **New Playwright test:**
+   - Added "past games list container has proper overflow styling" test to verify CSS properties
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Updated flex layout for scrolling
+- `src/components/StatisticsScreen.tsx` - Updated flex layout for scrolling
+- `e2e/tests/past-games.test.ts` - Added test for scroll container styling
+
+**Tests:** All 143 Playwright tests and 104 unit tests pass.

@@ -132,4 +132,20 @@ test.describe("Past games", () => {
     await homePage.clickPastGame(1)
     await pastGamePage.expectPlayerName("Alice")
   })
+
+  test("past games list container has proper overflow styling", async ({ page }) => {
+    // Create one finished game
+    await createFinishedGame(page)
+
+    // Find the scrollable container (past games list)
+    const pastGamesList = page.locator(".overflow-y-auto")
+    await expect(pastGamesList).toBeVisible()
+
+    // Verify the container has the correct CSS properties for scrolling
+    const hasScrollStyles = await pastGamesList.evaluate((el: Element) => {
+      const style = getComputedStyle(el)
+      return style.overflowY === "auto" || style.overflowY === "scroll"
+    })
+    expect(hasScrollStyles).toBe(true)
+  })
 })

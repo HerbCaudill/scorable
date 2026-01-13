@@ -1,7 +1,11 @@
 ### To do
 
+- [ ] Change the name of the app to Scorable throughout the repo
+- [ ] Find some games that include both failed and successful challenges
+
 ### Done
 
+- [x] Fix scrolling on past games list and statistics page
 - [x] add more vertical padding around each player's statistics
 - [x] Add a little padding inside the average and best labels, as well as margin around them
 - [x] Make average and best scores bold (just the number, not the text part of the label)

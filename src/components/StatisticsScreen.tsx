@@ -167,8 +167,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
   }, [stats])
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="mx-auto w-full max-w-md px-4">
+    <div className="scrollbar-none flex h-full flex-col overflow-y-auto">
+      <div className="mx-auto w-full max-w-md px-4 pb-6">
         <Header title="Statistics" onBack={onBack} />
 
         {/* Player stats */}
