@@ -174,7 +174,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                 key={player.name}
                 className="rounded-lg bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
               >
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-4 flex items-center justify-between">
                   <span className="font-semibold">{player.name}</span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-green-600">
@@ -184,56 +184,56 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                  <div>
-                    <div className="font-semibold">{player.gamesPlayed}</div>
-                    <div className="text-xs text-neutral-500">Games</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{player.gamesWon}</div>
-                    <div className="text-xs text-neutral-500">Wins</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{player.highScore}</div>
-                    <div className="text-xs text-neutral-500">Best game</div>
-                  </div>
-                </div>
-
-                <div className="mt-2 grid grid-cols-4 gap-2 text-center text-sm">
-                  <div>
-                    <div className="font-semibold">{player.avgScore}</div>
-                    <div className="text-xs text-neutral-500">Avg game</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{player.avgMoveScore}</div>
-                    <div className="text-xs text-neutral-500">Avg move</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{player.maxMoveScore}</div>
-                    <div className="text-xs text-neutral-500">Best move</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{player.moveScores.length}</div>
-                    <div className="text-xs text-neutral-500">Moves</div>
+                {/* Move Scores section */}
+                <div className="mb-4">
+                  <div className="mb-2 text-xs font-medium text-neutral-500">Move scores</div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <Histogram
+                        data={player.moveScores}
+                        label=""
+                        color="teal"
+                        minValue={histogramRanges.moveScores.min}
+                        maxValue={histogramRanges.moveScores.max}
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center gap-1 text-right">
+                      <div>
+                        <span className="text-lg font-semibold">{player.avgMoveScore}</span>
+                        <span className="ml-1 text-xs text-neutral-500">avg</span>
+                      </div>
+                      <div>
+                        <span className="text-lg font-semibold">{player.maxMoveScore}</span>
+                        <span className="ml-1 text-xs text-neutral-500">best</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Score distribution histograms */}
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <Histogram
-                    data={player.moveScores}
-                    label="Move scores"
-                    color="teal"
-                    minValue={histogramRanges.moveScores.min}
-                    maxValue={histogramRanges.moveScores.max}
-                  />
-                  <Histogram
-                    data={player.gameScores}
-                    label="Game scores"
-                    color="amber"
-                    minValue={histogramRanges.gameScores.min}
-                    maxValue={histogramRanges.gameScores.max}
-                  />
+                {/* Game Scores section */}
+                <div>
+                  <div className="mb-2 text-xs font-medium text-neutral-500">Game scores</div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <Histogram
+                        data={player.gameScores}
+                        label=""
+                        color="amber"
+                        minValue={histogramRanges.gameScores.min}
+                        maxValue={histogramRanges.gameScores.max}
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center gap-1 text-right">
+                      <div>
+                        <span className="text-lg font-semibold">{player.avgScore}</span>
+                        <span className="ml-1 text-xs text-neutral-500">avg</span>
+                      </div>
+                      <div>
+                        <span className="text-lg font-semibold">{player.highScore}</span>
+                        <span className="ml-1 text-xs text-neutral-500">best</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

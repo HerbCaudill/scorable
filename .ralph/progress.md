@@ -1,5 +1,30 @@
 ## Progress log
 
+### 2026-01-13: Restructured statistics card with separate move and game score sections
+
+**Problem:** Player statistics cards showed a grid of stats (Games, Wins, Best game, Avg game, Avg move, Best move, Moves) which was visually cluttered and didn't clearly separate move-level and game-level statistics.
+
+**Solution:** Reorganized each player's statistics card into two distinct sections:
+
+1. **Move Scores** - Shows histogram with avg and best values on the right
+2. **Game Scores** - Shows histogram with avg and best values on the right
+
+Each section has:
+- A section header ("Move scores" / "Game scores")
+- The histogram on the left (using full available width)
+- Avg and best values stacked vertically on the right
+
+Also made the Histogram component's `label` prop optional, since the section headers now provide context.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Restructured player card layout with two sections
+- `src/components/Histogram.tsx` - Made label prop optional, conditionally render label only when provided
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Fixed histogram axis labels overlapping
 
 **Problem:** Histogram x-axis labels were bumping into each other because labels were positioned absolutely with centering (-translate-x-1/2), causing the edge labels to overlap or extend beyond the container.

@@ -1,6 +1,6 @@
 import { cx } from "@/lib/cx"
 
-export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: Props) => {
+export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue }: Props) => {
   if (data.length === 0) return null
 
   // Create bins for the histogram
@@ -15,7 +15,7 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
   if (range === 0) {
     return (
       <div className="flex flex-col gap-1">
-        <div className="text-center text-xs text-neutral-500">{label}</div>
+        {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
         <div className="flex items-end justify-center gap-0.5" style={{ height: 40 }}>
           <div
             className={cx("w-full rounded-t", color === "teal" ? "bg-teal-500" : "bg-amber-500")}
@@ -52,7 +52,7 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="text-center text-xs text-neutral-500">{label}</div>
+      {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
       <div className="flex items-end justify-center gap-0.5" style={{ height: 40 }}>
         {bins.map((count, i) => (
           <div
@@ -80,7 +80,7 @@ export const Histogram = ({ data, label, color = "teal", minValue, maxValue }: P
 
 type Props = {
   data: number[]
-  label: string
+  label?: string
   color?: "teal" | "amber"
   minValue?: number
   maxValue?: number
