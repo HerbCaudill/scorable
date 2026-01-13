@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] add more vertical padding around each player's statistics
 - [ ] The average/best score labels should be one increment larger, and the numbers on the axis should be smaller
 - [ ] The move score chart should go back to being a histogram - there are just too many moves
 - [ ] Enable scrolling on the list of past games
