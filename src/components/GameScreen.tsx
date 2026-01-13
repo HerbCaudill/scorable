@@ -570,7 +570,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       {/*  Board + Player panels */}
       <div className="shrink-0">
         {/* Board area */}
-        <div className="flex flex-col items-center w-full">
+        <div className="w-full">
           <ScrabbleBoard
             tiles={displayBoard}
             newTiles={newTiles}

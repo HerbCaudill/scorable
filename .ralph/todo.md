@@ -3,7 +3,7 @@
 - [ ] on the chart, center the `avg: X` label on the line. And allow enough space at the top of the chart so the label doesn't overlap with any of the chart elements
 - [ ] the "create test games" button should only appear on first use
 - [ ] the header doesn't need that much vertical padding
-- [ ] make padding around the app consistent - on the game screen, the arrow and the board and the first panel and the first button should all be left-aligned
+- [x] make padding around the app consistent - on the game screen, the arrow and the board and the first panel and the first button should all be left-aligned
 - [ ] make the ring around the active player panel just 1 px
 
 ### Done

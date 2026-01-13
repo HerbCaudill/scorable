@@ -1145,3 +1145,31 @@ Removed the "Score keeper for word games" subtitle from the home screen header a
 - `e2e/tests/past-games.test.ts` - Added test for scroll container styling
 
 **Tests:** All 143 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-13: Made padding around the app consistent
+
+**Problem:** On the game screen, different elements had inconsistent left alignment:
+- The Header component had its own internal `p-2` padding, adding extra spacing
+- The board was centered within its container rather than left-aligned
+- This caused the back arrow, board, player panels, and action buttons to not align with each other
+
+**Solution:** Removed internal padding from elements to let the container handle spacing:
+
+1. **Header.tsx** - Removed `p-2` from the internal flex container. The Header now has no internal padding, allowing the parent container to control spacing.
+
+2. **GameScreen.tsx** - Removed `flex flex-col items-center` from the board area wrapper, leaving just `w-full`. The board now fills its container width and aligns with other elements.
+
+The main container's `p-2` now provides consistent 8px padding for all elements:
+- Back arrow
+- Board
+- Player panels (via `-mx-2 px-2` for horizontal scroll)
+- Action buttons (via `-mx-2 px-2` for horizontal scroll)
+
+**Files changed:**
+
+- `src/components/Header.tsx` - Removed `p-2` from flex container
+- `src/components/GameScreen.tsx` - Simplified board area wrapper classes
+
+**Tests:** All 143 Playwright tests and 104 unit tests pass.
