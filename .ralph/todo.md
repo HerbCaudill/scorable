@@ -1,6 +1,10 @@
 ### To do
 
-(none)
+- [ ] the "create test games" button should only appear on first use
+- [ ] the header doesn't need that much vertical padding
+- [ ] make padding around the app consistent - on the game screen, the arrow and the board and the first panel and the first button should all be left-aligned
+- [ ] make the ring around the active player panel just 1 px
+- [ ] when correcting, the "Editing move" heading as well as the cancel/save buttons should use the standard header component
 
 ### Done
 
