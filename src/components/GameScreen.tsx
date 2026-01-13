@@ -1,42 +1,41 @@
-import { useState, useEffect, useCallback } from "react"
-import { cx } from "class-variance-authority"
-import type { DocumentId } from "@automerge/automerge-repo"
-import { useGame } from "@/lib/useGame"
-import { darkenColor } from "@/lib/utils"
-import { getPlayerScore } from "@/lib/getPlayerScore"
-import ScrabbleBoard from "./ScrabbleBoard"
 import { Button } from "@/components/ui/button"
-import { createEmptyBoard, computeTimerState, type BoardState, type GameMove } from "@/lib/types"
-import { validateMove } from "@/lib/validateMove"
+import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
 import { boardStateToMove } from "@/lib/boardStateToMove"
 import { checkTileOveruse, type TileOveruseWarning } from "@/lib/checkTileOveruse"
-import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
 import { getPlayerMoveHistory } from "@/lib/getPlayerMoveHistory"
-import { UnplayedTilesScreen } from "./TileBagScreen"
-import { EndGameScreen } from "./EndGameScreen"
-import { ConfirmDialog } from "./ConfirmDialog"
-import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
-import { isValidWord, getWordDefinitionWithFallback } from "@/lib/wordList"
+import { getPlayerScore } from "@/lib/getPlayerScore"
+import { getRemainingTileCount } from "@/lib/getRemainingTileCount"
 import { getWordsFromMove } from "@/lib/getWordsFromMove"
-import { Timer } from "./Timer"
-import { useHighlightedTiles } from "@/hooks/useHighlightedTiles"
 import { useLocalStore } from "@/lib/localStore"
-import { toast } from "sonner"
+import { computeTimerState, createEmptyBoard, type BoardState, type GameMove } from "@/lib/types"
+import { useGame } from "@/lib/useGame"
+import { darkenColor } from "@/lib/utils"
+import { validateMove } from "@/lib/validateMove"
+import { getWordDefinitionWithFallback, isValidWord } from "@/lib/wordList"
+import type { DocumentId } from "@automerge/automerge-repo"
 import {
-  IconFlag,
-  IconCards,
-  IconPlayerPause,
-  IconPlayerPlay,
-  IconX,
-  IconShare,
   IconArrowBackUp,
   IconArrowForwardUp,
-  IconTrash,
+  IconCards,
+  IconFlag,
   IconHandStop,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconShare,
+  IconTrash,
+  IconX,
 } from "@tabler/icons-react"
-import { MobileKeyboard } from "./MobileKeyboard"
+import { useCallback, useEffect, useState } from "react"
+import { toast } from "sonner"
 import { BlankLetterDialog } from "./BlankLetterDialog"
+import { ConfirmDialog } from "./ConfirmDialog"
+import { EndGameScreen } from "./EndGameScreen"
 import { Header } from "./Header"
+import { MobileKeyboard } from "./MobileKeyboard"
+import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
+import ScrabbleBoard from "./ScrabbleBoard"
+import { UnplayedTilesScreen } from "./TileBagScreen"
+import { Timer } from "./Timer"
 
 /** Check if board has any tiles placed */
 const hasTilesPlaced = (board: BoardState): boolean =>
