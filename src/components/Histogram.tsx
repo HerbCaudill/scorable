@@ -71,7 +71,7 @@ export const Histogram = ({
   return (
     <div className="flex flex-col gap-1">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
-      <div className="relative pt-5">
+      <div className="relative pt-6">
         {/* Avg label at top of chart, flush left against the vertical line */}
         {referenceLines
           .filter(line => line.type === "avg")
@@ -81,7 +81,7 @@ export const Histogram = ({
               <span
                 key={`label-avg-${i}`}
                 className={cx(
-                  "absolute top-0 whitespace-nowrap rounded px-1 text-xs text-white",
+                  "absolute top-0 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `calc(${xPos}% + 4px)` }}
@@ -108,7 +108,7 @@ export const Histogram = ({
               <div
                 key={`ref-${i}`}
                 className={cx(
-                  "absolute top-5 z-10 w-px",
+                  "absolute top-6 z-10 w-px",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `${xPos}%`, height: 56 }}
@@ -157,7 +157,7 @@ export const Histogram = ({
           })}
       </div>
       {/* X-axis labels */}
-      <div className="relative h-4 text-[10px] text-neutral-400">
+      <div className="relative h-10 text-[10px] text-neutral-400">
         <span>{adjustedMin}</span>
         <span className="absolute right-0">{adjustedMax}</span>
         {/* Best label below axis */}
@@ -171,7 +171,7 @@ export const Histogram = ({
               <span
                 key={`label-best-${i}`}
                 className={cx(
-                  "absolute top-3 -translate-x-1/2 whitespace-nowrap rounded px-1 text-xs text-white",
+                  "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `${clampedPos}%` }}

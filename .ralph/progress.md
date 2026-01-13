@@ -1,5 +1,25 @@
 ## Progress log
 
+### 2026-01-13: Added padding inside avg/best labels and margin around them
+
+**Problem:** The avg and best score labels on the statistics page charts had minimal internal padding (`px-1` only) and no vertical padding, making them look cramped. The labels also needed more margin/space around them for better visual separation.
+
+**Solution:** Updated both DotPlot and Histogram components:
+
+1. **Internal padding** - Changed label padding from `px-1` to `px-1.5 py-0.5` for better internal spacing
+2. **Avg label margin** - Increased top padding of chart container from `pt-5` to `pt-6` in Histogram to give more space for the avg label
+3. **Best label margin** - Moved best label down from `top-3` to `top-4` and increased axis labels container height from `h-4` to `h-10` to accommodate the label with space below the axis numbers
+4. **Reference line positioning** - Updated reference line from `top-5` to `top-6` in Histogram to match new container padding
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Updated label padding, container padding, axis labels height, and reference line position
+- `src/components/DotPlot.tsx` - Updated label padding and axis labels height
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Made average and best score numbers bold in labels
 
 **Problem:** The average and best score labels on the statistics page (e.g., "avg: 25", "best: 40") displayed both the text and the number in the same font weight, making it hard to quickly scan the key values.

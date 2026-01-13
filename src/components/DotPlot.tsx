@@ -96,7 +96,7 @@ export const DotPlot = ({
               <span
                 key={`label-avg-${i}`}
                 className={cx(
-                  "absolute top-0 whitespace-nowrap rounded px-1 text-xs text-white",
+                  "absolute top-0 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `calc(${xPos}% + 4px)` }}
@@ -181,7 +181,7 @@ export const DotPlot = ({
           })}
       </div>
       {/* X-axis labels */}
-      <div className="relative h-4 text-[10px] text-neutral-400">
+      <div className="relative h-10 text-[10px] text-neutral-400">
         <span>{min}</span>
         <span className="absolute right-0">{max}</span>
         {/* Best label below axis (avg label is positioned at top of chart) */}
@@ -195,7 +195,7 @@ export const DotPlot = ({
               <span
                 key={`label-best-${i}`}
                 className={cx(
-                  "absolute top-3 -translate-x-1/2 whitespace-nowrap rounded px-1 text-xs text-white",
+                  "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `${clampedPos}%` }}

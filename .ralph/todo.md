@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] Add a little padding inside the average and best labels, as well as margin around them
 - [ ] add more vertical padding around each player's statistics
 
 ### Done
+
+- [x] Add a little padding inside the average and best labels, as well as margin around them
 
 - [x] Make average and best scores bold (just the number, not the text part of the label)
 
