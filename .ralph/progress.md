@@ -1,5 +1,22 @@
 ## Progress log
 
+### 2026-01-13: Added more vertical padding around player statistics cards
+
+**Problem:** The player statistics cards on the statistics screen felt cramped vertically. The padding inside cards was equal on all sides (`p-4`) and the gap between cards was only 16px.
+
+**Solution:** Increased vertical spacing in the StatisticsScreen:
+
+1. Changed player card padding from `p-4` to `px-4 py-6` (more vertical padding inside cards)
+2. Changed gap between cards from `gap-4` to `gap-6` (more space between cards)
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Updated card and container classes
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added padding inside avg/best labels and margin around them
 
 **Problem:** The avg and best score labels on the statistics page charts had minimal internal padding (`px-1` only) and no vertical padding, making them look cramped. The labels also needed more margin/space around them for better visual separation.

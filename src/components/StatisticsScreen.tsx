@@ -182,11 +182,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
               {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"} completed
             </p>
           </div>
-        : <div className="flex flex-col gap-4">
+        : <div className="flex flex-col gap-6">
             {stats.map(player => (
               <div
                 key={player.name}
-                className="rounded-lg bg-white p-4 shadow-[0_3px_0_0_rgba(0,0,0,0.1)]"
+                className="rounded-lg bg-white px-4 py-6 shadow-[0_3px_0_0_rgba(0,0,0,0.1)]"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <span className="font-semibold">{player.name}</span>

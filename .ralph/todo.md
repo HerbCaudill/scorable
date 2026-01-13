@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] add more vertical padding around each player's statistics
-
 ### Done
+
+- [x] add more vertical padding around each player's statistics
 
 - [x] Add a little padding inside the average and best labels, as well as margin around them
 
