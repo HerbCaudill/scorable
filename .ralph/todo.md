@@ -1,14 +1,16 @@
 ### To do
 
-- [ ] Refactor PastGameScreen to use same layout as GameScreen
-  - [ ] Use the same player panel structure (header + move history)
-  - [ ] Show winner indicator on the winning player's panel
-  - [ ] Use same horizontal scrolling footer with action buttons
-  - [ ] Move delete button to footer
-  - [ ] Board should be read-only (no editing capability)
-  - [ ] Remove header date display (or move to footer)
+(empty)
 
 ### Done
+
+- [x] Refactor PastGameScreen to use same layout as GameScreen
+  - [x] Use the same player panel structure (header + move history)
+  - [x] Show winner indicator on the winning player's panel
+  - [x] Use same horizontal scrolling footer with action buttons
+  - [x] Move delete button to footer
+  - [x] Board should be read-only (no editing capability)
+  - [x] Remove header date display
 
 - [x] show histogram values when hovering over bars
 - [x] make the histograms a little more granular

@@ -1,5 +1,31 @@
 ## Progress log
 
+### 2026-01-13: Refactored PastGameScreen to match GameScreen layout
+
+**Problem:** The PastGameScreen had a different layout than GameScreen, with separate score display cards, a full-width delete button, and move history in a different format.
+
+**Solution:** Refactored PastGameScreen to use the same layout structure as GameScreen:
+
+1. **Player panels** - Same card structure with header containing name, score, and move history below
+2. **Winner indicator** - Trophy icon shown in the winner's panel header (instead of separate "Winner" badge)
+3. **Footer** - Horizontal scrolling footer with Delete button (same style as GameScreen)
+4. **Board** - Same centered layout, read-only (no editing capability)
+5. **Removed** - Date display from header (not needed for past games)
+
+The layout now matches the GameScreen with these key differences:
+- No timer controls (game is finished)
+- No editing controls (undo/redo, pass, etc.)
+- Winner trophy icon on winning player's panel
+- Only Delete button in footer
+
+**Files changed:**
+
+- `src/components/PastGameScreen.tsx` - Complete layout refactor
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added hover tooltips to histogram bars
 
 **Problem:** Users couldn't see the exact values represented by histogram bars without hovering.
