@@ -1,7 +1,14 @@
 import { useState } from "react"
 import { cx } from "@/lib/cx"
 
-export const DotPlot = ({ data, minValue, maxValue, color = "teal", getTooltip }: Props) => {
+export const DotPlot = ({
+  data,
+  minValue,
+  maxValue,
+  color = "teal",
+  getTooltip,
+  referenceLines = [],
+}: Props) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   if (data.length === 0) return null
@@ -62,6 +69,17 @@ export const DotPlot = ({ data, minValue, maxValue, color = "teal", getTooltip }
           </div>
         )}
         <div className="relative" style={{ height: 48 }} onMouseLeave={() => setHoveredIndex(null)}>
+          {/* Reference lines (vertical dashes in chart area) */}
+          {referenceLines.map((line, i) => {
+            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+            return (
+              <div
+                key={`ref-${i}`}
+                className="absolute top-0 h-full w-px border-l border-dashed border-neutral-400"
+                style={{ left: `${xPos}%` }}
+              />
+            )
+          })}
           {positionedDots.map(({ dataPoint, index, stackIndex, x }) => (
             <div
               key={index}
@@ -82,11 +100,39 @@ export const DotPlot = ({ data, minValue, maxValue, color = "teal", getTooltip }
           ))}
         </div>
       </div>
-      {/* X-axis line and labels */}
-      <div className="h-px bg-neutral-300" />
-      <div className="flex justify-between text-xs text-neutral-400">
+      {/* X-axis line */}
+      <div className="relative h-px bg-neutral-300">
+        {/* Reference line tick marks */}
+        {referenceLines.map((line, i) => {
+          const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+          return (
+            <div
+              key={`tick-${i}`}
+              className="absolute -top-1 h-2 w-px bg-neutral-400"
+              style={{ left: `${xPos}%` }}
+            />
+          )
+        })}
+      </div>
+      {/* X-axis labels */}
+      <div className="relative h-4 text-xs text-neutral-400">
         <span>{min}</span>
-        <span>{max}</span>
+        <span className="absolute right-0">{max}</span>
+        {/* Reference line labels on a second row to avoid overlap */}
+        {referenceLines.map((line, i) => {
+          const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+          // Clamp position to avoid labels going off-edge
+          const clampedPos = Math.max(8, Math.min(92, xPos))
+          return (
+            <span
+              key={`label-${i}`}
+              className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-[10px] text-neutral-500"
+              style={{ left: `${clampedPos}%` }}
+            >
+              {line.label}
+            </span>
+          )
+        })}
       </div>
     </div>
   )
@@ -97,10 +143,16 @@ export type DataPoint = {
   label?: string
 }
 
+export type ReferenceLine = {
+  value: number
+  label: string
+}
+
 type Props = {
   data: DataPoint[]
   minValue?: number
   maxValue?: number
   color?: "teal" | "amber"
   getTooltip?: (dataPoint: DataPoint) => string
+  referenceLines?: ReferenceLine[]
 }

@@ -6,7 +6,7 @@ import { getPlayerScoreFromDoc } from "@/lib/getPlayerScoreFromDoc"
 import { getMoveDataFromDoc, type MoveData } from "@/lib/getMoveDataFromDoc"
 import { getGameDataFromDoc, type GameData } from "@/lib/getGameDataFromDoc"
 import { Header } from "./Header"
-import { DotPlot, type DataPoint } from "./DotPlot"
+import { DotPlot, type DataPoint, type ReferenceLine } from "./DotPlot"
 
 const MIN_GAMES_FOR_STATS = 3
 
@@ -192,53 +192,33 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                 {/* Move Scores section */}
                 <div className="mb-4">
                   <div className="mb-2 text-xs font-medium text-neutral-500">Move scores</div>
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <DotPlot
-                        data={player.moveData}
-                        color="teal"
-                        minValue={plotRanges.moveScores.min}
-                        maxValue={plotRanges.moveScores.max}
-                        getTooltip={d => d.label ?? String(d.value)}
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center gap-1 text-right">
-                      <div>
-                        <span className="text-lg font-semibold">{player.avgMoveScore}</span>
-                        <span className="ml-1 text-xs text-neutral-500">avg</span>
-                      </div>
-                      <div>
-                        <span className="text-lg font-semibold">{player.maxMoveScore}</span>
-                        <span className="ml-1 text-xs text-neutral-500">best</span>
-                      </div>
-                    </div>
-                  </div>
+                  <DotPlot
+                    data={player.moveData}
+                    color="teal"
+                    minValue={plotRanges.moveScores.min}
+                    maxValue={plotRanges.moveScores.max}
+                    getTooltip={d => d.label ?? String(d.value)}
+                    referenceLines={[
+                      { value: player.avgMoveScore, label: `avg ${player.avgMoveScore}` },
+                      { value: player.maxMoveScore, label: `best ${player.maxMoveScore}` },
+                    ]}
+                  />
                 </div>
 
                 {/* Game Scores section */}
                 <div>
                   <div className="mb-2 text-xs font-medium text-neutral-500">Game scores</div>
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <DotPlot
-                        data={player.gameData}
-                        color="amber"
-                        minValue={plotRanges.gameScores.min}
-                        maxValue={plotRanges.gameScores.max}
-                        getTooltip={d => d.label ?? String(d.value)}
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center gap-1 text-right">
-                      <div>
-                        <span className="text-lg font-semibold">{player.avgScore}</span>
-                        <span className="ml-1 text-xs text-neutral-500">avg</span>
-                      </div>
-                      <div>
-                        <span className="text-lg font-semibold">{player.highScore}</span>
-                        <span className="ml-1 text-xs text-neutral-500">best</span>
-                      </div>
-                    </div>
-                  </div>
+                  <DotPlot
+                    data={player.gameData}
+                    color="amber"
+                    minValue={plotRanges.gameScores.min}
+                    maxValue={plotRanges.gameScores.max}
+                    getTooltip={d => d.label ?? String(d.value)}
+                    referenceLines={[
+                      { value: player.avgScore, label: `avg ${player.avgScore}` },
+                      { value: player.highScore, label: `best ${player.highScore}` },
+                    ]}
+                  />
                 </div>
               </div>
             ))}

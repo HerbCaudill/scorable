@@ -1,5 +1,26 @@
 ## Progress log
 
+### 2026-01-13: Anchored best and average scores to dot plot charts
+
+**Problem:** The statistics page showed avg and best scores as numbers to the right of the charts, but users wanted these values visually anchored to the chart itself.
+
+**Solution:** Added reference lines to the DotPlot component:
+
+1. **Vertical dashed lines** - Drawn through the chart area at the x-position of each reference value
+2. **Tick marks** - Small vertical marks on the x-axis line where reference lines cross
+3. **Labels below axis** - "avg 35" and "best 194" labels positioned on a second row below the min/max axis labels
+
+The reference lines are configurable via a new `referenceLines` prop that accepts an array of `{ value: number, label: string }` objects.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Added `ReferenceLine` type and `referenceLines` prop, render vertical lines, tick marks, and labels
+- `src/components/StatisticsScreen.tsx` - Removed separate avg/best display, now passes referenceLines to DotPlot for both move and game scores
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Replaced histogram with dot plot visualization
 
 **Problem:** Histograms on the statistics screen showed binned data but you couldn't see individual games or moves. Users wanted to hover over specific data points to see details about each game/move.
