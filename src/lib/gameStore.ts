@@ -378,7 +378,7 @@ export const useGameStore = create<GameStore>()(
       },
     }),
     {
-      name: "scrabble-game-storage",
+      name: "scorable-game-storage",
       version: 2,
       partialize: state => ({
         currentGame: state.currentGame,

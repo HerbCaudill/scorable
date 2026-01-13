@@ -1,5 +1,26 @@
 ## Progress log
 
+### 2026-01-13: Renamed app to "Scorable"
+
+**Task:** Change the name of the app from "Scrabble" to "Scorable" throughout the repository.
+
+**Changes made:**
+
+1. **package.json** - Changed `name` from "scrabble" to "scorable"
+2. **index.html** - Updated `<title>` and `apple-mobile-web-app-title` meta tag to "Scorable"
+3. **vite.config.ts** - Updated PWA manifest `name`, `short_name`, and `description` to use "Scorable" and generic wording
+4. **src/lib/gameStore.ts** - Changed storage key from "scrabble-game-storage" to "scorable-game-storage"
+5. **src/lib/localStore.ts** - Changed storage key from "scrabble-local-storage" to "scorable-local-storage"
+6. **src/lib/repo.ts** - Changed IndexedDB storage name from "scrabble-games" to "scorable-games"
+7. **e2e/fixtures/seed-game.ts** - Updated storage key reference for tests
+8. **CLAUDE.md** - Updated app title and description
+
+**Note:** Internal code references (like `ScrabbleBoard` component name, comments explaining game rules, and the `@herbcaudill/scrabble-words` dictionary package) were intentionally kept unchanged as they are technical identifiers rather than user-facing branding.
+
+**Tests:** All 143 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added more vertical padding around player statistics cards
 
 **Problem:** The player statistics cards on the statistics screen felt cramped vertically. The padding inside cards was equal on all sides (`p-4`) and the gap between cards was only 16px.

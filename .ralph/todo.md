@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] Change the name of the app to Scorable throughout the repo
 - [ ] Find some games that include both failed and successful challenges
 
 ### Done
+
+- [x] Change the name of the app to Scorable throughout the repo
 
 - [x] Fix scrolling on past games list and statistics page
 - [x] add more vertical padding around each player's statistics

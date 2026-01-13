@@ -17,9 +17,9 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 35 * 1024 * 1024, // 35 MB to accommodate Automerge WASM + word list
       },
       manifest: {
-        name: "Scrabble Scorekeeper",
-        short_name: "Scrabble",
-        description: "Keep score during Scrabble games",
+        name: "Scorable",
+        short_name: "Scorable",
+        description: "Keep score during word games",
         theme_color: "#B0A092",
         background_color: "#B0A092",
         display: "standalone",

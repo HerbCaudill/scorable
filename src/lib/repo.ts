@@ -8,5 +8,5 @@ const SYNC_SERVER_URL = import.meta.env.VITE_SYNC_SERVER_URL || "wss://sync.auto
 
 export const repo = new Repo({
   network: [new BroadcastChannelNetworkAdapter(), new WebSocketClientAdapter(SYNC_SERVER_URL)],
-  storage: new IndexedDBStorageAdapter("scrabble-games"),
+  storage: new IndexedDBStorageAdapter("scorable-games"),
 })

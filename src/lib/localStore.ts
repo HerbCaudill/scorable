@@ -74,7 +74,7 @@ export const useLocalStore = create<LocalStore>()(
       },
     }),
     {
-      name: "scrabble-local-storage",
+      name: "scorable-local-storage",
       partialize: state => ({
         knownGameIds: state.knownGameIds,
         playerRecords: state.playerRecords,

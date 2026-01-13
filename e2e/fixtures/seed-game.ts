@@ -105,7 +105,7 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
       const documentId = handle.documentId
 
       // Update localStorage to include this game ID
-      const storageKey = "scrabble-local-storage"
+      const storageKey = "scorable-local-storage"
       const existing = localStorage.getItem(storageKey)
       const state =
         existing ?

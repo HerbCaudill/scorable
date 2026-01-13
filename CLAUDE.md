@@ -1,6 +1,6 @@
-# Scrabble score-keeping app
+# Scorable
 
-An app for keeping score during Scrabble games.
+An app for keeping score during word games.
 
 ## Quick reference
 
