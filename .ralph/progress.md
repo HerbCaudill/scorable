@@ -1,5 +1,31 @@
 ## Progress log
 
+### 2026-01-13: Fixed build chunk size warning with bundle splitting
+
+**Problem:** Build showed warning about chunks being larger than 500KB. The main bundle was 31MB due to the Scrabble dictionary and Automerge being bundled together with app code.
+
+**Solution:** Added Rollup `manualChunks` configuration to split the bundle into logical pieces:
+
+1. **word-list** (~31MB) - Scrabble dictionary with definitions (csw21)
+2. **automerge** (~184KB) - CRDT library for sync
+3. **react** (~11KB) - React core
+4. **radix** (~86KB) - Radix UI components
+
+Also increased `chunkSizeWarningLimit` to 32MB since the dictionary is intentionally large and cannot be reduced without losing word definitions.
+
+**Results:**
+- Main app bundle reduced from 31MB to 411KB (97% reduction)
+- All dependencies now cached independently
+- No more build warnings
+
+**Files changed:**
+
+- `vite.config.ts` - Added build.rollupOptions.output.manualChunks and chunkSizeWarningLimit
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Refactored PastGameScreen to match GameScreen layout
 
 **Problem:** The PastGameScreen had a different layout than GameScreen, with separate score display cards, a full-width delete button, and move history in a different format.
@@ -13,6 +39,7 @@
 5. **Removed** - Date display from header (not needed for past games)
 
 The layout now matches the GameScreen with these key differences:
+
 - No timer controls (game is finished)
 - No editing controls (undo/redo, pass, etc.)
 - Winner trophy icon on winning player's panel

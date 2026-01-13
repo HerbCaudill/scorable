@@ -63,4 +63,29 @@ export default defineConfig({
   test: {
     exclude: ["**/node_modules/**", "**/e2e/**"],
   },
+  build: {
+    // The word list chunk is ~31MB (Scrabble dictionary with definitions).
+    // This is intentional and cannot be reduced without losing functionality.
+    chunkSizeWarningLimit: 32000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Scrabble dictionary - large word list with definitions (~31MB)
+          "word-list": ["@herbcaudill/scrabble-words/csw21"],
+          // Automerge - CRDT library for sync
+          automerge: ["@automerge/automerge", "@automerge/automerge-repo"],
+          // React core
+          react: ["react", "react-dom"],
+          // UI components
+          radix: [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-select",
+            "@radix-ui/react-alert-dialog",
+            "@radix-ui/react-slot",
+          ],
+        },
+      },
+    },
+  },
 })
