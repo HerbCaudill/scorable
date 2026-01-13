@@ -1,5 +1,21 @@
 ## Progress log
 
+### 2026-01-13: Added colons after avg and best labels on statistics page
+
+**Problem:** The avg and best score labels on the dot plot charts said "avg 32" and "best 194" without colons, which looked inconsistent with typical label formatting.
+
+**Solution:** Added colons after "avg" and "best" in all reference line labels in StatisticsScreen.tsx:
+- Move scores: `avg: 32`, `best: 45`
+- Game scores: `avg: 320`, `best: 389`
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Updated reference line labels to include colons
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Fixed avg/best label overlap on statistics page
 
 **Problem:** The avg and best score labels on the dot plot charts were both positioned on the same row below the x-axis, causing them to overlap when their values were close together.
