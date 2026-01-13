@@ -1,5 +1,23 @@
 ## Progress log
 
+### 2026-01-13: Fixed avg/best label overlap on statistics page
+
+**Problem:** The avg and best score labels on the dot plot charts were both positioned on the same row below the x-axis, causing them to overlap when their values were close together.
+
+**Solution:** Moved the avg label to the top of the chart, flush left against the vertical line, while keeping the best label below the x-axis:
+
+1. Added avg labels at the top of the chart area, positioned `top-0` with `left: calc(xPos% + 4px)` to be flush right of the vertical line
+2. Best labels remain below the axis with `top-3` positioning
+3. Labels now have clear separation and never overlap
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Split label rendering: avg at top of chart, best below axis
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Positioned dot plot tooltips next to selected dot
 
 **Problem:** When clicking a dot on the statistics page dot plots, the tooltip was always positioned in a fixed location above the center of the chart. Users had to look back and forth between the tooltip and the selected dot to understand which data point they were viewing.

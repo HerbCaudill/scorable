@@ -87,6 +87,21 @@ export const DotPlot = ({
   return (
     <div className="flex flex-col gap-1" ref={containerRef}>
       <div className="relative" style={{ height: chartHeight }}>
+        {/* Avg label at top of chart, flush left against the vertical line */}
+        {referenceLines
+          .filter(line => line.type === "avg")
+          .map((line, i) => {
+            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+            return (
+              <span
+                key={`label-avg-${i}`}
+                className="absolute top-0 whitespace-nowrap text-xs text-neutral-500"
+                style={{ left: `calc(${xPos}% + 4px)` }}
+              >
+                {line.label}
+              </span>
+            )
+          })}
         {/* Tooltip - positioned next to the selected dot */}
         {selectedIndex !== null &&
           (() => {
@@ -157,21 +172,23 @@ export const DotPlot = ({
       <div className="relative h-4 text-[10px] text-neutral-400">
         <span>{min}</span>
         <span className="absolute right-0">{max}</span>
-        {/* Reference line labels on a second row to avoid overlap */}
-        {referenceLines.map((line, i) => {
-          const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
-          // Clamp position to avoid labels going off-edge
-          const clampedPos = Math.max(8, Math.min(92, xPos))
-          return (
-            <span
-              key={`label-${i}`}
-              className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-xs text-neutral-500"
-              style={{ left: `${clampedPos}%` }}
-            >
-              {line.label}
-            </span>
-          )
-        })}
+        {/* Best label below axis (avg label is positioned at top of chart) */}
+        {referenceLines
+          .filter(line => line.type === "best")
+          .map((line, i) => {
+            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+            // Clamp position to avoid labels going off-edge
+            const clampedPos = Math.max(8, Math.min(92, xPos))
+            return (
+              <span
+                key={`label-best-${i}`}
+                className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-xs text-neutral-500"
+                style={{ left: `${clampedPos}%` }}
+              >
+                {line.label}
+              </span>
+            )
+          })}
       </div>
     </div>
   )
