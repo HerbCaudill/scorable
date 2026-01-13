@@ -86,46 +86,56 @@ export const DotPlot = ({
 
   return (
     <div className="flex flex-col gap-1" ref={containerRef}>
-      <div className="relative">
-        {/* Tooltip */}
-        {selectedIndex !== null && (
-          <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
-            {getTooltip?.(data[selectedIndex]) ?? data[selectedIndex].value}
-          </div>
-        )}
-        <div className="relative" style={{ height: chartHeight }}>
-          {/* Reference lines (vertical lines in chart area) - only for "avg" type */}
-          {referenceLines
-            .filter(line => line.type !== "best")
-            .map((line, i) => {
-              const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
-              return (
-                <div
-                  key={`ref-${i}`}
-                  className="absolute top-0 h-full w-0.5 bg-neutral-500"
-                  style={{ left: `${xPos}%` }}
-                />
-              )
-            })}
-          {positionedDots.map(({ index, stackIndex, x }) => (
-            <div
-              key={index}
-              className={cx(
-                "absolute cursor-pointer rounded-full transition-all",
-                color === "teal" ? "bg-teal-500" : "bg-amber-500",
-                selectedIndex !== null && selectedIndex !== index ? "opacity-30" : "",
-                selectedIndex === index ? "ring-2 ring-neutral-800" : "",
-              )}
-              style={{
-                width: dotSize,
-                height: dotSize,
-                left: `calc(${x}% - ${dotSize / 2}px)`,
-                bottom: stackIndex * dotSpacing,
-              }}
-              onClick={() => setSelectedIndex(selectedIndex === index ? null : index)}
-            />
-          ))}
-        </div>
+      <div className="relative" style={{ height: chartHeight }}>
+        {/* Tooltip - positioned next to the selected dot */}
+        {selectedIndex !== null &&
+          (() => {
+            const selectedDot = positionedDots.find(d => d.index === selectedIndex)
+            if (!selectedDot) return null
+            const tooltipBottom = selectedDot.stackIndex * dotSpacing + dotSize + 4
+            return (
+              <div
+                className="pointer-events-none absolute z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white"
+                style={{
+                  left: `${selectedDot.x}%`,
+                  bottom: tooltipBottom,
+                }}
+              >
+                {getTooltip?.(data[selectedIndex]) ?? data[selectedIndex].value}
+              </div>
+            )
+          })()}
+        {/* Reference lines (vertical lines in chart area) - only for "avg" type */}
+        {referenceLines
+          .filter(line => line.type !== "best")
+          .map((line, i) => {
+            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+            return (
+              <div
+                key={`ref-${i}`}
+                className="absolute top-0 h-full w-0.5 bg-neutral-500"
+                style={{ left: `${xPos}%` }}
+              />
+            )
+          })}
+        {positionedDots.map(({ index, stackIndex, x }) => (
+          <div
+            key={index}
+            className={cx(
+              "absolute cursor-pointer rounded-full transition-all",
+              color === "teal" ? "bg-teal-500" : "bg-amber-500",
+              selectedIndex !== null && selectedIndex !== index ? "opacity-30" : "",
+              selectedIndex === index ? "ring-2 ring-neutral-800" : "",
+            )}
+            style={{
+              width: dotSize,
+              height: dotSize,
+              left: `calc(${x}% - ${dotSize / 2}px)`,
+              bottom: stackIndex * dotSpacing,
+            }}
+            onClick={() => setSelectedIndex(selectedIndex === index ? null : index)}
+          />
+        ))}
       </div>
       {/* X-axis line */}
       <div className="relative h-px bg-neutral-300">

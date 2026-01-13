@@ -1,5 +1,26 @@
 ## Progress log
 
+### 2026-01-13: Positioned dot plot tooltips next to selected dot
+
+**Problem:** When clicking a dot on the statistics page dot plots, the tooltip was always positioned in a fixed location above the center of the chart. Users had to look back and forth between the tooltip and the selected dot to understand which data point they were viewing.
+
+**Solution:** Modified the tooltip positioning in the DotPlot component to appear directly above the selected dot:
+
+1. Moved the tooltip inside the chart div (same container as dots) so `bottom` positioning works correctly
+2. Calculate tooltip position using the selected dot's `x` percentage and `stackIndex`
+3. Position tooltip at `bottom: stackIndex * dotSpacing + dotSize + 4` (4px gap above the dot)
+4. Use `left: selectedDot.x%` with `-translate-x-1/2` to center the tooltip horizontally over the dot
+
+The tooltip now appears right above whichever dot is selected, making it immediately clear which data point the user is viewing.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Moved tooltip inside chart div, calculate position from selected dot
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Enabled scrolling on past games list
 
 **Problem:** The list of past games on the home screen could overflow the viewport when there were many games, with no way to scroll through them.
