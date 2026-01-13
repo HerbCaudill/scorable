@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] Add more space between the move score and game score sections, and make the headings bold
 - [ ] The average/best score labels should be one increment larger, and the numbers on the axis should be smaller
 - [ ] Make the vertical line for average scores more prominent. For the best scores, we don't need a line - just the label
 - [ ] The move score chart should go back to being a histogram - there are just too many moves
