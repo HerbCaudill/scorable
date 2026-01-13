@@ -1,5 +1,26 @@
 ## Progress log
 
+### 2026-01-13: Made move scores histogram taller with padding for avg label
+
+**Problem:** The move scores histogram on the statistics screen was too short at 40px height, and the avg label at the top of the chart was positioned at `top-0` which could cause it to overlap with chart elements.
+
+**Solution:** Updated the Histogram component:
+
+1. Increased chart height from 40px to 56px for better visibility
+2. Added `pt-5` (20px) padding at the top of the relative container to create space for the avg label
+3. Updated the vertical reference line to start at `top-5` (after the padding) and span 56px height
+4. Adjusted tooltip positioning from `-top-6` to `top-0` to work with the new padding
+
+This gives the avg label dedicated space above the chart, ensuring it never touches the histogram bars.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Increased height, added top padding, adjusted reference line and tooltip positioning
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Styled reference lines and labels with graph colors
 
 **Problem:** The vertical reference lines for average scores were 2px thick and neutral gray. The avg/best labels had no background color, making them hard to see against the chart.

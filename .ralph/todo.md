@@ -3,9 +3,10 @@
 - [ ] Add a little padding inside the average and best labels, as well as margin around them
 - [ ] add more vertical padding around each player's statistics
 - [ ] Make average and best scores bold (just the number, not the text part of the label)
-- [ ] Make the move scores chart a bit taller, and add some padding at top so that the average label isn't touching any of the elements of the chart itself
 
 ### Done
+
+- [x] Make the move scores chart a bit taller, and add some padding at top so that the average label isn't touching any of the elements of the chart itself
 
 - [x] Make the vertical lines showing the average 1px thick and a darker version of the graph color. Give the average and best labels a solid color background of that same color.
 

@@ -71,7 +71,7 @@ export const Histogram = ({
   return (
     <div className="flex flex-col gap-1">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
-      <div className="relative">
+      <div className="relative pt-5">
         {/* Avg label at top of chart, flush left against the vertical line */}
         {referenceLines
           .filter(line => line.type === "avg")
@@ -92,7 +92,7 @@ export const Histogram = ({
           })}
         {/* Tooltip */}
         {hoveredBin !== null && bins[hoveredBin] > 0 && (
-          <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
+          <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
             {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
           </div>
         )}
@@ -105,16 +105,16 @@ export const Histogram = ({
               <div
                 key={`ref-${i}`}
                 className={cx(
-                  "absolute top-0 z-10 h-full w-px",
+                  "absolute top-5 z-10 w-px",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
-                style={{ left: `${xPos}%` }}
+                style={{ left: `${xPos}%`, height: 56 }}
               />
             )
           })}
         <div
           className="flex items-end justify-center gap-0.5"
-          style={{ height: 40 }}
+          style={{ height: 56 }}
           onMouseLeave={() => setHoveredBin(null)}
         >
           {bins.map((count, i) => (
