@@ -7,6 +7,7 @@ import { getMoveDataFromDoc, type MoveData } from "@/lib/getMoveDataFromDoc"
 import { getGameDataFromDoc, type GameData } from "@/lib/getGameDataFromDoc"
 import { Header } from "./Header"
 import { DotPlot } from "./DotPlot"
+import { Histogram } from "./Histogram"
 
 const MIN_GAMES_FOR_STATS = 3
 const MAX_GAME_SCORE = 500 // Filter out games with scores above this to keep data relatable
@@ -200,12 +201,11 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                 {/* Move Scores section */}
                 <div className="mb-6">
                   <div className="mb-2 text-xs font-bold text-neutral-500">Move scores</div>
-                  <DotPlot
-                    data={player.moveData}
+                  <Histogram
+                    data={player.moveData.map(m => m.value)}
                     color="teal"
                     minValue={plotRanges.moveScores.min}
                     maxValue={plotRanges.moveScores.max}
-                    getTooltip={d => d.label ?? String(d.value)}
                     referenceLines={[
                       {
                         value: player.avgMoveScore,

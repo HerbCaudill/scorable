@@ -1,7 +1,14 @@
 import { useState } from "react"
 import { cx } from "@/lib/cx"
 
-export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue }: Props) => {
+export const Histogram = ({
+  data,
+  label = "",
+  color = "teal",
+  minValue,
+  maxValue,
+  referenceLines = [],
+}: Props) => {
   const [hoveredBin, setHoveredBin] = useState<number | null>(null)
   if (data.length === 0) return null
 
@@ -59,16 +66,46 @@ export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue
     return { binStart, binEnd }
   }
 
+  const adjustedRange = adjustedMax - adjustedMin
+
   return (
     <div className="flex flex-col gap-1">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
       <div className="relative">
+        {/* Avg label at top of chart, flush left against the vertical line */}
+        {referenceLines
+          .filter(line => line.type === "avg")
+          .map((line, i) => {
+            const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
+            return (
+              <span
+                key={`label-avg-${i}`}
+                className="absolute top-0 whitespace-nowrap text-xs text-neutral-500"
+                style={{ left: `calc(${xPos}% + 4px)` }}
+              >
+                {line.label}
+              </span>
+            )
+          })}
         {/* Tooltip */}
         {hoveredBin !== null && bins[hoveredBin] > 0 && (
           <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
             {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
           </div>
         )}
+        {/* Reference lines (vertical lines in chart area) - only for "avg" type */}
+        {referenceLines
+          .filter(line => line.type !== "best")
+          .map((line, i) => {
+            const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
+            return (
+              <div
+                key={`ref-${i}`}
+                className="absolute top-0 z-10 h-full w-0.5 bg-neutral-500"
+                style={{ left: `${xPos}%` }}
+              />
+            )
+          })}
         <div
           className="flex items-end justify-center gap-0.5"
           style={{ height: 40 }}
@@ -91,14 +128,52 @@ export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue
           ))}
         </div>
       </div>
-      {/* X-axis line and labels */}
-      <div className="h-px bg-neutral-300" />
-      <div className="flex justify-between text-xs text-neutral-400">
+      {/* X-axis line */}
+      <div className="relative h-px bg-neutral-300">
+        {/* Reference line tick marks - only for "avg" type */}
+        {referenceLines
+          .filter(line => line.type !== "best")
+          .map((line, i) => {
+            const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
+            return (
+              <div
+                key={`tick-${i}`}
+                className="absolute -top-1 h-2 w-0.5 bg-neutral-500"
+                style={{ left: `${xPos}%` }}
+              />
+            )
+          })}
+      </div>
+      {/* X-axis labels */}
+      <div className="relative h-4 text-[10px] text-neutral-400">
         <span>{adjustedMin}</span>
-        <span>{adjustedMax}</span>
+        <span className="absolute right-0">{adjustedMax}</span>
+        {/* Best label below axis */}
+        {referenceLines
+          .filter(line => line.type === "best")
+          .map((line, i) => {
+            const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
+            // Clamp position to avoid labels going off-edge
+            const clampedPos = Math.max(8, Math.min(92, xPos))
+            return (
+              <span
+                key={`label-best-${i}`}
+                className="absolute top-3 -translate-x-1/2 whitespace-nowrap text-xs text-neutral-500"
+                style={{ left: `${clampedPos}%` }}
+              >
+                {line.label}
+              </span>
+            )
+          })}
       </div>
     </div>
   )
+}
+
+export type ReferenceLine = {
+  value: number
+  label: string
+  type?: "avg" | "best"
 }
 
 type Props = {
@@ -107,4 +182,5 @@ type Props = {
   color?: "teal" | "amber"
   minValue?: number
   maxValue?: number
+  referenceLines?: ReferenceLine[]
 }

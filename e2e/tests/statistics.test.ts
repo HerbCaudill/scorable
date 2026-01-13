@@ -64,7 +64,7 @@ test.describe("Statistics", () => {
     await expect(page.getByText("1 game completed")).toBeVisible()
   })
 
-  test("clicking dot shows tooltip, clicking again hides it", async ({ page }) => {
+  test("clicking dot in game scores shows tooltip, clicking again hides it", async ({ page }) => {
     // Create 4 finished games using the UI helper (need >=3 for stats to show)
     await createFinishedGame(page, true)
     await createFinishedGame(page, false)
@@ -80,7 +80,8 @@ test.describe("Statistics", () => {
     // Wait for statistics to render with player data
     await expect(page.getByText("Alice")).toBeVisible()
 
-    // Get a dot in the dot plot (dots are small circle elements with cursor-pointer)
+    // Get a dot in the game scores dot plot (move scores uses histogram now)
+    // Dots are small circle elements with cursor-pointer
     const dots = page.locator(".rounded-full.cursor-pointer")
     const firstDot = dots.first()
     await expect(firstDot).toBeVisible()
@@ -99,7 +100,7 @@ test.describe("Statistics", () => {
     await expect(tooltip).not.toBeVisible()
   })
 
-  test("clicking outside dot plot hides tooltip", async ({ page }) => {
+  test("clicking outside game scores dot plot hides tooltip", async ({ page }) => {
     // Create 4 finished games using the UI helper (need >=3 for stats to show)
     await createFinishedGame(page, true)
     await createFinishedGame(page, false)
@@ -115,7 +116,7 @@ test.describe("Statistics", () => {
     // Wait for statistics to render
     await expect(page.getByText("Alice")).toBeVisible()
 
-    // Click a dot to show tooltip
+    // Click a dot in game scores to show tooltip (move scores uses histogram now)
     const dots = page.locator(".rounded-full.cursor-pointer")
     const firstDot = dots.first()
     await firstDot.click()
