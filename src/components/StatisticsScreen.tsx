@@ -198,8 +198,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                 </div>
 
                 {/* Move Scores section */}
-                <div className="mb-4">
-                  <div className="mb-2 text-xs font-medium text-neutral-500">Move scores</div>
+                <div className="mb-6">
+                  <div className="mb-2 text-xs font-bold text-neutral-500">Move scores</div>
                   <DotPlot
                     data={player.moveData}
                     color="teal"
@@ -215,7 +215,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
 
                 {/* Game Scores section */}
                 <div>
-                  <div className="mb-2 text-xs font-medium text-neutral-500">Game scores</div>
+                  <div className="mb-2 text-xs font-bold text-neutral-500">Game scores</div>
                   <DotPlot
                     data={player.gameData}
                     color="amber"

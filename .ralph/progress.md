@@ -1,5 +1,20 @@
 ## Progress log
 
+### 2026-01-13: Added more space between statistics sections and made headings bold
+
+**Problem:** The Move scores and Game scores sections on the statistics page were too close together, and the section headings weren't visually prominent enough.
+
+**Solution:**
+1. Increased margin between sections from `mb-4` to `mb-6`
+2. Changed heading font weight from `font-medium` to `font-bold`
+
+**Files changed:**
+- `src/components/StatisticsScreen.tsx` - Updated section margin and heading font weight
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Changed statistics page tooltips from hover to click/tap
 
 **Problem:** The dot plot tooltips on the statistics page used hover-based interaction (`onMouseEnter`), which doesn't work on mobile/touch devices. Since the app is primarily used on mobile, users couldn't see move or game details on their phones.
@@ -11,6 +26,7 @@
 3. **Click outside to dismiss** - Clicking anywhere outside the dot plot also hides the tooltip
 
 Implementation:
+
 - Renamed `hoveredIndex` state to `selectedIndex`
 - Changed `onMouseEnter` to `onClick` with toggle behavior
 - Removed `onMouseLeave` handler from container
