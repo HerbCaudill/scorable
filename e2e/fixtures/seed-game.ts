@@ -184,8 +184,9 @@ export async function seedGameWithMoves(
 
 /**
  * Seeds a finished game for testing past games.
+ * @param clearStorage Whether to clear existing games first (default true)
  */
-export async function seedFinishedGame(page: Page, playerNames: string[]) {
+export async function seedFinishedGame(page: Page, playerNames: string[], clearStorage = true) {
   return seedGame(page, {
     playerNames,
     moves: [
@@ -206,6 +207,7 @@ export async function seedFinishedGame(page: Page, playerNames: string[]) {
       },
     ],
     status: "finished",
+    clearStorage,
   })
 }
 

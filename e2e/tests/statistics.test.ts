@@ -63,4 +63,71 @@ test.describe("Statistics", () => {
     // Should show games count
     await expect(page.getByText("1 game completed")).toBeVisible()
   })
+
+  test("clicking dot shows tooltip, clicking again hides it", async ({ page }) => {
+    // Create 4 finished games using the UI helper (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Click Statistics
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Get a dot in the dot plot (dots are small circle elements with cursor-pointer)
+    const dots = page.locator(".rounded-full.cursor-pointer")
+    const firstDot = dots.first()
+    await expect(firstDot).toBeVisible()
+
+    // Click the dot to show tooltip
+    await firstDot.click()
+
+    // Tooltip should appear (it's a dark background div with text)
+    const tooltip = page.locator(".bg-neutral-800.text-white")
+    await expect(tooltip).toBeVisible()
+
+    // Click the same dot again to hide tooltip
+    await firstDot.click()
+
+    // Tooltip should be hidden
+    await expect(tooltip).not.toBeVisible()
+  })
+
+  test("clicking outside dot plot hides tooltip", async ({ page }) => {
+    // Create 4 finished games using the UI helper (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Click Statistics
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Click a dot to show tooltip
+    const dots = page.locator(".rounded-full.cursor-pointer")
+    const firstDot = dots.first()
+    await firstDot.click()
+
+    // Tooltip should appear
+    const tooltip = page.locator(".bg-neutral-800.text-white")
+    await expect(tooltip).toBeVisible()
+
+    // Click outside the dot plot (on the header)
+    await page.getByText("Statistics").click()
+
+    // Tooltip should be hidden
+    await expect(tooltip).not.toBeVisible()
+  })
 })

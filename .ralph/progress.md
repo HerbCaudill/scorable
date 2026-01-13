@@ -1,5 +1,32 @@
 ## Progress log
 
+### 2026-01-13: Changed statistics page tooltips from hover to click/tap
+
+**Problem:** The dot plot tooltips on the statistics page used hover-based interaction (`onMouseEnter`), which doesn't work on mobile/touch devices. Since the app is primarily used on mobile, users couldn't see move or game details on their phones.
+
+**Solution:** Changed the interaction model from hover to click/tap:
+
+1. **Click to select** - Clicking/tapping a dot shows its tooltip
+2. **Click same dot to deselect** - Clicking the same dot again hides the tooltip
+3. **Click outside to dismiss** - Clicking anywhere outside the dot plot also hides the tooltip
+
+Implementation:
+- Renamed `hoveredIndex` state to `selectedIndex`
+- Changed `onMouseEnter` to `onClick` with toggle behavior
+- Removed `onMouseLeave` handler from container
+- Added `useEffect` with document-level `mousedown` and `touchstart` listeners to detect clicks outside
+- Added `containerRef` to identify when clicks are outside the component
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Changed from hover to click/tap interaction
+- `e2e/fixtures/seed-game.ts` - Added `clearStorage` parameter to `seedFinishedGame`
+- `e2e/tests/statistics.test.ts` - Added 2 new tests for click behavior
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Filtered outlier scores from statistics and added more normal-scoring games
 
 **Problem:** The statistics screen was showing some extreme scores (games >500 points, moves >100 points) that skewed the visualizations and made them less relatable to typical gameplay. Additionally, some test games included these outlier scores.

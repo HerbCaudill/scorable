@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { cx } from "@/lib/cx"
 
 export const DotPlot = ({
@@ -9,7 +9,26 @@ export const DotPlot = ({
   getTooltip,
   referenceLines = [],
 }: Props) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    if (selectedIndex === null) return
+
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setSelectedIndex(null)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("touchstart", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("touchstart", handleClickOutside)
+    }
+  }, [selectedIndex])
 
   if (data.length === 0) return null
 
@@ -66,19 +85,15 @@ export const DotPlot = ({
   const chartHeight = Math.max(minHeight, requiredHeight)
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1" ref={containerRef}>
       <div className="relative">
         {/* Tooltip */}
-        {hoveredIndex !== null && (
+        {selectedIndex !== null && (
           <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
-            {getTooltip?.(data[hoveredIndex]) ?? data[hoveredIndex].value}
+            {getTooltip?.(data[selectedIndex]) ?? data[selectedIndex].value}
           </div>
         )}
-        <div
-          className="relative"
-          style={{ height: chartHeight }}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
+        <div className="relative" style={{ height: chartHeight }}>
           {/* Reference lines (vertical dashes in chart area) */}
           {referenceLines.map((line, i) => {
             const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
@@ -90,14 +105,14 @@ export const DotPlot = ({
               />
             )
           })}
-          {positionedDots.map(({ dataPoint, index, stackIndex, x }) => (
+          {positionedDots.map(({ index, stackIndex, x }) => (
             <div
               key={index}
               className={cx(
                 "absolute cursor-pointer rounded-full transition-all",
                 color === "teal" ? "bg-teal-500" : "bg-amber-500",
-                hoveredIndex !== null && hoveredIndex !== index ? "opacity-30" : "",
-                hoveredIndex === index ? "ring-2 ring-neutral-800" : "",
+                selectedIndex !== null && selectedIndex !== index ? "opacity-30" : "",
+                selectedIndex === index ? "ring-2 ring-neutral-800" : "",
               )}
               style={{
                 width: dotSize,
@@ -105,7 +120,7 @@ export const DotPlot = ({
                 left: `calc(${x}% - ${dotSize / 2}px)`,
                 bottom: stackIndex * dotSpacing,
               }}
-              onMouseEnter={() => setHoveredIndex(index)}
+              onClick={() => setSelectedIndex(selectedIndex === index ? null : index)}
             />
           ))}
         </div>
