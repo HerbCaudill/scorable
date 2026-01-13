@@ -94,17 +94,19 @@ export const DotPlot = ({
           </div>
         )}
         <div className="relative" style={{ height: chartHeight }}>
-          {/* Reference lines (vertical dashes in chart area) */}
-          {referenceLines.map((line, i) => {
-            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
-            return (
-              <div
-                key={`ref-${i}`}
-                className="absolute top-0 h-full w-px border-l border-dashed border-neutral-400"
-                style={{ left: `${xPos}%` }}
-              />
-            )
-          })}
+          {/* Reference lines (vertical lines in chart area) - only for "avg" type */}
+          {referenceLines
+            .filter(line => line.type !== "best")
+            .map((line, i) => {
+              const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+              return (
+                <div
+                  key={`ref-${i}`}
+                  className="absolute top-0 h-full w-0.5 bg-neutral-500"
+                  style={{ left: `${xPos}%` }}
+                />
+              )
+            })}
           {positionedDots.map(({ index, stackIndex, x }) => (
             <div
               key={index}
@@ -127,17 +129,19 @@ export const DotPlot = ({
       </div>
       {/* X-axis line */}
       <div className="relative h-px bg-neutral-300">
-        {/* Reference line tick marks */}
-        {referenceLines.map((line, i) => {
-          const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
-          return (
-            <div
-              key={`tick-${i}`}
-              className="absolute -top-1 h-2 w-px bg-neutral-400"
-              style={{ left: `${xPos}%` }}
-            />
-          )
-        })}
+        {/* Reference line tick marks - only for "avg" type */}
+        {referenceLines
+          .filter(line => line.type !== "best")
+          .map((line, i) => {
+            const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
+            return (
+              <div
+                key={`tick-${i}`}
+                className="absolute -top-1 h-2 w-0.5 bg-neutral-500"
+                style={{ left: `${xPos}%` }}
+              />
+            )
+          })}
       </div>
       {/* X-axis labels */}
       <div className="relative h-4 text-xs text-neutral-400">
@@ -171,6 +175,7 @@ export type DataPoint = {
 export type ReferenceLine = {
   value: number
   label: string
+  type?: "avg" | "best"
 }
 
 type Props = {

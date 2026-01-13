@@ -1,14 +1,36 @@
 ## Progress log
 
+### 2026-01-13: Made avg line prominent, removed line for best scores
+
+**Problem:** On the statistics page dot plots, both the average and best score reference lines had identical dashed line styling, making it hard to distinguish between them. Users wanted the average line to be more prominent and the best score to only show a label (no line).
+
+**Solution:** Added a `type` property to the `ReferenceLine` type that can be `"avg"` or `"best"`:
+
+1. **Average lines** - Show a solid 2px line (`w-0.5 bg-neutral-500`) and tick mark, more prominent than before
+2. **Best lines** - Only show the label below the axis, no vertical line or tick mark
+
+The filtering is done by checking `line.type !== "best"` when rendering vertical lines and tick marks.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Added `type` property to ReferenceLine, filter out "best" type from vertical line and tick mark rendering, made lines solid and darker
+- `src/components/StatisticsScreen.tsx` - Added `type: "avg"` and `type: "best"` to reference lines for both move and game score dot plots
+
+**Tests:** All 142 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Added more space between statistics sections and made headings bold
 
 **Problem:** The Move scores and Game scores sections on the statistics page were too close together, and the section headings weren't visually prominent enough.
 
 **Solution:**
+
 1. Increased margin between sections from `mb-4` to `mb-6`
 2. Changed heading font weight from `font-medium` to `font-bold`
 
 **Files changed:**
+
 - `src/components/StatisticsScreen.tsx` - Updated section margin and heading font weight
 
 **Tests:** All 142 Playwright tests and 104 unit tests pass.
