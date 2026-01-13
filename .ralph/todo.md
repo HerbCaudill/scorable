@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] The histograms have a fixed height and the dots sometimes overflow it
 - [ ] Let's leave out games with scores over 500 or move scores over 100 to make this more relatable. Let's also find 10 more games online that match these criteria.
 
 ### Done
+
+- [x] The histograms have a fixed height and the dots sometimes overflow it
 
 - [x] On the statistics page, I'd like to anchor the best and average scores to the charts
 

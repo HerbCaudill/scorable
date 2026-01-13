@@ -55,9 +55,15 @@ export const DotPlot = ({
   // Flatten all positioned dots
   const positionedDots: PositionedDot[] = Array.from(bins.values()).flat()
 
-  // Calculate dot size based on available space and data density
-  // Height is 48px, each dot needs some space
-  const dotSize = Math.max(4, Math.min(8, 48 / maxStackHeight - 1))
+  // Fixed dot size
+  const dotSize = 6
+  const dotSpacing = dotSize + 1
+
+  // Calculate height dynamically based on tallest stack
+  // Minimum height of 48px, but grow to fit all dots
+  const minHeight = 48
+  const requiredHeight = maxStackHeight * dotSpacing
+  const chartHeight = Math.max(minHeight, requiredHeight)
 
   return (
     <div className="flex flex-col gap-1">
@@ -68,7 +74,11 @@ export const DotPlot = ({
             {getTooltip?.(data[hoveredIndex]) ?? data[hoveredIndex].value}
           </div>
         )}
-        <div className="relative" style={{ height: 48 }} onMouseLeave={() => setHoveredIndex(null)}>
+        <div
+          className="relative"
+          style={{ height: chartHeight }}
+          onMouseLeave={() => setHoveredIndex(null)}
+        >
           {/* Reference lines (vertical dashes in chart area) */}
           {referenceLines.map((line, i) => {
             const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
@@ -93,7 +103,7 @@ export const DotPlot = ({
                 width: dotSize,
                 height: dotSize,
                 left: `calc(${x}% - ${dotSize / 2}px)`,
-                bottom: stackIndex * (dotSize + 1),
+                bottom: stackIndex * dotSpacing,
               }}
               onMouseEnter={() => setHoveredIndex(index)}
             />

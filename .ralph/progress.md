@@ -1,5 +1,25 @@
 ## Progress log
 
+### 2026-01-13: Fixed dot overflow in DotPlot component
+
+**Problem:** The DotPlot component had a fixed height of 48px, but when many data points fell into the same bin, the stacked dots could overflow the container since the minimum dot size was 4px.
+
+**Solution:** Made the chart height dynamic based on the tallest stack:
+
+1. Changed to a fixed dot size of 6px with 1px spacing between dots
+2. Calculate required height as `maxStackHeight * dotSpacing`
+3. Chart height is `Math.max(48, requiredHeight)` - minimum 48px but grows to fit all dots
+
+This ensures dots never overflow while maintaining consistent dot sizes across all charts.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Dynamic height calculation based on tallest stack
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Anchored best and average scores to dot plot charts
 
 **Problem:** The statistics page showed avg and best scores as numbers to the right of the charts, but users wanted these values visually anchored to the chart itself.
