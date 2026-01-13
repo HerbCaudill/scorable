@@ -1,8 +1,10 @@
 ### To do
 
-- [ ] Find some games that include both failed and successful challenges
+(none)
 
 ### Done
+
+- [x] Find some games that include both failed and successful challenges
 
 - [x] Change the name of the app to Scorable throughout the repo
 

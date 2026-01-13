@@ -1,5 +1,36 @@
 ## Progress log
 
+### 2026-01-13: Documented GCG games with challenge notation
+
+**Task:** Find GCG games that include both failed and successful challenges.
+
+**Findings:**
+
+The GCG format distinguishes between two challenge outcomes:
+
+- **Successful challenge** (invalid word removed): Notation is `>Player: RACK -- -SCORE CUMULATIVE`
+- **Failed challenge** (valid word kept, challenger loses points): Notation is `>Player: RACK (challenge) +BONUS CUMULATIVE`
+
+**Existing file with both challenge types:**
+
+`e2e/games/ct17123.gcg` already contains both types of challenges:
+
+- Lines 7 and 16: Successful challenges with `-- -15` and `-- -31` (word was invalid, removed from board)
+- Line 30: Failed challenge with `(challenge) +5` (word was valid, challenger lost 5 points)
+
+This file can be used for testing challenge functionality in the app.
+
+**Other files with challenges:**
+
+- `anno57595.gcg`: Two failed challenges only (`(challenge) +5`)
+- `anno57741.gcg`: One failed challenge only (`(challenge) +5`)
+- `ct38790.gcg`: One successful challenge only (`-- -80`)
+- `cresta-yorra-2006.gcg`: One successful challenge only (`-- -70`)
+
+**Note:** The current GCG parser (`src/lib/parseGcg.ts`) handles the `--` notation for successful challenges but does not yet handle the `(challenge)` notation for failed challenges. This may need to be implemented if challenge testing is expanded.
+
+---
+
 ### 2026-01-13: Renamed app to "Scorable"
 
 **Task:** Change the name of the app from "Scrabble" to "Scorable" throughout the repository.
