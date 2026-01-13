@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-13: Made histograms more granular
+
+**Problem:** Histograms on the statistics screen used 5-12 bins which didn't provide enough granularity to see the distribution of scores clearly.
+
+**Solution:** Increased the bin count range from 5-12 to 10-20 bins, allowing for more detailed visualization of score distributions.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Changed binCount calculation from `Math.min(12, Math.max(5, data.length))` to `Math.min(20, Math.max(10, data.length))`
+
+**Tests:** All 140 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Restructured statistics card with separate move and game score sections
 
 **Problem:** Player statistics cards showed a grid of stats (Games, Wins, Best game, Avg game, Avg move, Best move, Moves) which was visually cluttered and didn't clearly separate move-level and game-level statistics.
@@ -10,6 +24,7 @@
 2. **Game Scores** - Shows histogram with avg and best values on the right
 
 Each section has:
+
 - A section header ("Move scores" / "Game scores")
 - The histogram on the left (using full available width)
 - Avg and best values stacked vertically on the right

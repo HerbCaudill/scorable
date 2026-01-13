@@ -30,8 +30,8 @@ export const Histogram = ({ data, label = "", color = "teal", minValue, maxValue
     )
   }
 
-  // Aim for ~8-12 bins, with nice round numbers
-  const binCount = Math.min(12, Math.max(5, data.length))
+  // Aim for ~15-20 bins for more granularity
+  const binCount = Math.min(20, Math.max(10, data.length))
   const binSize = Math.ceil(range / binCount)
   const adjustedMin = Math.floor(min / binSize) * binSize
   const bins: number[] = []
