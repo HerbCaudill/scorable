@@ -133,19 +133,54 @@ test.describe("Past games", () => {
     await pastGamePage.expectPlayerName("Alice")
   })
 
-  test("past games list container has proper overflow styling", async ({ page }) => {
-    // Create one finished game
-    await createFinishedGame(page)
+  test("past games list is scrollable when many games exist", async ({ page }) => {
+    // Navigate to home and create test games
+    await page.goto("/")
+    await page.getByRole("button", { name: /Create test games/i }).click()
 
-    // Find the scrollable container (past games list)
-    const pastGamesList = page.locator(".overflow-y-auto")
-    await expect(pastGamesList).toBeVisible()
+    // Wait for past games to appear (at least 10 finished games from createTestGames)
+    const pastGamesContainer = page.locator(".overflow-y-auto")
+    await expect(pastGamesContainer).toBeVisible()
 
-    // Verify the container has the correct CSS properties for scrolling
-    const hasScrollStyles = await pastGamesList.evaluate((el: Element) => {
-      const style = getComputedStyle(el)
-      return style.overflowY === "auto" || style.overflowY === "scroll"
+    // Wait for games to load
+    await page.waitForTimeout(500)
+
+    // Get all past game items
+    const pastGameItems = pastGamesContainer.locator(".cursor-pointer")
+    const count = await pastGameItems.count()
+    expect(count).toBeGreaterThanOrEqual(10)
+
+    // Check that content overflows and scrolling is possible
+    const scrollState = await pastGamesContainer.evaluate((el: Element) => ({
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+      canScroll: el.scrollHeight > el.clientHeight,
+    }))
+
+    // Content MUST overflow to allow scrolling
+    expect(scrollState.canScroll).toBe(true)
+
+    // Get the last game item
+    const lastItem = pastGameItems.last()
+
+    // Scroll to the bottom of the container
+    await pastGamesContainer.evaluate((el: Element) => {
+      el.scrollTop = el.scrollHeight
     })
-    expect(hasScrollStyles).toBe(true)
+
+    // Wait for scroll to complete
+    await page.waitForTimeout(100)
+
+    // Verify we actually scrolled (scrollTop should be > 0)
+    const finalScrollState = await pastGamesContainer.evaluate((el: Element) => ({
+      scrollTop: el.scrollTop,
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+    }))
+
+    expect(finalScrollState.scrollTop).toBeGreaterThan(0)
+
+    // Verify the last item is now visible
+    await expect(lastItem).toBeVisible()
   })
 })

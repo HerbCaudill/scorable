@@ -29,8 +29,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-khaki-100">
-      <div className="mx-auto max-w-xl pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className="h-screen bg-khaki-100">
+      <div className="mx-auto h-full max-w-xl pb-[max(1rem,env(safe-area-inset-bottom))]">
         {route.screen === "home" && (
           <HomeScreen
             onNewGame={() => setRoute({ screen: "new-game" })}
