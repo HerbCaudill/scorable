@@ -14,7 +14,8 @@ When you complete a task, before committing:
 - Where applicable, make new playwright tests to validate your changes and confirm that they pass.
 - Update the todo list by checking off the completed task and moving it to the "Done" section.
 - Append your progress to the @.ralph/progress.md file. Use this to leave a note for the next person working in the codebase.
+- Update CLAUDE.md with anything you learned that could be useful for the next person working in the codebase.
 
-Make one git commit for this task then end your turn.
+Make one git commit for this task then end your turn. In the body of the commit message, concisely describe the change, including the problem that motivated it and the solution implemented.
 
 If there are no incomplete tasks in the todo list, output <promise>COMPLETE</promise> and exit.

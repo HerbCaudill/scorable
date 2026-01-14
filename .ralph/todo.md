@@ -1,34 +1,22 @@
 ### To do
 
-- [ ] Test todo please disregard
+- [ ] Describe this application in the README.
 
 ### Done
 
 - [x] the header doesn't need that much vertical padding
-
 - [x] link game score tooltips to the game
-
 - [x] draw a line from best game score label to that game's dot
-
 - [x] on the chart, center the `avg: X` label on the line. And allow enough space at the top of the chart so the label doesn't overlap with any of the chart elements
-
 - [x] Show more ticks on axes
-
 - [x] Don't show tooltips on word score histograms
-
 - [x] For best moves score, include words
-
 - [x] New game: focus next player automatically until there are two players
-
 - [x] On histogram, bars should abut x-axis. On game score chart, spacing between dots and axis should match spacing between dots
-
 - [x] Test games button is too low on the screen on iPhone
-
 - [x] make the ring around the active player panel just 1 px
-
 - [x] show the test games button if there are no games (not only on first run)
 - [x] the "create test games" button should only appear on first use
-
 - [x] make padding around the app consistent - on the game screen, the arrow and the board and the first panel and the first button should all be left-aligned
 - [x] when correcting, the "Editing move" heading as well as the cancel/save buttons should use the standard header component
 - [x] Find some games that include both failed and successful challenges
