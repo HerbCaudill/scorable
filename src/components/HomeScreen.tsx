@@ -55,7 +55,7 @@ export const HomeScreen = ({
     <div className="flex h-full flex-col overflow-hidden p-4">
       <div className="mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col gap-6 overflow-hidden">
         {/* Header */}
-        <div className="flex flex-col items-center gap-2 py-4">
+        <div className="flex flex-col items-center gap-2 py-2">
           <div className="flex items-center gap-2">
             {/* Simple tile-style logo */}
             <div className="relative flex h-10 w-10 -rotate-12 items-center justify-center rounded bg-amber-100 font-bold text-amber-900 shadow-[0_3px_0_0_rgba(0,0,0,0.15)]">

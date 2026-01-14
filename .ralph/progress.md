@@ -1,5 +1,19 @@
 ## Progress log
 
+### 2026-01-14: Reduced vertical padding on home screen header
+
+**Problem:** The home screen header (with the Scorable logo and title) had excessive vertical padding (`py-4` = 32px total), creating too much white space at the top of the app.
+
+**Solution:** Reduced the padding from `py-4` (16px top + 16px bottom) to `py-2` (8px top + 8px bottom), cutting the vertical padding in half.
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Changed header container from `py-4` to `py-2`
+
+**Tests:** All 146 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-14: Disabled tooltips on move score histograms
 
 **Problem:** The move score histograms on the statistics page showed tooltips when hovering over bars. Since there are many moves per player and the histogram already shows the distribution visually, tooltips were unnecessary noise that distracted from the important information (avg and best scores).

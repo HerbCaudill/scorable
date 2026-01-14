@@ -1,9 +1,10 @@
 ### To do
 
 - [ ] Test todo please disregard
-- [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] the header doesn't need that much vertical padding
 
 - [x] link game score tooltips to the game
 
