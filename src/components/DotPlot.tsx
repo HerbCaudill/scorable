@@ -258,10 +258,22 @@ export const DotPlot = ({
 
             // Find the dot with the best value to draw a connecting line
             const bestDot = positionedDots.find(d => d.dataPoint.value === line.value)
-            // Calculate the line height from top of label area to the dot
-            // Label is at top-4 (16px), line should go from there up to the dot
-            const lineHeight =
-              bestDot ? chartHeightWithPadding + bestDot.stackIndex * dotSpacing + dotSpacing : 0
+            // Calculate the line from the top of the label to the center of the dot
+            // The label is positioned at top-4 (16px from top of label area)
+            // The line should start at the top of the label
+            const labelTop = 16 // top-4 = 16px
+            // The dot's vertical position from the bottom of chart area
+            const dotBottomOffset = bestDot ? bestDot.stackIndex * dotSpacing + dotSpacing : 0
+            // The dot center is at dotBottomOffset + dotSize/2 from the bottom of the chart
+            const dotCenterFromChartBottom = dotBottomOffset + dotSize / 2
+            // The label area is h-10 (40px). Line starts at labelTop from the top of label area
+            // Line goes from labelTop of label area up through the 1px x-axis line through the chart to the dot center
+            // Total distance: (40 - labelTop) from label area + 1px axis line + (chartHeightWithPadding - dotCenterFromChartBottom) from chart
+            const labelAreaHeight = 40 // h-10 = 40px
+            const lineStartFromBottom = labelAreaHeight - labelTop // distance from bottom of label area to line start
+            const lineHeight = bestDot
+              ? lineStartFromBottom + 1 + chartHeightWithPadding - dotCenterFromChartBottom
+              : 0
 
             return (
               <div key={`label-best-${i}`}>
@@ -274,7 +286,7 @@ export const DotPlot = ({
                     )}
                     style={{
                       left: `${xPos}%`,
-                      bottom: 0,
+                      bottom: lineStartFromBottom,
                       height: lineHeight,
                     }}
                   />

@@ -1,5 +1,24 @@
 # Progress Log
 
+## 2025-01-14: Fix best game score line positioning in DotPlot
+
+Fixed the connecting line between the "best:" label and the best game score dot on the statistics screen. Previously, the line extended incorrectly - it went above the dot and below the label.
+
+**Problem:** The line was drawn from `bottom: 0` of the label area with a height calculated to go all the way up through the chart, but this caused it to extend beyond both the label and the dot.
+
+**Solution:** Recalculated the line positioning to:
+1. Start at the top of the label (at `top-4` = 16px from top of label area)
+2. End at the center of the dot (not above it)
+
+The key changes:
+- `lineStartFromBottom`: Position the line's bottom edge at `24px` (40px label area height - 16px top offset), aligning with the top of the label
+- `lineHeight`: Calculate the distance from the top of the label, through the 1px x-axis line, up to the center of the dot
+
+**Files changed:**
+- `src/components/DotPlot.tsx` - Rewrote the line height and position calculations for the best score connecting line
+
+All 150 Playwright tests pass.
+
 ## 2025-01-14: Right-align best move score label on histogram
 
 Changed the "best:" label on the move score histogram to be right-aligned instead of anchored to the x-position of the best score value.
