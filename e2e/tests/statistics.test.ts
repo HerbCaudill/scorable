@@ -169,4 +169,50 @@ test.describe("Statistics", () => {
     await expect(page.getByText("Alice")).toBeVisible()
     await expect(page.getByText("Bob")).toBeVisible()
   })
+
+  test("clicking best game score label focuses the corresponding dot and shows tooltip", async ({
+    page,
+  }) => {
+    // Create 4 finished games using the UI helper (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Click Statistics
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Find the best label in game scores section (there's also one in move scores)
+    // The game scores section has "best:" labels
+    const bestLabels = page.locator("text=best:")
+    await expect(bestLabels.first()).toBeVisible()
+
+    // Make sure no tooltip is visible initially
+    const tooltip = page.locator(".bg-neutral-800.text-white")
+    await expect(tooltip).not.toBeVisible()
+
+    // Click the best label (the one in game scores is the second one)
+    // Game scores is below move scores
+    const gameScoresBestLabel = bestLabels.nth(1)
+    await gameScoresBestLabel.click()
+
+    // Tooltip should appear
+    await expect(tooltip).toBeVisible()
+
+    // One of the dots should have a ring around it (selected state)
+    const selectedDot = page.locator(".rounded-full.cursor-pointer.ring-2")
+    await expect(selectedDot).toBeVisible()
+
+    // Click the best label again to hide tooltip
+    await gameScoresBestLabel.click()
+
+    // Tooltip should be hidden
+    await expect(tooltip).not.toBeVisible()
+  })
 })

@@ -284,8 +284,14 @@ export const DotPlot = ({
                   className={cx(
                     "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                     color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                    bestDot ? "cursor-pointer" : "",
                   )}
                   style={{ left: `${clampedPos}%` }}
+                  onClick={() => {
+                    if (bestDot) {
+                      setSelectedIndex(selectedIndex === bestDot.index ? null : bestDot.index)
+                    }
+                  }}
                 >
                   {line.label}
                   {line.labelValue !== undefined && (

@@ -69,3 +69,25 @@ Changed the visual styling of blank tile letters from 25% opacity (appearing gra
   - "blank tile letter is displayed in yellow on scoresheet" - verifies blank letters have different color than regular letters
 
 All 148 Playwright tests pass.
+
+## 2025-01-14: Clickable "best" label on game scores DotPlot
+
+Made the "best:" label on the game scores dot plot clickable. Clicking the label now focuses the corresponding best-score dot and displays its tooltip, matching the behavior of clicking on the dot directly.
+
+**Problem:** Users could click on individual dots in the game score dot plot to see details, but the "best:" label (which highlights the highest scoring game) was not interactive. This was inconsistent since the label is visually prominent and users might expect to be able to click it.
+
+**Solution:** Added an `onClick` handler to the "best" label `<span>` element in the DotPlot component that:
+1. Finds the `bestDot` (already computed for drawing the connecting line)
+2. Sets/toggles `selectedIndex` to that dot's index, showing/hiding the tooltip
+3. Added `cursor-pointer` class when a bestDot exists to indicate clickability
+
+**Files changed:**
+- `src/components/DotPlot.tsx` - Added onClick handler and cursor-pointer class to the "best" label
+
+**Tests added:**
+- `e2e/tests/statistics.test.ts` - "clicking best game score label focuses the corresponding dot and shows tooltip"
+  - Verifies clicking the label shows the tooltip
+  - Verifies the corresponding dot gets the selected ring
+  - Verifies clicking again hides the tooltip
+
+All 150 Playwright tests pass.
