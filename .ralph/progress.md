@@ -1273,3 +1273,24 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 - `e2e/pages/player-setup.page.ts` - Updated to handle auto-opened dropdowns correctly
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Show words in best move score labels
+
+**Problem:** The statistics screen showed the best move score as just a number (e.g., "best: 45"), but users wanted to see which word(s) earned that score.
+
+**Solution:** Extended the statistics calculation to track the word(s) that achieved the best move score:
+
+1. Added `bestMoveLabel` field to `PlayerStats` type to store the word(s) from the best-scoring move(s)
+2. After finding moves with the max score, extract word labels from each move's label (format: "WORD for X")
+3. If multiple different words achieved the same max score, join them with commas (e.g., "QUIZ, QUAY")
+4. Display the best move as "best: WORD (score)" instead of just "best: score"
+
+The label is extracted using a regex match on the existing MoveData.label format.
+
+**Files changed:**
+
+- `src/components/StatisticsScreen.tsx` - Added bestMoveLabel calculation and display
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.

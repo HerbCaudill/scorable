@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] for best moves score, include words
 - [ ] show more ticks on axes
 - [ ] Don't show tooltips on word score histograms
 - [ ] draw a line from best game score label to that game's dot
@@ -9,6 +8,8 @@
 - [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] For best moves score, include words
 
 - [x] New game: focus next player automatically until there are two players
 

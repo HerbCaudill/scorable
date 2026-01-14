@@ -38,6 +38,7 @@ type PlayerStats = {
   moveData: MoveData[]
   avgMoveScore: number
   maxMoveScore: number
+  bestMoveLabel: string
 }
 
 export const StatisticsScreen = ({ onBack }: Props) => {
@@ -104,6 +105,19 @@ export const StatisticsScreen = ({ onBack }: Props) => {
 
       const gameScores = filteredGameData.map(g => g.value)
       const moveScores = filteredMoveData.map(m => m.value)
+      const maxMoveScore = moveScores.length > 0 ? Math.max(...moveScores) : 0
+
+      // Find all moves with the max score and extract their word labels
+      const bestMoves = filteredMoveData.filter(m => m.value === maxMoveScore)
+      // Extract word from label (format: "WORD for X" or "X pts")
+      const bestMoveWords = bestMoves
+        .map(m => {
+          const match = m.label.match(/^(.+) for \d+$/)
+          return match ? match[1] : ""
+        })
+        .filter(Boolean)
+      // Join unique words (in case same high score achieved multiple times with different words)
+      const bestMoveLabel = [...new Set(bestMoveWords)].join(", ")
 
       playerStats.push({
         name,
@@ -123,7 +137,8 @@ export const StatisticsScreen = ({ onBack }: Props) => {
           moveScores.length > 0 ?
             Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)
           : 0,
-        maxMoveScore: moveScores.length > 0 ? Math.max(...moveScores) : 0,
+        maxMoveScore,
+        bestMoveLabel,
       })
     }
 
@@ -216,7 +231,10 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                       {
                         value: player.maxMoveScore,
                         label: "best:",
-                        labelValue: player.maxMoveScore,
+                        labelValue:
+                          player.bestMoveLabel ?
+                            `${player.bestMoveLabel} (${player.maxMoveScore})`
+                          : player.maxMoveScore,
                         type: "best",
                       },
                     ]}
