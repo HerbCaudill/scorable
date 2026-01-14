@@ -1,5 +1,18 @@
 # Progress Log
 
+## 2025-01-14: Add vertical padding to Header component
+
+Added `py-2` (8px vertical padding) to the Header component to give it consistent vertical spacing across all screens.
+
+**Problem:** The Header component had no vertical padding, making it feel cramped against surrounding content.
+
+**Solution:** Added `py-2` class to the Header's root div, which applies 8px of padding above and below the header content.
+
+**Files changed:**
+- `src/components/Header.tsx` - Added `py-2` to the flex container
+
+All 149 Playwright tests pass.
+
 ## 2025-01-14: Blank tile letter dialog in edit mode
 
 Fixed a bug where adding blank tiles when correcting/editing a move didn't show the letter-selection dialog. Users now see the same `BlankLetterDialog` UI when placing blank tiles during edit mode as they do when entering a move for the first time.
