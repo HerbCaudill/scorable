@@ -41,7 +41,7 @@ type PlayerStats = {
   bestMoveLabel: string
 }
 
-export const StatisticsScreen = ({ onBack }: Props) => {
+export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
   const { knownGameIds } = useLocalStore()
 
   // Load all known game documents
@@ -74,7 +74,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
         const score = scores[i]
         const isWinner = score === maxScore
         const playerMoveData = getMoveDataFromDoc(doc, i)
-        const playerGameData = getGameDataFromDoc(doc, i)
+        const playerGameData = getGameDataFromDoc(doc, i, id)
 
         const existing = playerStatsMap.get(playerName) || {
           gamesPlayed: 0,
@@ -251,6 +251,13 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                     minValue={plotRanges.gameScores.min}
                     maxValue={plotRanges.gameScores.max}
                     getTooltip={d => d.label ?? String(d.value)}
+                    onDotClick={
+                      onViewPastGame ?
+                        d => {
+                          if (d.gameId) onViewPastGame(d.gameId)
+                        }
+                      : undefined
+                    }
                     referenceLines={[
                       {
                         value: player.avgScore,
@@ -278,4 +285,5 @@ export const StatisticsScreen = ({ onBack }: Props) => {
 
 type Props = {
   onBack: () => void
+  onViewPastGame?: (gameId: string) => void
 }

@@ -37,6 +37,7 @@ export const DotPlot = ({
   maxValue,
   color = "teal",
   getTooltip,
+  onDotClick,
   referenceLines = [],
 }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
@@ -147,15 +148,25 @@ export const DotPlot = ({
             const selectedDot = positionedDots.find(d => d.index === selectedIndex)
             if (!selectedDot) return null
             const tooltipBottom = selectedDot.stackIndex * dotSpacing + dotSpacing + dotSize + 4
+            const isClickable = onDotClick !== undefined
             return (
               <div
-                className="pointer-events-none absolute z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white"
+                className={cx(
+                  "absolute z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white",
+                  isClickable ? "cursor-pointer" : "pointer-events-none",
+                )}
                 style={{
                   left: `${selectedDot.x}%`,
                   bottom: tooltipBottom,
                 }}
+                onClick={() => {
+                  if (isClickable) {
+                    onDotClick(data[selectedIndex])
+                  }
+                }}
               >
                 {getTooltip?.(data[selectedIndex]) ?? data[selectedIndex].value}
+                {isClickable && <span className="ml-1 opacity-60">→</span>}
               </div>
             )
           })()}
@@ -292,6 +303,7 @@ export const DotPlot = ({
 export type DataPoint = {
   value: number
   label?: string
+  gameId?: string
 }
 
 export type ReferenceLine = {
@@ -307,5 +319,6 @@ type Props = {
   maxValue?: number
   color?: "teal" | "amber"
   getTooltip?: (dataPoint: DataPoint) => string
+  onDotClick?: (dataPoint: DataPoint) => void
   referenceLines?: ReferenceLine[]
 }

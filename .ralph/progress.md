@@ -1384,3 +1384,39 @@ The line makes it immediately clear which dot represents the best game score.
 - `src/components/DotPlot.tsx` - Added connecting line from "best" label to corresponding dot
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Link game score tooltips to past game view
+
+**Problem:** When viewing statistics, clicking on a game score dot showed a tooltip with game details (date, opponent, score), but users couldn't navigate to that game to see full details.
+
+**Solution:** Made game score tooltips clickable to navigate to the past game view:
+
+1. **Added `gameId` to GameData type** (`src/lib/getGameDataFromDoc.ts`) - The data structure now includes an optional `gameId` field to link each data point to its source game.
+
+2. **Updated `getGameDataFromDoc`** to accept a `gameId` parameter and include it in the returned data.
+
+3. **Added `onDotClick` prop to DotPlot** (`src/components/DotPlot.tsx`) - When provided:
+   - Tooltips become clickable (pointer cursor, not pointer-events-none)
+   - An arrow indicator (→) is shown in the tooltip
+   - Clicking the tooltip calls the callback with the data point
+
+4. **Updated StatisticsScreen** (`src/components/StatisticsScreen.tsx`):
+   - Added `onViewPastGame` prop
+   - Pass game ID when creating game data
+   - Connect `onDotClick` to navigation callback for game score dots
+
+5. **Updated App.tsx** - Pass `onViewPastGame` handler to StatisticsScreen that navigates to the past game view.
+
+6. **Added Playwright test** (`e2e/tests/statistics.test.ts`) - New test "clicking game score tooltip navigates to past game" verifies the tooltip shows an arrow and clicking it navigates to the past game view.
+
+**Files changed:**
+
+- `src/lib/getGameDataFromDoc.ts` - Added `gameId` field to GameData type and parameter
+- `src/components/DotPlot.tsx` - Added `gameId` to DataPoint type, added `onDotClick` prop with clickable tooltip
+- `src/components/StatisticsScreen.tsx` - Added `onViewPastGame` prop, pass game ID and click handler
+- `src/App.tsx` - Pass `onViewPastGame` to StatisticsScreen
+- `e2e/tests/statistics.test.ts` - Added new test for tooltip navigation
+
+**Tests:** All 146 Playwright tests and 104 unit tests pass.

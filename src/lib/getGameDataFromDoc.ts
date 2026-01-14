@@ -5,10 +5,15 @@ import { formatDate } from "./formatDate"
 export type GameData = {
   value: number
   label: string // e.g., "Jan 5 vs Bob: 312"
+  gameId?: string // Optional game ID for linking to the game
 }
 
 /** Get game score with label for a specific player from a GameDoc */
-export const getGameDataFromDoc = (doc: GameDoc, playerIndex: number): GameData => {
+export const getGameDataFromDoc = (
+  doc: GameDoc,
+  playerIndex: number,
+  gameId?: string,
+): GameData => {
   const score = getPlayerScoreFromDoc(doc, playerIndex)
   const date = formatDate(doc.createdAt)
 
@@ -21,5 +26,6 @@ export const getGameDataFromDoc = (doc: GameDoc, playerIndex: number): GameData 
   return {
     value: score,
     label: `${date} vs ${opponents}: ${score}`,
+    gameId,
   }
 }

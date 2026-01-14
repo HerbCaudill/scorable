@@ -131,4 +131,42 @@ test.describe("Statistics", () => {
     // Tooltip should be hidden
     await expect(tooltip).not.toBeVisible()
   })
+
+  test("clicking game score tooltip navigates to past game", async ({ page }) => {
+    // Create 4 finished games using the UI helper (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Click Statistics
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Click a dot in the game scores dot plot
+    const dots = page.locator(".rounded-full.cursor-pointer")
+    const firstDot = dots.first()
+    await firstDot.click()
+
+    // Tooltip should appear with arrow indicating it's clickable
+    const tooltip = page.locator(".bg-neutral-800.text-white")
+    await expect(tooltip).toBeVisible()
+    await expect(tooltip).toContainText("→")
+
+    // Click the tooltip to navigate to the game
+    await tooltip.click()
+
+    // Should navigate to past game view (URL contains /view/)
+    await expect(page).toHaveURL(/.*#\/view\/.*/)
+
+    // Should show the game board and player scores
+    await expect(page.getByRole("grid", { name: "Scrabble board" })).toBeVisible()
+    await expect(page.getByText("Alice")).toBeVisible()
+    await expect(page.getByText("Bob")).toBeVisible()
+  })
 })

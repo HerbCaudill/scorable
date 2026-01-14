@@ -58,7 +58,12 @@ function App() {
             onBack={() => setRoute({ screen: "game", gameId: route.gameId })}
           />
         )}
-        {route.screen === "statistics" && <StatisticsScreen onBack={handleGoHome} />}
+        {route.screen === "statistics" && (
+          <StatisticsScreen
+            onBack={handleGoHome}
+            onViewPastGame={id => setRoute({ screen: "view-past-game", gameId: id as DocumentId })}
+          />
+        )}
       </div>
       <Toaster />
     </div>

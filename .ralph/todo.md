@@ -1,9 +1,11 @@
 ### To do
 
-- [ ] link game score tooltips to the game
+- [ ] Test todo please disregard
 - [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] link game score tooltips to the game
 
 - [x] draw a line from best game score label to that game's dot
 
