@@ -151,17 +151,19 @@ export const HomeScreen = ({
           </div>
         )}
 
-        {/* Spacer to push test button to bottom (only when no past games) */}
-        {finishedGames.length === 0 && <div className="flex-1" />}
+        {/* Spacer to push test button to bottom (only when no games) */}
+        {activeGames.length === 0 && finishedGames.length === 0 && <div className="flex-1" />}
 
-        {/* Test games button at bottom */}
-        <button
-          onClick={handleCreateTestGames}
-          className="flex items-center justify-center gap-1 py-2 text-xs text-gray-400 hover:text-gray-500"
-        >
-          <IconTestPipe size={14} />
-          Create test games
-        </button>
+        {/* Test games button - only show when there are no games */}
+        {activeGames.length === 0 && finishedGames.length === 0 && (
+          <button
+            onClick={handleCreateTestGames}
+            className="flex items-center justify-center gap-1 py-2 text-xs text-gray-400 hover:text-gray-500"
+          >
+            <IconTestPipe size={14} />
+            Create test games
+          </button>
+        )}
       </div>
     </div>
   )

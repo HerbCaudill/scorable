@@ -21,6 +21,33 @@ test.describe("Home screen", () => {
     await expect(page.getByText("Active games")).not.toBeVisible()
   })
 
+  test("shows Create test games button when no games exist", async ({ page }) => {
+    // Button should be visible when there are no games
+    await expect(page.getByRole("button", { name: "Create test games" })).toBeVisible()
+  })
+
+  test("hides Create test games button when games exist", async ({ page }) => {
+    const homePage = new HomePage(page)
+    const setupPage = new PlayerSetupPage(page)
+    const gamePage = new GamePage(page)
+
+    // Create a new game
+    await homePage.clickNewGame()
+    await setupPage.addNewPlayer(0, "Alice")
+    await setupPage.addNewPlayer(1, "Bob")
+    await setupPage.startGame()
+    await gamePage.expectOnGameScreen()
+
+    // Navigate back to home
+    await page.evaluate(() => {
+      window.location.hash = ""
+    })
+    await expect(page.getByRole("button", { name: "New game" })).toBeVisible()
+
+    // Create test games button should not be visible
+    await expect(page.getByRole("button", { name: "Create test games" })).not.toBeVisible()
+  })
+
   test("navigates to player setup on New Game click", async ({ page }) => {
     const homePage = new HomePage(page)
     await homePage.clickNewGame()

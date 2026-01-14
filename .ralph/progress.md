@@ -1151,6 +1151,7 @@ Removed the "Score keeper for word games" subtitle from the home screen header a
 ### 2026-01-13: Made padding around the app consistent
 
 **Problem:** On the game screen, different elements had inconsistent left alignment:
+
 - The Header component had its own internal `p-2` padding, adding extra spacing
 - The board was centered within its container rather than left-aligned
 - This caused the back arrow, board, player panels, and action buttons to not align with each other
@@ -1162,6 +1163,7 @@ Removed the "Score keeper for word games" subtitle from the home screen header a
 2. **GameScreen.tsx** - Removed `flex flex-col items-center` from the board area wrapper, leaving just `w-full`. The board now fills its container width and aligns with other elements.
 
 The main container's `p-2` now provides consistent 8px padding for all elements:
+
 - Back arrow
 - Board
 - Player panels (via `-mx-2 px-2` for horizontal scroll)
@@ -1173,3 +1175,18 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 - `src/components/GameScreen.tsx` - Simplified board area wrapper classes
 
 **Tests:** All 143 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Show test games button only when no games exist
+
+**Problem:** The "Create test games" button was always visible at the bottom of the home screen, even when games already existed. It should only appear when there are no games (both active and finished lists are empty).
+
+**Solution:** Added conditional rendering to only show the button and its spacer when `activeGames.length === 0 && finishedGames.length === 0`.
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Wrapped test games button in conditional render
+- `e2e/tests/home-screen.test.ts` - Added two new tests: "shows Create test games button when no games exist" and "hides Create test games button when games exist"
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
