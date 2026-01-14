@@ -242,4 +242,39 @@ test.describe("Statistics", () => {
     const height = await avgLine.evaluate(el => el.style.height)
     expect(height).toBe("84px")
   })
+
+  test("average game score label has vertical spacing from chart in DotPlot", async ({ page }) => {
+    // Create 4 finished games (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Go to statistics page
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // The avg label in the DotPlot (game scores section) should have amber background
+    // Find the game scores section avg label (amber-600 background)
+    const avgLabel = page.locator(".bg-amber-600").filter({ hasText: "avg:" }).first()
+    await expect(avgLabel).toBeVisible()
+
+    // The vertical reference line for average in DotPlot should extend full height
+    // including the 28px label area height (h-full on the line)
+    const avgLine = page.locator(".bg-amber-600.w-px.h-full").first()
+    await expect(avgLine).toBeVisible()
+
+    // Verify the chart container has the label area height included
+    // The line has h-full class, meaning it extends to the full container height
+    // Parent container should include the 28px label area height
+    const parent = avgLine.locator("..")
+    const parentHeight = await parent.evaluate(el => parseInt(getComputedStyle(el).height))
+    // Chart height should be at least minHeight (48) + dotSpacing (7) + labelAreaHeight (28) = 83px
+    expect(parentHeight).toBeGreaterThanOrEqual(83)
+  })
 })

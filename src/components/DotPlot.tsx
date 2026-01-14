@@ -109,6 +109,11 @@ export const DotPlot = ({
   const dotSize = 6
   const dotSpacing = dotSize + 1
 
+  // Label area height (space for avg label above chart)
+  // Only add space if there's an avg reference line
+  const hasAvgLine = referenceLines.some(line => line.type === "avg")
+  const labelAreaHeight = hasAvgLine ? 28 : 0 // ~1em + some padding for label
+
   // Calculate height dynamically based on tallest stack
   // Minimum height of 48px, but grow to fit all dots
   const minHeight = 48
@@ -116,7 +121,8 @@ export const DotPlot = ({
   const chartHeight = Math.max(minHeight, requiredHeight)
 
   // Add spacing at bottom so dots don't touch axis (matching dot spacing)
-  const chartHeightWithPadding = chartHeight + dotSpacing
+  // Add label area height at top for avg label
+  const chartHeightWithPadding = chartHeight + dotSpacing + labelAreaHeight
 
   return (
     <div className="flex flex-col" ref={containerRef}>

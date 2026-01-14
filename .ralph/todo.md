@@ -3,11 +3,9 @@
 - [ ] Describe this application in the README.
 - [ ] When importing games, populate the letter represented by blank tiles
 
-Statistics screen:
-
-- [ ] Allow about 1em of vertical space between the average game score label and the chart itself, but extend the line all the way to the label
-
 ### Done
+
+- [x] Allow about 1em of vertical space between the average game score label and the chart itself, but extend the line all the way to the label
 
 - [x] The average word score line should start at the x-axis and go all the way up to the label. Currently it extends below the x-axis and ends below the label.
 

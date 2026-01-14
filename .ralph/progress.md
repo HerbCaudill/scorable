@@ -1,5 +1,28 @@
 # Progress Log
 
+## 2025-01-14: Add vertical spacing between avg label and chart in DotPlot
+
+Added approximately 1em (~28px) of vertical space between the average game score label and the chart dots on the statistics screen, while keeping the reference line extending all the way from the label to the x-axis.
+
+**Problem:** The average label at the top of the DotPlot (game scores chart) was positioned directly at `top-0`, meaning the dots could stack up very close to the label, potentially overlapping or looking cramped.
+
+**Solution:** Added a `labelAreaHeight` constant (28px) that is conditionally included when the chart has an avg reference line:
+1. The label area height is added to the total chart container height
+2. The dots are still positioned from the bottom, so they now have 28px of clearance from the label
+3. The reference line uses `h-full` class so it automatically extends the full height (including the label area)
+4. Only added when there's an avg line to avoid unnecessary padding for charts without avg reference
+
+**Files changed:**
+- `src/components/DotPlot.tsx` - Added `hasAvgLine` check and `labelAreaHeight` constant, updated `chartHeightWithPadding` calculation
+
+**Tests added:**
+- `e2e/tests/statistics.test.ts` - "average game score label has vertical spacing from chart in DotPlot"
+  - Verifies the avg label is visible with amber background
+  - Verifies the reference line extends full height
+  - Verifies the chart container is at least 83px tall (min chart height + label area)
+
+All 152 Playwright tests pass.
+
 ## 2025-01-14: Fix best game score line positioning in DotPlot
 
 Fixed the connecting line between the "best:" label and the best game score dot on the statistics screen. Previously, the line extended incorrectly - it went above the dot and below the label.
