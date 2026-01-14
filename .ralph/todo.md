@@ -11,9 +11,10 @@
 - [ ] link game score tooltips to the game
 - [ ] on the chart, center the `avg: X` label on the line. And allow enough space at the top of the chart so the label doesn't overlap with any of the chart elements
 - [ ] the header doesn't need that much vertical padding
-- [ ] make the ring around the active player panel just 1 px
 
 ### Done
+
+- [x] make the ring around the active player panel just 1 px
 
 - [x] show the test games button if there are no games (not only on first run)
 - [x] the "create test games" button should only appear on first use

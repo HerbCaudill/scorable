@@ -1190,3 +1190,17 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 - `e2e/tests/home-screen.test.ts` - Added two new tests: "shows Create test games button when no games exist" and "hides Create test games button when games exist"
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Made active player panel ring 1px thick
+
+**Problem:** The ring around the active player's panel was 3px thick, which was too prominent and visually heavy.
+
+**Solution:** Changed the box-shadow from `0 0 0 3px ${player.color}` to `0 0 0 1px ${player.color}` for the active player panel. The inactive player panels already had 1px rings, so now both states are consistent.
+
+**Files changed:**
+
+- `src/components/GameScreen.tsx` - Changed active player panel ring from 3px to 1px
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.

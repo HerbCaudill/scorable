@@ -609,7 +609,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                 style={{
                   boxShadow:
                     isActive ?
-                      `0 0 0 3px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
+                      `0 0 0 1px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
                     : `0 0 0 1px ${player.color}40, 0 3px 0 0 ${darkenColor(player.color)}40`,
                 }}
               >
