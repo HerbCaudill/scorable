@@ -221,6 +221,7 @@ export const StatisticsScreen = ({ onBack }: Props) => {
                     color="teal"
                     minValue={plotRanges.moveScores.min}
                     maxValue={plotRanges.moveScores.max}
+                    showTooltip={false}
                     referenceLines={[
                       {
                         value: player.avgMoveScore,

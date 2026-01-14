@@ -1,13 +1,14 @@
 ### To do
 
 - [ ] show more ticks on axes
-- [ ] Don't show tooltips on word score histograms
 - [ ] draw a line from best game score label to that game's dot
 - [ ] link game score tooltips to the game
 - [ ] on the chart, center the `avg: X` label on the line. And allow enough space at the top of the chart so the label doesn't overlap with any of the chart elements
 - [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] Don't show tooltips on word score histograms
 
 - [x] For best moves score, include words
 

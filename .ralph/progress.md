@@ -1,5 +1,27 @@
 ## Progress log
 
+### 2026-01-14: Disabled tooltips on move score histograms
+
+**Problem:** The move score histograms on the statistics page showed tooltips when hovering over bars. Since there are many moves per player and the histogram already shows the distribution visually, tooltips were unnecessary noise that distracted from the important information (avg and best scores).
+
+**Solution:** Added a `showTooltip` prop to the Histogram component that defaults to `true` for backward compatibility. When `false`:
+
+1. The tooltip element is not rendered
+2. Hover handlers are not attached to bars
+3. The cursor doesn't change to pointer on hover
+4. Bars don't dim when hovering other bars
+
+Updated StatisticsScreen to pass `showTooltip={false}` to the move score Histogram.
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added `showTooltip` prop, conditionally render tooltip and hover handlers
+- `src/components/StatisticsScreen.tsx` - Pass `showTooltip={false}` to move scores Histogram
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-13: Refactored edit mode header to use standard Header component
 
 **Problem:** When correcting a move, the "Editing move" heading was displayed as a separate `<div>` below the header, and the cancel/save buttons were custom-styled inline. This was inconsistent with other screens that used the standard `Header` component.

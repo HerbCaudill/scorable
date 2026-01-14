@@ -8,6 +8,7 @@ export const Histogram = ({
   minValue,
   maxValue,
   referenceLines = [],
+  showTooltip = true,
 }: Props) => {
   const [hoveredBin, setHoveredBin] = useState<number | null>(null)
   if (data.length === 0) return null
@@ -94,7 +95,7 @@ export const Histogram = ({
             )
           })}
         {/* Tooltip */}
-        {hoveredBin !== null && bins[hoveredBin] > 0 && (
+        {showTooltip && hoveredBin !== null && bins[hoveredBin] > 0 && (
           <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
             {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
           </div>
@@ -118,21 +119,22 @@ export const Histogram = ({
         <div
           className="flex items-end justify-center"
           style={{ height: 56 }}
-          onMouseLeave={() => setHoveredBin(null)}
+          onMouseLeave={showTooltip ? () => setHoveredBin(null) : undefined}
         >
           {bins.map((count, i) => (
             <div
               key={i}
               className={cx(
-                "min-w-1 flex-1 cursor-pointer transition-opacity",
+                "min-w-1 flex-1 transition-opacity",
                 color === "teal" ? "bg-teal-500" : "bg-amber-500",
-                hoveredBin !== null && hoveredBin !== i ? "opacity-50" : "",
+                showTooltip && "cursor-pointer",
+                showTooltip && hoveredBin !== null && hoveredBin !== i ? "opacity-50" : "",
               )}
               style={{
                 height: `${maxCount > 0 ? (count / maxCount) * 100 : 0}%`,
                 minHeight: count > 0 ? 2 : 0,
               }}
-              onMouseEnter={() => setHoveredBin(i)}
+              onMouseEnter={showTooltip ? () => setHoveredBin(i) : undefined}
             />
           ))}
         </div>
@@ -202,4 +204,5 @@ type Props = {
   minValue?: number
   maxValue?: number
   referenceLines?: ReferenceLine[]
+  showTooltip?: boolean
 }
