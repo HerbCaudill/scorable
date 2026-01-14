@@ -13,7 +13,7 @@ import { useLongPress } from "@/lib/useLongPress"
 
 export type MoveAction = "correct" | "challenge" | "check"
 
-/** Render a word with blank letters at 25% opacity */
+/** Render a word with blank letters in yellow */
 const WordWithBlanks = ({ wordInfo }: { wordInfo: WordWithBlankInfo }) => {
   const { word, blankIndices } = wordInfo
   const blankSet = new Set(blankIndices)
@@ -21,7 +21,7 @@ const WordWithBlanks = ({ wordInfo }: { wordInfo: WordWithBlankInfo }) => {
   return (
     <span>
       {word.split("").map((char, i) => (
-        <span key={i} className={blankSet.has(i) ? "opacity-25" : ""}>
+        <span key={i} className={blankSet.has(i) ? "text-yellow-600" : ""}>
           {char}
         </span>
       ))}
@@ -29,7 +29,7 @@ const WordWithBlanks = ({ wordInfo }: { wordInfo: WordWithBlankInfo }) => {
   )
 }
 
-/** Render words list with blanks shown at 25% opacity */
+/** Render words list with blanks shown in yellow */
 const WordsDisplay = ({ entry }: { entry: MoveHistoryEntry }) => {
   if (entry.words.length === 0) {
     return <em className="text-neutral-400">(pass)</em>

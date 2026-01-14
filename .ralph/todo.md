@@ -15,6 +15,7 @@ Statistics screen:
 
 ### Done
 
+- [x] Make the "ghost" letter that a blank tile represents yellow instead of gray, both in the scoresheet and the game board
 - [x] the header doesn't need that much vertical padding
 - [x] link game score tooltips to the game
 - [x] draw a line from best game score label to that game's dot

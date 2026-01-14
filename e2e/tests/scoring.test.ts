@@ -73,6 +73,60 @@ test.describe("Scoring", () => {
     expect(await gamePage.getPlayerScore(0)).toBe(8)
   })
 
+  test("blank tile letter is displayed in yellow on board", async ({ page }) => {
+    // Place C_T where _ is a blank representing A
+    await gamePage.clickCell(7, 7)
+    await gamePage.typeLetters("C")
+    await gamePage.pressKey(" ") // Blank tile
+    await gamePage.typeLetters("T")
+    await gamePage.pressKey("Enter")
+    await gamePage.typeBlankLetters("A")
+
+    // Find the blank tile on the board (at position H8) - aria-label indicates it's a blank
+    const blankTile = page.locator('[aria-label="Blank tile representing A"]')
+    await expect(blankTile).toBeVisible()
+
+    // The letter span inside should have yellow color (not the default khaki-800)
+    const letterSpan = blankTile.locator("span").first()
+    const color = await letterSpan.evaluate((el) => getComputedStyle(el).color)
+    // Yellow-600 is approximately rgb(202, 138, 4) - just verify it's not the default khaki
+    expect(color).not.toContain("rgb(72,") // khaki-800 starts with ~72
+  })
+
+  test("blank tile letter is displayed in yellow on scoresheet", async ({ page }) => {
+    // Place C_T where _ is a blank representing A
+    await gamePage.clickCell(7, 7)
+    await gamePage.typeLetters("C")
+    await gamePage.pressKey(" ") // Blank tile
+    await gamePage.typeLetters("T")
+    await gamePage.pressKey("Enter")
+    await gamePage.typeBlankLetters("A")
+
+    // Wait for move to be committed and appear in history (Alice's panel)
+    const alicePanel = page.locator('[role="region"][data-player="Alice"]')
+    await expect(alicePanel).toContainText("CAT")
+
+    // The blank letter "A" should have the yellow class applied
+    // DOM structure: div.truncate > span (WordsDisplay wrapper) > span (WordWithBlanks) > span.text-yellow-600
+    // Find spans inside the move entry with yellow color
+    const moveEntry = alicePanel.locator(".divide-y > div").first()
+
+    // Get the computed color of the "A" letter (second character in CAT)
+    // The structure is: span.truncate > span > span > span[0]=C, span[1]=A, span[2]=T
+    const letterSpans = moveEntry.locator("span.truncate span span span")
+
+    // Get the colors of C and A to verify A is different (yellow)
+    const cColor = await letterSpans.nth(0).evaluate((el) => getComputedStyle(el).color)
+    const aColor = await letterSpans.nth(1).evaluate((el) => getComputedStyle(el).color)
+
+    // The blank letter A should have a different color than regular letter C
+    expect(aColor).not.toBe(cColor)
+    // A should have yellow coloring (oklch format with positive chroma/saturation)
+    expect(aColor).toContain("oklch")
+    // Yellow-600 has chroma > 0, regular text has chroma = 0
+    expect(aColor).not.toBe("oklch(0.439 0 0)") // Not the default gray
+  })
+
   test("double letter square", async () => {
     // Alice places CAT at center
     await gamePage.placeWord(7, 7, "CAT")

@@ -31,8 +31,7 @@ export const Tile = ({ letter, variant = "existing", className }: Props) => {
       <span
         className={cx(
           "text-[55cqw] font-bold leading-none",
-          isExisting ? "text-khaki-800" : "text-teal-800",
-          isBlank && "opacity-25",
+          isBlank ? "text-yellow-600" : isExisting ? "text-khaki-800" : "text-teal-800",
         )}
       >
         {displayLetter}

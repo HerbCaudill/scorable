@@ -147,7 +147,7 @@ Zustand store with actions:
 - Multipliers only apply to newly placed tiles
 - Cross words scored automatically
 - 50-point bingo bonus for 7-tile moves
-- Blank tiles (space) = 0 points
+- Blank tiles (space) = 0 points, displayed in yellow (text-yellow-600) to distinguish from regular tiles
 
 ## Board interaction (`src/components/ScrabbleBoard.tsx`)
 
