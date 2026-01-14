@@ -1298,6 +1298,31 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 
 ---
 
+### 2026-01-14: Show more ticks on axes in statistics charts
+
+**Problem:** The statistics page charts (Histogram and DotPlot) only showed min and max values on the x-axis (e.g., "0" and "100" for move scores, "0" and "500" for game scores). This made it hard to read intermediate values at a glance.
+
+**Solution:** Added a `generateTicks` function to both components that calculates nice round tick values for any axis range:
+
+1. The function determines a nice step size based on the range (aiming for ~4-5 ticks)
+2. Steps are rounded to nice values (multiples of 1, 2, 5, 10, 20, 50, etc.)
+3. Ticks are placed at round numbers between min and max (e.g., 20, 40, 60, 80 for a 0-100 range)
+4. Added tick marks (1px gray lines) on the axis at each tick position
+5. Added tick labels below the axis at each position
+
+Results:
+- Move scores (0-100): shows 0, 20, 40, 60, 80, 100
+- Game scores (0-500): shows 0, 100, 200, 300, 400, 500
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Added `generateTicks` function, tick marks on axis, tick labels
+- `src/components/DotPlot.tsx` - Added same `generateTicks` function, tick marks on axis, tick labels
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
 ### 2026-01-14: Show words in best move score labels
 
 **Problem:** The statistics screen showed the best move score as just a number (e.g., "best: 45"), but users wanted to see which word(s) earned that score.

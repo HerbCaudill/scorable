@@ -1,6 +1,36 @@
 import { useState } from "react"
 import { cx } from "@/lib/cx"
 
+/** Generate nice tick values for an axis range */
+const generateTicks = (min: number, max: number): number[] => {
+  const range = max - min
+  if (range <= 0) return [min]
+
+  // Determine a nice step size based on the range
+  // Aim for about 4-5 ticks
+  const rawStep = range / 5
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)))
+
+  // Round to nearest nice step (1, 2, 5, 10, 20, 50, etc.)
+  let step: number
+  const normalized = rawStep / magnitude
+  if (normalized <= 1.5) step = magnitude
+  else if (normalized <= 3) step = 2 * magnitude
+  else if (normalized <= 7) step = 5 * magnitude
+  else step = 10 * magnitude
+
+  // Generate ticks at nice round numbers
+  const ticks: number[] = []
+  const start = Math.ceil(min / step) * step
+  for (let tick = start; tick < max; tick += step) {
+    // Skip ticks that are too close to min or max
+    if (tick > min && tick < max) {
+      ticks.push(tick)
+    }
+  }
+  return ticks
+}
+
 export const Histogram = ({
   data,
   label = "",
@@ -141,6 +171,17 @@ export const Histogram = ({
       </div>
       {/* X-axis line */}
       <div className="relative h-px bg-neutral-300">
+        {/* Intermediate tick marks */}
+        {generateTicks(adjustedMin, adjustedMax).map(tick => {
+          const xPos = ((tick - adjustedMin) / adjustedRange) * 100
+          return (
+            <div
+              key={`tick-${tick}`}
+              className="absolute -top-0.5 h-1 w-px bg-neutral-300"
+              style={{ left: `${xPos}%` }}
+            />
+          )
+        })}
         {/* Reference line tick marks - only for "avg" type */}
         {referenceLines
           .filter(line => line.type !== "best")
@@ -161,6 +202,15 @@ export const Histogram = ({
       {/* X-axis labels */}
       <div className="relative h-10 text-[10px] text-neutral-400">
         <span>{adjustedMin}</span>
+        {/* Intermediate tick labels */}
+        {generateTicks(adjustedMin, adjustedMax).map(tick => {
+          const xPos = ((tick - adjustedMin) / adjustedRange) * 100
+          return (
+            <span key={tick} className="absolute -translate-x-1/2" style={{ left: `${xPos}%` }}>
+              {tick}
+            </span>
+          )
+        })}
         <span className="absolute right-0">{adjustedMax}</span>
         {/* Best label below axis */}
         {referenceLines
