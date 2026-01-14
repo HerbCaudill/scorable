@@ -84,9 +84,12 @@ export const DotPlot = ({
   const requiredHeight = maxStackHeight * dotSpacing
   const chartHeight = Math.max(minHeight, requiredHeight)
 
+  // Add spacing at bottom so dots don't touch axis (matching dot spacing)
+  const chartHeightWithPadding = chartHeight + dotSpacing
+
   return (
-    <div className="flex flex-col gap-1" ref={containerRef}>
-      <div className="relative" style={{ height: chartHeight }}>
+    <div className="flex flex-col" ref={containerRef}>
+      <div className="relative" style={{ height: chartHeightWithPadding }}>
         {/* Avg label at top of chart, flush left against the vertical line */}
         {referenceLines
           .filter(line => line.type === "avg")
@@ -113,7 +116,7 @@ export const DotPlot = ({
           (() => {
             const selectedDot = positionedDots.find(d => d.index === selectedIndex)
             if (!selectedDot) return null
-            const tooltipBottom = selectedDot.stackIndex * dotSpacing + dotSize + 4
+            const tooltipBottom = selectedDot.stackIndex * dotSpacing + dotSpacing + dotSize + 4
             return (
               <div
                 className="pointer-events-none absolute z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white"
@@ -155,7 +158,7 @@ export const DotPlot = ({
               width: dotSize,
               height: dotSize,
               left: `calc(${x}% - ${dotSize / 2}px)`,
-              bottom: stackIndex * dotSpacing,
+              bottom: stackIndex * dotSpacing + dotSpacing,
             }}
             onClick={() => setSelectedIndex(selectedIndex === index ? null : index)}
           />

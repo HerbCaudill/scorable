@@ -1218,3 +1218,31 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 - `src/components/HomeScreen.tsx` - Moved test games button into the main actions div, removed spacer
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Fixed histogram and dot plot spacing
+
+**Problem:** Two visual issues with the statistics page charts:
+1. Histogram bars had gaps between them and didn't touch the x-axis line due to `gap-1` in the wrapper container and `gap-0.5` between bars
+2. The dot plot had inconsistent spacing - dots touched the x-axis (bottom: 0) but there was `gap-1` between the chart and axis
+
+**Solution:** Fixed both components for consistent spacing:
+
+1. **Histogram.tsx:**
+   - Removed `gap-1` from the outer wrapper flex container (was creating gap between chart and axis)
+   - Removed `gap-0.5` from the bars container so bars abut each other
+   - Removed `rounded-t` from bars so they have square tops (better for abutting the axis line visually)
+
+2. **DotPlot.tsx:**
+   - Removed `gap-1` from the outer wrapper flex container
+   - Added `dotSpacing` padding at the bottom of the chart area so spacing between dots and axis matches the spacing between dots
+   - Updated dot positioning to add `dotSpacing` to the bottom position
+   - Updated tooltip positioning to account for the new padding
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Removed gaps, bars now abut x-axis
+- `src/components/DotPlot.tsx` - Added consistent bottom spacing matching dot spacing
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.

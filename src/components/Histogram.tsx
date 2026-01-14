@@ -69,7 +69,7 @@ export const Histogram = ({
   const adjustedRange = adjustedMax - adjustedMin
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
       <div className="relative pt-6">
         {/* Avg label at top of chart, flush left against the vertical line */}
@@ -116,7 +116,7 @@ export const Histogram = ({
             )
           })}
         <div
-          className="flex items-end justify-center gap-0.5"
+          className="flex items-end justify-center"
           style={{ height: 56 }}
           onMouseLeave={() => setHoveredBin(null)}
         >
@@ -124,7 +124,7 @@ export const Histogram = ({
             <div
               key={i}
               className={cx(
-                "min-w-1 flex-1 cursor-pointer rounded-t transition-opacity",
+                "min-w-1 flex-1 cursor-pointer transition-opacity",
                 color === "teal" ? "bg-teal-500" : "bg-amber-500",
                 hoveredBin !== null && hoveredBin !== i ? "opacity-50" : "",
               )}

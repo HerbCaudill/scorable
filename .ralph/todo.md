@@ -1,5 +1,5 @@
 ### To do
-- [ ] On histogram, bars should abut x-axis. On game score chart, spacing between dots and axis should match spacing between dots
+
 - [ ] New game: focus next player automatically until there are two players
 - [ ] for best moves score, include words
 - [ ] Show the date on previous games
@@ -11,6 +11,8 @@
 - [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] On histogram, bars should abut x-axis. On game score chart, spacing between dots and axis should match spacing between dots
 
 - [x] Test games button is too low on the screen on iPhone
 
