@@ -1,8 +1,6 @@
 ### To do
 
-- [ ] New game: focus next player automatically until there are two players
 - [ ] for best moves score, include words
-- [ ] Show the date on previous games
 - [ ] show more ticks on axes
 - [ ] Don't show tooltips on word score histograms
 - [ ] draw a line from best game score label to that game's dot
@@ -11,6 +9,8 @@
 - [ ] the header doesn't need that much vertical padding
 
 ### Done
+
+- [x] New game: focus next player automatically until there are two players
 
 - [x] On histogram, bars should abut x-axis. On game score chart, spacing between dots and axis should match spacing between dots
 

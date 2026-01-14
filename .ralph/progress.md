@@ -1224,6 +1224,7 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 ### 2026-01-14: Fixed histogram and dot plot spacing
 
 **Problem:** Two visual issues with the statistics page charts:
+
 1. Histogram bars had gaps between them and didn't touch the x-axis line due to `gap-1` in the wrapper container and `gap-0.5` between bars
 2. The dot plot had inconsistent spacing - dots touched the x-axis (bottom: 0) but there was `gap-1` between the chart and axis
 
@@ -1244,5 +1245,31 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 
 - `src/components/Histogram.tsx` - Removed gaps, bars now abut x-axis
 - `src/components/DotPlot.tsx` - Added consistent bottom spacing matching dot spacing
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Auto-focus next player slot until two players selected
+
+**Problem:** When setting up a new game, users had to manually click on each player slot to add players. This required extra taps, especially for the common case of adding just two players.
+
+**Solution:** After selecting or adding a player, if fewer than 2 players have been entered, automatically open the dropdown for the next empty slot:
+
+1. In `handleSelectPlayer`, after updating the players array, check if `enteredCount < 2`
+2. If so, find the next empty slot (index > current) and set `activeDropdown` to that index
+3. If no previous players are available for that slot, also set `isAddingNew = true` to show the input field directly
+4. Radix DropdownMenu handles closing the current dropdown and opening the new one when `activeDropdown` state changes
+
+**Page object updates:**
+
+- Added `aria-expanded` check in `clickPlayerSlot` to avoid toggling an already-open dropdown
+- Added explicit `waitFor`, `click`, and `fill` sequence for the input to ensure proper focus
+- These changes handle the race condition where the dropdown auto-opens but the test also tries to click the slot
+
+**Files changed:**
+
+- `src/components/PlayerSetup.tsx` - Added auto-open logic in `handleSelectPlayer`
+- `e2e/pages/player-setup.page.ts` - Updated to handle auto-opened dropdowns correctly
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.

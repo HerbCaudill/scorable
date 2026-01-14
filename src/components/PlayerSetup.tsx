@@ -44,9 +44,28 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
     const newPlayers = [...players]
     newPlayers[index] = name
     setPlayers(newPlayers)
-    setActiveDropdown(null)
     setIsAddingNew(false)
     setNewNameInput("")
+
+    // Count how many players will be entered after this selection
+    const enteredCount = newPlayers.filter((p): p is string => p !== null && p.trim() !== "").length
+
+    // If we don't have 2 players yet, auto-focus the next empty slot
+    if (enteredCount < 2) {
+      const nextEmptyIndex = newPlayers.findIndex((p, i) => i > index && p === null)
+      if (nextEmptyIndex !== -1) {
+        // Open the next dropdown (Radix will close the current one)
+        setActiveDropdown(nextEmptyIndex)
+        // Auto-show new player input if no previous players are available
+        const remainingPlayers = previousPlayers.filter(n => !newPlayers.includes(n))
+        if (remainingPlayers.length === 0) {
+          setIsAddingNew(true)
+        }
+        return
+      }
+    }
+
+    setActiveDropdown(null)
   }
 
   const handleNewClick = () => {
