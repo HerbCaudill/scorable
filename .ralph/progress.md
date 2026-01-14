@@ -1,5 +1,18 @@
 # Progress Log
 
+## 2025-01-14: Right-align best move score label on histogram
+
+Changed the "best:" label on the move score histogram to be right-aligned instead of anchored to the x-position of the best score value.
+
+**Problem:** The best move score label (e.g., `best: ZESTY (88)`) was positioned based on where the best score value fell on the x-axis, which could cause it to be awkwardly positioned or conflict with other elements.
+
+**Solution:** Changed the label positioning from using `left: ${clampedPos}%` with `-translate-x-1/2` to simply using `right: 0`, making it consistently right-aligned below the x-axis.
+
+**Files changed:**
+- `src/components/Histogram.tsx` - Updated the "best" label positioning to use `right-0` class instead of calculating x-position
+
+All 149 Playwright tests pass.
+
 ## 2025-01-14: Add vertical padding to Header component
 
 Added `py-2` (8px vertical padding) to the Header component to give it consistent vertical spacing across all screens.

@@ -212,21 +212,17 @@ export const Histogram = ({
           )
         })}
         <span className="absolute right-0">{adjustedMax}</span>
-        {/* Best label below axis */}
+        {/* Best label below axis - right-aligned */}
         {referenceLines
           .filter(line => line.type === "best")
           .map((line, i) => {
-            const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
-            // Clamp position to avoid labels going off-edge
-            const clampedPos = Math.max(8, Math.min(92, xPos))
             return (
               <span
                 key={`label-best-${i}`}
                 className={cx(
-                  "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
+                  "absolute top-4 right-0 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
-                style={{ left: `${clampedPos}%` }}
               >
                 {line.label}
                 {line.labelValue !== undefined && (
