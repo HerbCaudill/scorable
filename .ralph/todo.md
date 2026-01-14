@@ -1,9 +1,10 @@
 ### To do
 
 - [ ] Describe this application in the README.
-- [ ] When importing games, populate the letter represented by blank tiles
 
 ### Done
+
+- [x] When importing games, populate the letter represented by blank tiles
 
 - [x] Allow about 1em of vertical space between the average game score label and the chart itself, but extend the line all the way to the label
 

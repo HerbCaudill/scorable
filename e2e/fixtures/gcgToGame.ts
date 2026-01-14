@@ -28,9 +28,9 @@ function wordToTiles(
       // This is a through-tile (already on board), skip it
     } else {
       // This is a new tile being placed
-      // Lowercase letters represent blanks playing as that letter
-      const tile = char === char.toLowerCase() ? " " : char
-      tiles.push({ row, col, tile })
+      // Lowercase letters represent blanks playing as that letter - keep them as-is
+      // (the app uses lowercase to represent assigned blank tiles)
+      tiles.push({ row, col, tile: char })
     }
 
     // Move to next position

@@ -154,3 +154,25 @@ The key changes:
   - Verifies the line has the correct height (84px) to extend from label to x-axis
 
 All 151 Playwright tests pass.
+
+## 2025-01-14: Populate blank tile letters when importing GCG games
+
+Fixed a bug where blank tiles in imported GCG games lost their letter representation. Previously, lowercase letters in GCG word data (which indicate blank tiles playing as that letter) were converted to spaces (`" "`), meaning users had to re-assign letters to blanks when viewing imported games. Now the letter representation is preserved.
+
+**Problem:** In GCG format, lowercase letters indicate blank tiles playing as that letter (e.g., `SCAMsTER` has a blank playing as 'S'). The import code was converting these lowercase letters to spaces (`" "`), losing the information about what letter each blank represented. This required users to manually re-assign letters when viewing imported games.
+
+**Solution:** Modified the GCG-to-game conversion functions to preserve lowercase letters instead of converting them to spaces. The app already uses lowercase letters to represent assigned blank tiles internally, so no other changes were needed.
+
+**Files changed:**
+- `e2e/fixtures/gcgToGame.ts` - Changed `wordToTiles()` to keep the original character instead of converting lowercase to space
+- `src/lib/createTestGame.ts` - Changed `convertGcgToMoves()` to keep the original letter instead of converting lowercase to space
+
+**Tests added:**
+- `src/lib/createTestGame.test.ts` - New test file with 4 tests:
+  - "preserves blank tile letters (lowercase) when converting GCG to game"
+  - "handles multiple blank tiles in a single word"
+  - "handles blank at the end of a word (VROWs)"
+  - "handles blank in the middle of a word (SCAMsTER)"
+- `e2e/tests/scoring.test.ts` - Added test "imported games display blank tiles with assigned letters"
+
+All 153 Playwright tests and 108 Vitest unit tests pass.

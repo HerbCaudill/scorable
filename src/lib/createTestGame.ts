@@ -50,9 +50,9 @@ const convertGcgToMoves = (gcg: GcgGame, swapPlayers: boolean = false): GameMove
       // Only include new tiles
       if (board[row][col] === null) {
         const letter = playMove.word[j]
-        // Lowercase = blank tile, represent as space
-        const tile = letter === letter.toLowerCase() ? " " : letter
-        tilesPlaced.push({ row, col, tile })
+        // Lowercase letters represent blanks playing as that letter - keep them as-is
+        // (the app uses lowercase to represent assigned blank tiles)
+        tilesPlaced.push({ row, col, tile: letter })
         board[row][col] = letter.toUpperCase()
       }
     }

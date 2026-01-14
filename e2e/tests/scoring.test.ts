@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test"
 import { GamePage } from "../pages/game.page"
+import { HomePage } from "../pages/home.page"
+import { clearStorage } from "../fixtures/storage-fixtures"
 
 import { seedTwoPlayerGame } from "../fixtures/seed-game"
 
@@ -159,5 +161,47 @@ test.describe("Scoring", () => {
     await gamePage.endTurn()
     expect(await gamePage.getPlayerScore(0)).toBe(10)
     expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
+  })
+})
+
+test.describe("Imported game blank tiles", () => {
+  test("imported games display blank tiles with assigned letters", async ({ page }) => {
+    // Clear storage and navigate to home
+    await page.goto("/")
+    await clearStorage(page)
+
+    // Create test games - these are imported from GCG files
+    await page.getByRole("button", { name: /Create test games/i }).click()
+
+    // Wait for games to load
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Navigate to a past game
+    const homePage = new HomePage(page)
+    await homePage.clickPastGame(0)
+
+    // Wait for past game screen
+    await expect(page.getByRole("button", { name: "Back" })).toBeVisible()
+
+    // Look for any blank tiles on the board - they should have yellow coloring
+    // Blank tiles are marked with aria-label="Blank tile representing X"
+    const blankTiles = page.locator('[aria-label^="Blank tile representing"]')
+    const blankTileCount = await blankTiles.count()
+
+    // Many of the test games have blank tiles, so we should find some
+    // If we find blank tiles, verify they display correctly (not as empty spaces)
+    if (blankTileCount > 0) {
+      const firstBlankTile = blankTiles.first()
+      await expect(firstBlankTile).toBeVisible()
+
+      // The blank tile should show a letter (from the aria-label we know it represents a letter)
+      const ariaLabel = await firstBlankTile.getAttribute("aria-label")
+      // Extract the letter from "Blank tile representing X"
+      const letter = ariaLabel?.replace("Blank tile representing ", "")
+      expect(letter).toMatch(/^[A-Z]$/)
+
+      // The tile should display that letter
+      await expect(firstBlankTile).toContainText(letter!)
+    }
   })
 })

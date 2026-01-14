@@ -149,6 +149,16 @@ Zustand store with actions:
 - 50-point bingo bonus for 7-tile moves
 - Blank tiles (space) = 0 points, displayed in yellow (text-yellow-600) to distinguish from regular tiles
 
+## Blank tiles
+
+Blank tiles are represented as:
+- `" "` (space) for unassigned blanks (user hasn't chosen a letter yet)
+- Lowercase letters (a-z) for assigned blanks representing that letter
+
+In GCG files, lowercase letters in words indicate blank tiles playing as that letter (e.g., `SCAMsTER` has a blank playing as 'S'). The import code preserves these lowercase letters, so imported games display blanks correctly.
+
+Display-wise, blank tiles show their letter in yellow (`text-yellow-600`) to distinguish them from regular tiles.
+
 ## Board interaction (`src/components/ScrabbleBoard.tsx`)
 
 - Click to place cursor, type letters to place tiles
