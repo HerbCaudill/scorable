@@ -1204,3 +1204,17 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 - `src/components/GameScreen.tsx` - Changed active player panel ring from 3px to 1px
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Fixed test games button positioning on iPhone
+
+**Problem:** The "Create test games" button was pushed to the very bottom of the screen using a `flex-1` spacer. On iPhone, this made the button too low and potentially awkward to reach, especially with the safe area at the bottom.
+
+**Solution:** Moved the test games button to appear directly below the "New game" button instead of at the bottom of the screen. Removed the `flex-1` spacer that was pushing the button down.
+
+**Files changed:**
+
+- `src/components/HomeScreen.tsx` - Moved test games button into the main actions div, removed spacer
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
