@@ -2,7 +2,6 @@
 
 - [ ] Describe this application in the README.
 - [ ] The header needs a little bit of vertical spacing
-- [ ] If I add a blank tile when correcting, I should see the same UI for specifying the letter as I do when entering a move in the first place
 - [ ] When importing games, populate the letter represented by blank tiles
 
 Statistics screen:
@@ -15,6 +14,7 @@ Statistics screen:
 
 ### Done
 
+- [x] If I add a blank tile when correcting, I should see the same UI for specifying the letter as I do when entering a move in the first place
 - [x] Make the "ghost" letter that a blank tile represents yellow instead of gray, both in the scoresheet and the game board
 - [x] the header doesn't need that much vertical padding
 - [x] link game score tooltips to the game

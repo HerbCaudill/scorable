@@ -166,7 +166,7 @@ Zustand store with actions:
 
 ## Move correction
 
-Long-press on a move in the history to edit it. The board shows the state before that move, allowing tile placement corrections.
+Long-press on a move in the history to edit it. The board shows the state before that move, allowing tile placement corrections. Blank tiles added during correction trigger the same `BlankLetterDialog` as during normal move entry.
 
 ## Navigation and ending games
 

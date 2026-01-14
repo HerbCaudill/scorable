@@ -166,4 +166,33 @@ test.describe("Move correction", () => {
 
     await gamePage.cancelEdit()
   })
+
+  test("adding blank tile during edit mode shows letter dialog", async () => {
+    // Alice plays CAT
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Bob passes
+    await gamePage.pass()
+
+    // Edit Alice's move - replace A with a blank tile representing A
+    await gamePage.longPressMove("Alice", 0)
+    await gamePage.expectInEditMode()
+
+    // Click on the A position and replace with blank
+    await gamePage.clickCell(7, 8)
+    await gamePage.pressKey(" ") // Place blank tile
+
+    // Save edit - should trigger blank letter dialog
+    await gamePage.saveEdit()
+
+    // Type the blank letter and complete - reuse the same helper
+    await gamePage.typeBlankLetters("A")
+
+    // Should exit edit mode
+    await gamePage.expectNotInEditMode()
+
+    // Score should be lower now: C(3) + blank(0) + T(1) = 4 * 2 = 8 (was 10 with regular A)
+    expect(await gamePage.getPlayerScore(0)).toBe(8)
+  })
 })

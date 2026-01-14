@@ -142,6 +142,11 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
     blanks: Array<{ row: number; col: number }>
     pendingMove: Array<{ row: number; col: number; tile: string }>
   } | null>(null)
+  const [pendingEditBlankTiles, setPendingEditBlankTiles] = useState<{
+    blanks: Array<{ row: number; col: number }>
+    pendingMove: Array<{ row: number; col: number; tile: string }>
+    editingIndex: number
+  } | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const removeGameId = useLocalStore(s => s.removeGameId)
 
@@ -205,6 +210,38 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
 
   const handleBlankLettersCancel = useCallback(() => {
     setPendingBlankTiles(null)
+  }, [])
+
+  // Handle blank letter assignment during edit mode
+  const handleEditBlankLettersComplete = useCallback(
+    (letters: string[]) => {
+      if (!pendingEditBlankTiles) return
+
+      // Update the pending move with assigned letters (lowercase = blank tile)
+      const updatedMove = pendingEditBlankTiles.pendingMove.map(tile => {
+        if (tile.tile === " ") {
+          // Find index of this blank in the blanks array
+          const blankIndex = pendingEditBlankTiles.blanks.findIndex(
+            b => b.row === tile.row && b.col === tile.col,
+          )
+          if (blankIndex !== -1 && letters[blankIndex]) {
+            return { ...tile, tile: letters[blankIndex].toLowerCase() }
+          }
+        }
+        return tile
+      })
+
+      // Update the move with assigned blanks
+      updateMove(pendingEditBlankTiles.editingIndex, updatedMove)
+      setEditingMoveIndex(null)
+      setNewTiles(createEmptyBoard())
+      setPendingEditBlankTiles(null)
+    },
+    [pendingEditBlankTiles, updateMove],
+  )
+
+  const handleEditBlankLettersCancel = useCallback(() => {
+    setPendingEditBlankTiles(null)
   }, [])
 
   // Force re-render every 100ms to update timer display when running
@@ -417,6 +454,18 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       const validation = validateMove(move, boardForValidation, isFirstMove)
       if (!validation.valid) {
         toast.error(validation.error)
+        return
+      }
+
+      // Check for unassigned blank tiles (stored as " ")
+      const unassignedBlanks = move.filter(tile => tile.tile === " ")
+      if (unassignedBlanks.length > 0) {
+        // Show dialog to assign letters to blanks
+        setPendingEditBlankTiles({
+          blanks: unassignedBlanks.map(t => ({ row: t.row, col: t.col })),
+          pendingMove: move,
+          editingIndex: editingMoveIndex,
+        })
         return
       }
     }
@@ -748,6 +797,14 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
         blanks={pendingBlankTiles?.blanks ?? []}
         onComplete={handleBlankLettersComplete}
         onCancel={handleBlankLettersCancel}
+      />
+
+      {/* Blank tile letter assignment dialog for edit mode */}
+      <BlankLetterDialog
+        open={pendingEditBlankTiles !== null}
+        blanks={pendingEditBlankTiles?.blanks ?? []}
+        onComplete={handleEditBlankLettersComplete}
+        onCancel={handleEditBlankLettersCancel}
       />
 
       {/* Delete game confirmation dialog */}
