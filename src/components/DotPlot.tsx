@@ -244,20 +244,44 @@ export const DotPlot = ({
             const xPos = range > 0 ? ((line.value - min) / range) * 100 : 0
             // Clamp position to avoid labels going off-edge
             const clampedPos = Math.max(8, Math.min(92, xPos))
+
+            // Find the dot with the best value to draw a connecting line
+            const bestDot = positionedDots.find(d => d.dataPoint.value === line.value)
+            // Calculate the line height from top of label area to the dot
+            // Label is at top-4 (16px), line should go from there up to the dot
+            const lineHeight =
+              bestDot ? chartHeightWithPadding + bestDot.stackIndex * dotSpacing + dotSpacing : 0
+
             return (
-              <span
-                key={`label-best-${i}`}
-                className={cx(
-                  "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
-                  color === "teal" ? "bg-teal-600" : "bg-amber-600",
+              <div key={`label-best-${i}`}>
+                {/* Connecting line from label to dot */}
+                {bestDot && (
+                  <div
+                    className={cx(
+                      "absolute w-px",
+                      color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                    )}
+                    style={{
+                      left: `${xPos}%`,
+                      bottom: 0,
+                      height: lineHeight,
+                    }}
+                  />
                 )}
-                style={{ left: `${clampedPos}%` }}
-              >
-                {line.label}
-                {line.labelValue !== undefined && (
-                  <span className="font-bold"> {line.labelValue}</span>
-                )}
-              </span>
+                {/* Best label */}
+                <span
+                  className={cx(
+                    "absolute top-4 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
+                    color === "teal" ? "bg-teal-600" : "bg-amber-600",
+                  )}
+                  style={{ left: `${clampedPos}%` }}
+                >
+                  {line.label}
+                  {line.labelValue !== undefined && (
+                    <span className="font-bold"> {line.labelValue}</span>
+                  )}
+                </span>
+              </div>
             )
           })}
       </div>

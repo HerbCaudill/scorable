@@ -1363,3 +1363,24 @@ The label is extracted using a regex match on the existing MoveData.label format
 - `src/components/StatisticsScreen.tsx` - Added bestMoveLabel calculation and display
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Draw line from best game score label to dot
+
+**Problem:** On the statistics page, the "best" label for game scores was positioned below the x-axis, but it wasn't visually connected to the corresponding dot that represented the best game.
+
+**Solution:** Added a vertical line connecting the "best" label to its corresponding dot in the DotPlot component:
+
+1. When rendering a "best" reference line, find the positioned dot whose value matches the reference line value
+2. Calculate the line height from the bottom of the axis labels area up to the dot's position
+3. Draw a 1px colored line (amber for game scores) from the label up through the axis to the dot
+4. The line uses the same color as other reference lines (`bg-amber-600` for amber charts)
+
+The line makes it immediately clear which dot represents the best game score.
+
+**Files changed:**
+
+- `src/components/DotPlot.tsx` - Added connecting line from "best" label to corresponding dot
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
