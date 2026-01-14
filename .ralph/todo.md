@@ -1,6 +1,17 @@
 ### To do
 
 - [ ] Describe this application in the README.
+- [ ] The header needs a little bit of vertical spacing
+- [ ] If I add a blank tile when correcting, I should see the same UI for specifying the letter as I do when entering a move in the first place
+- [ ] When importing games, populate the letter represented by blank tiles
+
+Statistics screen:
+
+- [ ] On the move score chart, just right-align the label (e.g. `best: ZESTY (88)`) rather than anchoring it to a point on the chart
+- [ ] Allow about 1em of vertical space between the average game score label and the chart itself, but extend the line all the way to the label
+- [ ] The line should go from the best game score label to the best game score dot (currently it extends above the dot and below the label)
+- [ ] The average word score line should start at the x-axis and go all the way up to the label. Currently it extends below the x-axis and ends below the label.
+- [ ] Clicking on the best game score label should focus the corresponding dot and display the tooltip
 
 ### Done
 
