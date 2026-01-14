@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Describe this application in the README.
-
 ### Done
+
+- [x] Describe this application in the README.
 
 - [x] When importing games, populate the letter represented by blank tiles
 

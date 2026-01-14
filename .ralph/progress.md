@@ -1,5 +1,24 @@
 # Progress Log
 
+## 2025-01-14: Add README with application description
+
+Added a comprehensive README.md describing the Scorable application for end users.
+
+**Problem:** The README was empty, providing no information about what the app does or how to use it.
+
+**Solution:** Created a user-facing README covering:
+- App description and purpose (score-keeping for Scrabble/word games)
+- Feature list (scoring, timers, move correction, challenges, statistics, multi-device sync, offline support)
+- Installation instructions (web and PWA)
+- Usage guide (starting games, recording moves, timers, corrections, challenges, ending games)
+- Development setup and commands
+- Tech stack overview
+
+**Files changed:**
+- `README.md` - Complete rewrite with user documentation
+
+All 153 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-14: Add vertical spacing between avg label and chart in DotPlot
 
 Added approximately 1em (~28px) of vertical space between the average game score label and the chart dots on the statistics screen, while keeping the reference line extending all the way from the label to the x-axis.
