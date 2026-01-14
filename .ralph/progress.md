@@ -1311,6 +1311,7 @@ The main container's `p-2` now provides consistent 8px padding for all elements:
 5. Added tick labels below the axis at each position
 
 Results:
+
 - Move scores (0-100): shows 0, 20, 40, 60, 80, 100
 - Game scores (0-500): shows 0, 100, 200, 300, 400, 500
 
@@ -1318,6 +1319,27 @@ Results:
 
 - `src/components/Histogram.tsx` - Added `generateTicks` function, tick marks on axis, tick labels
 - `src/components/DotPlot.tsx` - Added same `generateTicks` function, tick marks on axis, tick labels
+
+**Tests:** All 145 Playwright tests and 104 unit tests pass.
+
+---
+
+### 2026-01-14: Center avg label on line in statistics charts
+
+**Problem:** The avg labels on the statistics page charts (Histogram and DotPlot) were positioned flush left against the vertical reference line using `left: calc(${xPos}% + 4px)`. The task asked to center the label on the line instead.
+
+**Solution:** Updated both components to center the avg label horizontally on the line:
+
+1. Changed positioning from `left: calc(${xPos}% + 4px)` to `left: ${xPos}%`
+2. Added `-translate-x-1/2` class to center the label on that position
+3. Increased top padding in Histogram from `pt-6` to `pt-7` to ensure the label doesn't overlap with bars
+4. Updated the reference line in Histogram from `top-6` to `top-7` to match the new padding
+5. Updated comment to reflect "centered on the vertical line" instead of "flush left against the vertical line"
+
+**Files changed:**
+
+- `src/components/Histogram.tsx` - Centered avg label, increased top padding
+- `src/components/DotPlot.tsx` - Centered avg label, updated comment
 
 **Tests:** All 145 Playwright tests and 104 unit tests pass.
 

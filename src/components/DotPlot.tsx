@@ -120,7 +120,7 @@ export const DotPlot = ({
   return (
     <div className="flex flex-col" ref={containerRef}>
       <div className="relative" style={{ height: chartHeightWithPadding }}>
-        {/* Avg label at top of chart, flush left against the vertical line */}
+        {/* Avg label at top of chart, centered on the vertical line */}
         {referenceLines
           .filter(line => line.type === "avg")
           .map((line, i) => {
@@ -129,10 +129,10 @@ export const DotPlot = ({
               <span
                 key={`label-avg-${i}`}
                 className={cx(
-                  "absolute top-0 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
+                  "absolute top-0 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
-                style={{ left: `calc(${xPos}% + 4px)` }}
+                style={{ left: `${xPos}%` }}
               >
                 {line.label}
                 {line.labelValue !== undefined && (

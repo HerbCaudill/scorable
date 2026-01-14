@@ -102,8 +102,8 @@ export const Histogram = ({
   return (
     <div className="flex flex-col">
       {label && <div className="text-center text-xs text-neutral-500">{label}</div>}
-      <div className="relative pt-6">
-        {/* Avg label at top of chart, flush left against the vertical line */}
+      <div className="relative pt-7">
+        {/* Avg label at top of chart, centered on the vertical line */}
         {referenceLines
           .filter(line => line.type === "avg")
           .map((line, i) => {
@@ -112,10 +112,10 @@ export const Histogram = ({
               <span
                 key={`label-avg-${i}`}
                 className={cx(
-                  "absolute top-0 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
+                  "absolute top-0 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-xs text-white",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
-                style={{ left: `calc(${xPos}% + 4px)` }}
+                style={{ left: `${xPos}%` }}
               >
                 {line.label}
                 {line.labelValue !== undefined && (
@@ -139,7 +139,7 @@ export const Histogram = ({
               <div
                 key={`ref-${i}`}
                 className={cx(
-                  "absolute top-6 z-10 w-px",
+                  "absolute top-7 z-10 w-px",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
                 style={{ left: `${xPos}%`, height: 56 }}
