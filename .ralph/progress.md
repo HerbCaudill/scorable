@@ -110,3 +110,24 @@ Made the "best:" label on the game scores dot plot clickable. Clicking the label
   - Verifies clicking again hides the tooltip
 
 All 150 Playwright tests pass.
+
+## 2025-01-14: Fix average move score line in Histogram to extend from label to x-axis
+
+Fixed the average reference line in the move score histogram on the statistics screen. Previously, the line only covered the chart area and didn't extend up to the "avg:" label at the top.
+
+**Problem:** The average reference line was positioned with `top-7` (starting 28px from the top of the container) with a height of 56px. This meant it only covered the chart area (the histogram bars), but didn't extend up through the 28px label area to connect with the "avg:" label at the top.
+
+**Solution:** Changed the line positioning to start from `top-0` with a height of 84px (28px label area + 56px chart height). This makes the line extend from the top of the label area all the way down to the x-axis.
+
+The key changes:
+- `top-7` → `top-0` to start the line at the top of the container
+- `height: 56` → `height: 84` to extend through both the label area and chart area
+
+**Files changed:**
+- `src/components/Histogram.tsx` - Updated the reference line positioning from `top-7` to `top-0` and height from 56px to 84px
+
+**Tests added:**
+- `e2e/tests/statistics.test.ts` - "average move score line extends from label to x-axis"
+  - Verifies the line has the correct height (84px) to extend from label to x-axis
+
+All 151 Playwright tests pass.

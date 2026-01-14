@@ -215,4 +215,31 @@ test.describe("Statistics", () => {
     // Tooltip should be hidden
     await expect(tooltip).not.toBeVisible()
   })
+
+  test("average move score line extends from label to x-axis", async ({ page }) => {
+    // Create 4 finished games (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Go to statistics page
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // The average line in the histogram should extend the full height (84px)
+    // from the top of the label area to the x-axis
+    // The line is a 1px wide div with teal-600 background
+    const avgLine = page.locator(".bg-teal-600.w-px").first()
+    await expect(avgLine).toBeVisible()
+
+    // Verify the line has the correct height (84px = 28px label area + 56px chart)
+    const height = await avgLine.evaluate(el => el.style.height)
+    expect(height).toBe("84px")
+  })
 })

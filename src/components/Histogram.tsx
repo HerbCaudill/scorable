@@ -130,19 +130,21 @@ export const Histogram = ({
             {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
           </div>
         )}
-        {/* Reference lines (vertical lines in chart area) - only for "avg" type */}
+        {/* Reference lines (vertical lines from label to x-axis) - only for "avg" type */}
         {referenceLines
           .filter(line => line.type !== "best")
           .map((line, i) => {
             const xPos = adjustedRange > 0 ? ((line.value - adjustedMin) / adjustedRange) * 100 : 0
+            // Line extends from top of label area (top-0) to x-axis
+            // Height = pt-7 padding (28px) + chart height (56px) = 84px
             return (
               <div
                 key={`ref-${i}`}
                 className={cx(
-                  "absolute top-7 z-10 w-px",
+                  "absolute top-0 z-10 w-px",
                   color === "teal" ? "bg-teal-600" : "bg-amber-600",
                 )}
-                style={{ left: `${xPos}%`, height: 56 }}
+                style={{ left: `${xPos}%`, height: 84 }}
               />
             )
           })}
