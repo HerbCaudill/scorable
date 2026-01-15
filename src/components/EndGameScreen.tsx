@@ -296,7 +296,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
       {/* Footer - needs z-index to appear above keyboard and extra padding when keyboard is visible */}
       <div
         className={cx(
-          "z-60 flex justify-end gap-2 border-t bg-white p-3 transition-all",
+          "z-60 flex justify-end gap-2 border-t p-3 transition-all",
           isMobile && focusedPlayerIndex !== null && "pb-[280px]",
         )}
       >

@@ -373,4 +373,22 @@ test.describe("End game", () => {
     const firstTile = unaccountedSection.locator("button").first()
     await expect(firstTile).toHaveClass(/opacity-50/)
   })
+
+  test("footer has transparent background", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Find the footer container (has Cancel and Apply buttons)
+    const footer = page.locator("div.border-t").filter({
+      has: page.getByRole("button", { name: "Apply & end game" }),
+    })
+
+    // Verify the footer doesn't have bg-white class
+    await expect(footer).not.toHaveClass(/bg-white/)
+
+    // Verify the background is actually transparent by checking computed style
+    const bgColor = await footer.evaluate(el => getComputedStyle(el).backgroundColor)
+    // transparent is represented as "rgba(0, 0, 0, 0)" in computed styles
+    expect(bgColor).toBe("rgba(0, 0, 0, 0)")
+  })
 })

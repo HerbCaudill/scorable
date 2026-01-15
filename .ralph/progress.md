@@ -1,5 +1,23 @@
 # Progress Log
 
+## 2025-01-15: Make EndGameScreen footer background transparent
+
+Changed the footer background on the EndGameScreen from white to transparent for better visual consistency.
+
+**Problem:** The footer on the EndGameScreen (containing the Cancel and "Apply & end game" buttons) had a `bg-white` class that made it appear with a solid white background. This looked inconsistent with the rest of the UI design.
+
+**Solution:** Removed the `bg-white` class from the footer div in EndGameScreen.tsx, allowing the footer background to be transparent.
+
+**Files changed:**
+- `src/components/EndGameScreen.tsx` - Removed `bg-white` from footer className
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts` - "footer has transparent background"
+  - Verifies the footer doesn't have bg-white class
+  - Verifies the computed backgroundColor is "rgba(0, 0, 0, 0)" (transparent)
+
+All 166 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-14: Add README with application description
 
 Added a comprehensive README.md describing the Scorable application for end users.
