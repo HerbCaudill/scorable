@@ -236,3 +236,7 @@ When adding new fixed/absolute positioned elements, be mindful of this hierarchy
 - **E2E tests**: `e2e/tests/*.test.ts` - game flow, persistence, score verification against GCG files
 
 Run `pnpm test` for unit tests, `pnpm test:pw` for Playwright.
+
+## Debugging
+
+For detailed Automerge/automerge-repo logging, add to localStorage: key `DEBUG`, value `automerge*`.
