@@ -264,34 +264,36 @@ export const DotPlot = ({
 
             // Find the dot with the best value to draw a connecting line
             const bestDot = positionedDots.find(d => d.dataPoint.value === line.value)
-            // Calculate the line from the top of the label to the center of the dot
-            // The label is positioned at top-4 (16px from top of label area)
-            // The line should start at the top of the label
-            const labelTop = 16 // top-4 = 16px
-            // The dot's vertical position from the bottom of chart area
+
+            // Calculate line from top of label to center of dot
+            // The label is at top-4 (16px from top of label area which is h-10 = 40px)
+            // So the line starts at 40 - 16 = 24px from bottom of label area
+            const xAxisLabelAreaHeight = 40 // h-10 = 40px
+            const labelTopOffset = 16 // top-4 = 16px
+            const lineStartFromBottom = xAxisLabelAreaHeight - labelTopOffset // 24px
+
+            // The dot's center Y position from bottom of chart
             const dotBottomOffset = bestDot ? bestDot.stackIndex * dotSpacing + dotSpacing : 0
-            // The dot center is at dotBottomOffset + dotSize/2 from the bottom of the chart
             const dotCenterFromChartBottom = dotBottomOffset + dotSize / 2
-            // The label area is h-10 (40px). Line starts at labelTop from the top of label area
-            // Line goes from labelTop of label area up through the 1px x-axis line through the chart to the dot center
-            // Total distance: (40 - labelTop) from label area + 1px axis line + (chartHeightWithPadding - dotCenterFromChartBottom) from chart
-            const labelAreaHeight = 40 // h-10 = 40px
-            const lineStartFromBottom = labelAreaHeight - labelTop // distance from bottom of label area to line start
+
+            // Line height: from label top, through 1px axis line, to dot center
+            // The chart height WITHOUT the top label area is what we need
+            const chartHeightWithoutTopLabel = chartHeight + dotSpacing
             const lineHeight = bestDot
-              ? lineStartFromBottom + 1 + chartHeightWithPadding - dotCenterFromChartBottom
+              ? lineStartFromBottom + 1 + chartHeightWithoutTopLabel - dotCenterFromChartBottom
               : 0
 
             return (
               <div key={`label-best-${i}`}>
-                {/* Connecting line from label to dot */}
+                {/* Connecting line from label to dot center */}
                 {bestDot && (
                   <div
                     className={cx(
-                      "absolute w-px",
+                      "pointer-events-none absolute w-px",
                       color === "teal" ? "bg-teal-600" : "bg-amber-600",
                     )}
                     style={{
-                      left: `${xPos}%`,
+                      left: `${bestDot.x}%`,
                       bottom: lineStartFromBottom,
                       height: lineHeight,
                     }}

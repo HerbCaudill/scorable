@@ -554,3 +554,30 @@ Removed the visual borders and padding from the player section divs on the EndGa
   - Verifies player section elements don't have border, rounded-lg, or p-3 classes
 
 All 173 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Fix best game score line to center on dot
+
+Fixed the connecting line between the "best:" label and the best game score dot on the statistics screen. Previously, the line was offset from the dot's center (using the mathematical score position instead of the dot's bin-center position), and the line height calculation was including the top label area height, making it extend too far up.
+
+**Problem:** The line connecting the "best:" label to the best game score dot had two issues:
+1. The line's x-position used `xPos` (the exact value position on the axis), but the dot's position uses `x` (the bin center position). These differ because dots are placed at the center of their bin, not at the exact value position.
+2. The line height calculation included `chartHeightWithPadding` which includes the `labelAreaHeight` at the top of the chart, causing the line to extend all the way to the top of the chart instead of stopping at the dot's center.
+
+**Solution:**
+1. Changed the line's `left` position from `${xPos}%` to `${bestDot.x}%`, using the dot's actual bin-center x position
+2. Changed the line height calculation to use `chartHeightWithoutTopLabel` (chartHeight + dotSpacing) instead of `chartHeightWithPadding`
+3. Added `pointer-events-none` to the line to prevent it from blocking clicks on dots
+
+**Files changed:**
+- `src/components/DotPlot.tsx`:
+  - Changed line position from `left: ${xPos}%` to `left: ${bestDot.x}%`
+  - Changed height calculation to exclude top label area
+  - Added `pointer-events-none` class to prevent click interception
+
+**Tests added:**
+- `e2e/tests/statistics.test.ts` - "best game score line is centered on dot and doesn't reach top of chart"
+  - Verifies the line doesn't have `h-full` class (which would extend to top)
+  - Verifies the line has an explicit height style set
+  - Verifies the line's left position uses percentage positioning matching the dot
+
+All 179 Playwright tests and 108 Vitest unit tests pass.

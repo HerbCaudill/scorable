@@ -1,9 +1,13 @@
 ### To do
 
-(No open tasks)
+- [ ] The drop shadows are wrong on the buttons in the "Too many tiles" dialog
+- [ ] On the insufficient tiles dialog, show the tile component for each letter mentioned, and change the wording:
+  - C: none left
+  - C: 2 played, but only 1 left
 
 ### Done
 
+- [x] On the stats screen, there should be a straight line from the best game label to the center of the corresponding dot. Currently that line touches the dot on one side or another but isn't centered on it; and it reaches all the way to the top of the chart.
 - [x] Support drag and drop between the players' racks and the unaccounted list
 - [x] Remove the borders and padding from the player divs
 - [x] bump up the text size in the scoresheet

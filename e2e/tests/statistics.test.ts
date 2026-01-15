@@ -278,6 +278,61 @@ test.describe("Statistics", () => {
     expect(parentHeight).toBeGreaterThanOrEqual(83)
   })
 
+  test("best game score line is centered on dot and doesn't reach top of chart", async ({ page }) => {
+    // Create 4 finished games (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Go to statistics page
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Find the best label in game scores section (amber-600 background, contains "best:")
+    const bestLabels = page.locator(".bg-amber-600").filter({ hasText: "best:" })
+    const gameScoresBestLabel = bestLabels.first()
+    await expect(gameScoresBestLabel).toBeVisible()
+
+    // The connecting line should be a 1px amber-600 line inside the x-axis label area
+    // It connects the best label to the best dot
+    // The line should NOT have h-full class (that would make it go to top)
+    // Instead it should have a specific height set via style
+    // Note: Use .first() since there are 2 players with stats, each with their own best line
+    const bestLine = page.locator(".bg-amber-600.w-px.pointer-events-none").first()
+    await expect(bestLine).toBeVisible()
+
+    // The line should have a fixed height set via inline style, not h-full class
+    const hasHFullClass = await bestLine.evaluate(el => el.classList.contains("h-full"))
+    expect(hasHFullClass).toBe(false)
+
+    // The line should have an explicit height style
+    const lineHeight = await bestLine.evaluate(el => el.style.height)
+    expect(lineHeight).toBeTruthy()
+    expect(parseInt(lineHeight)).toBeGreaterThan(0)
+
+    // The line's left position should match the dot's x position (centered)
+    // Both should use percentage positioning
+    const lineLeft = await bestLine.evaluate(el => el.style.left)
+    expect(lineLeft).toContain("%")
+
+    // Find the corresponding best dot (the one that would be selected when clicking the label)
+    // Click the label to select the best dot
+    await gameScoresBestLabel.click()
+    const selectedDot = page.locator(".rounded-full.cursor-pointer.ring-2").first()
+    await expect(selectedDot).toBeVisible()
+
+    // The dot's left position (from style) should match the line's left position
+    const dotLeftStyle = await selectedDot.evaluate(el => el.style.left)
+    // The dot position is like "calc(X% - 3px)" where X matches the line's percentage
+    expect(dotLeftStyle).toContain("%")
+  })
+
   test("player cards have matching border and shadow colors", async ({ page }) => {
     // Create 4 finished games (need >=3 for stats to show)
     await createFinishedGame(page, true)
