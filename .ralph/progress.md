@@ -325,3 +325,24 @@ This follows the established pattern where shadows are the same color as borders
   - Verifies the shadow uses oklch color (from CSS variable) not black rgba
 
 All 160 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Add blinking cursor to RackTileInput on EndGameScreen
+
+Added a blinking cursor to the rack tile input on the EndGameScreen to provide visual feedback when the input is focused.
+
+**Problem:** On the EndGameScreen, when users clicked on a player's rack input field to type tiles, there was no visual cursor to indicate where new tiles would be added. This made it confusing to know if the input was focused and ready for typing.
+
+**Solution:** Added a teal blinking cursor element that appears after the tiles when the input is focused and not disabled:
+1. Added a new `animate-blink` CSS animation in `index.css` with `step-end` timing for a crisp on/off effect
+2. Added a cursor div (`h-6 w-0.5 animate-blink bg-teal-500`) to `RackTileInput.tsx` that only shows when `isFocused && !disabled`
+
+**Files changed:**
+- `src/components/RackTileInput.tsx` - Added blinking cursor element after tiles
+- `src/index.css` - Added `@keyframes blink` animation and `.animate-blink` class
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts` - Two new tests:
+  - "focused rack input shows blinking cursor" - Verifies cursor appears with blink animation when input is focused
+  - "disabled rack input does not show cursor when clicked" - Verifies cursor doesn't appear on disabled inputs
+
+All 162 Playwright tests and 108 Vitest unit tests pass.

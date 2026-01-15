@@ -208,6 +208,13 @@ Examples:
 
 Active/pressed state removes the shadow and translates the element down by the shadow height (simulating a button press).
 
+## Custom CSS animations
+
+The app defines custom animations in `src/index.css`:
+
+- `animate-highlight-fade`: 1.5s fade out effect for highlighting new elements
+- `animate-blink`: 1s step-end blinking cursor for focused input fields (used in `RackTileInput`)
+
 ## Z-index layering
 
 The app uses the following z-index hierarchy (Tailwind classes):

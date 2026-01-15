@@ -259,4 +259,40 @@ test.describe("End game", () => {
     // Now should have teal border
     await expect(rackInput).toHaveClass(/border-teal-500/)
   })
+
+  test("focused rack input shows blinking cursor", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Click on Bob's rack input
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+
+    // Initially should not have cursor visible
+    const cursor = rackInput.locator(".animate-blink")
+    await expect(cursor).toHaveCount(0)
+
+    // Click to focus
+    await rackInput.click()
+
+    // Now cursor should be visible with the blink animation
+    await expect(cursor).toBeVisible()
+    await expect(cursor).toHaveClass(/bg-teal-500/)
+  })
+
+  test("disabled rack input does not show cursor when clicked", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Alice ended the game, so her rack is disabled
+    const aliceSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Alice" })
+    const rackInput = aliceSection.locator('[tabindex="-1"]')
+
+    // Try to click Alice's rack (which is disabled)
+    await rackInput.click()
+
+    // Cursor should not be visible
+    const cursor = rackInput.locator(".animate-blink")
+    await expect(cursor).toHaveCount(0)
+  })
 })
