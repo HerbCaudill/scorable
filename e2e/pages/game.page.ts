@@ -257,8 +257,8 @@ export class GamePage {
   }
 
   /** Expect a tile at a specific position */
-  async expectTileAt(row: number, col: number, letter: string) {
-    await expect(this.getCell(row, col)).toContainText(letter)
+  async expectTileAt(row: number, col: number, letter: string, timeout?: number) {
+    await expect(this.getCell(row, col)).toContainText(letter, { timeout })
   }
 
   /** Expect a cell to be selected (cursor on it) */

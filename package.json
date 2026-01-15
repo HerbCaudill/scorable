@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@automerge/automerge-repo-storage-nodefs": "^2.5.1",
+    "@automerge/automerge-repo-sync-server": "^0.2.8",
     "@herbcaudill/ralph": "link:../ralph",
     "@playwright/test": "^1.57.0",
     "@storybook/react": "^10.1.4",

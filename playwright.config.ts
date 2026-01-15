@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test"
 
 const PORT = 5175
+const SYNC_SERVER_PORT = 3031
 
 export default defineConfig({
   testDir: "./e2e",
@@ -28,9 +29,16 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: `pnpm dev --port ${PORT}`,
-    url: `http://localhost:${PORT}`,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: `pnpm tsx e2e/sync-server.ts`,
+      port: SYNC_SERVER_PORT,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: `VITE_SYNC_SERVER_URL=ws://localhost:${SYNC_SERVER_PORT} pnpm dev --port ${PORT}`,
+      url: `http://localhost:${PORT}`,
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 })
