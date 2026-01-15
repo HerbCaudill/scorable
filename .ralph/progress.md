@@ -346,3 +346,30 @@ Added a blinking cursor to the rack tile input on the EndGameScreen to provide v
   - "disabled rack input does not show cursor when clicked" - Verifies cursor doesn't appear on disabled inputs
 
 All 162 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Add unaccounted tiles display to EndGameScreen
+
+Added a new "Unaccounted tiles" section to the EndGameScreen that shows tiles that haven't been assigned to any player's rack yet. When a player's rack input is focused, tapping an unaccounted tile adds it to their rack.
+
+**Problem:** On the EndGameScreen, for 3+ player games or when manually adjusting 2-player game racks, users had to remember or look up which tiles were still unassigned. There was no visual representation of the tiles that needed to be distributed among players.
+
+**Solution:** Added an "Unaccounted tiles" section between the "Who ended the game?" selection and the player racks:
+1. Calculates unaccounted tiles by subtracting assigned tiles (across all player racks) from remaining tiles (unplayed tiles in the game)
+2. Displays each unaccounted tile as a clickable button with the Tile component
+3. When a player's rack is focused, shows "(tap to add)" hint and enables clicking tiles to add them to the focused rack
+4. When no rack is focused, tiles are dimmed (50% opacity) and disabled
+
+**Files changed:**
+- `src/components/EndGameScreen.tsx`:
+  - Added `Tile` component import
+  - Added `unaccountedTiles` useMemo calculation (placed after `playerRacks` state to avoid circular dependency)
+  - Added `handleUnaccountedTileClick` callback to add tiles to focused rack
+  - Added "Unaccounted tiles" UI section with conditional rendering and styling
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts` - Three new tests:
+  - "unaccounted tiles appear when tiles are cleared from rack" - Verifies section appears when tiles are removed from auto-populated rack
+  - "tapping unaccounted tile adds it to focused player rack" - Verifies tap-to-add functionality moves tiles correctly
+  - "unaccounted tiles are disabled when no rack is focused" - Verifies tiles are dimmed and hint is hidden when no rack is focused
+
+All 165 Playwright tests and 108 Vitest unit tests pass.

@@ -295,4 +295,82 @@ test.describe("End game", () => {
     const cursor = rackInput.locator(".animate-blink")
     await expect(cursor).toHaveCount(0)
   })
+
+  test("unaccounted tiles appear when tiles are cleared from rack", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Initially Bob's rack is auto-populated with all remaining tiles (I, N, N, R, T, U)
+    // So there should be no unaccounted tiles section visible
+    const unaccountedSection = page.getByTestId("unaccounted-tiles")
+    await expect(unaccountedSection).not.toBeVisible()
+
+    // Clear all tiles from Bob's rack (6 tiles)
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Now unaccounted tiles section should be visible
+    await expect(unaccountedSection).toBeVisible()
+    await expect(unaccountedSection).toContainText("Unaccounted tiles")
+
+    // Should show the 6 unaccounted tiles as visual tile components
+    const tiles = unaccountedSection.locator("button .bg-amber-100")
+    await expect(tiles).toHaveCount(6)
+  })
+
+  test("tapping unaccounted tile adds it to focused player rack", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Clear all tiles from Bob's rack to show unaccounted tiles
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Verify unaccounted tiles are visible
+    const unaccountedSection = page.getByTestId("unaccounted-tiles")
+    await expect(unaccountedSection).toBeVisible()
+
+    // Bob's rack should now be empty
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    let bobTiles = bobSection.locator('[tabindex="0"]').locator(".bg-amber-100")
+    await expect(bobTiles).toHaveCount(0)
+
+    // Click on Bob's rack to focus it
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    await rackInput.click()
+
+    // Should now show "(tap to add)" hint
+    await expect(unaccountedSection).toContainText("(tap to add)")
+
+    // Tap the first unaccounted tile to add it to Bob's rack
+    const firstTile = unaccountedSection.locator("button").first()
+    await firstTile.click()
+
+    // Bob's rack should now have 1 tile
+    bobTiles = bobSection.locator('[tabindex="0"]').locator(".bg-amber-100")
+    await expect(bobTiles).toHaveCount(1)
+
+    // Unaccounted tiles should now show 5 tiles (one was moved)
+    const unaccountedTiles = unaccountedSection.locator("button .bg-amber-100")
+    await expect(unaccountedTiles).toHaveCount(5)
+  })
+
+  test("unaccounted tiles are disabled when no rack is focused", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Clear all tiles from Bob's rack to show unaccounted tiles
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Click elsewhere to blur the rack input
+    await page.click("h2:text('Unaccounted tiles')")
+    await page.waitForTimeout(200) // Allow focus change to process
+
+    // Unaccounted tiles section should be visible but without the hint
+    const unaccountedSection = page.getByTestId("unaccounted-tiles")
+    await expect(unaccountedSection).toBeVisible()
+    await expect(unaccountedSection).not.toContainText("(tap to add)")
+
+    // Tiles should have opacity-50 class (disabled state)
+    const firstTile = unaccountedSection.locator("button").first()
+    await expect(firstTile).toHaveClass(/opacity-50/)
+  })
 })

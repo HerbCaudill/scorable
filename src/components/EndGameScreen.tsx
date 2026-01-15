@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { RackTileInput } from "./RackTileInput"
 import { RackKeyboard } from "./RackKeyboard"
+import { Tile } from "./Tile"
 import { getRemainingTiles } from "@/lib/getRemainingTiles"
 import { validateRackTiles, type RackValidationError } from "@/lib/validateRackTiles"
 import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
@@ -79,6 +80,29 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     [playerRacks, remainingTiles],
   )
 
+  // Calculate unaccounted tiles (remaining tiles not yet assigned to any player's rack)
+  const unaccountedTiles = useMemo(() => {
+    // Count tiles assigned across all racks
+    const assignedCounts: Record<string, number> = {}
+    for (const rack of playerRacks) {
+      for (const tile of rack) {
+        const letter = tile.toUpperCase()
+        assignedCounts[letter] = (assignedCounts[letter] || 0) + 1
+      }
+    }
+
+    // Subtract assigned from remaining to get unaccounted
+    const unaccounted: string[] = []
+    for (const [letter, count] of Object.entries(remainingTiles)) {
+      const assigned = assignedCounts[letter] || 0
+      const remaining = count - assigned
+      for (let i = 0; i < remaining; i++) {
+        unaccounted.push(letter)
+      }
+    }
+    return unaccounted.sort((a, b) => a.localeCompare(b))
+  }, [remainingTiles, playerRacks])
+
   // Calculate adjustments
   const adjustments = useMemo(() => {
     const racks = playerRacks.map((tiles, playerIndex) => ({ playerIndex, tiles }))
@@ -149,6 +173,16 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     [focusedPlayerIndex],
   )
 
+  // Handle tapping an unaccounted tile to add it to the focused player's rack
+  const handleUnaccountedTileClick = useCallback(
+    (tile: string) => {
+      if (focusedPlayerIndex === null) return
+      const tiles = playerRacks[focusedPlayerIndex]
+      handleRackChange(focusedPlayerIndex, [...tiles, tile])
+    },
+    [focusedPlayerIndex, playerRacks],
+  )
+
   const handleApply = () => {
     const adjustmentsWithRacks = adjustments.map((adj, i) => ({
       ...adj,
@@ -197,6 +231,34 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
             </button>
           </div>
         </div>
+
+        {/* Unaccounted tiles section */}
+        {unaccountedTiles.length > 0 && (
+          <div className="mb-6" data-testid="unaccounted-tiles">
+            <h2 className="mb-2 text-sm font-medium text-neutral-600">
+              Unaccounted tiles
+              {focusedPlayerIndex !== null && (
+                <span className="ml-1 text-teal-600">(tap to add)</span>
+              )}
+            </h2>
+            <div className="flex flex-wrap gap-1">
+              {unaccountedTiles.map((tile, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleUnaccountedTileClick(tile)}
+                  disabled={focusedPlayerIndex === null}
+                  className={cx(
+                    "h-8 w-8 transition-opacity",
+                    focusedPlayerIndex === null ? "cursor-default opacity-50" : "cursor-pointer",
+                  )}
+                  aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
+                >
+                  <Tile letter={tile} variant="existing" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Per-player rack entry */}
         <div className="space-y-4">

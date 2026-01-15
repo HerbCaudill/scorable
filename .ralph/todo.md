@@ -1,15 +1,16 @@
 ### To do
 
 - [ ] bump up the text size in the scoresheet
+
 End game screen:
 
-- [ ] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
 - [ ] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
 - [ ] Remove the borders and padding from the player divs
 - [ ] Support drag and drop between the players' racks and the unaccounted list
 
 ### Done
 
+- [x] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
 - [x] when the fake input is focused and we're "typing" tiles, we need a fake cursor
 - [x] All drop shadows should be the same color as the element's border
 - [x] not getting a keyboard on mobile (EndGameScreen)
