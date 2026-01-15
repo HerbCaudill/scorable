@@ -278,7 +278,9 @@ test.describe("Statistics", () => {
     expect(parentHeight).toBeGreaterThanOrEqual(83)
   })
 
-  test("best game score line is centered on dot and doesn't reach top of chart", async ({ page }) => {
+  test("best game score line is centered on dot and doesn't reach top of chart", async ({
+    page,
+  }) => {
     // Create 4 finished games (need >=3 for stats to show)
     await createFinishedGame(page, true)
     await createFinishedGame(page, false)
@@ -357,9 +359,7 @@ test.describe("Statistics", () => {
     await expect(playerCard).toHaveClass(/border-neutral-300/)
 
     // Check that the shadow uses a CSS variable color (oklch)
-    const boxShadow = await playerCard.evaluate(el =>
-      window.getComputedStyle(el).boxShadow
-    )
+    const boxShadow = await playerCard.evaluate(el => window.getComputedStyle(el).boxShadow)
     // The shadow should contain oklch color (neutral-300) rather than only black rgba values
     expect(boxShadow).toContain("oklch")
   })

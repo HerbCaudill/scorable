@@ -90,7 +90,7 @@ test.describe("Scoring", () => {
 
     // The letter span inside should have yellow color (not the default khaki-800)
     const letterSpan = blankTile.locator("span").first()
-    const color = await letterSpan.evaluate((el) => getComputedStyle(el).color)
+    const color = await letterSpan.evaluate(el => getComputedStyle(el).color)
     // Yellow-600 is approximately rgb(202, 138, 4) - just verify it's not the default khaki
     expect(color).not.toContain("rgb(72,") // khaki-800 starts with ~72
   })
@@ -118,8 +118,8 @@ test.describe("Scoring", () => {
     const letterSpans = moveEntry.locator("span.truncate span span span")
 
     // Get the colors of C and A to verify A is different (yellow)
-    const cColor = await letterSpans.nth(0).evaluate((el) => getComputedStyle(el).color)
-    const aColor = await letterSpans.nth(1).evaluate((el) => getComputedStyle(el).color)
+    const cColor = await letterSpans.nth(0).evaluate(el => getComputedStyle(el).color)
+    const aColor = await letterSpans.nth(1).evaluate(el => getComputedStyle(el).color)
 
     // The blank letter A should have a different color than regular letter C
     expect(aColor).not.toBe(cColor)

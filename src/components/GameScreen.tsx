@@ -781,9 +781,9 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                       <Tile letter={w.tile === "blank" ? " " : w.tile} variant="existing" />
                     </div>
                     <span>
-                      {w.available === 0
-                        ? "none left"
-                        : `${w.used} played, but only ${w.available} left`}
+                      {w.available === 0 ?
+                        "none left"
+                      : `${w.used} played, but only ${w.available} left`}
                     </span>
                   </div>
                 ))}
@@ -794,7 +794,6 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
         }
         secondaryText="Play anyway"
         onSecondary={handleConfirmTileOveruse}
-        secondaryClassName="border-input bg-background text-foreground shadow-[0_3px_0_0_var(--color-neutral-300)] hover:bg-accent hover:text-accent-foreground active:shadow-none active:translate-y-[3px]"
         confirmText="Fix move"
         onConfirm={() => setTileOveruseConfirm(null)}
       />
@@ -822,7 +821,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
         title="Delete game?"
         description="This game will be permanently deleted. This cannot be undone."
         confirmText="Delete"
-        confirmClassName="bg-red-600 shadow-[0_3px_0_0_oklch(0.45_0.2_27)] hover:bg-red-700 active:shadow-none active:translate-y-[3px]"
+        confirmVariant="destructive"
         onConfirm={handleDeleteGame}
       />
 

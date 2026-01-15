@@ -9,6 +9,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { type VariantProps } from "class-variance-authority"
+import { buttonVariants } from "@/components/ui/button"
+
+type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
 
 type Props = {
   open: boolean
@@ -18,12 +22,12 @@ type Props = {
   cancelText?: string
   confirmText?: string
   onConfirm: () => void
-  /** Additional class names for the confirm button */
-  confirmClassName?: string
+  /** Button variant for the confirm button */
+  confirmVariant?: ButtonVariant
   /** Optional secondary action (replaces cancel button when provided) */
   secondaryText?: string
   onSecondary?: () => void
-  secondaryClassName?: string
+  secondaryVariant?: ButtonVariant
 }
 
 export const ConfirmDialog = ({
@@ -34,10 +38,10 @@ export const ConfirmDialog = ({
   cancelText = "Cancel",
   confirmText = "Confirm",
   onConfirm,
-  confirmClassName,
+  confirmVariant = "default",
   secondaryText,
   onSecondary,
-  secondaryClassName,
+  secondaryVariant = "outline",
 }: Props) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -50,11 +54,18 @@ export const ConfirmDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           {onSecondary ?
-            <AlertDialogAction onClick={onSecondary} className={secondaryClassName}>
+            <AlertDialogAction
+              onClick={onSecondary}
+              className={buttonVariants({ variant: secondaryVariant })}
+            >
               {secondaryText}
             </AlertDialogAction>
           : <AlertDialogCancel>{cancelText}</AlertDialogCancel>}
-          <AlertDialogAction onClick={onConfirm} className={confirmClassName} autoFocus>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className={buttonVariants({ variant: confirmVariant })}
+            autoFocus
+          >
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

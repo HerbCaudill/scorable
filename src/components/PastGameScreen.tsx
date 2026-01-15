@@ -136,7 +136,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
         title="Delete game?"
         description="This game will be removed from your history. This cannot be undone."
         confirmText="Delete"
-        confirmClassName="bg-red-600 shadow-[0_3px_0_0_oklch(0.45_0.2_27)] hover:bg-red-700 active:shadow-none active:translate-y-[3px]"
+        confirmVariant="destructive"
         onConfirm={handleDelete}
       />
     </div>

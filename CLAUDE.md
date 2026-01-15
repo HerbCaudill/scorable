@@ -152,6 +152,7 @@ Zustand store with actions:
 ## Blank tiles
 
 Blank tiles are represented as:
+
 - `" "` (space) for unassigned blanks (user hasn't chosen a letter yet)
 - Lowercase letters (a-z) for assigned blanks representing that letter
 
@@ -201,6 +202,7 @@ The app uses a consistent 3D "press-down" shadow effect for interactive elements
 **Shadow color should match the element's border color** (or a darker shade of the background for borderless elements).
 
 Examples:
+
 - **Buttons**: Shadow is a darker variant of the background color (e.g., teal-600 bg → teal-700 shadow)
 - **Player panels**: Shadow uses `darkenColor(player.color)` to match the player's border color
 - **Outline buttons**: Shadow uses neutral-300 to match the default border color
@@ -219,12 +221,12 @@ The app defines custom animations in `src/index.css`:
 
 The app uses the following z-index hierarchy (Tailwind classes):
 
-| z-index | Usage |
-|---------|-------|
-| `z-0` - `z-30` | Board elements (tiles, cursor, highlights) |
-| `z-60` | Footer button containers (Timer, Pass, Tiles, End, Delete) |
-| `z-70` | Mobile keyboard |
-| `z-80` | Dialog overlays and content (must be above all other UI) |
+| z-index        | Usage                                                      |
+| -------------- | ---------------------------------------------------------- |
+| `z-0` - `z-30` | Board elements (tiles, cursor, highlights)                 |
+| `z-60`         | Footer button containers (Timer, Pass, Tiles, End, Delete) |
+| `z-70`         | Mobile keyboard                                            |
+| `z-80`         | Dialog overlays and content (must be above all other UI)   |
 
 When adding new fixed/absolute positioned elements, be mindful of this hierarchy to ensure proper layering.
 

@@ -279,8 +279,9 @@ export const DotPlot = ({
             // Line height: from label top, through 1px axis line, to dot center
             // The chart height WITHOUT the top label area is what we need
             const chartHeightWithoutTopLabel = chartHeight + dotSpacing
-            const lineHeight = bestDot
-              ? lineStartFromBottom + 1 + chartHeightWithoutTopLabel - dotCenterFromChartBottom
+            const lineHeight =
+              bestDot ?
+                lineStartFromBottom + 1 + chartHeightWithoutTopLabel - dotCenterFromChartBottom
               : 0
 
             return (

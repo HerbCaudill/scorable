@@ -155,7 +155,8 @@ test.describe("Dialog button styling", () => {
     expect(deleteStyles.boxShadow).toContain("3px")
     // Background should be red (can be rgb or oklch format)
     expect(
-      deleteStyles.backgroundColor.includes("rgb") || deleteStyles.backgroundColor.includes("oklch"),
+      deleteStyles.backgroundColor.includes("rgb") ||
+        deleteStyles.backgroundColor.includes("oklch"),
     ).toBe(true)
 
     // Check the Cancel button - should have neutral shadow (outline variant)

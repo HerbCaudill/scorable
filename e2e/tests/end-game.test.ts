@@ -202,7 +202,10 @@ test.describe("End game", () => {
     await expect(keyboard.getByRole("button", { name: "blank" })).toBeVisible()
 
     // Tap hide button (chevron down) to close keyboard - use tap() for touch event
-    const hideButton = keyboard.locator("button").filter({ has: page.locator("svg") }).last()
+    const hideButton = keyboard
+      .locator("button")
+      .filter({ has: page.locator("svg") })
+      .last()
     await hideButton.tap()
 
     // Keyboard should be hidden again
@@ -238,7 +241,11 @@ test.describe("End game", () => {
     await expect(tiles).toHaveCount(3)
 
     // Use backspace to remove one - first button with SVG icon is backspace
-    await keyboard.getByRole("button").filter({ has: page.locator("svg") }).first().tap()
+    await keyboard
+      .getByRole("button")
+      .filter({ has: page.locator("svg") })
+      .first()
+      .tap()
     await expect(tiles).toHaveCount(2)
   })
 

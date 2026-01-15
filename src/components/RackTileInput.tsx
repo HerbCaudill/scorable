@@ -180,9 +180,7 @@ export const RackTileInput = ({
         ))}
 
         {/* Blinking cursor when focused */}
-        {isFocused && !disabled && (
-          <div className="h-6 w-0.5 animate-blink bg-teal-500" />
-        )}
+        {isFocused && !disabled && <div className="h-6 w-0.5 animate-blink bg-teal-500" />}
 
         {/* Deduction display */}
         {deduction !== undefined && deduction !== 0 && (
@@ -204,9 +202,9 @@ export const RackTileInput = ({
             <Tile letter={error.tile === " " ? " " : error.tile} variant="existing" />
           </div>
           <span>
-            {error.available === 0
-              ? "none left"
-              : `${error.entered} entered, but only ${error.available} left`}
+            {error.available === 0 ?
+              "none left"
+            : `${error.entered} entered, but only ${error.available} left`}
           </span>
         </div>
       )}

@@ -190,12 +190,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   const [isRemainingTilesDragOver, setIsRemainingTilesDragOver] = useState(false)
 
   // Handle drag start from a rack tile - track the source
-  const handleRackTileDragStart = useCallback(
-    (playerIndex: number, tileIndex: number) => {
-      setDragSource({ playerIndex, tileIndex })
-    },
-    [],
-  )
+  const handleRackTileDragStart = useCallback((playerIndex: number, tileIndex: number) => {
+    setDragSource({ playerIndex, tileIndex })
+  }, [])
 
   // Handle drop onto a player's rack (coming from another rack or remaining tiles)
   const handleTileDropOnRack = useCallback(
@@ -380,9 +377,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                     onClick={() => handleUnaccountedTileClick(tile)}
                     className={cx(
                       "h-8 w-8 transition-opacity",
-                      focusedPlayerIndex === null ?
-                        "cursor-grab opacity-50"
-                      : "cursor-pointer active:cursor-grabbing",
+                      focusedPlayerIndex === null ? "cursor-grab opacity-50" : (
+                        "cursor-pointer active:cursor-grabbing"
+                      ),
                     )}
                     aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
                   >

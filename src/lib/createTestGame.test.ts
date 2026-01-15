@@ -15,13 +15,13 @@ function convertGcgToTiles(gcg: GcgGame): Array<{ row: number; col: number; tile
 
     for (let j = 0; j < playMove.word.length; j++) {
       const row =
-        playMove.position.direction === "vertical"
-          ? playMove.position.row + j
-          : playMove.position.row
+        playMove.position.direction === "vertical" ?
+          playMove.position.row + j
+        : playMove.position.row
       const col =
-        playMove.position.direction === "horizontal"
-          ? playMove.position.col + j
-          : playMove.position.col
+        playMove.position.direction === "horizontal" ?
+          playMove.position.col + j
+        : playMove.position.col
 
       // Only include new tiles
       if (board[row][col] === null) {

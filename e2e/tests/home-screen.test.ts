@@ -152,9 +152,7 @@ test.describe("Home screen", () => {
     await expect(logoTile).toHaveClass(/border-amber-300/)
 
     // Check that the shadow uses amber color (via CSS variable)
-    const boxShadow = await logoTile.evaluate(el =>
-      window.getComputedStyle(el).boxShadow
-    )
+    const boxShadow = await logoTile.evaluate(el => window.getComputedStyle(el).boxShadow)
     // The shadow should contain oklch color (amber) rather than only black rgba values
     // The browser includes empty rgba(0,0,0,0) placeholders, so we check for oklch
     expect(boxShadow).toContain("oklch")
