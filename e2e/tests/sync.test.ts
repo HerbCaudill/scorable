@@ -9,7 +9,7 @@ import { clearStorage } from "../fixtures/storage-fixtures"
  *
  * The app uses:
  * - BroadcastChannel for same-origin tab sync (immediate)
- * - WebSocket to sync.automerge.org for remote sync
+ * - WebSocket to wss://automerge-sync.fly.dev for remote sync
  *
  * In these tests we use two pages (tabs) in the SAME browser context.
  * This allows BroadcastChannel to sync between them immediately.
