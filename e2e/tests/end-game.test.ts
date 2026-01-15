@@ -52,8 +52,8 @@ test.describe("End game", () => {
     await gamePage.selectNobodyEndedGame()
 
     // Neither player should show "ended the game"
-    const aliceSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Alice" })
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const aliceSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Alice" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     await expect(aliceSection).not.toContainText("ended the game")
     await expect(bobSection).not.toContainText("ended the game")
   })
@@ -158,7 +158,7 @@ test.describe("End game", () => {
     await gamePage.enterRackTiles("Bob", "Q")
 
     // Error should show "none left" for tile with 0 remaining
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     // Select the error div specifically (has flex layout for tile + text)
     const errorElement = bobSection.locator("div.flex.items-center.gap-1\\.5.text-red-600")
     await expect(errorElement).toContainText("none left")
@@ -187,7 +187,7 @@ test.describe("End game", () => {
     await expect(keyboard).toHaveClass(/translate-y-full/)
 
     // Click on Bob's rack input (he's not the one who ended the game, so it's editable)
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     await rackInput.click()
 
@@ -217,7 +217,7 @@ test.describe("End game", () => {
     await gamePage.clearRackTiles("Bob", 6)
 
     // Click on Bob's rack input
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     await rackInput.click()
 
@@ -247,7 +247,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Click on Bob's rack input
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
 
     // Initially should not have teal border
@@ -265,7 +265,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Click on Bob's rack input
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
 
     // Initially should not have cursor visible
@@ -285,7 +285,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Alice ended the game, so her rack is disabled
-    const aliceSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Alice" })
+    const aliceSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Alice" })
     const rackInput = aliceSection.locator('[tabindex="-1"]')
 
     // Try to click Alice's rack (which is disabled)
@@ -325,7 +325,7 @@ test.describe("End game", () => {
     await gamePage.clearRackTiles("Bob", 6)
 
     // Get the position of the last player section (Bob's)
-    const playerSections = page.locator(".rounded-lg.border.p-3")
+    const playerSections = page.locator('[data-testid^="player-rack-"]')
     const lastPlayerSection = playerSections.last()
     const playerBox = await lastPlayerSection.boundingBox()
 
@@ -351,7 +351,7 @@ test.describe("End game", () => {
     await expect(unaccountedSection).toBeVisible()
 
     // Bob's rack should now be empty
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     let bobTiles = bobSection.locator('[tabindex="0"]').locator(".bg-amber-100")
     await expect(bobTiles).toHaveCount(0)
 
@@ -419,7 +419,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Bob's rack is auto-populated with tiles (I, N, N, R, T, U)
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     const tiles = rackInput.locator(".relative.h-8.w-8")
 
@@ -441,7 +441,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Bob's rack has tiles (I, N, N, R, T, U) - sorted alphabetically
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     const tiles = rackInput.locator(".relative.h-8.w-8")
 
@@ -474,7 +474,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Bob's rack has tiles
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     const tiles = rackInput.locator(".relative.h-8.w-8")
 
@@ -504,7 +504,7 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Bob's rack has tiles
-    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
     const rackInput = bobSection.locator('[tabindex="0"]')
     const tiles = rackInput.locator(".relative.h-8.w-8")
 
@@ -518,5 +518,23 @@ test.describe("End game", () => {
 
     // X button should now be hidden
     await expect(removeButton).toHaveCount(0)
+  })
+
+  test("player divs have no borders or padding", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Get the player section containers
+    const playerSections = page.locator('[data-testid^="player-rack-"]')
+    await expect(playerSections).toHaveCount(2) // Alice and Bob
+
+    // Verify each player section has no border or padding classes
+    for (let i = 0; i < 2; i++) {
+      const section = playerSections.nth(i)
+      // Should NOT have border classes
+      await expect(section).not.toHaveClass(/border/)
+      await expect(section).not.toHaveClass(/rounded-lg/)
+      await expect(section).not.toHaveClass(/p-3/)
+    }
   })
 })

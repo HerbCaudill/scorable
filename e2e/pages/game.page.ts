@@ -316,9 +316,9 @@ export class GamePage {
 
   /** Get the player section by finding the element containing the player's name */
   private getPlayerSection(playerName: string) {
-    // Find the section that contains the player name - it's a div with rounded-lg border p-3 classes
+    // Find the section that contains the player name - it's a div with data-testid="player-rack-X"
     // Use filter to find the one containing the specific player name
-    return this.page.locator("div.rounded-lg.border.p-3").filter({ hasText: playerName })
+    return this.page.locator('[data-testid^="player-rack-"]').filter({ hasText: playerName })
   }
 
   /** Focus the rack input for a player and type tiles */

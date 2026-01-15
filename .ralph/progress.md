@@ -491,3 +491,22 @@ Moved the unaccounted tiles section to appear below the player racks (instead of
   - Verifies the Remaining tiles section's Y position is below the last player section's bottom edge
 
 All 167 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Remove borders and padding from player divs on EndGameScreen
+
+Removed the visual borders and padding from the player section divs on the EndGameScreen for a cleaner appearance.
+
+**Problem:** The player sections on the EndGameScreen had `rounded-lg border p-3` classes which added visible borders and padding around each player's name and rack input. This visual treatment made the UI look cluttered.
+
+**Solution:** Removed the `rounded-lg border p-3` classes from the player section container in EndGameScreen.tsx. Added a `data-testid` attribute (`player-rack-{index}`) to enable reliable test selection after removing the CSS classes that tests were using for locators.
+
+**Files changed:**
+- `src/components/EndGameScreen.tsx` - Removed `rounded-lg border p-3` from player section div, added `data-testid="player-rack-{index}"` attribute
+- `e2e/pages/game.page.ts` - Updated `getPlayerSection()` method to use `[data-testid^="player-rack-"]` selector instead of `.rounded-lg.border.p-3`
+- `e2e/tests/end-game.test.ts` - Updated all occurrences of `.rounded-lg.border.p-3` selector to use the new testid-based selector
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts` - "player divs have no borders or padding"
+  - Verifies player section elements don't have border, rounded-lg, or p-3 classes
+
+All 173 Playwright tests and 108 Vitest unit tests pass.

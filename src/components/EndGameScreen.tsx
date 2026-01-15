@@ -240,7 +240,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
             const netAdjustment = adjustment?.net ?? 0
 
             return (
-              <div key={index} className="rounded-lg border p-3">
+              <div key={index} data-testid={`player-rack-${index}`}>
                 <div className="mb-2 flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full" style={{ backgroundColor: player.color }} />
                   <span className="font-medium">{player.name}</span>
