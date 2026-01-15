@@ -1,5 +1,31 @@
 # Progress Log
 
+## 2025-01-15: Fix dialog button drop shadows
+
+Fixed the drop shadows on dialog buttons across the app. The buttons in dialogs were using incorrect shadow colors that didn't match their visual styling.
+
+**Problem:** When ConfirmDialog buttons were styled with custom colors (e.g., `bg-red-600` for delete or neutral colors for secondary actions), they retained the default teal drop shadow from the primary button variant. This violated the established pattern where shadows should match the element's border/color theme.
+
+**Solution:** Added explicit shadow styling to match the button's visual theme:
+1. **"Too many tiles" dialog** - The "Play anyway" button (styled with neutral background) now uses `shadow-[0_3px_0_0_var(--color-neutral-300)]` to match the outline button variant
+2. **Delete dialogs** (GameScreen and PastGameScreen) - The "Delete" button (styled with red background) now uses `shadow-[0_3px_0_0_oklch(0.45_0.2_27)]` to match the destructive button variant
+
+Both changes also include the active state styling (`active:shadow-none active:translate-y-[3px]`) for consistent press feedback.
+
+**Files changed:**
+- `src/components/GameScreen.tsx`:
+  - Updated secondaryClassName for tile overuse dialog to include neutral-300 shadow
+  - Updated confirmClassName for delete dialog to include destructive shadow
+- `src/components/PastGameScreen.tsx`:
+  - Updated confirmClassName for delete dialog to include destructive shadow
+
+**Tests added:**
+- `e2e/tests/dialog-buttons.test.ts` - New test file with 2 tests:
+  - "tile overuse dialog buttons have correct shadow colors" - Verifies Play anyway and Fix move buttons have correct shadows
+  - "delete dialog buttons have correct shadow colors" - Verifies Delete and Cancel buttons have correct shadows
+
+All 181 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-15: Add drag and drop support for tile management on EndGameScreen
 
 Added drag-and-drop functionality to move tiles between player racks and the "Remaining tiles" section on the EndGameScreen, providing an intuitive alternative to tap-to-add and X-to-remove interactions.
