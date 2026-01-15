@@ -301,19 +301,18 @@ test.describe("End game", () => {
     await gamePage.expectOnEndGameScreen()
 
     // Initially Bob's rack is auto-populated with all remaining tiles (I, N, N, R, T, U)
-    // So there should be no unaccounted tiles section visible
+    // So the "Remaining tiles" label should not be visible
     const unaccountedSection = page.getByTestId("unaccounted-tiles")
-    await expect(unaccountedSection).not.toBeVisible()
+    await expect(unaccountedSection.locator("text=Remaining tiles")).not.toBeVisible()
 
     // Clear all tiles from Bob's rack (6 tiles)
     await gamePage.clearRackTiles("Bob", 6)
 
-    // Now unaccounted tiles section should be visible
-    await expect(unaccountedSection).toBeVisible()
+    // Now unaccounted tiles section label should be visible
     await expect(unaccountedSection).toContainText("Remaining tiles")
 
-    // Should show the 6 unaccounted tiles as visual tile components
-    const tiles = unaccountedSection.locator("button .bg-amber-100")
+    // Should show the 6 unaccounted tiles as visual tile components (divs now, not buttons)
+    const tiles = unaccountedSection.locator("[draggable='true'] .bg-amber-100")
     await expect(tiles).toHaveCount(6)
   })
 
@@ -346,9 +345,9 @@ test.describe("End game", () => {
     // Clear all tiles from Bob's rack to show unaccounted tiles
     await gamePage.clearRackTiles("Bob", 6)
 
-    // Verify unaccounted tiles are visible
+    // Verify unaccounted tiles label is visible
     const unaccountedSection = page.getByTestId("unaccounted-tiles")
-    await expect(unaccountedSection).toBeVisible()
+    await expect(unaccountedSection).toContainText("Remaining tiles")
 
     // Bob's rack should now be empty
     const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
@@ -362,8 +361,8 @@ test.describe("End game", () => {
     // Should now show "(tap to add)" hint
     await expect(unaccountedSection).toContainText("(tap to add)")
 
-    // Tap the first unaccounted tile to add it to Bob's rack
-    const firstTile = unaccountedSection.locator("button").first()
+    // Tap the first unaccounted tile to add it to Bob's rack (now divs, not buttons)
+    const firstTile = unaccountedSection.locator("[draggable='true']").first()
     await firstTile.click()
 
     // Bob's rack should now have 1 tile
@@ -371,7 +370,7 @@ test.describe("End game", () => {
     await expect(bobTiles).toHaveCount(1)
 
     // Unaccounted tiles should now show 5 tiles (one was moved)
-    const unaccountedTiles = unaccountedSection.locator("button .bg-amber-100")
+    const unaccountedTiles = unaccountedSection.locator("[draggable='true'] .bg-amber-100")
     await expect(unaccountedTiles).toHaveCount(5)
   })
 
@@ -388,11 +387,11 @@ test.describe("End game", () => {
 
     // Unaccounted tiles section should be visible but without the hint
     const unaccountedSection = page.getByTestId("unaccounted-tiles")
-    await expect(unaccountedSection).toBeVisible()
+    await expect(unaccountedSection).toContainText("Remaining tiles")
     await expect(unaccountedSection).not.toContainText("(tap to add)")
 
-    // Tiles should have opacity-50 class (disabled state)
-    const firstTile = unaccountedSection.locator("button").first()
+    // Tiles should have opacity-50 class (disabled state) - now divs, not buttons
+    const firstTile = unaccountedSection.locator("[draggable='true']").first()
     await expect(firstTile).toHaveClass(/opacity-50/)
   })
 
@@ -445,8 +444,9 @@ test.describe("End game", () => {
     const rackInput = bobSection.locator('[tabindex="0"]')
     const tiles = rackInput.locator(".relative.h-8.w-8")
 
-    // Initially no remaining tiles section (all tiles assigned)
-    await expect(page.getByTestId("unaccounted-tiles")).toHaveCount(0)
+    // Initially no remaining tiles label visible (all tiles assigned)
+    const unaccountedSection = page.getByTestId("unaccounted-tiles")
+    await expect(unaccountedSection.locator("text=Remaining tiles")).not.toBeVisible()
 
     // Click on the first tile (should be "I")
     await tiles.first().click()
@@ -464,9 +464,8 @@ test.describe("End game", () => {
     // X button should be hidden (selection cleared)
     await expect(removeButton).toHaveCount(0)
 
-    // Remaining tiles section should now be visible with the removed tile
-    const unaccountedSection = page.getByTestId("unaccounted-tiles")
-    await expect(unaccountedSection).toBeVisible()
+    // Remaining tiles section should now show the label with the removed tile
+    await expect(unaccountedSection).toContainText("Remaining tiles")
   })
 
   test("tapping another tile moves X icon to that tile", async ({ page }) => {
@@ -518,6 +517,112 @@ test.describe("End game", () => {
 
     // X button should now be hidden
     await expect(removeButton).toHaveCount(0)
+  })
+
+  test("can drag tile from rack to remaining tiles section", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack has tiles (I, N, N, R, T, U) - sorted alphabetically
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const tiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Initially should have 6 tiles
+    await expect(tiles).toHaveCount(6)
+
+    // Get the remaining tiles drop target
+    const remainingSection = page.getByTestId("unaccounted-tiles")
+
+    // Drag the first tile from Bob's rack to the remaining tiles section
+    const firstTile = tiles.first()
+    await firstTile.dragTo(remainingSection)
+
+    // Should now have 5 tiles in the rack
+    await expect(tiles).toHaveCount(5)
+
+    // Remaining tiles section should show the label
+    await expect(remainingSection).toContainText("Remaining tiles")
+  })
+
+  test("can drag tile from remaining tiles to rack", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Clear Bob's rack first to show remaining tiles
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Verify remaining tiles are visible
+    const remainingSection = page.getByTestId("unaccounted-tiles")
+    await expect(remainingSection).toContainText("Remaining tiles")
+    const remainingTiles = remainingSection.locator("[draggable='true']")
+    await expect(remainingTiles).toHaveCount(6)
+
+    // Get Bob's rack
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const rackTiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Bob's rack should be empty
+    await expect(rackTiles).toHaveCount(0)
+
+    // Drag the first remaining tile to Bob's rack
+    const firstRemainingTile = remainingTiles.first()
+    await firstRemainingTile.dragTo(rackInput)
+
+    // Bob's rack should now have 1 tile
+    await expect(rackTiles).toHaveCount(1)
+
+    // Remaining tiles should now have 5
+    await expect(remainingTiles).toHaveCount(5)
+  })
+
+  test("rack tiles are draggable (have cursor-grab class)", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack has tiles
+    const bobSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const firstTile = rackInput.locator(".relative.h-8.w-8").first()
+
+    // Tile should have cursor-grab class and draggable attribute
+    await expect(firstTile).toHaveClass(/cursor-grab/)
+    await expect(firstTile).toHaveAttribute("draggable", "true")
+  })
+
+  test("disabled rack tiles are not draggable", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Alice is the one who ended the game (default)
+    // Her rack is disabled and empty
+    const aliceSection = page.locator('[data-testid^="player-rack-"]').filter({ hasText: "Alice" })
+    const rackInput = aliceSection.locator('[tabindex="-1"]')
+
+    // The tabindex should be -1 (not focusable/disabled)
+    await expect(rackInput).toBeVisible()
+
+    // The container should have the disabled background
+    await expect(rackInput).toHaveClass(/bg-neutral-100/)
+
+    // It should show "No tiles" placeholder
+    await expect(rackInput).toContainText("No tiles")
+  })
+
+  test("remaining tiles section shows visual feedback when dragging over", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    const remainingSection = page.getByTestId("unaccounted-tiles")
+
+    // Initially should have transparent/neutral border (dashed with neutral-300 when empty)
+    // When dragging over, it should get teal-500 border and teal-50 background
+    // The section exists but has transparent border when empty
+    await expect(remainingSection).toHaveClass(/border-transparent/)
+
+    // Verify the section is always visible as a drop target
+    await expect(remainingSection).toBeVisible()
   })
 
   test("player divs have no borders or padding", async ({ page }) => {

@@ -1,11 +1,10 @@
 ### To do
 
-End game screen:
-
-- [ ] Support drag and drop between the players' racks and the unaccounted list
+(No open tasks)
 
 ### Done
 
+- [x] Support drag and drop between the players' racks and the unaccounted list
 - [x] Remove the borders and padding from the player divs
 - [x] bump up the text size in the scoresheet
 - [x] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list

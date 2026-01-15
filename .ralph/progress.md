@@ -1,5 +1,49 @@
 # Progress Log
 
+## 2025-01-15: Add drag and drop support for tile management on EndGameScreen
+
+Added drag-and-drop functionality to move tiles between player racks and the "Remaining tiles" section on the EndGameScreen, providing an intuitive alternative to tap-to-add and X-to-remove interactions.
+
+**Problem:** On the EndGameScreen, users could only move tiles by tapping (to add from remaining to a focused rack) or clicking X icons (to remove from rack to remaining). There was no way to directly drag tiles between locations, which is a more intuitive interaction on desktop.
+
+**Solution:** Implemented HTML5 Drag and Drop API support for tiles on the EndGameScreen:
+1. **RackTileInput** - Made rack tiles draggable with `draggable` attribute, added drag/drop event handlers, visual feedback (teal border/background) when dragging over
+2. **EndGameScreen** - Made remaining tiles draggable, made the remaining tiles section a drop target for removing tiles from racks, added state tracking for drag source to enable proper tile transfers
+
+Key features:
+- Tiles in player racks have `cursor-grab` styling and can be dragged to other racks or the remaining tiles section
+- Remaining tiles can be dragged to any player rack
+- Visual feedback: teal border and background when hovering over valid drop targets
+- Disabled racks (player who ended the game) cannot receive drops and don't have draggable tiles
+- The remaining tiles section is always visible as a drop target (with dashed border when tiles can be dropped there)
+
+**Files changed:**
+- `src/components/RackTileInput.tsx`:
+  - Added `isDragOver` state for visual feedback
+  - Added `onTileDrop` and `onTileDragStart` callback props
+  - Added drag/drop event handlers (`handleDragStart`, `handleDragOver`, `handleDragLeave`, `handleDrop`)
+  - Made tiles draggable with proper attributes and cursor styling
+- `src/components/EndGameScreen.tsx`:
+  - Added `dragSource` and `isRemainingTilesDragOver` state
+  - Added drag event handlers for the remaining tiles section
+  - Wired up `onTileDrop` and `onTileDragStart` to coordinate tile transfers
+  - Changed remaining tiles from `<button>` to `<div>` elements (for draggable support)
+  - Made remaining tiles section always visible as a drop target
+- `e2e/tests/end-game.test.ts`:
+  - Updated existing tests to use `[draggable='true']` selector instead of `button` for remaining tiles
+  - Updated visibility checks for remaining tiles section (now uses label visibility)
+  - Added 5 new tests for drag-and-drop functionality
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts`:
+  - "can drag tile from rack to remaining tiles section"
+  - "can drag tile from remaining tiles to rack"
+  - "rack tiles are draggable (have cursor-grab class)"
+  - "disabled rack tiles are not draggable"
+  - "remaining tiles section shows visual feedback when dragging over"
+
+All 178 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-15: Increase scoresheet text size from 10px to 12px
 
 Increased the font size in the move history lists (scoresheets) displayed in player panels from 10px to 12px for better readability.

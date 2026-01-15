@@ -183,6 +183,91 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     [focusedPlayerIndex, playerRacks],
   )
 
+  // Track which player is currently dragging a tile (for removing from source on drop)
+  const [dragSource, setDragSource] = useState<{ playerIndex: number; tileIndex: number } | null>(
+    null,
+  )
+  const [isRemainingTilesDragOver, setIsRemainingTilesDragOver] = useState(false)
+
+  // Handle drag start from a rack tile - track the source
+  const handleRackTileDragStart = useCallback(
+    (playerIndex: number, tileIndex: number) => {
+      setDragSource({ playerIndex, tileIndex })
+    },
+    [],
+  )
+
+  // Handle drop onto a player's rack (coming from another rack or remaining tiles)
+  const handleTileDropOnRack = useCallback(
+    (playerIndex: number, tile: string) => {
+      // Remove tile from source (if coming from another rack)
+      if (dragSource) {
+        const newSourceTiles = [...playerRacks[dragSource.playerIndex]]
+        // Find the tile in the source rack (match by value since we don't have unique IDs)
+        const tileIndexInSource = newSourceTiles.indexOf(tile)
+        if (tileIndexInSource !== -1) {
+          newSourceTiles.splice(tileIndexInSource, 1)
+          setPlayerRacks(prev => {
+            const updated = [...prev]
+            updated[dragSource.playerIndex] = newSourceTiles
+            // Add tile to target rack
+            updated[playerIndex] = [...updated[playerIndex], tile]
+            return updated
+          })
+        }
+        setDragSource(null)
+      } else {
+        // Coming from remaining tiles - just add it
+        handleRackChange(playerIndex, [...playerRacks[playerIndex], tile])
+      }
+    },
+    [dragSource, playerRacks],
+  )
+
+  // Handle drag events on the remaining tiles section (as a drop target)
+  const handleRemainingTilesDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setIsRemainingTilesDragOver(true)
+  }, [])
+
+  const handleRemainingTilesDragLeave = useCallback((e: React.DragEvent) => {
+    // Check if we're actually leaving the container
+    const target = e.currentTarget as HTMLElement
+    if (!target.contains(e.relatedTarget as Node)) {
+      setIsRemainingTilesDragOver(false)
+    }
+  }, [])
+
+  const handleRemainingTilesDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsRemainingTilesDragOver(false)
+
+      // Only handle drops from rack tiles (tiles that have the rack-tile data)
+      const rackTileData = e.dataTransfer.getData("application/x-rack-tile")
+      if (!rackTileData || !dragSource) return
+
+      const { tile } = JSON.parse(rackTileData)
+      // Remove tile from the source rack
+      const newSourceTiles = [...playerRacks[dragSource.playerIndex]]
+      const tileIndexInSource = newSourceTiles.indexOf(tile)
+      if (tileIndexInSource !== -1) {
+        newSourceTiles.splice(tileIndexInSource, 1)
+        handleRackChange(dragSource.playerIndex, newSourceTiles)
+      }
+      setDragSource(null)
+    },
+    [dragSource, playerRacks],
+  )
+
+  // Handle drag start from remaining tiles
+  const handleRemainingTileDragStart = useCallback((tile: string, e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", tile)
+    e.dataTransfer.effectAllowed = "move"
+    setDragSource(null) // Not from a rack
+  }, [])
+
   const handleApply = () => {
     const adjustmentsWithRacks = adjustments.map((adj, i) => ({
       ...adj,
@@ -258,6 +343,8 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                   deduction={netAdjustment}
                   isFocused={focusedPlayerIndex === index}
                   onFocusChange={focused => handleFocusChange(index, focused)}
+                  onTileDrop={tile => handleTileDropOnRack(index, tile)}
+                  onTileDragStart={tileIndex => handleRackTileDragStart(index, tileIndex)}
                 />
               </div>
             )
@@ -265,32 +352,50 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
         </div>
 
         {/* Remaining tiles section (unaccounted tiles) */}
-        {unaccountedTiles.length > 0 && (
-          <div className="mt-6" data-testid="unaccounted-tiles">
-            <h2 className="mb-2 text-sm font-medium text-neutral-600">
-              Remaining tiles
-              {focusedPlayerIndex !== null && (
-                <span className="ml-1 text-teal-600">(tap to add)</span>
-              )}
-            </h2>
-            <div className="flex flex-wrap gap-1">
-              {unaccountedTiles.map((tile, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleUnaccountedTileClick(tile)}
-                  disabled={focusedPlayerIndex === null}
-                  className={cx(
-                    "h-8 w-8 transition-opacity",
-                    focusedPlayerIndex === null ? "cursor-default opacity-50" : "cursor-pointer",
-                  )}
-                  aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
-                >
-                  <Tile letter={tile} variant="existing" />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <div
+          className={cx(
+            "mt-6 min-h-[60px] rounded-lg border-2 border-dashed p-3 transition-colors",
+            isRemainingTilesDragOver ? "border-teal-500 bg-teal-50" : "border-neutral-300",
+            unaccountedTiles.length === 0 && !isRemainingTilesDragOver && "border-transparent",
+          )}
+          data-testid="unaccounted-tiles"
+          onDragOver={handleRemainingTilesDragOver}
+          onDragLeave={handleRemainingTilesDragLeave}
+          onDrop={handleRemainingTilesDrop}
+        >
+          {(unaccountedTiles.length > 0 || isRemainingTilesDragOver) && (
+            <>
+              <h2 className="mb-2 text-sm font-medium text-neutral-600">
+                Remaining tiles
+                {focusedPlayerIndex !== null && (
+                  <span className="ml-1 text-teal-600">(tap to add)</span>
+                )}
+              </h2>
+              <div className="flex flex-wrap gap-1">
+                {unaccountedTiles.map((tile, index) => (
+                  <div
+                    key={index}
+                    draggable
+                    onDragStart={e => handleRemainingTileDragStart(tile, e)}
+                    onClick={() => handleUnaccountedTileClick(tile)}
+                    className={cx(
+                      "h-8 w-8 transition-opacity",
+                      focusedPlayerIndex === null ?
+                        "cursor-grab opacity-50"
+                      : "cursor-pointer active:cursor-grabbing",
+                    )}
+                    aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
+                  >
+                    <Tile letter={tile} variant="existing" />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {unaccountedTiles.length === 0 && isRemainingTilesDragOver && (
+            <span className="text-sm text-neutral-400">Drop tile here to unassign</span>
+          )}
+        </div>
       </div>
 
       {/* Footer - needs z-index to appear above keyboard and extra padding when keyboard is visible */}

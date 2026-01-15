@@ -12,9 +12,12 @@ export const RackTileInput = ({
   deduction,
   isFocused = false,
   onFocusChange,
+  onTileDrop,
+  onTileDragStart,
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedTileIndex, setSelectedTileIndex] = useState<number | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
 
   // Handle keyboard events for desktop
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -74,6 +77,47 @@ export const RackTileInput = ({
     setSelectedTileIndex(null)
   }
 
+  // Drag-and-drop handlers
+  const handleDragStart = (index: number, e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", tiles[index])
+    e.dataTransfer.setData("application/x-rack-tile", JSON.stringify({ tile: tiles[index], index }))
+    e.dataTransfer.effectAllowed = "move"
+    onTileDragStart?.(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    if (disabled) return
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Only handle drag leave if we're actually leaving the container
+    if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (disabled) return
+    e.preventDefault()
+    setIsDragOver(false)
+
+    const tile = e.dataTransfer.getData("text/plain")
+    if (!tile) return
+
+    // Check if this is coming from another rack (has the rack-tile data)
+    const rackTileData = e.dataTransfer.getData("application/x-rack-tile")
+    if (rackTileData) {
+      // Use onTileDrop to notify parent, which handles removing from source
+      onTileDrop?.(tile)
+    } else {
+      // Coming from remaining tiles, just add it
+      onChange([...tiles, tile])
+    }
+  }
+
   return (
     <div className="flex flex-col gap-1">
       <div
@@ -82,10 +126,16 @@ export const RackTileInput = ({
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         onBlur={() => onFocusChange?.(false)}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
         className={cx(
           "flex min-h-10 cursor-text items-center gap-1 rounded-lg border-2 px-2 py-1 outline-none transition-colors",
           disabled ? "cursor-default bg-neutral-100" : "",
-          error ? "border-red-400" : isFocused ? "border-teal-500" : "border-neutral-300",
+          error ? "border-red-400"
+          : isDragOver ? "border-teal-500 bg-teal-50"
+          : isFocused ? "border-teal-500"
+          : "border-neutral-300",
         )}
         style={
           {
@@ -102,7 +152,9 @@ export const RackTileInput = ({
         {tiles.map((tile, index) => (
           <div
             key={index}
-            className="relative h-8 w-8 cursor-pointer"
+            draggable={!disabled}
+            onDragStart={e => handleDragStart(index, e)}
+            className={cx("relative h-8 w-8", disabled ? "" : "cursor-grab active:cursor-grabbing")}
             onClick={e => handleTileClick(index, e)}
           >
             <Tile letter={tile} variant="existing" />
@@ -171,4 +223,6 @@ type Props = {
   deduction?: number
   isFocused?: boolean
   onFocusChange?: (focused: boolean) => void
+  onTileDrop?: (tile: string) => void
+  onTileDragStart?: (tileIndex: number) => void
 }
