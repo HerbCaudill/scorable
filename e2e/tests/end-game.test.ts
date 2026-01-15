@@ -177,4 +177,86 @@ test.describe("End game", () => {
     await expect(errorElement).toContainText("entered, but only")
     await expect(errorElement).toContainText("left")
   })
+
+  test("mobile keyboard appears when clicking rack input", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Initially, keyboard should be hidden (has translate-y-full class)
+    const keyboard = page.locator(".fixed.inset-x-0.bottom-0.z-70.bg-neutral-200")
+    await expect(keyboard).toHaveClass(/translate-y-full/)
+
+    // Click on Bob's rack input (he's not the one who ended the game, so it's editable)
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    await rackInput.click()
+
+    // Now keyboard should be visible (has translate-y-0 class)
+    await expect(keyboard).toHaveClass(/translate-y-0/)
+
+    // Verify keyboard has letter keys (use exact match)
+    await expect(keyboard.getByRole("button", { name: "A", exact: true })).toBeVisible()
+    await expect(keyboard.getByRole("button", { name: "Z", exact: true })).toBeVisible()
+
+    // Verify keyboard has blank button
+    await expect(keyboard.getByRole("button", { name: "blank" })).toBeVisible()
+
+    // Tap hide button (chevron down) to close keyboard - use tap() for touch event
+    const hideButton = keyboard.locator("button").filter({ has: page.locator("svg") }).last()
+    await hideButton.tap()
+
+    // Keyboard should be hidden again
+    await expect(keyboard).toHaveClass(/translate-y-full/)
+  })
+
+  test("mobile keyboard input adds tiles to rack", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Clear Bob's auto-populated tiles first
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Click on Bob's rack input
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    await rackInput.click()
+
+    // Use the mobile keyboard to type letters
+    const keyboard = page.locator(".fixed.inset-x-0.bottom-0.z-70.bg-neutral-200")
+    await expect(keyboard).toHaveClass(/translate-y-0/)
+
+    // Type "A" using keyboard - use tap() for touch event simulation
+    await keyboard.getByRole("button", { name: "A", exact: true }).tap()
+
+    // Verify the tile appears in the rack
+    const tiles = bobSection.locator('[tabindex="0"]').locator(".bg-amber-100")
+    await expect(tiles).toHaveCount(1)
+
+    // Type "B" and "C"
+    await keyboard.getByRole("button", { name: "B", exact: true }).tap()
+    await keyboard.getByRole("button", { name: "C", exact: true }).tap()
+    await expect(tiles).toHaveCount(3)
+
+    // Use backspace to remove one - first button with SVG icon is backspace
+    await keyboard.getByRole("button").filter({ has: page.locator("svg") }).first().tap()
+    await expect(tiles).toHaveCount(2)
+  })
+
+  test("focused rack input shows teal border", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Click on Bob's rack input
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+
+    // Initially should not have teal border
+    await expect(rackInput).not.toHaveClass(/border-teal-500/)
+
+    // Click to focus
+    await rackInput.click()
+
+    // Now should have teal border
+    await expect(rackInput).toHaveClass(/border-teal-500/)
+  })
 })

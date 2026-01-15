@@ -262,3 +262,35 @@ Enhanced the rack validation error display to show a visual tile component and i
     - "X entered, but only Y left" message appears when available > 0 but insufficient
 
 All 155 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Add mobile keyboard support to EndGameScreen
+
+Added a mobile keyboard for entering rack tiles on the EndGameScreen, fixing three related issues:
+1. No keyboard appearing on mobile when tapping rack input fields
+2. Cancel/Apply buttons not visible when keyboard is shown
+3. Focus ring styling (now uses teal border instead of ring)
+
+**Problem:** On mobile devices, the EndGameScreen's rack input fields used `onKeyDown` events which require a physical keyboard. Mobile users had no way to enter or edit tile letters since no virtual keyboard would appear.
+
+**Solution:** Created a new `RackKeyboard` component (simplified version of `MobileKeyboard` without direction toggle) and integrated it into `EndGameScreen`:
+1. Added `RackKeyboard.tsx` - a streamlined keyboard with A-Z, blank, backspace, and hide buttons
+2. Modified `RackTileInput.tsx` to accept `isFocused` and `onFocusChange` props for controlled focus state
+3. Updated `EndGameScreen.tsx` to:
+   - Track which player's rack is focused (`focusedPlayerIndex` state)
+   - Show `RackKeyboard` when on mobile and a rack is focused
+   - Add padding to footer when keyboard is visible so buttons remain accessible
+   - Changed from `h-screen` to `h-dvh` for proper mobile viewport handling
+4. Changed rack input border to teal when focused (instead of focus ring)
+
+**Files changed:**
+- `src/components/RackKeyboard.tsx` - New component (simplified mobile keyboard)
+- `src/components/RackTileInput.tsx` - Added `isFocused`, `onFocusChange` props; teal border on focus
+- `src/components/EndGameScreen.tsx` - Integrated mobile keyboard, focus tracking, viewport fix
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts`:
+  - "mobile keyboard appears when clicking rack input" - verifies keyboard shows/hides
+  - "mobile keyboard input adds tiles to rack" - verifies typing via touch events
+  - "focused rack input shows teal border" - verifies visual focus indicator
+
+All 158 Playwright tests and 108 Vitest unit tests pass (excluding one pre-existing flaky test).

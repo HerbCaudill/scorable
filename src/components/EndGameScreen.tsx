@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { RackTileInput } from "./RackTileInput"
+import { RackKeyboard } from "./RackKeyboard"
 import { getRemainingTiles } from "@/lib/getRemainingTiles"
 import { validateRackTiles, type RackValidationError } from "@/lib/validateRackTiles"
 import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
@@ -96,6 +97,10 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     return undefined
   }
 
+  // Mobile keyboard support
+  const [isMobile] = useState(() => "ontouchstart" in window || navigator.maxTouchPoints > 0)
+  const [focusedPlayerIndex, setFocusedPlayerIndex] = useState<number | null>(null)
+
   const handleRackChange = (playerIndex: number, tiles: string[]) => {
     setPlayerRacks(prev => {
       const updated = [...prev]
@@ -103,6 +108,46 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
       return updated
     })
   }
+
+  // Handle keyboard input from RackKeyboard (mobile)
+  const handleKeyPress = useCallback(
+    (key: string) => {
+      if (focusedPlayerIndex === null) return
+
+      const tiles = playerRacks[focusedPlayerIndex]
+
+      if (key === "Escape") {
+        // Hide keyboard
+        setFocusedPlayerIndex(null)
+      } else if (key === "Backspace") {
+        if (tiles.length > 0) {
+          handleRackChange(focusedPlayerIndex, tiles.slice(0, -1))
+        }
+      } else if (key === " ") {
+        // Blank tile
+        handleRackChange(focusedPlayerIndex, [...tiles, " "])
+      } else if (/^[A-Z]$/.test(key)) {
+        handleRackChange(focusedPlayerIndex, [...tiles, key])
+      }
+    },
+    [focusedPlayerIndex, playerRacks],
+  )
+
+  // Handle focus change from RackTileInput
+  const handleFocusChange = useCallback(
+    (playerIndex: number, focused: boolean) => {
+      if (focused) {
+        setFocusedPlayerIndex(playerIndex)
+      } else if (focusedPlayerIndex === playerIndex) {
+        // Only clear if this is the currently focused player
+        // Use setTimeout to allow click events on other racks to process first
+        setTimeout(() => {
+          setFocusedPlayerIndex(prev => (prev === playerIndex ? null : prev))
+        }, 100)
+      }
+    },
+    [focusedPlayerIndex],
+  )
 
   const handleApply = () => {
     const adjustmentsWithRacks = adjustments.map((adj, i) => ({
@@ -113,7 +158,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       <Header title="End game" onBack={onBack} />
 
       {/* Content */}
@@ -177,6 +222,8 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                   disabled={isPlayerWhoEnded}
                   error={getErrorForPlayer(index)}
                   deduction={netAdjustment}
+                  isFocused={focusedPlayerIndex === index}
+                  onFocusChange={focused => handleFocusChange(index, focused)}
                 />
               </div>
             )
@@ -184,8 +231,13 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex justify-end gap-2 border-t p-3">
+      {/* Footer - needs z-index to appear above keyboard and extra padding when keyboard is visible */}
+      <div
+        className={cx(
+          "z-60 flex justify-end gap-2 border-t bg-white p-3 transition-all",
+          isMobile && focusedPlayerIndex !== null && "pb-[280px]",
+        )}
+      >
         <Button variant="outline" onClick={onBack}>
           Cancel
         </Button>
@@ -193,6 +245,11 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
           Apply & end game
         </Button>
       </div>
+
+      {/* Mobile keyboard for rack input */}
+      {isMobile && (
+        <RackKeyboard onKeyPress={handleKeyPress} visible={focusedPlayerIndex !== null} />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { Tile } from "./Tile"
 import { cx } from "@/lib/cx"
 import type { RackValidationError } from "@/lib/validateRackTiles"
@@ -10,9 +10,12 @@ export const RackTileInput = ({
   disabled = false,
   error,
   deduction,
+  isFocused = false,
+  onFocusChange,
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
+  // Handle keyboard events for desktop
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return
 
@@ -30,26 +33,35 @@ export const RackTileInput = ({
     }
   }
 
-  const handleFocus = () => {
+  const handleClick = () => {
+    if (disabled) return
+    onFocusChange?.(true)
     containerRef.current?.focus()
   }
+
+  // Focus the element when isFocused becomes true (for desktop keyboard support)
+  useEffect(() => {
+    if (isFocused && containerRef.current) {
+      containerRef.current.focus()
+    }
+  }, [isFocused])
 
   return (
     <div className="flex flex-col gap-1">
       <div
         ref={containerRef}
         tabIndex={disabled ? -1 : 0}
-        onClick={handleFocus}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
+        onBlur={() => onFocusChange?.(false)}
         className={cx(
           "flex min-h-10 cursor-text items-center gap-1 rounded-lg border-2 px-2 py-1 outline-none transition-colors",
-          disabled ? "cursor-default bg-neutral-100" : "focus:ring-2 focus:ring-offset-1",
-          error ? "border-red-400" : "border-neutral-300",
+          disabled ? "cursor-default bg-neutral-100" : "",
+          error ? "border-red-400" : isFocused ? "border-teal-500" : "border-neutral-300",
         )}
         style={
           {
             "--ring-color": playerColor,
-            focusRing: `var(--ring-color)`,
           } as React.CSSProperties
         }
       >
@@ -102,4 +114,6 @@ type Props = {
   disabled?: boolean
   error?: RackValidationError
   deduction?: number
+  isFocused?: boolean
+  onFocusChange?: (focused: boolean) => void
 }

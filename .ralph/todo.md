@@ -4,16 +4,17 @@
 
 End game screen:
 
-- [ ] not getting a keyboard on mobile
-- [ ] not seeing the Cancel/Apply & end game buttons on mobile
 - [ ] when the fake input is focused and we're "typing" tiles, we need a fake cursor
-- [ ] don't need a focus ring on the tile inputs, make the border itself teal
 - [ ] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
 - [ ] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
 - [ ] Remove the borders and padding from the player divs
 - [ ] Support drag and drop between the players' racks and the unaccounted list
 
 ### Done
+
+- [x] not getting a keyboard on mobile (EndGameScreen)
+- [x] not seeing the Cancel/Apply & end game buttons on mobile (EndGameScreen)
+- [x] don't need a focus ring on the tile inputs, make the border itself teal (EndGameScreen)
 
 - [x] Describe this application in the README.
 - [x] When importing games, populate the letter represented by blank tiles
