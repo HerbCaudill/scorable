@@ -277,4 +277,35 @@ test.describe("Statistics", () => {
     // Chart height should be at least minHeight (48) + dotSpacing (7) + labelAreaHeight (28) = 83px
     expect(parentHeight).toBeGreaterThanOrEqual(83)
   })
+
+  test("player cards have matching border and shadow colors", async ({ page }) => {
+    // Create 4 finished games (need >=3 for stats to show)
+    await createFinishedGame(page, true)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+    await createFinishedGame(page, false)
+
+    // Wait for past games section to confirm games exist
+    await expect(page.getByText("Past games")).toBeVisible()
+
+    // Go to statistics page
+    await page.getByText("Statistics").click()
+
+    // Wait for statistics to render with player data
+    await expect(page.getByText("Alice")).toBeVisible()
+
+    // Find the player card (white background with border)
+    const playerCard = page.locator(".rounded-lg.border.bg-white").first()
+    await expect(playerCard).toBeVisible()
+
+    // Verify it has neutral-300 border
+    await expect(playerCard).toHaveClass(/border-neutral-300/)
+
+    // Check that the shadow uses a CSS variable color (oklch)
+    const boxShadow = await playerCard.evaluate(el =>
+      window.getComputedStyle(el).boxShadow
+    )
+    // The shadow should contain oklch color (neutral-300) rather than only black rgba values
+    expect(boxShadow).toContain("oklch")
+  })
 })

@@ -141,4 +141,22 @@ test.describe("Home screen", () => {
     // Should see the past game view with Back button
     await expect(page.getByRole("button", { name: "Back" })).toBeVisible()
   })
+
+  test("logo tile has matching border and shadow colors", async ({ page }) => {
+    // The logo tile should have an amber border and amber shadow (not black)
+    // Find the logo container (has the "S" letter and the score "1")
+    const logoTile = page.locator(".bg-amber-100.-rotate-12").first()
+    await expect(logoTile).toBeVisible()
+
+    // Check that the logo has an amber border
+    await expect(logoTile).toHaveClass(/border-amber-300/)
+
+    // Check that the shadow uses amber color (via CSS variable)
+    const boxShadow = await logoTile.evaluate(el =>
+      window.getComputedStyle(el).boxShadow
+    )
+    // The shadow should contain oklch color (amber) rather than only black rgba values
+    // The browser includes empty rgba(0,0,0,0) placeholders, so we check for oklch
+    expect(boxShadow).toContain("oklch")
+  })
 })

@@ -1,7 +1,5 @@
 ### To do
 
-- [ ] All drop shadows should be the same color as the element's border
-
 End game screen:
 
 - [ ] when the fake input is focused and we're "typing" tiles, we need a fake cursor
@@ -12,6 +10,7 @@ End game screen:
 
 ### Done
 
+- [x] All drop shadows should be the same color as the element's border
 - [x] not getting a keyboard on mobile (EndGameScreen)
 - [x] not seeing the Cancel/Apply & end game buttons on mobile (EndGameScreen)
 - [x] don't need a focus ring on the tile inputs, make the border itself teal (EndGameScreen)

@@ -194,6 +194,20 @@ When a player goes out or the game ends normally:
 2. System validates racks against remaining tiles
 3. Final adjustments: player who went out gets sum of opponents' rack values
 
+## Shadow styling pattern
+
+The app uses a consistent 3D "press-down" shadow effect for interactive elements. The key rule is:
+
+**Shadow color should match the element's border color** (or a darker shade of the background for borderless elements).
+
+Examples:
+- **Buttons**: Shadow is a darker variant of the background color (e.g., teal-600 bg → teal-700 shadow)
+- **Player panels**: Shadow uses `darkenColor(player.color)` to match the player's border color
+- **Outline buttons**: Shadow uses neutral-300 to match the default border color
+- **Cards with borders**: Shadow uses the same CSS variable as the border (e.g., `border-neutral-300` + `shadow-[..._var(--color-neutral-300)]`)
+
+Active/pressed state removes the shadow and translates the element down by the shadow height (simulating a button press).
+
 ## Z-index layering
 
 The app uses the following z-index hierarchy (Tailwind classes):

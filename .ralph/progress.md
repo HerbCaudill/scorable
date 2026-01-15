@@ -294,3 +294,34 @@ Added a mobile keyboard for entering rack tiles on the EndGameScreen, fixing thr
   - "focused rack input shows teal border" - verifies visual focus indicator
 
 All 158 Playwright tests and 108 Vitest unit tests pass (excluding one pre-existing flaky test).
+
+## 2025-01-15: Make drop shadow colors match border colors
+
+Standardized the 3D drop shadow colors across the app to match the element's border color, improving visual consistency.
+
+**Problem:** Several elements had drop shadows using black/gray `rgba(0,0,0,...)` colors that didn't match their border colors:
+1. HomeScreen logo tile: Had black shadow (`rgba(0,0,0,0.15)`) but amber styling
+2. StatisticsScreen player cards: Had black shadow (`rgba(0,0,0,0.1)`) but no border
+3. Outline button variant: Had khaki-300 shadow but default gray border
+
+**Solution:** Updated shadows to use CSS variables matching border colors:
+1. **Logo tile** (`HomeScreen.tsx`): Added `border-amber-300` and changed shadow to `var(--color-amber-300)`
+2. **Player cards** (`StatisticsScreen.tsx`): Added `border-neutral-300` and changed shadow to `var(--color-neutral-300)`
+3. **Outline button** (`button.tsx`): Changed shadow from `var(--color-khaki-300)` to `var(--color-neutral-300)` to match the default border
+
+This follows the established pattern where shadows are the same color as borders (e.g., player panels use player color for both border and shadow).
+
+**Files changed:**
+- `src/components/ui/button.tsx` - Changed outline variant shadow from khaki-300 to neutral-300
+- `src/components/HomeScreen.tsx` - Added amber-300 border and shadow to logo tile
+- `src/components/StatisticsScreen.tsx` - Added neutral-300 border and shadow to player cards
+
+**Tests added:**
+- `e2e/tests/home-screen.test.ts` - "logo tile has matching border and shadow colors"
+  - Verifies the logo has amber-300 border class
+  - Verifies the shadow uses oklch color (from CSS variable) not black rgba
+- `e2e/tests/statistics.test.ts` - "player cards have matching border and shadow colors"
+  - Verifies cards have neutral-300 border class
+  - Verifies the shadow uses oklch color (from CSS variable) not black rgba
+
+All 160 Playwright tests and 108 Vitest unit tests pass.
