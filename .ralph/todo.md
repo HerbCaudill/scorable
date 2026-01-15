@@ -4,12 +4,12 @@
 
 End game screen:
 
-- [ ] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
 - [ ] Remove the borders and padding from the player divs
 - [ ] Support drag and drop between the players' racks and the unaccounted list
 
 ### Done
 
+- [x] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
 - [x] move the unaccounted tiles below the players, and change the label to "Remaining tiles"
 - [x] the "apply and end game" footer background should be transparent, not white
 - [x] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack

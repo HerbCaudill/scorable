@@ -1,5 +1,36 @@
 # Progress Log
 
+## 2025-01-15: Add X icon to remove tiles from player rack on EndGameScreen
+
+Added the ability to tap a tile in a player's rack on the EndGameScreen to select it and show an X icon, which when clicked removes the tile from the rack (moving it back to the "Remaining tiles" section).
+
+**Problem:** On the EndGameScreen, users could only remove tiles from a player's rack by using the backspace key, which removes tiles from the end of the rack. There was no way to remove a specific tile in the middle of the rack, or to use a touch-based interface to remove tiles.
+
+**Solution:** Modified `RackTileInput.tsx` to support tile selection and removal:
+1. Added `selectedTileIndex` state to track which tile is currently selected
+2. When a tile is clicked, it becomes selected and shows a red X icon in the corner
+3. Clicking the X icon removes the tile from the rack (the tile then appears in "Remaining tiles")
+4. Clicking the same tile again deselects it
+5. Clicking a different tile moves the selection to that tile
+6. Selection is cleared when the rack loses focus
+
+**Files changed:**
+- `src/components/RackTileInput.tsx`:
+  - Added `selectedTileIndex` state
+  - Added `handleTileClick` to handle tile selection (also focuses the input)
+  - Added `handleRemoveTile` to remove the selected tile
+  - Added effect to clear selection when focus changes
+  - Updated tile rendering to include clickable wrapper with X icon overlay
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts`:
+  - "tapping a tile in player rack shows X icon to remove it"
+  - "clicking X icon removes tile from rack and adds to remaining tiles"
+  - "tapping another tile moves X icon to that tile"
+  - "tapping same tile twice deselects it and hides X icon"
+
+All 171 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-15: Make EndGameScreen footer background transparent
 
 Changed the footer background on the EndGameScreen from white to transparent for better visual consistency.

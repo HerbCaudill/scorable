@@ -413,4 +413,110 @@ test.describe("End game", () => {
     // transparent is represented as "rgba(0, 0, 0, 0)" in computed styles
     expect(bgColor).toBe("rgba(0, 0, 0, 0)")
   })
+
+  test("tapping a tile in player rack shows X icon to remove it", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack is auto-populated with tiles (I, N, N, R, T, U)
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const tiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Initially should have 6 tiles and no X button visible
+    await expect(tiles).toHaveCount(6)
+    const removeButton = page.getByTestId("remove-tile-button")
+    await expect(removeButton).toHaveCount(0)
+
+    // Click on the first tile
+    await tiles.first().click()
+
+    // X button should now be visible
+    await expect(removeButton).toBeVisible()
+    await expect(removeButton).toHaveClass(/bg-red-500/)
+  })
+
+  test("clicking X icon removes tile from rack and adds to remaining tiles", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack has tiles (I, N, N, R, T, U) - sorted alphabetically
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const tiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Initially no remaining tiles section (all tiles assigned)
+    await expect(page.getByTestId("unaccounted-tiles")).toHaveCount(0)
+
+    // Click on the first tile (should be "I")
+    await tiles.first().click()
+
+    // X button should appear
+    const removeButton = page.getByTestId("remove-tile-button")
+    await expect(removeButton).toBeVisible()
+
+    // Click the X button to remove the tile
+    await removeButton.click()
+
+    // Should now have 5 tiles
+    await expect(tiles).toHaveCount(5)
+
+    // X button should be hidden (selection cleared)
+    await expect(removeButton).toHaveCount(0)
+
+    // Remaining tiles section should now be visible with the removed tile
+    const unaccountedSection = page.getByTestId("unaccounted-tiles")
+    await expect(unaccountedSection).toBeVisible()
+  })
+
+  test("tapping another tile moves X icon to that tile", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack has tiles
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const tiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Click on the first tile
+    await tiles.first().click()
+
+    // X button should be on first tile
+    const removeButton = page.getByTestId("remove-tile-button")
+    await expect(removeButton).toBeVisible()
+
+    // Click on the third tile
+    await tiles.nth(2).click()
+
+    // X button should still be visible (on the new tile)
+    await expect(removeButton).toBeVisible()
+
+    // The button should be positioned on the third tile (verify its parent is the third tile's container)
+    const buttonParent = removeButton.locator("..")
+    // Get the third tile container and check they're the same element
+    const thirdTile = tiles.nth(2)
+    await expect(buttonParent).toHaveCount(1)
+    await expect(thirdTile.locator('[data-testid="remove-tile-button"]')).toBeVisible()
+  })
+
+  test("tapping same tile twice deselects it and hides X icon", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack has tiles
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    const rackInput = bobSection.locator('[tabindex="0"]')
+    const tiles = rackInput.locator(".relative.h-8.w-8")
+
+    // Click on the first tile to select it
+    await tiles.first().click()
+    const removeButton = page.getByTestId("remove-tile-button")
+    await expect(removeButton).toBeVisible()
+
+    // Click on the same tile again to deselect it
+    await tiles.first().click()
+
+    // X button should now be hidden
+    await expect(removeButton).toHaveCount(0)
+  })
 })

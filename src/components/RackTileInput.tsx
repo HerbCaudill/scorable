@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { Tile } from "./Tile"
 import { cx } from "@/lib/cx"
 import type { RackValidationError } from "@/lib/validateRackTiles"
@@ -14,6 +14,7 @@ export const RackTileInput = ({
   onFocusChange,
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [selectedTileIndex, setSelectedTileIndex] = useState<number | null>(null)
 
   // Handle keyboard events for desktop
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -46,6 +47,33 @@ export const RackTileInput = ({
     }
   }, [isFocused])
 
+  // Clear selected tile when focus changes or tiles change
+  useEffect(() => {
+    if (!isFocused) {
+      setSelectedTileIndex(null)
+    }
+  }, [isFocused])
+
+  // Handle clicking on a tile to select it
+  const handleTileClick = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent triggering container click
+    if (disabled) return
+    // Always focus the input when clicking a tile
+    onFocusChange?.(true)
+    containerRef.current?.focus()
+    // Toggle selection of this tile
+    setSelectedTileIndex(prev => (prev === index ? null : index))
+  }
+
+  // Handle clicking the X button to remove the tile
+  const handleRemoveTile = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent triggering tile click or container click
+    const newTiles = [...tiles]
+    newTiles.splice(index, 1)
+    onChange(newTiles)
+    setSelectedTileIndex(null)
+  }
+
   return (
     <div className="flex flex-col gap-1">
       <div
@@ -72,8 +100,30 @@ export const RackTileInput = ({
           <span className="text-sm text-neutral-400">No tiles</span>
         )}
         {tiles.map((tile, index) => (
-          <div key={index} className="h-8 w-8">
+          <div
+            key={index}
+            className="relative h-8 w-8 cursor-pointer"
+            onClick={e => handleTileClick(index, e)}
+          >
             <Tile letter={tile} variant="existing" />
+            {/* X icon overlay when tile is selected */}
+            {selectedTileIndex === index && (
+              <button
+                className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
+                onClick={e => handleRemoveTile(index, e)}
+                aria-label={`Remove ${tile === " " ? "blank" : tile} tile`}
+                data-testid="remove-tile-button"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-3.5 w-3.5"
+                >
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+              </button>
+            )}
           </div>
         ))}
 
