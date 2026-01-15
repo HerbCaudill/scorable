@@ -231,3 +231,34 @@ Extended the ghost click prevention to cover the Escape key (hide keyboard butto
 - `playwright.config.ts` - Changed test server port from 5174 to 5175 to avoid conflicts with other development servers running on the same machine
 
 All 154 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Improved insufficient tiles error display in EndGameScreen
+
+Enhanced the rack validation error display to show a visual tile component and improved wording.
+
+**Problem:** When entering rack tiles on the EndGameScreen, validation errors showed plain text like "Too many Q tiles (1 entered, 0 available)" which was hard to scan and inconsistent with the visual tile-based UI elsewhere in the app.
+
+**Solution:** Changed the error display to:
+1. Show the actual Tile component for the problematic tile (matching the visual style used elsewhere)
+2. Simplified wording:
+   - When 0 tiles remaining: "[tile] none left"
+   - When some tiles remaining but not enough: "[tile] X entered, but only Y left"
+
+**Files changed:**
+- `src/components/RackTileInput.tsx`:
+  - Changed `error` prop type from `string` to `RackValidationError` object
+  - Updated error display to use Tile component with flex layout
+  - Implemented conditional wording based on available tile count
+- `src/components/EndGameScreen.tsx`:
+  - Changed `getErrorForPlayer()` return type from `string | undefined` to `RackValidationError | undefined`
+  - Now returns the error object directly instead of formatting a string
+
+**Tests updated:**
+- `e2e/tests/end-game.test.ts`:
+  - Updated "validates rack tiles against remaining" test to use new error format
+  - Added new test "rack error shows tile component with appropriate message" that verifies:
+    - The tile component is visible in the error
+    - "none left" message appears when available is 0
+    - "X entered, but only Y left" message appears when available > 0 but insufficient
+
+All 155 Playwright tests and 108 Vitest unit tests pass.

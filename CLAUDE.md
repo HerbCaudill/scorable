@@ -33,7 +33,7 @@ src/
 │   ├── Timer.tsx       # Player timer with visual progress
 │   ├── Tile.tsx        # Individual tile display
 │   ├── ConfirmDialog.tsx  # Confirmation dialogs for pass/end game
-│   ├── RackTileInput.tsx  # Keyboard input for rack tiles
+│   ├── RackTileInput.tsx  # Keyboard input for rack tiles (error displays Tile component)
 │   ├── MobileKeyboard.tsx  # On-screen keyboard for mobile devices
 │   ├── BlankLetterDialog.tsx  # Dialog for selecting blank tile letter
 │   ├── BackButton.tsx  # Navigation back button

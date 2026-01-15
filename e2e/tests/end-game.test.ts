@@ -88,7 +88,8 @@ test.describe("End game", () => {
     await gamePage.enterRackTiles("Bob", "Q")
 
     // Should show error since Q was already used (it's now in rack via typing)
-    await gamePage.expectRackError("Bob", "Too many Q")
+    // New format: tile component followed by "none left" or "X entered, but only Y left"
+    await gamePage.expectRackError("Bob", "none left")
 
     // Apply button should be disabled
     expect(await gamePage.isApplyButtonDisabled()).toBe(true)
@@ -146,5 +147,34 @@ test.describe("End game", () => {
     await gamePage.enterRackTiles("Bob", "INN")
     adjustment = await gamePage.getPlayerAdjustment("Bob")
     expect(adjustment).toBe("-3") // I=1, N=1, N=1
+  })
+
+  test("rack error shows tile component with appropriate message", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Bob's rack is auto-populated with remaining tiles: I, N, N, R, T, U
+    // Enter a Q tile (which has 0 remaining since it was used in the game)
+    await gamePage.enterRackTiles("Bob", "Q")
+
+    // Error should show "none left" for tile with 0 remaining
+    const bobSection = page.locator(".rounded-lg.border.p-3").filter({ hasText: "Bob" })
+    // Select the error div specifically (has flex layout for tile + text)
+    const errorElement = bobSection.locator("div.flex.items-center.gap-1\\.5.text-red-600")
+    await expect(errorElement).toContainText("none left")
+
+    // Error should contain a tile component (div with Tile styling)
+    const tileInError = errorElement.locator("div.bg-amber-100")
+    await expect(tileInError).toBeVisible()
+
+    // Clear Q and test the "X entered, but only Y left" format
+    await gamePage.clearRackTiles("Bob", 1) // Remove Q
+
+    // Now add 3 more N tiles (already have 2, only 2 available total)
+    await gamePage.enterRackTiles("Bob", "NNN")
+
+    // Should show "X entered, but only Y left" format
+    await expect(errorElement).toContainText("entered, but only")
+    await expect(errorElement).toContainText("left")
   })
 })

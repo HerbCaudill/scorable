@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { RackTileInput } from "./RackTileInput"
 import { getRemainingTiles } from "@/lib/getRemainingTiles"
-import { validateRackTiles } from "@/lib/validateRackTiles"
+import { validateRackTiles, type RackValidationError } from "@/lib/validateRackTiles"
 import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
 import { cx } from "@/lib/cx"
 import { Header } from "./Header"
@@ -84,13 +84,13 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
     return calculateEndGameAdjustments(racks, playerWhoEndedGame)
   }, [playerRacks, playerWhoEndedGame])
 
-  // Get error message for a specific tile
-  const getErrorForPlayer = (playerIndex: number): string | undefined => {
+  // Get error for a specific player's rack
+  const getErrorForPlayer = (playerIndex: number): RackValidationError | undefined => {
     // Find tiles in this player's rack that are over limit
     const playerTiles = playerRacks[playerIndex]
     for (const error of validation.errors) {
       if (playerTiles.some(t => t.toUpperCase() === error.tile)) {
-        return `Too many ${error.tile === " " ? "blank" : error.tile} tiles (${error.entered} entered, ${error.available} available)`
+        return error
       }
     }
     return undefined

@@ -1,11 +1,5 @@
 ### To do
 
-- [ ] insufficient tiles dialog:
-  - Show the tile component rather than just the letter
-  - Change the wording as follows
-    [C]: none left
-    OR
-    [C]: 2 played, but only 1 left
 - [ ] All drop shadows should be the same color as the element's border
 
 End game screen:
@@ -66,3 +60,4 @@ End game screen:
 - [x] On the statistics page, move & game info should appear on tap or click rather than hover (since this is primarily used on mobile)
 - [x] fix footer buttons z-index - currently showing up in front of the backdrop for dialogs
 - [x] When hiding mobile keyboard, click event also passes to the delete button below the keyboard
+- [x] insufficient tiles dialog: Show the tile component rather than just the letter, and change wording to "[tile]: none left" or "[tile]: X entered, but only Y left"

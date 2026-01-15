@@ -1,6 +1,7 @@
 import { useRef } from "react"
 import { Tile } from "./Tile"
 import { cx } from "@/lib/cx"
+import type { RackValidationError } from "@/lib/validateRackTiles"
 
 export const RackTileInput = ({
   tiles,
@@ -78,7 +79,18 @@ export const RackTileInput = ({
         )}
       </div>
 
-      {error && <span className="text-sm text-red-600">{error}</span>}
+      {error && (
+        <div className="flex items-center gap-1.5 text-sm text-red-600">
+          <div className="h-5 w-5 flex-shrink-0">
+            <Tile letter={error.tile === " " ? " " : error.tile} variant="existing" />
+          </div>
+          <span>
+            {error.available === 0
+              ? "none left"
+              : `${error.entered} entered, but only ${error.available} left`}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
@@ -88,6 +100,6 @@ type Props = {
   onChange: (tiles: string[]) => void
   playerColor: string
   disabled?: boolean
-  error?: string
+  error?: RackValidationError
   deduction?: number
 }
