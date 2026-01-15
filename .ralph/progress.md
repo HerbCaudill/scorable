@@ -417,3 +417,24 @@ This ensures deterministic behavior by waiting for:
 - `e2e/fixtures/seed-game.ts` - Added waitForFunction for hash navigation before waitForSelector
 
 All 165 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Move "Remaining tiles" section below player racks on EndGameScreen
+
+Moved the unaccounted tiles section to appear below the player racks (instead of above them) and changed the label from "Unaccounted tiles" to "Remaining tiles" for clarity.
+
+**Problem:** On the EndGameScreen, the unaccounted tiles were displayed above the player rack entries, which was not intuitive. Users would see tiles to assign before seeing where to assign them. The label "Unaccounted tiles" was also confusing - "Remaining tiles" better describes what they are.
+
+**Solution:**
+1. Moved the unaccounted tiles section in EndGameScreen.tsx from before the player racks to after them
+2. Changed the label from "Unaccounted tiles" to "Remaining tiles"
+3. Changed margin from `mb-6` to `mt-6` since it now comes after the player sections
+
+**Files changed:**
+- `src/components/EndGameScreen.tsx` - Moved unaccounted tiles section after player racks, renamed label to "Remaining tiles"
+- `e2e/tests/end-game.test.ts` - Updated test assertions to use "Remaining tiles" instead of "Unaccounted tiles"
+
+**Tests added:**
+- `e2e/tests/end-game.test.ts` - "remaining tiles section appears below player racks"
+  - Verifies the Remaining tiles section's Y position is below the last player section's bottom edge
+
+All 167 Playwright tests and 108 Vitest unit tests pass.

@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] move the unaccounted tiles below the players, and change the label to "Remaining tiles"
 - [ ] bump up the text size in the scoresheet
 
 End game screen:
@@ -11,6 +10,7 @@ End game screen:
 
 ### Done
 
+- [x] move the unaccounted tiles below the players, and change the label to "Remaining tiles"
 - [x] the "apply and end game" footer background should be transparent, not white
 - [x] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
 - [x] when the fake input is focused and we're "typing" tiles, we need a fake cursor

@@ -232,34 +232,6 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
           </div>
         </div>
 
-        {/* Unaccounted tiles section */}
-        {unaccountedTiles.length > 0 && (
-          <div className="mb-6" data-testid="unaccounted-tiles">
-            <h2 className="mb-2 text-sm font-medium text-neutral-600">
-              Unaccounted tiles
-              {focusedPlayerIndex !== null && (
-                <span className="ml-1 text-teal-600">(tap to add)</span>
-              )}
-            </h2>
-            <div className="flex flex-wrap gap-1">
-              {unaccountedTiles.map((tile, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleUnaccountedTileClick(tile)}
-                  disabled={focusedPlayerIndex === null}
-                  className={cx(
-                    "h-8 w-8 transition-opacity",
-                    focusedPlayerIndex === null ? "cursor-default opacity-50" : "cursor-pointer",
-                  )}
-                  aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
-                >
-                  <Tile letter={tile} variant="existing" />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Per-player rack entry */}
         <div className="space-y-4">
           {players.map((player, index) => {
@@ -291,6 +263,34 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
             )
           })}
         </div>
+
+        {/* Remaining tiles section (unaccounted tiles) */}
+        {unaccountedTiles.length > 0 && (
+          <div className="mt-6" data-testid="unaccounted-tiles">
+            <h2 className="mb-2 text-sm font-medium text-neutral-600">
+              Remaining tiles
+              {focusedPlayerIndex !== null && (
+                <span className="ml-1 text-teal-600">(tap to add)</span>
+              )}
+            </h2>
+            <div className="flex flex-wrap gap-1">
+              {unaccountedTiles.map((tile, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleUnaccountedTileClick(tile)}
+                  disabled={focusedPlayerIndex === null}
+                  className={cx(
+                    "h-8 w-8 transition-opacity",
+                    focusedPlayerIndex === null ? "cursor-default opacity-50" : "cursor-pointer",
+                  )}
+                  aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
+                >
+                  <Tile letter={tile} variant="existing" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer - needs z-index to appear above keyboard and extra padding when keyboard is visible */}

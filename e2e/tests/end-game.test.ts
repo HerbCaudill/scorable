@@ -310,11 +310,33 @@ test.describe("End game", () => {
 
     // Now unaccounted tiles section should be visible
     await expect(unaccountedSection).toBeVisible()
-    await expect(unaccountedSection).toContainText("Unaccounted tiles")
+    await expect(unaccountedSection).toContainText("Remaining tiles")
 
     // Should show the 6 unaccounted tiles as visual tile components
     const tiles = unaccountedSection.locator("button .bg-amber-100")
     await expect(tiles).toHaveCount(6)
+  })
+
+  test("remaining tiles section appears below player racks", async ({ page }) => {
+    await gamePage.clickEndGame()
+    await gamePage.expectOnEndGameScreen()
+
+    // Clear all tiles from Bob's rack to make Remaining tiles section visible
+    await gamePage.clearRackTiles("Bob", 6)
+
+    // Get the position of the last player section (Bob's)
+    const playerSections = page.locator(".rounded-lg.border.p-3")
+    const lastPlayerSection = playerSections.last()
+    const playerBox = await lastPlayerSection.boundingBox()
+
+    // Get the position of the Remaining tiles section
+    const remainingSection = page.getByTestId("unaccounted-tiles")
+    const remainingBox = await remainingSection.boundingBox()
+
+    // Verify Remaining tiles is below the player racks
+    expect(remainingBox).not.toBeNull()
+    expect(playerBox).not.toBeNull()
+    expect(remainingBox!.y).toBeGreaterThan(playerBox!.y + playerBox!.height - 10) // -10 for some tolerance
   })
 
   test("tapping unaccounted tile adds it to focused player rack", async ({ page }) => {
@@ -361,7 +383,7 @@ test.describe("End game", () => {
     await gamePage.clearRackTiles("Bob", 6)
 
     // Click elsewhere to blur the rack input
-    await page.click("h2:text('Unaccounted tiles')")
+    await page.click("h2:text('Remaining tiles')")
     await page.waitForTimeout(200) // Allow focus change to process
 
     // Unaccounted tiles section should be visible but without the hint
