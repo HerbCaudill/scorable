@@ -1,5 +1,27 @@
 # Progress Log
 
+## 2025-01-15: Increase scoresheet text size from 10px to 12px
+
+Increased the font size in the move history lists (scoresheets) displayed in player panels from 10px to 12px for better readability.
+
+**Problem:** The text in the scoresheet (move history list showing words played and scores) was set to `text-[10px]` which is very small and difficult to read, especially on mobile devices.
+
+**Solution:** Changed the text size from `text-[10px]` to `text-xs` (12px) in both locations where MoveHistoryList is rendered:
+1. `GameScreen.tsx` - Active game view
+2. `PastGameScreen.tsx` - Past game review view
+
+This is a 20% increase in font size (10px → 12px), making the move history significantly easier to read.
+
+**Files changed:**
+- `src/components/GameScreen.tsx` - Changed MoveHistoryList className from `text-[10px]` to `text-xs`
+- `src/components/PastGameScreen.tsx` - Changed MoveHistoryList className from `text-[10px]` to `text-xs`
+
+**Tests added:**
+- `e2e/tests/scoring.test.ts` - "scoresheet text is readable size (12px)"
+  - Verifies the MoveHistoryList container has font-size of 12px
+
+All 172 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-15: Add X icon to remove tiles from player rack on EndGameScreen
 
 Added the ability to tap a tile in a player's rack on the EndGameScreen to select it and show an X icon, which when clicked removes the tile from the rack (moving it back to the "Remaining tiles" section).

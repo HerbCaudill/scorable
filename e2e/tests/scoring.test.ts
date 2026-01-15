@@ -144,6 +144,24 @@ test.describe("Scoring", () => {
     expect(await gamePage.getPlayerScore(1)).toBeGreaterThan(0)
   })
 
+  test("scoresheet text is readable size (12px)", async ({ page }) => {
+    // Place a word to have something in the move history
+    await gamePage.placeWord(7, 7, "CAT")
+    await gamePage.endTurn()
+
+    // Find the move history entry in Alice's panel
+    const alicePanel = page.locator('[role="region"][data-player="Alice"]')
+    await expect(alicePanel).toContainText("CAT")
+
+    // The MoveHistoryList container should have text-xs class (12px font size)
+    const moveHistoryContainer = alicePanel.locator(".divide-y")
+    await expect(moveHistoryContainer).toBeVisible()
+
+    // Verify the font size is 12px (text-xs in Tailwind)
+    const fontSize = await moveHistoryContainer.evaluate(el => getComputedStyle(el).fontSize)
+    expect(fontSize).toBe("12px")
+  })
+
   test("scores update after each valid move", async () => {
     // Initial scores should be 0
     expect(await gamePage.getPlayerScore(0)).toBe(0)

@@ -1,7 +1,5 @@
 ### To do
 
-- [ ] bump up the text size in the scoresheet
-
 End game screen:
 
 - [ ] Remove the borders and padding from the player divs
@@ -9,6 +7,7 @@ End game screen:
 
 ### Done
 
+- [x] bump up the text size in the scoresheet
 - [x] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
 - [x] move the unaccounted tiles below the players, and change the label to "Remaining tiles"
 - [x] the "apply and end game" footer background should be transparent, not white

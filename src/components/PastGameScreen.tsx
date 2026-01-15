@@ -107,7 +107,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
                   history={moveHistory}
                   onMoveClick={highlightTiles}
                   disableActions
-                  className="min-h-0 flex-1 overflow-y-auto p-1 text-[10px] [&_span:first-child]:font-mono"
+                  className="min-h-0 flex-1 overflow-y-auto p-1 text-xs [&_span:first-child]:font-mono"
                 />
               </div>
             )
