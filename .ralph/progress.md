@@ -215,3 +215,19 @@ Fixed a visual bug where footer action buttons (Timer, Pass, Tiles, End, Delete)
   - Verifies the dialog can be cancelled and backdrop disappears
 
 All 154 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Fix mobile keyboard ghost click on Escape key
+
+Extended the ghost click prevention to cover the Escape key (hide keyboard button) in addition to the Enter key.
+
+**Problem:** When hiding the mobile keyboard via the downward chevron button (Escape key), touch events could pass through to elements underneath, such as the Delete button in the footer. The existing fix only covered the Enter/Done key, not the Escape/hide key.
+
+**Solution:** Extended the click blocking code in `handleKeyPress` to include both "Enter" and "Escape" keys. When either key is pressed (both of which hide the keyboard), a temporary capture-phase click listener is added that prevents any clicks for ~400ms, blocking ghost clicks from reaching elements underneath.
+
+**Files changed:**
+- `src/components/MobileKeyboard.tsx` - Extended the click blocking condition from `key === "Enter"` to `key === "Enter" || key === "Escape"`
+
+**Also fixed:**
+- `playwright.config.ts` - Changed test server port from 5174 to 5175 to avoid conflicts with other development servers running on the same machine
+
+All 154 Playwright tests and 108 Vitest unit tests pass.

@@ -33,8 +33,9 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
     // Prevent duplicate events - only handle touchStart OR mouseDown, not both
     if (e.type === "mousedown" && "ontouchstart" in window) return
 
-    // For Enter key, block ghost clicks that could hit elements underneath
-    if (key === "Enter") {
+    // For keys that hide the keyboard (Enter, Escape), block ghost clicks
+    // that could hit elements underneath (like the Delete button in footer)
+    if (key === "Enter" || key === "Escape") {
       const blockClick = (clickEvent: MouseEvent) => {
         clickEvent.preventDefault()
         clickEvent.stopPropagation()

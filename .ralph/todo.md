@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] When hiding mobile keyboard, click event also passes to the delete button below the keyboard
 - [ ] insufficient tiles dialog:
   - Show the tile component rather than just the letter
   - Change the wording as follows
@@ -66,3 +65,4 @@ End game screen:
 - [x] Add more space between the move score and game score sections, and make the headings bold
 - [x] On the statistics page, move & game info should appear on tap or click rather than hover (since this is primarily used on mobile)
 - [x] fix footer buttons z-index - currently showing up in front of the backdrop for dialogs
+- [x] When hiding mobile keyboard, click event also passes to the delete button below the keyboard
