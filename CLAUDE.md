@@ -194,6 +194,19 @@ When a player goes out or the game ends normally:
 2. System validates racks against remaining tiles
 3. Final adjustments: player who went out gets sum of opponents' rack values
 
+## Z-index layering
+
+The app uses the following z-index hierarchy (Tailwind classes):
+
+| z-index | Usage |
+|---------|-------|
+| `z-0` - `z-30` | Board elements (tiles, cursor, highlights) |
+| `z-60` | Footer button containers (Timer, Pass, Tiles, End, Delete) |
+| `z-70` | Mobile keyboard |
+| `z-80` | Dialog overlays and content (must be above all other UI) |
+
+When adding new fixed/absolute positioned elements, be mindful of this hierarchy to ensure proper layering.
+
 ## Testing
 
 - **Unit tests**: `src/lib/*.test.ts` - scoring, validation, end game adjustments

@@ -195,3 +195,23 @@ Fixed a bug where blank tiles in imported GCG games lost their letter representa
 - `e2e/tests/scoring.test.ts` - Added test "imported games display blank tiles with assigned letters"
 
 All 153 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Fix dialog z-index to appear above footer buttons
+
+Fixed a visual bug where footer action buttons (Timer, Pass, Tiles, End, Delete) would appear in front of dialog backdrops instead of behind them, potentially allowing accidental clicks on buttons when a dialog should be blocking interaction.
+
+**Problem:** The dialog components (DialogOverlay, DialogContent, AlertDialogOverlay, AlertDialogContent) used `z-50`, while footer buttons on GameScreen and PastGameScreen used `z-60`, and the mobile keyboard used `z-70`. This meant when a dialog was open, the footer buttons would visually appear on top of the semi-transparent backdrop.
+
+**Solution:** Increased the z-index of dialog overlays and content from `z-50` to `z-80`, ensuring dialogs always appear above other UI elements including footer buttons and the mobile keyboard.
+
+**Files changed:**
+- `src/components/ui/dialog.tsx` - Changed `z-50` to `z-80` in DialogOverlay and DialogContent
+- `src/components/ui/alert-dialog.tsx` - Changed `z-50` to `z-80` in AlertDialogOverlay and AlertDialogContent
+
+**Tests added:**
+- `e2e/tests/past-games.test.ts` - "delete confirm dialog appears above footer buttons"
+  - Verifies the dialog backdrop is visible when Delete is clicked
+  - Verifies the dialog backdrop's z-index (80) is higher than the button container's z-index (60)
+  - Verifies the dialog can be cancelled and backdrop disappears
+
+All 154 Playwright tests and 108 Vitest unit tests pass.

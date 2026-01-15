@@ -133,6 +133,38 @@ test.describe("Past games", () => {
     await pastGamePage.expectPlayerName("Alice")
   })
 
+  test("delete confirm dialog appears above footer buttons", async ({ page }) => {
+    await createFinishedGame(page)
+
+    const homePage = new HomePage(page)
+    await homePage.clickPastGame(0)
+
+    // Click the Delete button to show the confirm dialog
+    await page.getByRole("button", { name: /Delete/i }).click()
+
+    // The dialog backdrop should be visible
+    const backdrop = page.locator('[data-slot="alert-dialog-overlay"]')
+    await expect(backdrop).toBeVisible()
+
+    // Get z-index of backdrop and delete button
+    const backdropZIndex = await backdrop.evaluate((el: Element) => {
+      return Number(window.getComputedStyle(el).zIndex)
+    })
+
+    const deleteButton = page.getByRole("button", { name: /Delete/i }).first()
+    const buttonContainer = page.locator(".relative.z-60")
+    const buttonZIndex = await buttonContainer.evaluate((el: Element) => {
+      return Number(window.getComputedStyle(el).zIndex)
+    })
+
+    // Dialog backdrop (z-80) should be higher than button container (z-60)
+    expect(backdropZIndex).toBeGreaterThan(buttonZIndex)
+
+    // Cancel the dialog
+    await page.getByRole("button", { name: /Cancel/i }).click()
+    await expect(backdrop).not.toBeVisible()
+  })
+
   test("past games list is scrollable when many games exist", async ({ page }) => {
     // Navigate to home and create test games
     await page.goto("/")

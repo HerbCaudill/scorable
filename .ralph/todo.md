@@ -1,5 +1,25 @@
 ### To do
 
+- [ ] When hiding mobile keyboard, click event also passes to the delete button below the keyboard
+- [ ] insufficient tiles dialog:
+  - Show the tile component rather than just the letter
+  - Change the wording as follows
+    [C]: none left
+    OR
+    [C]: 2 played, but only 1 left
+- [ ] All drop shadows should be the same color as the element's border
+
+End game screen:
+
+- [ ] not getting a keyboard on mobile
+- [ ] not seeing the Cancel/Apply & end game buttons on mobile
+- [ ] when the fake input is focused and we're "typing" tiles, we need a fake cursor
+- [ ] don't need a focus ring on the tile inputs, make the border itself teal
+- [ ] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
+- [ ] When I touch a tile on a player's rack, it should display an X icon in the corner, which moves it to the unaccounted list
+- [ ] Remove the borders and padding from the player divs
+- [ ] Support drag and drop between the players' racks and the unaccounted list
+
 ### Done
 
 - [x] Describe this application in the README.
@@ -45,3 +65,4 @@
 - [x] Make the vertical line for average scores more prominent. For the best scores, we don't need a line - just the label
 - [x] Add more space between the move score and game score sections, and make the headings bold
 - [x] On the statistics page, move & game info should appear on tap or click rather than hover (since this is primarily used on mobile)
+- [x] fix footer buttons z-index - currently showing up in front of the backdrop for dialogs
