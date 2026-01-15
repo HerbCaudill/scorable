@@ -1,10 +1,10 @@
 ### To do
 
-- [ ] On the insufficient tiles dialog, show the tile component for each letter mentioned, and change the wording:
+### Done
+
+- [x] On the insufficient tiles dialog, show the tile component for each letter mentioned, and change the wording:
   - C: none left
   - C: 2 played, but only 1 left
-
-### Done
 
 - [x] The drop shadows are wrong on the buttons in the "Too many tiles" dialog
 

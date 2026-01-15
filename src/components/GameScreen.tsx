@@ -33,6 +33,7 @@ import { Header } from "./Header"
 import { MobileKeyboard } from "./MobileKeyboard"
 import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
 import ScrabbleBoard from "./ScrabbleBoard"
+import { Tile } from "./Tile"
 import { UnplayedTilesScreen } from "./TileBagScreen"
 import { Timer } from "./Timer"
 
@@ -773,13 +774,20 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
           tileOveruseConfirm && (
             <div className="text-left">
               This move uses more tiles than exist in the game:
-              <ul className="mt-2 list-disc pl-5">
+              <div className="mt-2 flex flex-col gap-1.5">
                 {tileOveruseConfirm.warnings.map((w, i) => (
-                  <li key={i}>
-                    <strong>{w.tile}</strong>: {w.used} used, but only {w.available} exist
-                  </li>
+                  <div key={i} className="flex items-center gap-1.5">
+                    <div className="h-6 w-6 flex-shrink-0">
+                      <Tile letter={w.tile === "blank" ? " " : w.tile} variant="existing" />
+                    </div>
+                    <span>
+                      {w.available === 0
+                        ? "none left"
+                        : `${w.used} played, but only ${w.available} left`}
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <p className="mt-2">Do you want to play this move anyway?</p>
             </div>
           )

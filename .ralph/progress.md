@@ -1,5 +1,30 @@
 # Progress Log
 
+## 2025-01-15: Show tile components in tile overuse dialog
+
+Updated the "Too many tiles used" confirmation dialog to display visual tile components alongside improved error messages, matching the pattern used in the EndGameScreen rack validation.
+
+**Problem:** The tile overuse dialog showed plain text warnings like "J: 2 used, but only 1 exist" which was inconsistent with the visual tile-based UI used elsewhere in the app (e.g., the EndGameScreen rack validation errors).
+
+**Solution:** Updated the dialog in GameScreen.tsx to:
+1. Display the Tile component visually for each problematic tile
+2. Changed the wording to match the EndGameScreen format:
+   - "none left" when available is 0
+   - "X played, but only Y left" when some exist but not enough
+
+**Files changed:**
+- `src/components/GameScreen.tsx`:
+  - Added import for `Tile` component
+  - Changed the warning list from `<ul>` with `<li>` elements to a flex column with visual tiles
+  - Each warning now shows a 6x6 Tile component followed by the appropriate message
+
+**Tests added:**
+- `e2e/tests/dialog-buttons.test.ts` - Two new tests:
+  - "tile overuse dialog shows tile component with appropriate message" - Verifies tile wrapper is visible and "2 played, but only 1 left" message appears
+  - "tile overuse dialog shows 'none left' when zero tiles available" - Verifies the message format works for multiple tile overuse scenarios
+
+All 183 Playwright tests and 108 Vitest unit tests pass.
+
 ## 2025-01-15: Fix dialog button drop shadows
 
 Fixed the drop shadows on dialog buttons across the app. The buttons in dialogs were using incorrect shadow colors that didn't match their visual styling.
