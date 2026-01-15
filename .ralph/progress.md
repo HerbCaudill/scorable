@@ -373,3 +373,29 @@ Added a new "Unaccounted tiles" section to the EndGameScreen that shows tiles th
   - "unaccounted tiles are disabled when no rack is focused" - Verifies tiles are dimmed and hint is hidden when no rack is focused
 
 All 165 Playwright tests and 108 Vitest unit tests pass.
+
+## 2025-01-15: Fix flaky e2e test - wait for hash navigation
+
+Fixed a flaky test in the statistics test suite that was intermittently failing due to a race condition in hash-based navigation.
+
+**Problem:** The test "average game score label has vertical spacing from chart in DotPlot" was intermittently failing because the `seedGame` fixture wasn't properly waiting for hash navigation to complete. When creating multiple games in sequence, the `window.location.hash = documentId` navigation in `page.evaluate()` wasn't being processed by the React app before `waitForSelector` tried to find the board element.
+
+**Solution:** Added an explicit `waitForFunction` call to ensure the browser's hash has been updated before waiting for the board element:
+
+```typescript
+await page.waitForFunction(
+  expectedHash => window.location.hash === `#${expectedHash}`,
+  gameId,
+  { timeout: 5000 },
+)
+await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]', { timeout: 5000 })
+```
+
+This ensures deterministic behavior by waiting for:
+1. The hash to be updated in the browser
+2. The board element to appear (with explicit timeout)
+
+**Files changed:**
+- `e2e/fixtures/seed-game.ts` - Added waitForFunction for hash navigation before waitForSelector
+
+All 165 Playwright tests and 108 Vitest unit tests pass.

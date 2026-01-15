@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] the "apply and end game" footer background should be transparent, not white
 - [ ] bump up the text size in the scoresheet
 
 End game screen:

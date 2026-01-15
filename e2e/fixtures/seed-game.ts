@@ -154,7 +154,13 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
 
   // Wait for the game screen to be ready (only for active games)
   if (status !== "finished") {
-    await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]')
+    // Wait for hash navigation to be processed by the app
+    await page.waitForFunction(
+      expectedHash => window.location.hash === `#${expectedHash}`,
+      gameId,
+      { timeout: 5000 },
+    )
+    await page.waitForSelector('[role="grid"][aria-label="Scrabble board"]', { timeout: 5000 })
   }
 
   return gameId
