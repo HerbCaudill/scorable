@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] bump up the text size in the scoresheet
 End game screen:
 
 - [ ] show the tiles that haven't been accounted for. If one of the players' input is focused, tapping on one of those tiles should move it to their rack
