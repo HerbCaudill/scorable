@@ -13,9 +13,9 @@ export const Tile = ({ letter, variant = "existing", className }: Props) => {
   const isExisting = variant === "existing"
   const isBlank = isBlankTile(letter)
   const displayLetter = getTileDisplayLetter(letter)
-  const ariaLabel =
-    isBlank ?
-      displayLetter ? `Blank tile representing ${displayLetter}`
+  const ariaLabel = isBlank
+    ? displayLetter
+      ? `Blank tile representing ${displayLetter}`
       : "Blank tile"
     : `${displayLetter}${value > 0 ? `, ${value} points` : ""}`
 
@@ -31,9 +31,7 @@ export const Tile = ({ letter, variant = "existing", className }: Props) => {
       <span
         className={cx(
           "text-[55cqw] font-bold leading-none",
-          isBlank ? "text-yellow-600"
-          : isExisting ? "text-khaki-800"
-          : "text-teal-800",
+          isBlank ? "text-yellow-600" : isExisting ? "text-khaki-800" : "text-teal-800",
         )}
       >
         {displayLetter}

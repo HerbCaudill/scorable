@@ -46,7 +46,7 @@ export const RackKeyboard = ({ onKeyPress, visible }: Props) => {
     >
       {/* First two letter rows */}
       {ROWS.slice(0, 2).map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-center gap-1.5 mb-3">
+        <div key={rowIndex} className="mb-3 flex justify-center gap-1.5">
           {row.map(letter => (
             <button
               key={letter}
@@ -66,7 +66,7 @@ export const RackKeyboard = ({ onKeyPress, visible }: Props) => {
       ))}
 
       {/* Third row: Z-M letters + Backspace */}
-      <div className="flex justify-center gap-1.5 mb-3">
+      <div className="mb-3 flex justify-center gap-1.5">
         {ROWS[2].map(letter => (
           <button
             key={letter}

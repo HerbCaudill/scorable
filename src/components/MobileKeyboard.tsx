@@ -4,11 +4,11 @@ import { cx } from "@/lib/cx"
 /** Direction indicator that mirrors the cursor style on the board */
 const DirectionIndicator = ({ direction }: { direction: "horizontal" | "vertical" }) => {
   const triangleClasses =
-    direction === "horizontal" ?
-      // Right-pointing triangle
-      "left-full top-1/2 -translate-y-1/2 border-t-[5px] border-b-[5px] border-l-[6px] border-t-transparent border-b-transparent border-l-teal-600"
-      // Down-pointing triangle
-    : "top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-teal-600"
+    direction === "horizontal"
+      ? // Right-pointing triangle
+        "left-full top-1/2 -translate-y-1/2 border-t-[5px] border-b-[5px] border-l-[6px] border-t-transparent border-b-transparent border-l-teal-600"
+      : // Down-pointing triangle
+        "top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-teal-600"
 
   return (
     <div className="relative size-5 ring-[2.5px] ring-teal-600 ring-inset">
@@ -58,7 +58,7 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
     >
       {/* First two letter rows */}
       {ROWS.slice(0, 2).map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-center gap-1.5 mb-3">
+        <div key={rowIndex} className="mb-3 flex justify-center gap-1.5">
           {row.map(letter => (
             <button
               key={letter}
@@ -78,7 +78,7 @@ export const MobileKeyboard = ({ onKeyPress, direction, visible }: Props) => {
       ))}
 
       {/* Third row: Z-M letters + Backspace */}
-      <div className="flex justify-center gap-1.5 mb-3">
+      <div className="mb-3 flex justify-center gap-1.5">
         {ROWS[2].map(letter => (
           <button
             key={letter}

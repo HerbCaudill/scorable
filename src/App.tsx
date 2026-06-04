@@ -29,7 +29,7 @@ function App() {
   }
 
   return (
-    <div className="h-screen bg-khaki-100">
+    <div className="bg-khaki-100 h-screen">
       <div className="mx-auto h-full max-w-xl pb-[max(1rem,env(safe-area-inset-bottom))]">
         {route.screen === "home" && (
           <HomeScreen

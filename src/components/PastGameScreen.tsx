@@ -59,13 +59,13 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
 
       {/* Board - read-only */}
       <div className="shrink-0">
-        <div className="flex flex-col items-center w-full">
+        <div className="flex w-full flex-col items-center">
           <ScrabbleBoard tiles={board} highlightedTiles={highlightedTiles} />
         </div>
       </div>
 
       {/* Player panels + history - scroll together horizontally, each panel scrolls vertically */}
-      <div className="min-h-0 flex-1 overflow-x-auto -mx-2 px-2 py-1">
+      <div className="-mx-2 min-h-0 flex-1 overflow-x-auto px-2 py-1">
         <div className="flex h-full w-full gap-3">
           {players.map((player, index) => {
             const score = scores[index]
@@ -85,7 +85,7 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
               >
                 {/* Player panel header */}
                 <div
-                  className="shrink-0 flex items-center gap-3 p-2"
+                  className="flex shrink-0 items-center gap-3 p-2"
                   style={{
                     backgroundColor: isWinner ? `${player.color}20` : "transparent",
                     borderBottomWidth: 2,
@@ -116,8 +116,8 @@ export const PastGameScreen = ({ gameId, onBack }: Props) => {
       </div>
 
       {/* Footer with action buttons */}
-      <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 pb-1 relative z-60">
-        <div className="flex gap-2 w-max">
+      <div className="scrollbar-none relative z-60 -mx-2 shrink-0 overflow-x-auto px-2 pb-1">
+        <div className="flex w-max gap-2">
           <Button
             variant="outline"
             size="xs"

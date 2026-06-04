@@ -60,7 +60,7 @@ export const HomeScreen = ({
             {/* Simple tile-style logo */}
             <div className="relative flex h-10 w-10 -rotate-12 items-center justify-center rounded border border-amber-300 bg-amber-100 font-bold text-amber-900 shadow-[0_3px_0_0_var(--color-amber-300)]">
               <span className="text-2xl">S</span>
-              <span className="absolute bottom-0.5 right-1 text-[8px]">1</span>
+              <span className="absolute right-1 bottom-0.5 text-[8px]">1</span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-neutral-800">Scorable</h1>
           </div>

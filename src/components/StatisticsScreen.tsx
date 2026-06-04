@@ -126,17 +126,17 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
         winRate: gamesPlayed > 0 ? gamesWon / gamesPlayed : 0,
         totalScore: gameScores.reduce((a, b) => a + b, 0),
         avgScore:
-          gameScores.length > 0 ?
-            Math.round(gameScores.reduce((a, b) => a + b, 0) / gameScores.length)
-          : 0,
+          gameScores.length > 0
+            ? Math.round(gameScores.reduce((a, b) => a + b, 0) / gameScores.length)
+            : 0,
         highScore: gameScores.length > 0 ? Math.max(...gameScores) : 0,
         lowScore: gameScores.length > 0 ? Math.min(...gameScores) : 0,
         gameData: filteredGameData,
         moveData: filteredMoveData,
         avgMoveScore:
-          moveScores.length > 0 ?
-            Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)
-          : 0,
+          moveScores.length > 0
+            ? Math.round(moveScores.reduce((a, b) => a + b, 0) / moveScores.length)
+            : 0,
         maxMoveScore,
         bestMoveLabel,
       })
@@ -187,7 +187,7 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
         <Header title="Statistics" onBack={onBack} />
 
         {/* Player stats */}
-        {stats.length === 0 ?
+        {stats.length === 0 ? (
           <div className="text-center text-neutral-500">
             <p>No player statistics yet</p>
             <p className="text-sm">
@@ -197,7 +197,8 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
               {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"} completed
             </p>
           </div>
-        : <div className="flex flex-col gap-6">
+        ) : (
+          <div className="flex flex-col gap-6">
             {stats.map(player => (
               <div
                 key={player.name}
@@ -232,9 +233,8 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
                       {
                         value: player.maxMoveScore,
                         label: "best:",
-                        labelValue:
-                          player.bestMoveLabel ?
-                            `${player.bestMoveLabel} (${player.maxMoveScore})`
+                        labelValue: player.bestMoveLabel
+                          ? `${player.bestMoveLabel} (${player.maxMoveScore})`
                           : player.maxMoveScore,
                         type: "best",
                       },
@@ -252,11 +252,11 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
                     maxValue={plotRanges.gameScores.max}
                     getTooltip={d => d.label ?? String(d.value)}
                     onDotClick={
-                      onViewPastGame ?
-                        d => {
-                          if (d.gameId) onViewPastGame(d.gameId)
-                        }
-                      : undefined
+                      onViewPastGame
+                        ? d => {
+                            if (d.gameId) onViewPastGame(d.gameId)
+                          }
+                        : undefined
                     }
                     referenceLines={[
                       {
@@ -277,7 +277,7 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
               </div>
             ))}
           </div>
-        }
+        )}
       </div>
     </div>
   )

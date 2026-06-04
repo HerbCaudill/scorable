@@ -39,13 +39,13 @@ const convertGcgToMoves = (gcg: GcgGame, swapPlayers: boolean = false): GameMove
 
     for (let j = 0; j < playMove.word.length; j++) {
       const row =
-        playMove.position.direction === "vertical" ?
-          playMove.position.row + j
-        : playMove.position.row
+        playMove.position.direction === "vertical"
+          ? playMove.position.row + j
+          : playMove.position.row
       const col =
-        playMove.position.direction === "horizontal" ?
-          playMove.position.col + j
-        : playMove.position.col
+        playMove.position.direction === "horizontal"
+          ? playMove.position.col + j
+          : playMove.position.col
 
       // Only include new tiles
       if (board[row][col] === null) {
@@ -101,8 +101,9 @@ export const createTestGame = (repo: Repo, options: CreateGameOptions): Document
   const currentPlayerIndex = moves.length > 0 ? (moves[moves.length - 1].playerIndex + 1) % 2 : 0
 
   // Determine player order based on swapPlayers
-  const [firstPlayer, secondPlayer] =
-    swapPlayers ? [gcg.player2, gcg.player1] : [gcg.player1, gcg.player2]
+  const [firstPlayer, secondPlayer] = swapPlayers
+    ? [gcg.player2, gcg.player1]
+    : [gcg.player1, gcg.player2]
 
   const handle = repo.create<GameDoc>()
   handle.change(d => {
@@ -145,8 +146,9 @@ export const createTestGames = (repo: Repo): TestGameInfo[] => {
     const swapPlayers = Math.random() < 0.5
 
     // Player names in the order they appear in the game
-    const playerNames: [string, string] =
-      swapPlayers ? [gcg.player2.name, gcg.player1.name] : [gcg.player1.name, gcg.player2.name]
+    const playerNames: [string, string] = swapPlayers
+      ? [gcg.player2.name, gcg.player1.name]
+      : [gcg.player1.name, gcg.player2.name]
 
     let options: CreateGameOptions
 

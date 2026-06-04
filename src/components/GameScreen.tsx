@@ -249,9 +249,8 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
   const [, setTick] = useState(0)
 
   // Compute timer state from events (called on each render when timer running)
-  const timerState =
-    currentGame ?
-      computeTimerState(currentGame.timerEvents, currentGame.players.length)
+  const timerState = currentGame
+    ? computeTimerState(currentGame.timerEvents, currentGame.players.length)
     : { timeRemaining: [], activePlayerIndex: null, isRunning: false }
 
   const timerRunning = timerState.isRunning
@@ -315,9 +314,8 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
   const displayBoard = isEditing ? getBoardExcludingMove(moves, editingMoveIndex) : board
 
   // For validation: first move = no tiles placed before this point
-  const isFirstMove =
-    isEditing ?
-      !moves.slice(0, editingMoveIndex).some(m => m.tilesPlaced.length > 0)
+  const isFirstMove = isEditing
+    ? !moves.slice(0, editingMoveIndex).some(m => m.tilesPlaced.length > 0)
     : board.every(row => row.every(cell => cell === null))
 
   // Handle entering edit mode
@@ -405,7 +403,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
               </ul>
               {validWords.length > 0 && (
                 <>
-                  <div className="font-medium mt-2">Valid words:</div>
+                  <div className="mt-2 font-medium">Valid words:</div>
                   <ul className="mt-1 list-disc pl-4">
                     {validWords.map(word => (
                       <WordWithDefinition key={word} word={word} />
@@ -599,11 +597,12 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
           title={isEditing ? "Editing move" : undefined}
           onBack={isEditing ? handleCancelEdit : handleBack}
           rightContent={
-            isEditing ?
+            isEditing ? (
               <Button variant="default" size="xs" onClick={handleSaveEdit}>
                 Save
               </Button>
-            : <>
+            ) : (
+              <>
                 <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
                   <IconArrowBackUp size={14} />
                   Undo
@@ -613,6 +612,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                   Redo
                 </Button>
               </>
+            )
           }
         />
       </div>
@@ -635,7 +635,7 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
       </div>
 
       {/* Player panels + history - scroll together horizontally, each panel scrolls vertically */}
-      <div className="min-h-0 flex-1 overflow-x-auto -mx-2 px-2 py-1">
+      <div className="-mx-2 min-h-0 flex-1 overflow-x-auto px-2 py-1">
         <div className="flex h-full w-full gap-3">
           {players.map((player, index) => {
             const isActive = index === currentPlayerIndex
@@ -657,15 +657,14 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                 data-player={player.name}
                 className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
                 style={{
-                  boxShadow:
-                    isActive ?
-                      `0 0 0 1px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
+                  boxShadow: isActive
+                    ? `0 0 0 1px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
                     : `0 0 0 1px ${player.color}40, 0 3px 0 0 ${darkenColor(player.color)}40`,
                 }}
               >
                 {/* Player panel header */}
                 <div
-                  className="shrink-0 flex cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
+                  className="flex shrink-0 cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
                   style={{
                     backgroundColor: isActive ? `${player.color}20` : "transparent",
                     borderBottomWidth: 2,
@@ -697,9 +696,9 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                     handleMoveAction(index, playerMoveIndex, action)
                   }
                   editingIndex={
-                    editingMoveInfo?.playerIndex === index ?
-                      editingMoveInfo.playerMoveIndex
-                    : undefined
+                    editingMoveInfo?.playerIndex === index
+                      ? editingMoveInfo.playerMoveIndex
+                      : undefined
                   }
                   isLastMove={playerMoveIndex => isLastMoveForPlayer(index, playerMoveIndex)}
                   className="min-h-0 flex-1 overflow-y-auto p-1 text-xs [&_span:first-child]:font-mono"
@@ -712,24 +711,23 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
 
       {/* Action buttons - horizontally scrolling container at bottom */}
       {!isEditing && (
-        <div className="shrink-0 overflow-x-auto scrollbar-none -mx-2 px-2 pb-1 relative z-60">
-          <div className="flex gap-2 w-max">
-            {timerEverUsed ?
+        <div className="scrollbar-none relative z-60 -mx-2 shrink-0 overflow-x-auto px-2 pb-1">
+          <div className="flex w-max gap-2">
+            {timerEverUsed ? (
               <Button
                 variant={timerRunning ? "outline" : "default"}
                 size="xs"
                 onClick={handleTimerToggle}
               >
-                {timerRunning ?
-                  <IconPlayerPause size={14} />
-                : <IconPlayerPlay size={14} />}
+                {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
                 {timerRunning ? "Pause" : "Resume"}
               </Button>
-            : <Button variant="outline" size="xs" onClick={handleTimerToggle}>
+            ) : (
+              <Button variant="outline" size="xs" onClick={handleTimerToggle}>
                 <IconPlayerPlay size={14} />
                 Timer
               </Button>
-            }
+            )}
             <Button variant="outline" size="xs" onClick={handleConfirmPass}>
               <IconHandStop size={14} />
               Pass
@@ -781,9 +779,9 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
                       <Tile letter={w.tile === "blank" ? " " : w.tile} variant="existing" />
                     </div>
                     <span>
-                      {w.available === 0 ?
-                        "none left"
-                      : `${w.used} played, but only ${w.available} left`}
+                      {w.available === 0
+                        ? "none left"
+                        : `${w.used} played, but only ${w.available} left`}
                     </span>
                   </div>
                 ))}

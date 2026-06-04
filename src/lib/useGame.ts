@@ -68,23 +68,20 @@ const toAppGame = (doc: GameDoc): Game => {
         col: t.col,
         tile: t.tile,
       })),
-      adjustment:
-        m.adjustment ?
-          {
+      adjustment: m.adjustment
+        ? {
             rackTiles: [...m.adjustment.rackTiles],
             deduction: m.adjustment.deduction,
             bonus: m.adjustment.bonus,
           }
         : undefined,
-      failedChallenge:
-        m.failedChallenge ?
-          {
+      failedChallenge: m.failedChallenge
+        ? {
             words: [...m.failedChallenge.words],
           }
         : undefined,
-      successfulChallenge:
-        m.successfulChallenge ?
-          {
+      successfulChallenge: m.successfulChallenge
+        ? {
             words: [...m.successfulChallenge.words],
           }
         : undefined,
@@ -163,8 +160,9 @@ export const useGame = (id: DocumentId | null): UseGameResult => {
       moves: doc.moves.map(m => ({
         playerIndex: m.playerIndex,
         tilesPlaced: m.tilesPlaced.map(t => ({ row: t.row, col: t.col, tile: t.tile })),
-        adjustment:
-          m.adjustment ? { ...m.adjustment, rackTiles: [...m.adjustment.rackTiles] } : undefined,
+        adjustment: m.adjustment
+          ? { ...m.adjustment, rackTiles: [...m.adjustment.rackTiles] }
+          : undefined,
       })),
       currentPlayerIndex: doc.currentPlayerIndex,
       timerEventsLength: doc.timerEvents?.length ?? 0,

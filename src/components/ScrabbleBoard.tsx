@@ -121,9 +121,8 @@ const ScrabbleBoard = ({
   )
 
   // Combined view of all tiles (existing + new)
-  const allTiles =
-    tiles ?
-      tiles.map((row, rowIndex) =>
+  const allTiles = tiles
+    ? tiles.map((row, rowIndex) =>
         row.map((tile, colIndex) => newTiles[rowIndex][colIndex] ?? tile),
       )
     : newTiles
@@ -435,7 +434,7 @@ const ScrabbleBoard = ({
   // Bulls-eye component for start square - sized relative to container
   const BullsEye = () => (
     <div className="relative flex items-center justify-center">
-      <div className="size-[2.5cqw] rounded-full border-[0.15cqw] border-white flex items-center justify-center">
+      <div className="flex size-[2.5cqw] items-center justify-center rounded-full border-[0.15cqw] border-white">
         <div className="size-[1cqw] rounded-full bg-white" />
       </div>
     </div>
@@ -445,19 +444,19 @@ const ScrabbleBoard = ({
     const center = 7
     // Get rotation angle based on position relative to center
     const rotation =
-      row === center && col === center ?
-        "rotate-0" // Center
-      : row === center ?
-        "rotate-0" // Center row - horizontal
-      : col === center ?
-        "rotate-90" // Center column - vertical
-      : row < center && col < center ?
-        "rotate-45" // Top-left quadrant
-      : row < center && col > center ?
-        "rotate-[135deg]" // Top-right quadrant
-      : row > center && col < center ?
-        "-rotate-45" // Bottom-left quadrant
-      : "-rotate-[135deg]" // Bottom-right quadrant
+      row === center && col === center
+        ? "rotate-0" // Center
+        : row === center
+          ? "rotate-0" // Center row - horizontal
+          : col === center
+            ? "rotate-90" // Center column - vertical
+            : row < center && col < center
+              ? "rotate-45" // Top-left quadrant
+              : row < center && col > center
+                ? "rotate-[135deg]" // Top-right quadrant
+                : row > center && col < center
+                  ? "-rotate-45" // Bottom-left quadrant
+                  : "-rotate-[135deg]" // Bottom-right quadrant
 
     switch (squareType) {
       case "DL":
@@ -480,18 +479,18 @@ const ScrabbleBoard = ({
     <div
       className={cx(
         "absolute w-0 h-0 border-solid z-20",
-        direction === "horizontal" ?
-          // Right-pointing triangle, positioned to the right of the box
-          "left-full top-1/2 -translate-y-1/2  border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-teal-600"
-          // Down-pointing triangle, positioned below the box
-        : "top-full left-1/2 -translate-x-1/2  border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-teal-600",
+        direction === "horizontal"
+          ? // Right-pointing triangle, positioned to the right of the box
+            "left-full top-1/2 -translate-y-1/2  border-t-[1.2cqw] border-b-[1.2cqw] border-l-[1.5cqw] border-t-transparent border-b-transparent border-l-teal-600"
+          : // Down-pointing triangle, positioned below the box
+            "top-full left-1/2 -translate-x-1/2  border-l-[1.2cqw] border-r-[1.2cqw] border-t-[1.5cqw] border-l-transparent border-r-transparent border-t-teal-600",
       )}
     />
   )
 
   // Score badge component - shows current move score at cursor
   const ScoreBadge = ({ score }: { score: number }) => (
-    <div className="absolute -top-[1cqw] -right-[1cqw] z-30 bg-teal-600 text-white text-[2cqw] font-bold rounded-full min-w-[4cqw] h-[4cqw] flex items-center justify-center px-[0.8cqw] shadow-md">
+    <div className="absolute -top-[1cqw] -right-[1cqw] z-30 flex h-[4cqw] min-w-[4cqw] items-center justify-center rounded-full bg-teal-600 px-[0.8cqw] text-[2cqw] font-bold text-white shadow-md">
       {score}
     </div>
   )
@@ -502,11 +501,11 @@ const ScrabbleBoard = ({
   return (
     <div
       ref={boardRef}
-      className="@container w-full outline-none relative p-1"
+      className="@container relative w-full p-1 outline-none"
       role="grid"
       aria-label="Scrabble board"
     >
-      <div className="grid w-full aspect-square grid-cols-15 gap-[0.25cqw] bg-khaki-300 p-[0.25cqw]">
+      <div className="bg-khaki-300 grid aspect-square w-full grid-cols-15 gap-[0.25cqw] p-[0.25cqw]">
         {boardLayout.map((row, rowIndex) =>
           row.map((squareType, colIndex) => {
             const tile = allTiles[rowIndex][colIndex]
@@ -523,29 +522,26 @@ const ScrabbleBoard = ({
                 aria-label={cellLabel}
                 aria-selected={hasCursor}
                 data-has-tile={hasTile || undefined}
-                data-tile-state={
-                  isNewTile ? "new"
-                  : hasTile ?
-                    "existing"
-                  : undefined
-                }
+                data-tile-state={isNewTile ? "new" : hasTile ? "existing" : undefined}
                 data-cursor-direction={hasCursor ? cursor?.direction : undefined}
                 onClick={() => handleSquareClick(rowIndex, colIndex)}
                 className={cx(
                   "relative flex aspect-square items-center justify-center overflow-visible",
-                  squareType === "DW" || squareType === "TW" || squareType === "ST" ?
-                    "bg-khaki-500"
-                  : "bg-khaki-200",
+                  squareType === "DW" || squareType === "TW" || squareType === "ST"
+                    ? "bg-khaki-500"
+                    : "bg-khaki-200",
                   editable && "cursor-pointer hover:opacity-80",
                   hasCursor && "z-10",
                 )}
               >
-                {hasTile ?
+                {hasTile ? (
                   <Tile letter={tile} variant={isNewTile ? "new" : "existing"} />
-                : renderSquareContent(squareType, rowIndex, colIndex)}
+                ) : (
+                  renderSquareContent(squareType, rowIndex, colIndex)
+                )}
                 {hasCursor && (
                   <>
-                    <div className="absolute inset-0 ring-[0.4cqw] ring-teal-600 ring-inset pointer-events-none z-10" />
+                    <div className="pointer-events-none absolute inset-0 z-10 ring-[0.4cqw] ring-teal-600 ring-inset" />
                     {cursor && <CursorArrow direction={cursor.direction} />}
                     {currentMoveScore !== null && currentMoveScore > 0 && (
                       <ScoreBadge score={currentMoveScore} />
@@ -553,7 +549,7 @@ const ScrabbleBoard = ({
                   </>
                 )}
                 {highlighted && (
-                  <div className="absolute inset-0 ring-[0.4cqw] ring-orange-500 ring-inset pointer-events-none z-10 animate-highlight-fade" />
+                  <div className="animate-highlight-fade pointer-events-none absolute inset-0 z-10 ring-[0.4cqw] ring-orange-500 ring-inset" />
                 )}
               </div>
             )

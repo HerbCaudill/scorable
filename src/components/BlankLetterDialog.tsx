@@ -83,23 +83,19 @@ export const BlankLetterDialog = ({ open, blanks, onComplete, onCancel }: Props)
   const renderWordPreview = () => {
     let letterIndex = 0
     return (
-      <div className="flex flex-wrap gap-1 justify-center">
+      <div className="flex flex-wrap justify-center gap-1">
         {blanks.map((_, i) => {
           const letter = assignedLetters[letterIndex]
           const isCurrent = i === assignedLetters.length
           letterIndex = i < assignedLetters.length ? letterIndex + 1 : letterIndex
           return (
-            <div
-              key={i}
-              className="relative"
-              style={{ width: "2.5rem", height: "2.5rem" }}
-            >
+            <div key={i} className="relative" style={{ width: "2.5rem", height: "2.5rem" }}>
               <Tile letter={letter ?? ""} variant="new" />
               {isCurrent && (
-                <div className="absolute inset-0 ring-2 ring-teal-600 ring-inset pointer-events-none animate-pulse" />
+                <div className="pointer-events-none absolute inset-0 animate-pulse ring-2 ring-teal-600 ring-inset" />
               )}
               {!letter && !isCurrent && (
-                <div className="absolute inset-0 flex items-center justify-center text-neutral-400 text-xl font-bold">
+                <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-neutral-400">
                   ?
                 </div>
               )}

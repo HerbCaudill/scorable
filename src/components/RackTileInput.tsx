@@ -132,10 +132,13 @@ export const RackTileInput = ({
         className={cx(
           "flex min-h-10 cursor-text items-center gap-1 rounded-lg border-2 px-2 py-1 outline-none transition-colors",
           disabled ? "cursor-default bg-neutral-100" : "",
-          error ? "border-red-400"
-          : isDragOver ? "border-teal-500 bg-teal-50"
-          : isFocused ? "border-teal-500"
-          : "border-neutral-300",
+          error
+            ? "border-red-400"
+            : isDragOver
+              ? "border-teal-500 bg-teal-50"
+              : isFocused
+                ? "border-teal-500"
+                : "border-neutral-300",
         )}
         style={
           {
@@ -161,7 +164,7 @@ export const RackTileInput = ({
             {/* X icon overlay when tile is selected */}
             {selectedTileIndex === index && (
               <button
-                className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
+                className="absolute -top-1 -right-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
                 onClick={e => handleRemoveTile(index, e)}
                 aria-label={`Remove ${tile === " " ? "blank" : tile} tile`}
                 data-testid="remove-tile-button"
@@ -180,7 +183,7 @@ export const RackTileInput = ({
         ))}
 
         {/* Blinking cursor when focused */}
-        {isFocused && !disabled && <div className="h-6 w-0.5 animate-blink bg-teal-500" />}
+        {isFocused && !disabled && <div className="animate-blink h-6 w-0.5 bg-teal-500" />}
 
         {/* Deduction display */}
         {deduction !== undefined && deduction !== 0 && (
@@ -202,9 +205,9 @@ export const RackTileInput = ({
             <Tile letter={error.tile === " " ? " " : error.tile} variant="existing" />
           </div>
           <span>
-            {error.available === 0 ?
-              "none left"
-            : `${error.entered} entered, but only ${error.available} left`}
+            {error.available === 0
+              ? "none left"
+              : `${error.entered} entered, but only ${error.available} left`}
           </span>
         </div>
       )}

@@ -114,7 +114,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-md mx-auto">
+    <div className="mx-auto flex max-w-md flex-col gap-4 p-4">
       {players.map((player, index) => (
         <DropdownMenu
           key={index}
@@ -123,18 +123,13 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
         >
           <DropdownMenuTrigger asChild>
             <div
-              className={`
-                flex items-center justify-between
-                px-4 py-3
-                border-2 rounded
-                cursor-pointer
-                transition-colors
-                ${
-                  player ? "border-solid border-black bg-white"
-                  : activeDropdown === index ? "border-solid border-black bg-white"
-                  : "border-dashed border-gray-400 bg-white"
-                }
-              `}
+              className={`flex cursor-pointer items-center justify-between rounded border-2 px-4 py-3 transition-colors ${
+                player
+                  ? "border-solid border-black bg-white"
+                  : activeDropdown === index
+                    ? "border-solid border-black bg-white"
+                    : "border-dashed border-gray-400 bg-white"
+              } `}
             >
               <span className={player ? "text-black" : "text-gray-400"}>
                 {index + 1}. {player ?? "player name"}
@@ -146,7 +141,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                     event.stopPropagation()
                     handleClearPlayer(index)
                   }}
-                  className="text-gray-400 hover:text-black transition-colors"
+                  className="text-gray-400 transition-colors hover:text-black"
                   aria-label="Clear player"
                 >
                   <IconX size={16} />
@@ -155,7 +150,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
-            {isAddingNew ?
+            {isAddingNew ? (
               <div className="p-2">
                 <Input
                   ref={inputRef}
@@ -165,7 +160,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   onKeyDown={event => handleNewNameKeyDown(event, index)}
                   placeholder="Enter name..."
                 />
-                <div className="flex gap-2 mt-2">
+                <div className="mt-2 flex gap-2">
                   <Button
                     size="sm"
                     onClick={() => handleNewNameSubmit(index)}
@@ -187,7 +182,8 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   </Button>
                 </div>
               </div>
-            : <>
+            ) : (
+              <>
                 {availablePlayers.map(name => (
                   <DropdownMenuItem key={name} onSelect={() => handleSelectPlayer(index, name)}>
                     {name}
@@ -204,7 +200,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
                   New...
                 </DropdownMenuItem>
               </>
-            }
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ))}
@@ -213,10 +209,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
         size="lg"
         onClick={handleStartGame}
         disabled={!canStartGame}
-        className={`
-          mt-4 w-full
-          ${canStartGame ? "" : "opacity-50 cursor-not-allowed"}
-        `}
+        className={`mt-4 w-full ${canStartGame ? "" : "cursor-not-allowed opacity-50"} `}
       >
         <IconPlayerPlay size={20} />
         Start game

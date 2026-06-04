@@ -53,14 +53,16 @@ export const ConfirmDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {onSecondary ?
+          {onSecondary ? (
             <AlertDialogAction
               onClick={onSecondary}
               className={buttonVariants({ variant: secondaryVariant })}
             >
               {secondaryText}
             </AlertDialogAction>
-          : <AlertDialogCancel>{cancelText}</AlertDialogCancel>}
+          ) : (
+            <AlertDialogCancel>{cancelText}</AlertDialogCancel>
+          )}
           <AlertDialogAction
             onClick={onConfirm}
             className={buttonVariants({ variant: confirmVariant })}

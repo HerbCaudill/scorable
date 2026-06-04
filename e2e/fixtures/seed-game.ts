@@ -107,9 +107,8 @@ export async function seedGame(page: Page, options: SeedGameOptions): Promise<st
       // Update localStorage to include this game ID
       const storageKey = "scorable-local-storage"
       const existing = localStorage.getItem(storageKey)
-      const state =
-        existing ?
-          JSON.parse(existing)
+      const state = existing
+        ? JSON.parse(existing)
         : { state: { knownGameIds: [], playerRecords: [] }, version: 0 }
 
       if (!state.state.knownGameIds.includes(documentId)) {
@@ -494,13 +493,13 @@ export function convertGcgToSeedMoves(gcg: GcgGame): {
 
     for (let j = 0; j < playMove.word.length; j++) {
       const row =
-        playMove.position.direction === "vertical" ?
-          playMove.position.row + j
-        : playMove.position.row
+        playMove.position.direction === "vertical"
+          ? playMove.position.row + j
+          : playMove.position.row
       const col =
-        playMove.position.direction === "horizontal" ?
-          playMove.position.col + j
-        : playMove.position.col
+        playMove.position.direction === "horizontal"
+          ? playMove.position.col + j
+          : playMove.position.col
 
       // Only include new tiles
       if (board[row][col] === null) {

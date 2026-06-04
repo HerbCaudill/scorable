@@ -126,7 +126,7 @@ export const Histogram = ({
           })}
         {/* Tooltip */}
         {showTooltip && hoveredBin !== null && bins[hoveredBin] > 0 && (
-          <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-neutral-800 px-2 py-0.5 text-xs text-white">
+          <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 rounded bg-neutral-800 px-2 py-0.5 text-xs whitespace-nowrap text-white">
             {getBinRange(hoveredBin).binStart}-{getBinRange(hoveredBin).binEnd}: {bins[hoveredBin]}
           </div>
         )}

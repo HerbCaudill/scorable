@@ -289,9 +289,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                 onClick={() => setPlayerWhoEndedGame(index)}
                 className={cx(
                   "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                  playerWhoEndedGame === index ? "text-white" : (
-                    "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-                  ),
+                  playerWhoEndedGame === index
+                    ? "text-white"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
                 )}
                 style={{
                   backgroundColor: playerWhoEndedGame === index ? player.color : undefined,
@@ -304,9 +304,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
               onClick={() => setPlayerWhoEndedGame(null)}
               className={cx(
                 "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                playerWhoEndedGame === null ?
-                  "bg-neutral-800 text-white"
-                : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
+                playerWhoEndedGame === null
+                  ? "bg-neutral-800 text-white"
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
               )}
             >
               Nobody (blocked)
@@ -377,9 +377,9 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
                     onClick={() => handleUnaccountedTileClick(tile)}
                     className={cx(
                       "h-8 w-8 transition-opacity",
-                      focusedPlayerIndex === null ? "cursor-grab opacity-50" : (
-                        "cursor-pointer active:cursor-grabbing"
-                      ),
+                      focusedPlayerIndex === null
+                        ? "cursor-grab opacity-50"
+                        : "cursor-pointer active:cursor-grabbing",
                     )}
                     aria-label={`Add ${tile === " " ? "blank" : tile} to rack`}
                   >

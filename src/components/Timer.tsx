@@ -27,7 +27,7 @@ export const Timer = ({ timeRemainingMs, color, isActive = true, isPaused = fals
       className="relative flex size-12 shrink-0 items-center justify-center transition-opacity"
       style={{ opacity: isActive && !isPaused ? 1 : 0.4 }}
     >
-      <svg className="absolute size-12 rotate-90 -scale-x-100">
+      <svg className="absolute size-12 -scale-x-100 rotate-90">
         {/* Background circle (time used) */}
         <circle cx="24" cy="24" r={radius} fill="none" stroke="#e5e5e5" strokeWidth="4" />
         {/* Progress circle (time remaining) */}
