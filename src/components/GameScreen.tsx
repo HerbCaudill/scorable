@@ -30,6 +30,7 @@ import { BlankLetterDialog } from "./BlankLetterDialog"
 import { ConfirmDialog } from "./ConfirmDialog"
 import { EndGameScreen } from "./EndGameScreen"
 import { Header } from "./Header"
+import { usePreventReload } from "@/lib/usePreventReload"
 import { MobileKeyboard } from "./MobileKeyboard"
 import { MoveHistoryList, type MoveAction } from "./MoveHistoryList"
 import ScrabbleBoard from "./ScrabbleBoard"
@@ -149,6 +150,11 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
     editingIndex: number
   } | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  usePreventReload(
+    newTiles.some(row => row.some(tile => tile !== null)) ||
+      editingMoveIndex !== null ||
+      showEndGameScreen,
+  )
   const removeGameId = useLocalStore(s => s.removeGameId)
 
   // Current player index - needed early for callbacks
@@ -590,243 +596,242 @@ export const GameScreen = ({ gameId, onEndGame, onShowTiles }: Props) => {
   }
 
   return (
-    <div className="flex h-dvh flex-col gap-3 overflow-hidden p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Top navigation bar */}
-      <div className="shrink-0">
-        <Header
-          title={isEditing ? "Editing move" : undefined}
-          onBack={isEditing ? handleCancelEdit : handleBack}
-          rightContent={
-            isEditing ? (
-              <Button variant="default" size="xs" onClick={handleSaveEdit}>
-                Save
-              </Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
-                  <IconArrowBackUp size={14} />
-                  Undo
-                </Button>
-                <Button variant="ghost" size="xs" onClick={redo} disabled={!canRedo}>
-                  <IconArrowForwardUp size={14} />
-                  Redo
-                </Button>
-              </>
-            )
-          }
-        />
-      </div>
-
-      {/*  Board + Player panels */}
-      <div className="shrink-0">
-        {/* Board area */}
-        <div className="w-full">
-          <ScrabbleBoard
-            tiles={displayBoard}
-            newTiles={newTiles}
-            onNewTilesChange={setNewTiles}
-            editable
-            highlightedTiles={highlightedTiles}
-            onEnter={handleEndTurn}
-            onKeyPress={handleKeyPressCallback}
-            onCursorChange={handleCursorChangeCallback}
-          />
-        </div>
-      </div>
-
-      {/* Player panels + history - scroll together horizontally, each panel scrolls vertically */}
-      <div className="-mx-2 min-h-0 flex-1 overflow-x-auto px-2 py-1">
-        <div className="flex h-full w-full gap-3">
-          {players.map((player, index) => {
-            const isActive = index === currentPlayerIndex
-            const score = getPlayerScore(currentGame, index)
-            const moveHistory = getPlayerMoveHistory(moves, index)
-
-            const handlePlayerClick = () => {
-              // Only current player or next player can be clicked to end turn
-              if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
-              handleEndTurn()
-            }
-
-            return (
-              <div
-                key={index}
-                role="region"
-                aria-label={`${player.name}'s score panel`}
-                aria-current={isActive ? "true" : undefined}
-                data-player={player.name}
-                className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
-                style={{
-                  boxShadow: isActive
-                    ? `0 0 0 1px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
-                    : `0 0 0 1px ${player.color}40, 0 3px 0 0 ${darkenColor(player.color)}40`,
-                }}
-              >
-                {/* Player panel header */}
-                <div
-                  className="flex shrink-0 cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
-                  style={{
-                    backgroundColor: isActive ? `${player.color}20` : "transparent",
-                    borderBottomWidth: 2,
-                    borderBottomColor: isActive ? player.color : `${player.color}20`,
-                  }}
-                  onClick={handlePlayerClick}
-                >
-                  {timerEverUsed && (
-                    <Timer
-                      timeRemainingMs={timerState.timeRemaining[index] ?? player.timeRemainingMs}
-                      color={player.color}
-                      isActive={isActive}
-                      isPaused={!timerRunning}
-                    />
-                  )}
-
-                  {/* Player name and score */}
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">{player.name}</span>
-                    <span className="text-2xl font-bold">{score}</span>
-                  </div>
-                </div>
-
-                {/* Move history for this player - scrolls independently */}
-                <MoveHistoryList
-                  history={moveHistory}
-                  onMoveClick={highlightTiles}
-                  onMoveAction={(playerMoveIndex, action) =>
-                    handleMoveAction(index, playerMoveIndex, action)
-                  }
-                  editingIndex={
-                    editingMoveInfo?.playerIndex === index
-                      ? editingMoveInfo.playerMoveIndex
-                      : undefined
-                  }
-                  isLastMove={playerMoveIndex => isLastMoveForPlayer(index, playerMoveIndex)}
-                  className="min-h-0 flex-1 overflow-y-auto p-1 text-xs [&_span:first-child]:font-mono"
-                />
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Action buttons - horizontally scrolling container at bottom */}
-      {!isEditing && (
-        <div className="scrollbar-none relative z-60 -mx-2 shrink-0 overflow-x-auto px-2 pb-1">
-          <div className="flex w-max gap-2">
-            {timerEverUsed ? (
-              <Button
-                variant={timerRunning ? "outline" : "default"}
-                size="xs"
-                onClick={handleTimerToggle}
-              >
-                {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
-                {timerRunning ? "Pause" : "Resume"}
-              </Button>
-            ) : (
-              <Button variant="outline" size="xs" onClick={handleTimerToggle}>
-                <IconPlayerPlay size={14} />
-                Timer
-              </Button>
-            )}
-            <Button variant="outline" size="xs" onClick={handleConfirmPass}>
-              <IconHandStop size={14} />
-              Pass
+      <Header
+        title={isEditing ? "Editing move" : undefined}
+        onBack={isEditing ? handleCancelEdit : handleBack}
+        rightContent={
+          isEditing ? (
+            <Button variant="default" size="xs" onClick={handleSaveEdit}>
+              Save
             </Button>
-            <Button
-              variant="outline"
-              size="xs"
-              onClick={() => (onShowTiles ? onShowTiles() : setShowTileBag(true))}
-            >
-              <IconCards size={14} />
-              Tiles ({remainingTileCount})
-            </Button>
-            {canEndNormally && (
-              <Button variant="outline" size="xs" onClick={handleEndGameClick}>
-                <IconFlag size={14} />
-                End
+          ) : (
+            <>
+              <Button variant="ghost" size="xs" onClick={undo} disabled={!canUndo}>
+                <IconArrowBackUp size={14} />
+                Undo
               </Button>
-            )}
-            <Button variant="outline" size="xs" onClick={handleShare}>
-              <IconShare size={14} />
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              size="xs"
-              className="text-red-600 hover:bg-red-50"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <IconTrash size={14} />
-              Delete
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Tile overuse confirmation dialog */}
-      <ConfirmDialog
-        open={tileOveruseConfirm !== null}
-        onOpenChange={open => !open && setTileOveruseConfirm(null)}
-        title="Too many tiles used"
-        description={
-          tileOveruseConfirm && (
-            <div className="text-left">
-              This move uses more tiles than exist in the game:
-              <div className="mt-2 flex flex-col gap-1.5">
-                {tileOveruseConfirm.warnings.map((w, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <div className="h-6 w-6 flex-shrink-0">
-                      <Tile letter={w.tile === "blank" ? " " : w.tile} variant="existing" />
-                    </div>
-                    <span>
-                      {w.available === 0
-                        ? "none left"
-                        : `${w.used} played, but only ${w.available} left`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-2">Do you want to play this move anyway?</p>
-            </div>
+              <Button variant="ghost" size="xs" onClick={redo} disabled={!canRedo}>
+                <IconArrowForwardUp size={14} />
+                Redo
+              </Button>
+            </>
           )
         }
-        secondaryText="Play anyway"
-        onSecondary={handleConfirmTileOveruse}
-        confirmText="Fix move"
-        onConfirm={() => setTileOveruseConfirm(null)}
       />
+      <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col gap-3 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        {/*  Board + Player panels */}
+        <div className="shrink-0">
+          {/* Board area */}
+          <div className="w-full">
+            <ScrabbleBoard
+              tiles={displayBoard}
+              newTiles={newTiles}
+              onNewTilesChange={setNewTiles}
+              editable
+              highlightedTiles={highlightedTiles}
+              onEnter={handleEndTurn}
+              onKeyPress={handleKeyPressCallback}
+              onCursorChange={handleCursorChangeCallback}
+            />
+          </div>
+        </div>
 
-      {/* Blank tile letter assignment dialog */}
-      <BlankLetterDialog
-        open={pendingBlankTiles !== null}
-        blanks={pendingBlankTiles?.blanks ?? []}
-        onComplete={handleBlankLettersComplete}
-        onCancel={handleBlankLettersCancel}
-      />
+        {/* Player panels + history - scroll together horizontally, each panel scrolls vertically */}
+        <div className="-mx-2 min-h-0 flex-1 overflow-x-auto px-2 py-1">
+          <div className="flex h-full w-full gap-3">
+            {players.map((player, index) => {
+              const isActive = index === currentPlayerIndex
+              const score = getPlayerScore(currentGame, index)
+              const moveHistory = getPlayerMoveHistory(moves, index)
 
-      {/* Blank tile letter assignment dialog for edit mode */}
-      <BlankLetterDialog
-        open={pendingEditBlankTiles !== null}
-        blanks={pendingEditBlankTiles?.blanks ?? []}
-        onComplete={handleEditBlankLettersComplete}
-        onCancel={handleEditBlankLettersCancel}
-      />
+              const handlePlayerClick = () => {
+                // Only current player or next player can be clicked to end turn
+                if (!isActive && index !== (currentPlayerIndex + 1) % players.length) return
+                handleEndTurn()
+              }
 
-      {/* Delete game confirmation dialog */}
-      <ConfirmDialog
-        open={showDeleteConfirm}
-        onOpenChange={setShowDeleteConfirm}
-        title="Delete game?"
-        description="This game will be permanently deleted. This cannot be undone."
-        confirmText="Delete"
-        confirmVariant="destructive"
-        onConfirm={handleDeleteGame}
-      />
+              return (
+                <div
+                  key={index}
+                  role="region"
+                  aria-label={`${player.name}'s score panel`}
+                  aria-current={isActive ? "true" : undefined}
+                  data-player={player.name}
+                  className="flex min-h-0 min-w-40 flex-1 flex-col rounded-lg bg-white"
+                  style={{
+                    boxShadow: isActive
+                      ? `0 0 0 1px ${player.color}, 0 3px 0 0 ${darkenColor(player.color)}`
+                      : `0 0 0 1px ${player.color}40, 0 3px 0 0 ${darkenColor(player.color)}40`,
+                  }}
+                >
+                  {/* Player panel header */}
+                  <div
+                    className="flex shrink-0 cursor-pointer items-center gap-3 p-2 transition-colors hover:opacity-80"
+                    style={{
+                      backgroundColor: isActive ? `${player.color}20` : "transparent",
+                      borderBottomWidth: 2,
+                      borderBottomColor: isActive ? player.color : `${player.color}20`,
+                    }}
+                    onClick={handlePlayerClick}
+                  >
+                    {timerEverUsed && (
+                      <Timer
+                        timeRemainingMs={timerState.timeRemaining[index] ?? player.timeRemainingMs}
+                        color={player.color}
+                        isActive={isActive}
+                        isPaused={!timerRunning}
+                      />
+                    )}
 
-      {/* Mobile keyboard - floating overlay */}
-      {isMobile && keyHandler && (
-        <MobileKeyboard onKeyPress={keyHandler} direction={cursorDirection} visible={hasCursor} />
-      )}
+                    {/* Player name and score */}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{player.name}</span>
+                      <span className="text-2xl font-bold">{score}</span>
+                    </div>
+                  </div>
+
+                  {/* Move history for this player - scrolls independently */}
+                  <MoveHistoryList
+                    history={moveHistory}
+                    onMoveClick={highlightTiles}
+                    onMoveAction={(playerMoveIndex, action) =>
+                      handleMoveAction(index, playerMoveIndex, action)
+                    }
+                    editingIndex={
+                      editingMoveInfo?.playerIndex === index
+                        ? editingMoveInfo.playerMoveIndex
+                        : undefined
+                    }
+                    isLastMove={playerMoveIndex => isLastMoveForPlayer(index, playerMoveIndex)}
+                    className="min-h-0 flex-1 overflow-y-auto p-1 text-xs [&_span:first-child]:font-mono"
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Action buttons - horizontally scrolling container at bottom */}
+        {!isEditing && (
+          <div className="scrollbar-none relative z-60 -mx-2 shrink-0 overflow-x-auto px-2 pb-1">
+            <div className="flex w-max gap-2">
+              {timerEverUsed ? (
+                <Button
+                  variant={timerRunning ? "outline" : "default"}
+                  size="xs"
+                  onClick={handleTimerToggle}
+                >
+                  {timerRunning ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+                  {timerRunning ? "Pause" : "Resume"}
+                </Button>
+              ) : (
+                <Button variant="outline" size="xs" onClick={handleTimerToggle}>
+                  <IconPlayerPlay size={14} />
+                  Timer
+                </Button>
+              )}
+              <Button variant="outline" size="xs" onClick={handleConfirmPass}>
+                <IconHandStop size={14} />
+                Pass
+              </Button>
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={() => (onShowTiles ? onShowTiles() : setShowTileBag(true))}
+              >
+                <IconCards size={14} />
+                Tiles ({remainingTileCount})
+              </Button>
+              {canEndNormally && (
+                <Button variant="outline" size="xs" onClick={handleEndGameClick}>
+                  <IconFlag size={14} />
+                  End
+                </Button>
+              )}
+              <Button variant="outline" size="xs" onClick={handleShare}>
+                <IconShare size={14} />
+                Share
+              </Button>
+              <Button
+                variant="outline"
+                size="xs"
+                className="text-red-600 hover:bg-red-50"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <IconTrash size={14} />
+                Delete
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Tile overuse confirmation dialog */}
+        <ConfirmDialog
+          open={tileOveruseConfirm !== null}
+          onOpenChange={open => !open && setTileOveruseConfirm(null)}
+          title="Too many tiles used"
+          description={
+            tileOveruseConfirm && (
+              <div className="text-left">
+                This move uses more tiles than exist in the game:
+                <div className="mt-2 flex flex-col gap-1.5">
+                  {tileOveruseConfirm.warnings.map((w, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                      <div className="h-6 w-6 flex-shrink-0">
+                        <Tile letter={w.tile === "blank" ? " " : w.tile} variant="existing" />
+                      </div>
+                      <span>
+                        {w.available === 0
+                          ? "none left"
+                          : `${w.used} played, but only ${w.available} left`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2">Do you want to play this move anyway?</p>
+              </div>
+            )
+          }
+          secondaryText="Play anyway"
+          onSecondary={handleConfirmTileOveruse}
+          confirmText="Fix move"
+          onConfirm={() => setTileOveruseConfirm(null)}
+        />
+
+        {/* Blank tile letter assignment dialog */}
+        <BlankLetterDialog
+          open={pendingBlankTiles !== null}
+          blanks={pendingBlankTiles?.blanks ?? []}
+          onComplete={handleBlankLettersComplete}
+          onCancel={handleBlankLettersCancel}
+        />
+
+        {/* Blank tile letter assignment dialog for edit mode */}
+        <BlankLetterDialog
+          open={pendingEditBlankTiles !== null}
+          blanks={pendingEditBlankTiles?.blanks ?? []}
+          onComplete={handleEditBlankLettersComplete}
+          onCancel={handleEditBlankLettersCancel}
+        />
+
+        {/* Delete game confirmation dialog */}
+        <ConfirmDialog
+          open={showDeleteConfirm}
+          onOpenChange={setShowDeleteConfirm}
+          title="Delete game?"
+          description="This game will be permanently deleted. This cannot be undone."
+          confirmText="Delete"
+          confirmVariant="destructive"
+          onConfirm={handleDeleteGame}
+        />
+
+        {/* Mobile keyboard - floating overlay */}
+        {isMobile && keyHandler && (
+          <MobileKeyboard onKeyPress={keyHandler} direction={cursorDirection} visible={hasCursor} />
+        )}
+      </div>
     </div>
   )
 }

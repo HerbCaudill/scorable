@@ -8,6 +8,7 @@ import { validateRackTiles, type RackValidationError } from "@/lib/validateRackT
 import { calculateEndGameAdjustments } from "@/lib/calculateEndGameAdjustments"
 import { cx } from "@/lib/cx"
 import { Header } from "./Header"
+import { usePreventReload } from "@/lib/usePreventReload"
 import type { Game, Adjustment } from "@/lib/types"
 
 export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
@@ -29,6 +30,7 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   const lastMovePlayerIndex = game.moves.length ? game.moves[game.moves.length - 1].playerIndex : 0
 
   const [playerWhoEndedGame, setPlayerWhoEndedGame] = useState<number | null>(lastMovePlayerIndex)
+  usePreventReload(true)
 
   // Initialize racks
   // - Player who ended the game has empty rack
@@ -274,11 +276,11 @@ export const EndGameScreen = ({ game, onBack, onApply }: Props) => {
   }
 
   return (
-    <div className="flex h-dvh flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       <Header title="End game" onBack={onBack} />
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-4">
+      <div className="mx-auto min-h-0 w-full max-w-xl flex-1 overflow-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         {/* Who ended the game selection */}
         <div className="mb-6">
           <h2 className="mb-2 text-sm font-medium text-neutral-600">Who ended the game?</h2>

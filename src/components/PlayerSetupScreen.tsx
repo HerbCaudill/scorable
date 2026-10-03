@@ -47,12 +47,13 @@ export const PlayerSetupScreen = ({ onGameCreated, onBack }: Props) => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="mx-auto w-full max-w-md px-4">
-        <Header title="New game" onBack={onBack} />
-
-        {/* Player setup form */}
-        <PlayerSetup previousPlayers={previousPlayers} onStartGame={handleStartGame} />
+    <div className="flex h-full flex-col overflow-hidden">
+      <Header title="New game" onBack={onBack} />
+      <div className="min-h-0 flex-1 overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="mx-auto w-full max-w-md px-4">
+          {/* Player setup form */}
+          <PlayerSetup previousPlayers={previousPlayers} onStartGame={handleStartGame} />
+        </div>
       </div>
     </div>
   )

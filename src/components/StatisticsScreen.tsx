@@ -182,102 +182,103 @@ export const StatisticsScreen = ({ onBack, onViewPastGame }: Props) => {
   }, [stats])
 
   return (
-    <div className="scrollbar-none flex h-full flex-col overflow-y-auto">
-      <div className="mx-auto w-full max-w-md px-4 pb-6">
-        <Header title="Statistics" onBack={onBack} />
+    <div className="flex h-full flex-col overflow-hidden">
+      <Header title="Statistics" onBack={onBack} />
+      <div className="scrollbar-none min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-md px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+          {/* Player stats */}
+          {stats.length === 0 ? (
+            <div className="text-center text-neutral-500">
+              <p>No player statistics yet</p>
+              <p className="text-sm">
+                Complete at least {MIN_GAMES_FOR_STATS} games to see player statistics
+              </p>
+              <p className="mt-4 text-xs text-neutral-400">
+                {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"} completed
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {stats.map(player => (
+                <div
+                  key={player.name}
+                  className="rounded-lg border border-neutral-300 bg-white px-4 py-6 shadow-[0_3px_0_0_var(--color-neutral-300)]"
+                >
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="font-semibold">{player.name}</span>
+                    <div className="text-right">
+                      <span className="text-lg font-bold text-green-600">
+                        {Math.round(player.winRate * 100)}%
+                      </span>
+                      <span className="ml-1 text-sm text-neutral-500">win rate</span>
+                    </div>
+                  </div>
 
-        {/* Player stats */}
-        {stats.length === 0 ? (
-          <div className="text-center text-neutral-500">
-            <p>No player statistics yet</p>
-            <p className="text-sm">
-              Complete at least {MIN_GAMES_FOR_STATS} games to see player statistics
-            </p>
-            <p className="mt-4 text-xs text-neutral-400">
-              {totalFinishedGames} {totalFinishedGames === 1 ? "game" : "games"} completed
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-6">
-            {stats.map(player => (
-              <div
-                key={player.name}
-                className="rounded-lg border border-neutral-300 bg-white px-4 py-6 shadow-[0_3px_0_0_var(--color-neutral-300)]"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="font-semibold">{player.name}</span>
-                  <div className="text-right">
-                    <span className="text-lg font-bold text-green-600">
-                      {Math.round(player.winRate * 100)}%
-                    </span>
-                    <span className="ml-1 text-sm text-neutral-500">win rate</span>
+                  {/* Move Scores section */}
+                  <div className="mb-6">
+                    <div className="mb-2 text-xs font-bold text-neutral-500">Move scores</div>
+                    <Histogram
+                      data={player.moveData.map(m => m.value)}
+                      color="teal"
+                      minValue={plotRanges.moveScores.min}
+                      maxValue={plotRanges.moveScores.max}
+                      showTooltip={false}
+                      referenceLines={[
+                        {
+                          value: player.avgMoveScore,
+                          label: "avg:",
+                          labelValue: player.avgMoveScore,
+                          type: "avg",
+                        },
+                        {
+                          value: player.maxMoveScore,
+                          label: "best:",
+                          labelValue: player.bestMoveLabel
+                            ? `${player.bestMoveLabel} (${player.maxMoveScore})`
+                            : player.maxMoveScore,
+                          type: "best",
+                        },
+                      ]}
+                    />
+                  </div>
+
+                  {/* Game Scores section */}
+                  <div>
+                    <div className="mb-2 text-xs font-bold text-neutral-500">Game scores</div>
+                    <DotPlot
+                      data={player.gameData}
+                      color="amber"
+                      minValue={plotRanges.gameScores.min}
+                      maxValue={plotRanges.gameScores.max}
+                      getTooltip={d => d.label ?? String(d.value)}
+                      onDotClick={
+                        onViewPastGame
+                          ? d => {
+                              if (d.gameId) onViewPastGame(d.gameId)
+                            }
+                          : undefined
+                      }
+                      referenceLines={[
+                        {
+                          value: player.avgScore,
+                          label: "avg:",
+                          labelValue: player.avgScore,
+                          type: "avg",
+                        },
+                        {
+                          value: player.highScore,
+                          label: "best:",
+                          labelValue: player.highScore,
+                          type: "best",
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
-
-                {/* Move Scores section */}
-                <div className="mb-6">
-                  <div className="mb-2 text-xs font-bold text-neutral-500">Move scores</div>
-                  <Histogram
-                    data={player.moveData.map(m => m.value)}
-                    color="teal"
-                    minValue={plotRanges.moveScores.min}
-                    maxValue={plotRanges.moveScores.max}
-                    showTooltip={false}
-                    referenceLines={[
-                      {
-                        value: player.avgMoveScore,
-                        label: "avg:",
-                        labelValue: player.avgMoveScore,
-                        type: "avg",
-                      },
-                      {
-                        value: player.maxMoveScore,
-                        label: "best:",
-                        labelValue: player.bestMoveLabel
-                          ? `${player.bestMoveLabel} (${player.maxMoveScore})`
-                          : player.maxMoveScore,
-                        type: "best",
-                      },
-                    ]}
-                  />
-                </div>
-
-                {/* Game Scores section */}
-                <div>
-                  <div className="mb-2 text-xs font-bold text-neutral-500">Game scores</div>
-                  <DotPlot
-                    data={player.gameData}
-                    color="amber"
-                    minValue={plotRanges.gameScores.min}
-                    maxValue={plotRanges.gameScores.max}
-                    getTooltip={d => d.label ?? String(d.value)}
-                    onDotClick={
-                      onViewPastGame
-                        ? d => {
-                            if (d.gameId) onViewPastGame(d.gameId)
-                          }
-                        : undefined
-                    }
-                    referenceLines={[
-                      {
-                        value: player.avgScore,
-                        label: "avg:",
-                        labelValue: player.avgScore,
-                        type: "avg",
-                      },
-                      {
-                        value: player.highScore,
-                        label: "best:",
-                        labelValue: player.highScore,
-                        type: "best",
-                      },
-                    ]}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -8,6 +8,8 @@ import { StatisticsScreen } from "./components/StatisticsScreen"
 import { useRoute } from "./lib/useRoute"
 import { useGame } from "./lib/useGame"
 import { Toaster } from "@/components/ui/sonner"
+import { UpdateNotice } from "./components/UpdateNotice"
+import { repo } from "./lib/repo"
 
 function App() {
   const [route, setRoute] = useRoute()
@@ -29,8 +31,8 @@ function App() {
   }
 
   return (
-    <div className="bg-khaki-100 h-screen">
-      <div className="mx-auto h-full max-w-xl pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className="bg-khaki-100 h-full">
+      <div className="h-full">
         {route.screen === "home" && (
           <HomeScreen
             onNewGame={() => setRoute({ screen: "new-game" })}
@@ -66,6 +68,7 @@ function App() {
         )}
       </div>
       <Toaster />
+      <UpdateNotice beforeReload={flushGameChanges} />
     </div>
   )
 }
@@ -82,3 +85,6 @@ const TilesScreenWrapper = ({ gameId, onBack }: { gameId: DocumentId; onBack: ()
 }
 
 export default App
+
+/** Finish IndexedDB writes before applying an app update. */
+const flushGameChanges = () => repo.flush()

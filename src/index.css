@@ -166,9 +166,15 @@
     @apply border-border outline-ring/50 select-none;
   }
   html,
-  body,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
   #root {
-    @apply h-dvh overflow-hidden;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
   }
   body {
     @apply bg-background text-foreground;

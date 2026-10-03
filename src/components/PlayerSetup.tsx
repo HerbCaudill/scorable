@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { IconPlus, IconX, IconCheck, IconPlayerPlay } from "@tabler/icons-react"
+import { usePreventReload } from "@/lib/usePreventReload"
 
 export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const [players, setPlayers] = useState<Array<string | null>>([null, null, null, null])
@@ -17,6 +18,7 @@ export const PlayerSetup = ({ previousPlayers = [], onStartGame }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const enteredPlayers = players.filter((p): p is string => p !== null && p.trim() !== "")
+  usePreventReload(enteredPlayers.length > 0 || newNameInput.trim().length > 0)
   const canStartGame = enteredPlayers.length >= 2
 
   // Sort previous players by frequency (assuming they're already sorted)

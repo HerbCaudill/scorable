@@ -80,6 +80,7 @@ pnpm dev
 # Run tests
 pnpm test        # Unit tests (Vitest)
 pnpm test:pw     # E2E tests (Playwright)
+pnpm test:pwa    # Production service-worker update test
 pnpm test:all    # All tests + type checking
 
 # Other commands

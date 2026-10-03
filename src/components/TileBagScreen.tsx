@@ -14,11 +14,11 @@ export const UnplayedTilesScreen = ({ game, onBack }: Props) => {
   const sortedTiles = getSortedTileEntries(TILE_DISTRIBUTION)
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       <Header title="Unplayed tiles" onBack={onBack} />
 
       {/* Tile rows - each letter on its own row */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="mx-auto min-h-0 w-full max-w-xl flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <p className="mb-3 text-xs text-neutral-500">
           {remainingCount} tiles remaining · {playedCount} played
         </p>

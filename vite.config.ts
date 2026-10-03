@@ -12,7 +12,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       workbox: {
         maximumFileSizeToCacheInBytes: 35 * 1024 * 1024, // 35 MB to accommodate Automerge WASM + word list
       },
@@ -61,7 +61,7 @@ export default defineConfig({
     },
   },
   test: {
-    exclude: ["**/node_modules/**", "**/e2e/**"],
+    exclude: ["**/node_modules/**", "**/e2e/**", "**/e2e-pwa/**"],
   },
   build: {
     // The word list chunk is ~31MB (Scrabble dictionary with definitions).
