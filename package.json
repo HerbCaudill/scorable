@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
-    "dev": "vite --open",
+    "dev": "localhost-dev pnpm dev:app",
     "format": "oxfmt",
     "generate-icons": "rsvg-convert -w 192 -h 192 public/icon.svg -o public/icon-192.png && rsvg-convert -w 512 -h 512 public/icon.svg -o public/icon-512.png && rsvg-convert -w 180 -h 180 public/icon.svg -o public/apple-touch-icon.png",
     "preview": "vite preview",
@@ -17,7 +17,9 @@
     "test:pwa": "playwright test --config playwright.pwa.config.ts",
     "test:pw:headed": "playwright test --headed",
     "test:pw:ui": "playwright test --ui",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:app": "vite",
+    "dev:url": "localhost-dev url"
   },
   "dependencies": {
     "@automerge/automerge": "^3.2.1",

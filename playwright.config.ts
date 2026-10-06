@@ -33,12 +33,12 @@ export default defineConfig({
     {
       command: `pnpm tsx e2e/sync-server.ts`,
       port: SYNC_SERVER_PORT,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
     {
-      command: `VITE_SYNC_SERVER_URL=ws://localhost:${SYNC_SERVER_PORT} pnpm dev --port ${PORT}`,
+      command: `VITE_SYNC_SERVER_URL=ws://localhost:${SYNC_SERVER_PORT} pnpm dev:app --port ${PORT}`,
       url: `http://localhost:${PORT}`,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
   ],
 })
