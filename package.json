@@ -9,11 +9,13 @@
     "email": "herb@devresults.com"
   },
   "scripts": {
-    "dev": "vite --host --open  ",
+    "dev": "localhost-dev --service legacy pnpm dev:app",
     "build": "tsc && vite build",
     "test": "vitest --reporter verbose",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "dev:app": "vite",
+    "dev:url": "localhost-dev url --service legacy"
   },
   "dependencies": {
     "@herbcaudill/random": "^0.3.0",
