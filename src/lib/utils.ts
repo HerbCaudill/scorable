@@ -1,9 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export { cn } from "cn"
 
 /** Darken a hex color by a given factor (0-1, where 0.7 = 70% of original brightness) */
 export function darkenColor(hex: string, factor = 0.7): string {
